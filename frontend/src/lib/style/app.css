@@ -1,0 +1,55 @@
+@font-face {
+	font-family: font1;
+	src: url('/font/JosefinSans-Regular.ttf');
+}
+@font-face {
+	font-family: font2;
+	src: url('/font/JosefinSans-Bold.ttf');
+}
+
+body {
+	overflow-x: hidden;
+	font-family: var(--font1);
+}
+
+* {
+	box-sizing: border-box;
+	outline: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.removeMargin * {
+	margin: 0;
+	padding: 0;
+}
+
+#svelte-announcer {
+	display: none;
+}
+
+video,
+img {
+	width: 100%;
+}
+
+.pageContent img {
+	border-radius: var(--bRadius);
+}
+
+.date {
+	font-style: italic;
+	font-size: 12px;
+}
+
+pre {
+	overflow-x: auto;
+}
+
+p > code {
+	color: darkred;
+}
+
+.link {
+	color: var(--fColor3);
+	cursor: pointer;
+}

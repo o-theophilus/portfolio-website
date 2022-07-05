@@ -1,0 +1,9 @@
+Microsoft Word
+Power Point
+CorelDRAW
+Photoshop
+Maya
+3D Max
+Blender
+SketchUp
+Godot

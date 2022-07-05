@@ -1,0 +1,29 @@
+:root {
+	--colorNill: transparent;
+	--color1: white;
+	--color2: rgb(56, 56, 56);
+	--color3: rgb(255, 102, 51);
+	--color4: rgba(255, 255, 255, 0.5);
+	--color5: black;
+	--color6: rgb(230, 230, 230);
+
+	--fColor1: var(--color1);
+	--fColor2: black;
+	--fColor3: var(--color3);
+
+	--mobileWidth: 720px;
+	--mobileWidth2: 1200px;
+	--mobileMenuWidth: 300px;
+
+	--headerHeight: 70px;
+
+	--animTime1: 200ms;
+
+	--bRadius: 5px;
+	--pad: 30px;
+	--lineHeight: 30px;
+
+	--altFont: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	--font1: font1, var(--altFont);
+	--font2: font2, var(--altFont);
+}

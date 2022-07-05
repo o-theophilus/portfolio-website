@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link rel="stylesheet" href="../mvTemplateData/style.css">
+    <script src="../mvTemplateData/UnityProgress.js"></script>  
+    <script src="Build/UnityLoader.js"></script>
+    <script>
+      var gameInstance = UnityLoader.instantiate("gameContainer", "Build/3DViewer.json", {onProgress: UnityProgress});
+    </script>
+  </head>
+  <body>
+    <div id="gameContainer"></div>
+    <div class="fullscreen" onclick="gameInstance.SetFullscreen(1)"></div>
+  </body>
+</html>
