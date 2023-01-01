@@ -1,0 +1,45 @@
+* {
+	transition-property: background-color, border-color, opacity, outline;
+	transition-duration: 0.2s;
+	/* transition-timing-function: ease-in-out; */
+	transition-timing-function: cubic-bezier(0.47, 1.64, 0.41, 0.8);
+}
+
+:root {
+	--mobileWidth: 720px;
+	--mobileWidth2: 1200px;
+	--mobileMenuWidth: 300px;
+
+	--headerHeight: 70px;
+	--animTime1: 0.2s;
+	--animTime2: 0.5s;
+
+	--gap0: 4px;
+	--gap1: 8px;
+	--gap2: 16px;
+	--gap3: 24px;
+	--gap4: 32px;
+	--gap5: calc(var(--gap4) * 2);
+
+	--overlay: rgba(0, 0, 0, 0.8);
+	--light_color: white;
+	--mid_color: rgb(135, 135, 135);
+
+	--color1: rgb(255, 102, 51);
+	--color2: red;
+	--color3: green;
+	--color4: rgb(255, 162, 0);
+}
+
+main {
+	--font: black;
+	--foreground: rgb(210, 210, 210);
+	--background: white;
+}
+
+main.dark {
+	--font: white;
+	--foreground: rgb(46, 46, 46);
+	--background: rgb(24, 24, 24);
+	--background: black;
+}

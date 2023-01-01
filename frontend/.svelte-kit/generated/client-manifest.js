@@ -1,21 +1,27 @@
 export { matchers } from './client-matchers.js';
 
-export const components = [
-	() => import("..\\..\\src\\routes\\__layout.svelte"),
-	() => import("..\\..\\src\\routes\\__error.svelte"),
-	() => import("..\\..\\src\\routes\\blog\\[slug].svelte"),
-	() => import("..\\..\\src\\routes\\blog\\index.svelte"),
-	() => import("..\\..\\src\\routes\\index.svelte"),
-	() => import("..\\..\\src\\routes\\marked.svelte"),
-	() => import("..\\..\\src\\routes\\project\\[slug].svelte"),
-	() => import("..\\..\\src\\routes\\project\\index.svelte")
-];
+export const nodes = [() => import('./nodes/0'),
+	() => import('./nodes/1'),
+	() => import('./nodes/2'),
+	() => import('./nodes/3'),
+	() => import('./nodes/4'),
+	() => import('./nodes/5'),
+	() => import('./nodes/6'),
+	() => import('./nodes/7'),
+	() => import('./nodes/8')];
+
+export const server_loads = [];
 
 export const dictionary = {
-	"": [[0, 4], [1]],
-	"blog": [[0, 3], [1]],
-	"marked": [[0, 5], [1]],
-	"project": [[0, 7], [1]],
-	"blog/[slug]": [[0, 2], [1]],
-	"project/[slug]": [[0, 6], [1]]
+	"/": [2],
+	"/admin9049": [3],
+	"/blog": [4],
+	"/blog/[slug]": [5],
+	"/marked": [6],
+	"/project": [~7],
+	"/project/[slug]": [~8]
+};
+
+export const hooks = {
+	handleError: (({ error }) => { console.error(error) }),
 };

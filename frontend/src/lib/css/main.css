@@ -1,0 +1,158 @@
+@font-face {
+	font-family: "JosefinSans";
+	src: url('/font/JosefinSans-Regular.ttf');
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: "JosefinSans";
+	src: url('/font/JosefinSans-Bold.ttf');
+	font-weight: 500;
+}
+
+:root,
+textarea,
+select,
+input,
+button {
+	font-family: "JosefinSans", 'Segoe UI', Tahoma, Verdana, sans-serif;
+	font-size: 16px;
+}
+
+
+
+* {
+	line-height: 150%;
+
+	box-sizing: border-box;
+	outline: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+
+
+body {
+	overflow-x: hidden;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	transition: background-color 9999s;
+	-webkit-text-fill-color: var(--font);
+}
+
+
+img {
+	display: block;
+	width: 100%;
+
+	border-radius: var(--gap1);
+	/* background-color: var(--foreground); */
+}
+
+
+
+a {
+	color: var(--color1);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--gap0);
+}
+
+
+a,
+button,
+label,
+input,
+textarea,
+select {
+	pointer-events: all;
+}
+
+
+
+.color1 {
+	color: var(--color1);
+}
+
+.error {
+	color: var(--color2);
+}
+
+.date {
+	font-size: small;
+}
+
+.big {
+	font-size: large;
+}
+
+
+/* markdown */
+
+.img_block {
+	padding: var(--gap2);
+	margin: 20px auto;
+	background-color: var(--foreground);
+}
+
+pre {
+	padding: 20px;
+	border-radius: var(--gap1);
+
+	background: var(--foreground);
+}
+
+blockquote {
+	margin: auto 80px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 20px 0;
+}
+
+h1 {
+	font-size: 24px
+}
+
+h2 {
+	font-size: 22.5px
+}
+
+h3 {
+	font-size: 21.2px
+}
+
+h4 {
+	font-size: 19.9px
+}
+
+h5 {
+	font-size: 18.6px
+}
+
+h6 {
+	font-size: 17.3px
+}
+
+ol,
+ul {
+	padding-left: 24px;
+}
+
+/* markdown */

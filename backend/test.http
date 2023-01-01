@@ -4,26 +4,72 @@
 @Authorization = IjI1Zjc1NjRiN2NkMTQyYTY5MjlhMTMzZTkzODRlYzU2Ig.YFI30g.yNCajtuI6kwYj65OiHT5KGsxya0
 
 
-#Create
-post  {{host}}/entity HTTP/1.1
-content-type: application/json
-
-{
-    "type" : "blog_post",
-    "title": "How I met Svelte",
-    "description": "The new reactive component based approach to web design without a virtual DOM.",
-    "photo": "how-i-met-svelte-01.jpg",
-    "content": "<a href='{0}'> Click here </a>",
-    "format": "markdown"
-}
-
-###
-
 ### Init
 get {{host}} HTTP/1.1
 content-type: application/json
 
 ###
+
+
+#Create
+post  {{host}}/blog HTTP/1.1
+content-type: application/json
+
+{
+    "title": "How I met Svelte",
+    "description": "The new reactive component based approach to web design without a virtual DOM.",
+    "photo": "how-i-met-svelte-01.jpg",
+    "content": "<a href='{0}'> Click here </a>",
+    "format": "markdown",
+    "tags": ""
+}
+
+###
+
+### Init
+get {{host}}/blog HTTP/1.1
+content-type: application/json
+
+###
+
+
+### Init
+get {{host}}/project HTTP/1.1
+content-type: application/json
+
+###
+
+### Init
+get {{host}}/blog_project HTTP/1.1
+content-type: application/json
+
+###
+
+###
+
+### Init
+get {{host}}/blog/eee HTTP/1.1
+content-type: application/json
+
+###
+
+
+### Init
+get {{host}}/project/eee HTTP/1.1
+content-type: application/json
+
+###
+
+
+
+
+
+
+
+
+
+
+
 
 
 ### Init

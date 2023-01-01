@@ -43,5 +43,6 @@
     "unauthorised",
     "werkzeug",
     "y"
-  ]
+  ],
+  "python.analysis.typeCheckingMode": "basic"
 }

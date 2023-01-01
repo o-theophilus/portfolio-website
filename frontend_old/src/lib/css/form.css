@@ -1,0 +1,75 @@
+
+form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap2);
+	
+}
+
+.inputGroup {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap1);
+	
+	color: var(--font1);
+}
+
+.h{
+	flex-direction: unset;
+	gap: var(--gap3);
+	flex-wrap: wrap;
+}
+
+
+
+label {
+	width: fit-content;
+	text-transform: capitalize;
+}
+
+
+form input,
+form select,
+form textarea {
+	width: 100%;
+
+	padding: var(--gap2);
+	border-radius: var(--gap1);
+	border: 2px solid var(--background);
+
+	background-color: transparent;
+}
+
+form input[type="radio"]
+ {
+	width: unset;
+}
+
+form input:hover,
+form select:hover,
+form textarea:hover {
+	border-color: var(--mid_color);
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+	border-color: var(--mid_color);
+
+}
+
+form textarea {
+	display: block;
+	resize: none;
+	height: 160px;
+}
+
+form a, form .link {
+	width: fit-content;
+
+	color: var(--light_color);
+	text-decoration: none;
+	font-weight: 500;
+
+	cursor: pointer;
+}

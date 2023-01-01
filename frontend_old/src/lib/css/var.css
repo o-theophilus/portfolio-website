@@ -1,0 +1,50 @@
+* {
+	transition-property: background-color, border-color, opacity, outline;
+	transition-duration: 0.2s;
+	transition-timing-function: ease-in-out;
+}
+
+:root {
+	
+	--mobileWidth: 720px;
+	--mobileWidth2: 1200px;
+	--mobileMenuWidth: 300px;
+
+	--headerHeight: 80px;
+	--animTime1: 200ms;
+
+	--gap1: 8px;
+	--gap2: 16px;
+	--gap3: 24px;
+	--gap4: 32px;
+	
+	--light_color: white;
+	--mid_color: rgb(135, 135, 135);
+
+	--color1: green;
+	--color2: rgb(56, 56, 56);
+	--color3: rgb(255, 102, 51);
+	--color4: rgba(255, 255, 255, 0.5);
+	--color5: red;
+	--color6: rgb(230, 230, 230);
+	
+	
+	--font1: black;
+	--font2: rgb(63, 63, 63);
+	--foreground: white;
+	--background: rgb(210, 210, 210);
+}
+
+
+/* main {
+	--font1: black;
+	--font2: rgb(63, 63, 63);
+	--foreground: white;
+	--background: rgb(210, 210, 210);
+} */
+main.dark {
+	--font1: white;
+	--font2: rgb(210, 210, 210);
+	--foreground: rgb(24, 24, 24);
+	--background: rgb(46, 46, 46);
+}

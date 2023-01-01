@@ -1,18 +1,31 @@
 import { writable } from 'svelte/store';
 
+export const api_url = import.meta.env.VITE_API_URL;
+
+// app variables
 export const showHeader = writable(true);
 export const openMobileMenu = writable(false);
 export const isMobile = writable(true);
 
+// variables
+export const module = writable();
+export const loading = writable(false);
+
+export const _tick = writable("");
+export const tick = (data) => {
+	_tick.set(data);
+}
+
+
 // tools
 export const scroll = (query) => {
+	let e = document.querySelector(query);
+
 	const scrollMobile = () => {
-		let e = document.querySelector(query);
 		e.scrollIntoView({ behavior: 'smooth' });
 	};
 
 	const scrollDesktop = () => {
-		let e = document.querySelector(query);
 		const offset = 70;
 		const bodyRect = document.body.getBoundingClientRect().top;
 		const elementRect = e.getBoundingClientRect().top;
@@ -24,10 +37,13 @@ export const scroll = (query) => {
 			behavior: 'smooth'
 		});
 	};
-	// $isMobile ? scrollMobile() : scrollDesktop();
 
 	const unsubscribe = isMobile.subscribe((value) => {
 		value ? scrollMobile() : scrollDesktop();
 	});
 	return unsubscribe;
 };
+
+// temp fix
+export const is_admin = writable(true);
+export const theme = writable("dark");
