@@ -28,6 +28,8 @@
 <Content>
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
+			<strong class="big">About Me</strong>
+			<br /><br />
 			My name is <strong>Theophilus</strong>, I am a self-taught student of programming and software
 			development, and I spend way too much time and money pursuing this interest.
 			<br /> <br />
@@ -45,8 +47,7 @@
 		</div>
 	</Observe>
 
-	<br /> <br /> <br /> <br />
-
+	<br /> <br />
 	<strong class="big">Programming Skills / Stack</strong>
 	<br /><br />
 	{#each skills as ent}
@@ -59,7 +60,7 @@
 			</div>
 		</div>
 	{/each}
-	<br /><br /> <br /><br />
+	<br /><br /> 
 
 	<strong class="big">Software Skills</strong>
 	<br /> <br />
@@ -73,7 +74,7 @@
 			</div>
 		</div>
 	{/each}
-	<br /> <br /> <br /> <br />
+	<br /> <br /> 
 
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>

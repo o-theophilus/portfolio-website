@@ -1,14 +1,14 @@
 from flask import current_app
 from deta import Deta
-from PIL import Image, ImageOps
+from PIL import Image
 from io import BytesIO
 from uuid import uuid4
 
 
 def drive():
     name = "live"
-    if current_app.config["DEBUG"]:
-        name = "test"
+    # if current_app.config["DEBUG"]:
+    #     name = "test"
     return Deta(current_app.config["DETA_KEY"]).Drive(name)
 
 

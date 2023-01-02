@@ -49,9 +49,7 @@
 <section>
 	<strong class="big">Delete</strong>
 	<form on:submit|preventDefault novalidate autocomplete="off">
-		<div>
-			Are you sure you want to delete <strong> {post.title}</strong>
-		</div>
+		<div>Are you sure you want to delete</div>
 		{#if error}
 			<span class="error">
 				{error}

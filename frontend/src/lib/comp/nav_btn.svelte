@@ -3,9 +3,10 @@
 
 	export let link;
 	$: path = $page.url.pathname.split('/')[1];
+	$: is_home = $page.url.pathname == '/';
 </script>
 
-<a class:active={link == path} href="/{link}">
+<a class:active={link == path} class:is_home href="/{link}">
 	<div class="highlight" />
 	<div class="text">
 		<slot />
@@ -28,6 +29,9 @@
 
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;
+	}
+	.is_home {
+		color: var(--background);
 	}
 	a:hover {
 		color: var(--light_color);

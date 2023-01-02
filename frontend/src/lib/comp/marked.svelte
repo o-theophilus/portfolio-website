@@ -3,7 +3,6 @@
 	// import hljs from 'highlight.js';
 
 	import SvelteMarkdown from 'svelte-markdown';
-	import './marked.css';
 
 	// marked.setOptions({
 	// 	renderer: new marked.Renderer(),

@@ -36,10 +36,14 @@
 		margin-bottom: var(--gap5);
 	}
 	.is_home {
-		/* background-color: #ffaf1b; */
+		background-color: #ffaf1b;
+		/* color: var(--background); */
 	}
 	.is_home nav {
 		margin: 0;
+	}
+	.is_home nav a{
+		color: var(--background);
 	}
 	a {
 		display: flex;

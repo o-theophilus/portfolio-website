@@ -3,9 +3,11 @@
 	import { scroll } from '$lib/store.js';
 
 	export let query = '';
+	export let invert = false;
 </script>
 
 <button
+	class:invert
 	on:click|stopPropagation={() => {
 		scroll(query);
 	}}
@@ -27,7 +29,6 @@
 		justify-content: center;
 		align-items: center;
 
-		/* border: 2px solid var(--color1); */
 		border: 2px solid var(--font);
 		border-radius: 50%;
 		width: var(--size);
@@ -37,6 +38,10 @@
 		color: var(--font);
 
 		background-color: transparent;
+	}
+	.invert {
+		fill: var(--background);
+		border-color: var(--background);
 	}
 	button:hover {
 		fill: var(--light_color);

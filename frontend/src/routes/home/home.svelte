@@ -5,6 +5,7 @@
 </script>
 
 <div class="scroll_1" />
+<br /><br />
 <Content>
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
@@ -15,7 +16,7 @@
 		</div>
 	</Observe>
 
-	<br /><br /><br /><br />
+	<br /><br />
 
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
@@ -28,8 +29,7 @@
 		</div>
 	</Observe>
 
-	<br /><br /><br /><br />
-
+	<br /><br />
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
 			<strong>Develop what you need.</strong>
@@ -39,7 +39,7 @@
 		</div>
 	</Observe>
 
-	<br /><br /><br /><br />
+	<br /><br />
 
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>

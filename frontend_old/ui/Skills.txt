@@ -1,7 +1,0 @@
-C#
-Python
-HTML
-CSS
-JavaScript
-React
-Arduino

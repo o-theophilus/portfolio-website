@@ -10,6 +10,7 @@
 	import Fluid from './home/fluid.svelte';
 	import Module from '$lib/module/module.svelte';
 	import Footer from './footer/footer.svelte';
+	import Loading from '$lib/comp/loading.svelte';
 
 	$: is_home = $page.url.pathname == '/';
 </script>
@@ -18,12 +19,13 @@
 	{#if is_home}
 		<Fluid />
 	{/if}
-	<div class="page">
+	<div class="page" class:is_home>
 		<Nav />
 		<slot />
 		<Footer />
 	</div>
 	<Module />
+	<Loading />
 </main>
 
 <style>
@@ -36,7 +38,8 @@
 
 		transition: left var(--animTime1);
 		transition-timing-function: ease-in-out;
-
+	}
+	.is_home {
 		pointer-events: none;
 	}
 </style>

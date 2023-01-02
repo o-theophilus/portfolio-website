@@ -1,8 +1,12 @@
 <script>
+	import { page } from '$app/stores';
 	import { theme } from '$lib/store.js';
+
+	$: is_home = $page.url.pathname == '/';
 </script>
 
 <button
+	class:is_home
 	on:click={() => {
 		$theme = $theme == 'dark' ? 'light' : 'dark';
 	}}
@@ -40,6 +44,11 @@
 
 		transition-timing-function: ease-in-out;
 	}
+
+	.is_home {
+		color: var(--background);
+	}
+
 	button:hover {
 		color: var(--light_color);
 		background-color: var(--color1);
