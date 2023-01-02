@@ -9,7 +9,7 @@
 </script>
 
 <Content>
-	<footer>
+	<footer id="footer">
 		<strong class="big">Get in touch!</strong>
 		<br /><br /><br /><br />
 		<section>

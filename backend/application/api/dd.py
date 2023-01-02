@@ -20,7 +20,7 @@ def add(photo, path, compress=False):
         white = Image.new('RGBA', photo.size, (255, 255, 255))
         photo = Image.alpha_composite(white, photo).convert('RGB')
         # photo = ImageOps.fit(photo, (width, height), Image.ANTIALIAS)
-        photo.thumbnail((500, 500), Image.Resampling.LANCZOS)
+        photo.thumbnail((1024, 1024), Image.Resampling.LANCZOS)
 
         photo.save(file, format="JPEG")
     else:

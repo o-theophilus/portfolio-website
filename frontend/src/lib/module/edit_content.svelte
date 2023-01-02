@@ -51,9 +51,9 @@
 				$module = {
 					module: Info,
 					data: {
-						title: `${post_type} content edited`,
+						title: "Done",
 						status: 'good',
-						message: `${post_type} content edited successfully`,
+						message: "Content Saved",
 						button: [
 							{
 								name: 'OK',

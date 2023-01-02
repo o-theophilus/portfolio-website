@@ -21,8 +21,6 @@
 
 <Meta title="{post_type} | Theophilus" description="{post_type} Posts" image="/site/home.jpg" />
 
-<!-- <Image src="blog" copy="Blog Posts" /> -->
-
 <Content>
 	<strong class="big">{post_type}</strong>
 	<br /><br /><br /><br />
@@ -39,7 +37,7 @@
 		>
 			Add
 		</Button>
-		<br /><br /><br /><br />
+		<br />
 	{/if}
 	<section>
 		{#each posts as post}

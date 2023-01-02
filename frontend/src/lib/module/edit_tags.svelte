@@ -29,12 +29,14 @@
 			if (data.status == 200) {
 				tick(data.data.post);
 
+				let s = data.data.post.tags.split(',').length > 1;
+				
 				$module = {
 					module: Info,
 					data: {
-						title: `${post_type} tags edited`,
+						title: 'Done',
 						status: 'good',
-						message: `${post_type} tags edited successfully`,
+						message: `Tag${s ? 's' : ''} Saved`,
 						button: [
 							{
 								name: 'OK',

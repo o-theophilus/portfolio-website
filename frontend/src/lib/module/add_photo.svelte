@@ -78,7 +78,7 @@
 
 <section>
 	<strong class="big">
-		Add {post_type} photo
+		Add Photo
 	</strong>
 	<form on:submit|preventDefault novalidate autocomplete="off">
 		<img

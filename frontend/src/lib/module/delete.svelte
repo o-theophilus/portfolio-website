@@ -27,9 +27,9 @@
 				$module = {
 					module: Info,
 					data: {
-						title: `${post_type} deleted`,
+						title: "Done",
 						status: 'good',
-						message: `${post_type} deleted successfully`,
+						message: `${post_type} Deleted`,
 						button: [
 							{
 								name: 'Ok',

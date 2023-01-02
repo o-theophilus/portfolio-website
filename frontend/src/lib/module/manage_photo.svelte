@@ -101,7 +101,7 @@
 
 <section>
 	<strong class="big">
-		Manage {post_type} photo
+		Manage Photo
 	</strong>
 	<div class="content">
 		<img

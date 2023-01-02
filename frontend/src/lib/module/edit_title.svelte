@@ -40,9 +40,9 @@
 				$module = {
 					module: Info,
 					data: {
-						title: `${post_type} title edited`,
+						title: "Done",
 						status: 'good',
-						message: `${post_type} title edited successfully`,
+						message: "Title Saved",
 						button: [
 							{
 								name: 'OK',

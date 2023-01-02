@@ -119,12 +119,4 @@ Content column 1 | Content column 2
 </section>
 
 <style>
-	.markdown {
-		max-width: var(--mobileWidth);
-		width: 100%;
-		margin: auto;
-		padding: 0 var(--gap4);
-
-		color: var(--font);
-	}
 </style>

@@ -37,9 +37,9 @@
 				$module = {
 					module: Info,
 					data: {
-						title: `${post_type} created`,
+						title: "Done",
 						status: 'good',
-						message: `${post_type} created successfully`,
+						message: `${post_type} Created`,
 						button: [
 							{
 								name: 'OK',

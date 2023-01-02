@@ -32,9 +32,10 @@
 		let is_available = content.search(/<photo>/) >= 0;
 		while (is_available) {
 			post.photo_count = post.photo_count + 1;
-			let photo = `<img class="img_block" src="${api_url}/${post.photos[post.photo_count]}" alt=${
-				post.title
-			} onerror="this.src='/site/no_photo.png'" />`;
+			// let photo = `<img class="img_block" src="${api_url}/${post.photos[post.photo_count]}" alt=${
+			// 	post.title
+			// } onerror="this.src='/site/no_photo.png'" />`;
+			let photo = `![${post.title}](${api_url}/${post.photos[post.photo_count]})`;
 			content = content.replace(/<photo>/, photo);
 			is_available = content.search(/<photo>/) >= 0;
 		}
@@ -82,7 +83,7 @@
 	{/if}
 
 	<span class="date">{post.updated_at}</span>
-	
+
 	<br /><br />
 
 	{#if $is_admin}
@@ -155,17 +156,30 @@
 	{/if}
 
 	{#if $is_admin}
-		<Button
-			on:click={() => {
-				$module = {
-					module: Delete,
-					data: {
-						post,
-						post_type
-					}
-				};
-			}}>Delete</Button
-		>
+		<div class="row">
+			<Button
+				on:click={() => {
+					// $module = {
+					// 	module: Edit_Status,
+					// 	data: {
+					// 		post,
+					// 		post_type
+					// 	}
+					// };
+				}}>Edit Status</Button
+			>
+			<Button
+				on:click={() => {
+					$module = {
+						module: Delete,
+						data: {
+							post,
+							post_type
+						}
+					};
+				}}>Delete</Button
+			>
+		</div>
 	{/if}
 </Content>
 
