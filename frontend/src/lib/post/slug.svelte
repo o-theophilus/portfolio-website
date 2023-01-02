@@ -21,8 +21,6 @@
 	$: if ($_tick) {
 		post = $_tick;
 		$_tick = '';
-		// console.log('slug');
-		// console.log(post.photos);
 	}
 
 	let content = post.content;
@@ -32,9 +30,6 @@
 		let is_available = content.search(/<photo>/) >= 0;
 		while (is_available) {
 			post.photo_count = post.photo_count + 1;
-			// let photo = `<img class="img_block" src="${api_url}/${post.photos[post.photo_count]}" alt=${
-			// 	post.title
-			// } onerror="this.src='/site/no_photo.png'" />`;
 			let photo = `![${post.title}](${api_url}/${post.photos[post.photo_count]})`;
 			content = content.replace(/<photo>/, photo);
 			is_available = content.search(/<photo>/) >= 0;

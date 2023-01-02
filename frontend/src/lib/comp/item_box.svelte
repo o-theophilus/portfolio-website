@@ -13,7 +13,11 @@
 </script>
 
 <a {href} {target}>
-	<img src="{api_url}/{post.photos[0]}" alt={post.title} onerror="this.src='/site/no_photo.png'" />
+	<img
+		src="{api_url}/{post.photos[0] || ''}"
+		alt={post.title}
+		onerror="this.src='/site/no_photo.png'"
+	/>
 	<div class="blocker" />
 	<div class="block">
 		<strong class="big">
