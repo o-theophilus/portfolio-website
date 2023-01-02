@@ -23,7 +23,7 @@
 				<Link link="">Home</Link>
 			{/if}
 			<Link link="project">Project</Link>
-			<Link link="blog">Blog</Link>
+			<Link link="blogg">Blog</Link>
 		</nav>
 	</Content>
 </section>
