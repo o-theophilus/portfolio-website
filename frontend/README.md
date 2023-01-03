@@ -6,8 +6,6 @@ authentication
 user comments
 email api
 
-disable space fluid splat
-markdown textarea enable tab key
 
 add video
 add multiple photo
@@ -15,3 +13,7 @@ modify date
 
 error when no network
 fix nav blink
+filter by status (backend)
+
+disable space fluid splat
+markdown textarea enable tab key

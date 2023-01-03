@@ -1,4 +1,5 @@
 # Init
+pipenv shell
 set FLASK_APP=application
 set FLASK_DEBUG=True
 flask run

@@ -11,6 +11,7 @@
 	import Description from '$lib/module/edit_description.svelte';
 	import Tags from '$lib/module/edit_tags.svelte';
 	import Edit_Content from '$lib/module/edit_content.svelte';
+	import Edit_Status from '$lib/module/edit_status.svelte';
 	import Photo_Man from '$lib/module/manage_photo.svelte';
 
 	export let data;
@@ -143,16 +144,17 @@
 
 	{#if $is_admin}
 		<br /> <br />
+		{post.status}
 		<div class="row">
 			<Button
 				on:click={() => {
-					// $module = {
-					// 	module: Edit_Status,
-					// 	data: {
-					// 		post,
-					// 		post_type
-					// 	}
-					// };
+					$module = {
+						module: Edit_Status,
+						data: {
+							post,
+							post_type
+						}
+					};
 				}}>Edit Status</Button
 			>
 			<Button

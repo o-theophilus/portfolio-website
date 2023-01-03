@@ -197,14 +197,22 @@ def update_status(slug):
             "message": "invalid request"
         })
 
-    if "status" not in request.json or not request.json["status"]:
+    if "status" not in request.json or not request.json["temp_status"]:
         return jsonify({
             "status": 201,
             "message": "this field is required"
         })
 
+    status = request.json["temp_status"]
+    if status not in ["draft", "publish"] or status == post["status"]:
+        print(1)
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
     post["updated_at"] = now()
-    post["status"] = request.json["status"]
+    post["status"] = status
 
     db.add(post)
 
