@@ -1,23 +1,22 @@
 <script>
-	// import marked from 'marked';
-	// import hljs from 'highlight.js';
+	import { marked } from 'marked';
+	import hljs from 'highlight.js';
+	import './marked.css';
 
-	import SvelteMarkdown from 'svelte-markdown';
-
-	// marked.setOptions({
-	// 	renderer: new marked.Renderer(),
-	// 	highlight: function (code, lang) {
-	// 		const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-	// 		return hljs.highlight(code, { language }).value;
-	// 	}
-	// 	// pedantic: false,
-	// 	// gfm: true,
-	// 	// breaks: false,
-	// 	// sanitize: false,
-	// 	// smartLists: true,
-	// 	// smartypants: false,
-	// 	// xhtml: false
-	// });
+	marked.setOptions({
+		renderer: new marked.Renderer(),
+		highlight: function (code, lang) {
+			const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+			return hljs.highlight(code, { language }).value;
+		}
+		// pedantic: false,
+		// gfm: true,
+		// breaks: false,
+		// sanitize: false,
+		// smartLists: true,
+		// smartypants: false,
+		// xhtml: false
+	});
 
 	export let md = `	
 ---
@@ -113,10 +112,6 @@ Content column 1 | Content column 2
 	`;
 </script>
 
-<!-- {@html marked(md)} -->
 <section class="markdown">
-	<SvelteMarkdown source={md} />
+	{@html marked.parse(md)}
 </section>
-
-<style>
-</style>

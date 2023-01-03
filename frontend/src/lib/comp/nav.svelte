@@ -33,15 +33,15 @@
 		display: flex;
 		height: var(--headerHeight);
 
-		margin-bottom: var(--gap5);
+		/* margin-bottom: var(--gap5); */
 	}
 	.is_home {
 		background-color: #ffaf1b;
 		/* color: var(--background); */
 	}
-	.is_home nav {
+	/* .is_home nav {
 		margin: 0;
-	}
+	} */
 	.is_home nav a{
 		color: var(--background);
 	}

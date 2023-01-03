@@ -14,3 +14,4 @@ add multiple photo
 modify date
 
 error when no network
+fix nav blink

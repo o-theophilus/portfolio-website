@@ -41,8 +41,9 @@
 
 <Content>
 	<img src="{api_url}/{post.photos[0]}" alt={post.title} onerror="this.src='/site/no_photo.png'" />
-	<br />
+
 	{#if $is_admin}
+		<br />
 		<Button
 			class="tiny"
 			on:click={() => {
@@ -57,10 +58,8 @@
 		>
 	{/if}
 
-	<br /><br /><br /><br />
-
-	<strong class="big">{post.title}</strong>
 	<br /><br />
+	<strong class="big">{post.title}</strong>
 	{#if $is_admin}
 		<Button
 			class="tiny"
@@ -74,17 +73,14 @@
 				};
 			}}>Edit Title</Button
 		>
-		<br /><br />
 	{/if}
 
+	<br /><br />
 	<span class="date">{post.updated_at}</span>
 
-	<br /><br />
-
 	{#if $is_admin}
-		{post.description}
-
 		<br /><br />
+		{post.description}
 
 		<Button
 			class="tiny"
@@ -99,13 +95,10 @@
 			}}>Edit Description</Button
 		>
 	{/if}
-</Content>
 
-<br /><br />
+	<br /><br />
+	<Marked md={content} />
 
-<Marked md={content} />
-
-<Content>
 	{#if $is_admin}
 		<Button
 			class="tiny"
@@ -119,17 +112,16 @@
 				};
 			}}>Edit Content</Button
 		>
-
-		<br /><br /><br />
 	{/if}
 
+	<br />
 	{#if post.tags}
+		<br />
 		<div class="row">
 			{#each post.tags.split(', ') as tag}
 				<Button class="tiny">{tag}</Button>
 			{/each}
 		</div>
-		<br />
 	{/if}
 	{#if $is_admin}
 		<Button
@@ -147,10 +139,10 @@
 		>
 			Edit Tags
 		</Button>
-		<br /> <br /> <br /> <br />
 	{/if}
 
 	{#if $is_admin}
+		<br /> <br />
 		<div class="row">
 			<Button
 				on:click={() => {
@@ -179,4 +171,7 @@
 </Content>
 
 <style>
+	.big {
+		font-size: x-large;
+	}
 </style>
