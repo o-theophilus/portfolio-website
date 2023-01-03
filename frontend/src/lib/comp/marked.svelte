@@ -9,6 +9,7 @@
 			const language = hljs.getLanguage(lang) ? lang : 'plaintext';
 			return hljs.highlight(code, { language }).value;
 		}
+		// langPrefix: 'hljs language-',
 		// pedantic: false,
 		// gfm: true,
 		// breaks: false,
