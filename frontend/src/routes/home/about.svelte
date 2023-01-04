@@ -80,7 +80,7 @@
 		<div class="observe" class:intersecting>
 			<strong class="big">This Website</strong>
 			<br /><br />
-			This website was made with SvelteKit<span class="heart">&#10084</span> and deployed on Vercel.
+			This website was made with Svelte<span class="heart">&#10084</span> and deployed on Vercel.
 			It's entirely static through the SvelteKit's SSG feature.
 			<br /> <br />
 			Posts are written in Markdown, in-page codes are formatted using Highlight.js and then converted

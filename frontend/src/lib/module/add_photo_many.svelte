@@ -15,22 +15,23 @@
 	let src = default_img;
 	let error = '';
 
+	let file_type;
+
 	const on_change = () => {
 		error = '';
 		// image_file = input.files[0];
-
-		// input.files.forEach((file) => {
-		// 	console.log(file);
-		// });
 
 		for (let i = 0; i < input.files.length; i++) {
 			let file = input.files[i];
 			console.log(file.name);
 		}
-		// for (const f in input) {
-		// let name = input[f].name;
-		// console.log(input.files[f].name);
-		// }
+
+		let reader = new FileReader();
+		reader.readAsDataURL(input.files[0]);
+		reader.onload = () => {
+			src = reader.result;
+			file_type = src.split(';')[0].split(':')[1].split('/')[0];
+		};
 
 		// input.value = null;
 
@@ -103,12 +104,17 @@
 		/>
 		<input
 			type="file"
-			accept="image/*"
+			accept="image/*, video/*"
 			bind:this={input}
 			on:change={on_change}
 			id="img_input"
 			multiple
 		/>
+
+		<video controls>
+			<source {src} type="video/mp4" />
+			<track kind="captions" />
+		</video>
 
 		{#if error}
 			<div class="inputGroup">

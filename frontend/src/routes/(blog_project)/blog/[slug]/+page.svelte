@@ -1,5 +1,5 @@
 <script>
-	import Post from '$lib/post/slug.svelte';
+	import Post from '../../post/slug.svelte';
 
 	export let data;
 </script>

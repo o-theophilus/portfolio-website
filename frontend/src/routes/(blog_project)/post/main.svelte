@@ -22,8 +22,9 @@
 <Meta title="{post_type} | Theophilus" description="{post_type} Posts" image="/site/home.jpg" />
 
 <Content>
+	<br />
 	<strong class="big">{post_type}</strong>
-	<br /><br /><br /><br />
+	<br /><br />
 	{#if $is_admin}
 		<Button
 			on:click={() => {
@@ -67,5 +68,8 @@
 	}
 	strong {
 		text-transform: capitalize;
+	}
+	.big {
+		text-transform: uppercase;
 	}
 </style>

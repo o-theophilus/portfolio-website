@@ -176,4 +176,7 @@
 	.big {
 		font-size: x-large;
 	}
+	img {
+		background-color: var(--foreground);
+	}
 </style>

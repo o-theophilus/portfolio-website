@@ -9,7 +9,11 @@ pre {
 	border-radius: var(--gap1);
 
 	background-color: var(--foreground);
+
+	overflow-y: auto;
 }
+
+
 
 code {
 	font-size: small;
