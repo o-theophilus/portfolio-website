@@ -12,7 +12,6 @@ add multiple photo
 modify date
 
 error when no network
-fix nav blink
 filter by status (backend)
 
 disable space fluid splat

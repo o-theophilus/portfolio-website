@@ -6,6 +6,7 @@
 	import About from './home/about.svelte';
 	import Scroller from '$lib/comp/scroller.svelte';
 	import Meta from '$lib/comp/meta.svelte';
+	import Nav from '$lib/comp/nav.svelte';
 </script>
 
 <Meta
@@ -14,6 +15,7 @@
 	image="akropol_001.jpg"
 />
 
+<Nav home />
 <section>
 	<Parallax />
 	<div class="text">

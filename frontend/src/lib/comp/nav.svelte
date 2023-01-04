@@ -1,16 +1,14 @@
 <script>
-	import { page } from '$app/stores';
-	
 	import Link from './nav_btn.svelte';
 	import Theme from './nav_theme.svelte';
 	import SVG from './svg.svelte';
 
 	import Content from '$lib/comp/content.svelte';
 
-	$: is_home = $page.url.pathname == '/';
+	export let home = false;
 </script>
 
-<section class:is_home>
+<section class:home>
 	<Content>
 		<nav>
 			<a href="/">
@@ -19,7 +17,7 @@
 			</a>
 
 			<Theme />
-			{#if !is_home}
+			{#if !home}
 				<Link link="">Home</Link>
 			{/if}
 			<Link link="project">Project</Link>
@@ -32,17 +30,11 @@
 	nav {
 		display: flex;
 		height: var(--headerHeight);
-
-		/* margin-bottom: var(--gap5); */
 	}
-	.is_home {
+	.home {
 		background-color: #ffaf1b;
-		/* color: var(--background); */
 	}
-	/* .is_home nav {
-		margin: 0;
-	} */
-	.is_home nav a{
+	.is_home nav a {
 		color: var(--background);
 	}
 	a {

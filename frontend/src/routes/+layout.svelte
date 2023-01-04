@@ -6,7 +6,6 @@
 	import '$lib/css/main.css';
 	import '$lib/css/form.css';
 
-	import Nav from '$lib/comp/nav.svelte';
 	// import Fluid from './home/fluid.svelte';
 	import Module from '$lib/module/module.svelte';
 	import Footer from './footer/footer.svelte';
@@ -20,7 +19,6 @@
 		<!-- <Fluid /> -->
 	{/if}
 	<div class="page" class:is_home>
-		<Nav />
 		<slot />
 		<Footer />
 	</div>
