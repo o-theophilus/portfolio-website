@@ -6,7 +6,8 @@
 	$: is_home = $page.url.pathname == '/';
 </script>
 
-<a class:active={link == path} class:is_home href="/{link}" data-sveltekit-preload-data>
+<a class:active={link == path} class:is_home href="/{link}">
+	<!-- data-sveltekit-preload-data -->
 	<div class="highlight" />
 	<div class="text">
 		<slot />

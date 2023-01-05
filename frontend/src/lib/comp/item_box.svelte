@@ -12,7 +12,8 @@
 	}
 </script>
 
-<a {href} {target} data-sveltekit-preload-data>
+<a {href} {target} >
+	<!-- data-sveltekit-preload-data -->
 	<img
 		src="{api_url}/{post.photos[0] || ''}"
 		alt={post.title}
