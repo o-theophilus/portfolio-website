@@ -1,7 +1,7 @@
 <div class="block">
 	<a href="/">Home</a> &#8226;
 	<a href="/project">Project</a> &#8226;
-	<a href="/blog">Blog</a> &#8226;
+	<a href="/blog">Blog</a>
 </div>
 
 <style>

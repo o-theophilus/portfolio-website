@@ -45,5 +45,5 @@ export const scroll = (query) => {
 };
 
 // temp fix
-export const is_admin = writable(false);
+export const is_admin = writable(true);
 export const theme = writable("dark");

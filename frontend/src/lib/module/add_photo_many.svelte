@@ -9,57 +9,74 @@
 	let { post_type } = data;
 
 	let input;
-	let files;
-
-	let default_img = '/site/select_photo.png';
-	let src = default_img;
-	let error = '';
-
-	let file_type;
+	let files = [];
+	let error = [];
 
 	const on_change = () => {
-		error = '';
-		// image_file = input.files[0];
-
 		for (let i = 0; i < input.files.length; i++) {
 			let file = input.files[i];
-			console.log(file.name);
+			let media_type = input.files[i].type.split('/');
+			let temp = {
+				file: input.files[i],
+				name: file.name,
+				media: media_type[0],
+				type: media_type[1],
+				lastModified: input.files[i].lastModified,
+				size: input.files[i].size
+			};
+
+			const is_new = () => {
+				let a = [...files, ...error];
+
+				for (let j = 0; j < a.length; j++) {
+					if (
+						a[j].name == temp.name &&
+						a[j].media == temp.media &&
+						a[j].type == temp.type &&
+						a[j].lastModified == temp.lastModified &&
+						a[j].size == temp.size
+					) {
+						return false;
+					}
+				}
+
+				return true;
+			};
+
+			if (is_new()) {
+				if (['image', 'video'].includes(temp.media) && !['svg+xml'].includes(temp.type)) {
+					let reader = new FileReader();
+					reader.readAsDataURL(input.files[i]);
+					reader.onload = () => {
+						temp.src = reader.result;
+					};
+					files.push(temp);
+					files = files;
+				} else {
+					temp.error = 'invalid file';
+					error.push(temp);
+					error = error;
+				}
+			}
 		}
-
-		let reader = new FileReader();
-		reader.readAsDataURL(input.files[0]);
-		reader.onload = () => {
-			src = reader.result;
-			file_type = src.split(';')[0].split(':')[1].split('/')[0];
-		};
-
-		// input.value = null;
-
-		// let name = files.name.split('.');
-		// let ext = name[name.length - 1];
-
-		// if (!['jpg', 'png', 'gif'].includes(ext.toLowerCase())) {
-		// 	src = default_img;
-		// 	error = 'invalid file type';
-		// } else {
-		// 	let reader = new FileReader();
-		// 	reader.readAsDataURL(image_file);
-		// 	reader.onload = (e) => {
-		// 		src = e.target.result;
-		// 	};
-		// }
 	};
 
 	const validate = () => {
-		if (!files) {
-			error = 'please select a photo';
+		if (Object.keys(error).length == 0) {
+			submit();
+		} else {
+			error = { error: 'please select a photo' };
 		}
-		!error && submit();
 	};
-
 	const submit = async () => {
+		let f = [...files];
+		let files = [];
+		for (let j = 0; j < f.length; j++) {
+			files.push(files[i].file);
+		}
+
 		let formData = new FormData();
-		formData.append('photo', files);
+		formData.append('files', files);
 		formData.append('slug', post.slug);
 
 		const resp = await fetch(`${api_url}/${post_type}/photo/${post.slug}`, {
@@ -89,19 +106,67 @@
 			}
 		}
 	};
+
+	let file_type = 'image';
+	let src = '/site/select_photo.png';
+	let dragover = false;
 </script>
 
 <section>
 	<strong class="big"> Add Photo </strong>
-	<form on:submit|preventDefault novalidate autocomplete="off">
-		<img
-			{src}
-			alt={post.title}
+
+	<div class:dragover class="display">
+		{#if file_type == 'image'}
+			<img
+				{src}
+				alt={post.title}
+				on:click={() => {
+					input.click();
+				}}
+				on:keypress
+				on:dragover|preventDefault={() => {
+					dragover = true;
+				}}
+				on:dragleave|preventDefault={() => {
+					dragover = false;
+				}}
+				on:drop|preventDefault={(e) => {
+					dragover = false;
+					input.files = e.dataTransfer.files;
+					on_change();
+				}}
+			/>
+		{:else if file_type == 'video'}
+			<video
+				controls
+				{src}
+				on:click={() => {
+					input.click();
+				}}
+				on:keypress
+			>
+				<track kind="captions" /></video
+			>
+		{/if}
+	</div>
+
+	{#each files as f}
+		<Button
 			on:click={() => {
-				input.click();
+				file_type = f.type;
+				src = f.src;
 			}}
-			on:keypress
-		/>
+			>{f.name}
+		</Button>
+	{/each}
+	{#each error as e}
+		<div>
+			<span class="error">
+				{e.name} - {e.error} ({e.type})
+			</span>
+		</div>
+	{/each}
+	<form on:submit|preventDefault novalidate autocomplete="off">
 		<input
 			type="file"
 			accept="image/*, video/*"
@@ -111,26 +176,13 @@
 			multiple
 		/>
 
-		<video controls>
-			<source {src} type="video/mp4" />
-			<track kind="captions" />
-		</video>
-
-		{#if error}
-			<div class="inputGroup">
-				<span class="error">
-					{error}
-				</span>
-			</div>
-		{/if}
-
-		<!-- <Button
+		<Button
 			class="primary"
 			name="Upload"
 			on:click={() => {
 				validate();
 			}}
-		/> -->
+		/>
 	</form>
 </section>
 
@@ -156,5 +208,12 @@
 
 	#img_input {
 		display: none;
+	}
+	.display {
+		border: 2px solid transparent;
+	}
+	.display:hover,
+	.dragover {
+		border-color: var(--color1);
 	}
 </style>

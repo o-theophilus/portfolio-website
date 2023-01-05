@@ -15,12 +15,12 @@ export const server_loads = [];
 
 export const dictionary = {
 	"/": [3],
-	"/admin9049": [8],
-	"/(blog_project)/blog": [~4,[2]],
-	"/(blog_project)/blog/[slug]": [~5,[2]],
-	"/(blog_project)/project": [~6,[2]],
-	"/(blog_project)/project/[slug]": [~7,[2]],
-	"/test": [9]
+	"/(p)/admin9049": [4,[2]],
+	"/(p)/blog": [~5,[2]],
+	"/(p)/blog/[slug]": [~6,[2]],
+	"/(p)/project": [~7,[2]],
+	"/(p)/project/[slug]": [~8,[2]],
+	"/(p)/test": [9,[2]]
 };
 
 export const hooks = {
