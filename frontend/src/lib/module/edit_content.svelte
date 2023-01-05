@@ -33,9 +33,8 @@
 	};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post_type}/content/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post_type}/content/${post.slug}/`, {
 			method: 'put',
-			mode: 'cors',
 			headers: {
 				'Content-Type': 'application/json'
 				// Authorization: session.token
