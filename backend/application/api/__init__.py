@@ -6,6 +6,12 @@ from datetime import datetime, timedelta
 bp = Blueprint("api", __name__)
 
 
+@bp.after_request
+def add_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
+
+
 @bp.route("/")
 def index():
     return jsonify({
