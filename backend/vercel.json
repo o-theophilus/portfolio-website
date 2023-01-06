@@ -9,10 +9,7 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/",
-            "headers": {
-                "Access-Control-Allow-Origin": "*"
-            }
+            "dest": "/"
         }
     ]
 }
