@@ -9,6 +9,7 @@ bp = Blueprint("api", __name__)
 # @bp.after_request
 # def add_headers(response):
 #     response.headers['Access-Control-Allow-Origin'] = '*'
+#     response.headers['Access-Control-Allow-Origin'] = "https://theophilus.vercel.app/"
 #     return response
 
 
