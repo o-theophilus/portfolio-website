@@ -1,8 +1,7 @@
 <script>
-	import { api_url, module, tick } from '$lib/store.js';
+	import { api_url, loading, tick } from '$lib/store.js';
 
 	import Button from '$lib/comp/button.svelte';
-	import Add from './add_photo.svelte';
 
 	export let data;
 	let { post } = data;
@@ -10,12 +9,20 @@
 
 	let init_order = [...post.photos];
 
-	let error = '';
 	let order_changed = false;
 	let show_left_btn = true;
 	let show_right_btn = true;
 
+	let input;
+	let files = [];
+	let excess_files = [];
+	let invalid_files = [];
+
+	let dragover = false;
+	let error = '';
+
 	const make_active = (photo = '') => {
+		error = '';
 		show_left_btn = true;
 		show_right_btn = true;
 		post.active_photo = photo || post.photos[0] || '';
@@ -61,8 +68,9 @@
 		}
 	};
 
-	const submit = async (method) => {
+	const reorder_delete = async (method) => {
 		error = '';
+		$loading= true
 		const resp = await fetch(`${api_url}/${post_type}/photo/${post.slug}`, {
 			method: method,
 			headers: {
@@ -71,6 +79,7 @@
 			},
 			body: JSON.stringify(post)
 		});
+		$loading= false
 
 		if (resp.ok) {
 			let data = await resp.json();
@@ -96,18 +105,108 @@
 		}
 	};
 
+	const on_input = () => {
+		files = [];
+		excess_files = [];
+		invalid_files = [];
+		error = '';
+		for (let i = 0; i < input.files.length; i++) {
+			let file = input.files[i];
+			let media_type = input.files[i].type.split('/');
+			let media = media_type[0];
+			let type = media_type[1];
+
+			if (media == 'image' && !['svg+xml', 'x-icon'].includes(type)) {
+				if (files.length < post.photo_count - post.photos.length) {
+					files.push(file);
+				} else {
+					excess_files.push(file);
+				}
+			} else {
+				invalid_files.push(file);
+			}
+		}
+
+		files.length > 0 && upload_input();
+
+		if (excess_files.length > 0) {
+			let names = [];
+			for (let i = 0; i < excess_files.length; i++) {
+				names.push(excess_files[i].name);
+			}
+			error = `
+			Excess File${excess_files.length > 1 ? 's' : ''}:
+			<br/>
+			${names.join(', ')}`;
+		}
+		if (invalid_files.length > 0) {
+			let names = [];
+			for (let i = 0; i < invalid_files.length; i++) {
+				names.push(invalid_files[i].name);
+			}
+			error = `${excess_files.length > 0 ? `${error}<br/><br/>` : ''}
+			Invalid File${invalid_files.length > 1 ? 's' : ''}:
+			<br/>
+			${names.join(', ')}`;
+		}
+	};
+
+	const upload_input = async () => {
+		let formData = new FormData();
+		formData.append('slug', post.slug);
+		for (let i = 0; i < files.length; i++) {
+			formData.append('files', files[i]);
+		}
+
+		$loading= true
+		const resp = await fetch(`${api_url}/${post_type}/photo_many/${post.slug}`, {
+			method: 'post',
+			headers: {
+				// Authorization: $token
+			},
+			body: formData
+		});
+		$loading= false
+
+		if (resp.ok) {
+			let data = await resp.json();
+
+			if (data.status == 200) {
+				let temp = post.active_photo;
+				let temp2 = post.photo_count;
+				post = data.data.post;
+				post.active_photo = temp;
+				post.photo_count = temp2;
+
+				tick(post);
+			} else {
+				error = data.message;
+			}
+		}
+	};
+
 	make_active();
 </script>
 
 <section>
-	<strong class="big">
-		Manage Photo
-	</strong>
+	<strong class="big"> Manage Photo </strong>
 	<div class="content">
 		<img
+			class:dragover
 			src="{api_url}/{post.active_photo}"
 			alt={post.title}
 			onerror="this.src='/site/no_photo.png'"
+			on:dragover|preventDefault={() => {
+				dragover = true;
+			}}
+			on:dragleave|preventDefault={() => {
+				dragover = false;
+			}}
+			on:drop|preventDefault={(e) => {
+				dragover = false;
+				input.files = e.dataTransfer.files;
+				on_input();
+			}}
 		/>
 		<br />
 		{#if post.photos.length > 1}
@@ -125,12 +224,15 @@
 					/>
 				{/each}
 			</div>
+		{/if}
 
-			{#if error}
-				<p class="error">
-					{error}
-				</p>
-			{/if}
+		{#if error}
+			<p class="error">
+				{@html error}
+			</p>
+		{/if}
+
+		{#if post.photos.length > 1}
 			<br />
 			<div class="row">
 				{#if show_left_btn}
@@ -153,7 +255,7 @@
 					<Button
 						name="Save Order"
 						on:click={() => {
-							submit('put');
+							reorder_delete('put');
 						}}
 					/>
 				{/if}
@@ -161,19 +263,25 @@
 		{/if}
 		<br />
 		<div class="row">
-			{#if post.photos.length <= post.photo_count}
+			{#if post.photos.length < post.photo_count}
 				<Button
-					name="Add"
+					name="Add ({post.photo_count - post.photos.length})"
 					class="primary"
 					on:click={() => {
-						$module = {
-							module: Add,
-							data: {
-								post,
-								post_type
-							}
-						};
+						input.click();
 					}}
+				/>
+
+				<input
+					style:display="none"
+					type="file"
+					accept="image/*"
+					bind:this={input}
+					on:change={() => {
+						on_input();
+					}}
+					id="img_input"
+					multiple
 				/>
 			{/if}
 
@@ -181,7 +289,7 @@
 				<Button
 					name="Remove"
 					on:click={() => {
-						submit('delete');
+						reorder_delete('delete');
 					}}
 				/>
 			{/if}
@@ -233,6 +341,12 @@
 		transform: scale(1.1);
 	}
 	.slide > *.active {
+		border-color: var(--color1);
+	}
+	img {
+		border: 2px solid transparent;
+	}
+	.dragover {
 		border-color: var(--color1);
 	}
 </style>

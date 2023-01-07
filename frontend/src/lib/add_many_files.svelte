@@ -10,9 +10,12 @@
 
 	let input;
 	let files = [];
-	let error = [];
+	let bad_files = [];
+	let error = '';
 
 	const on_change = () => {
+		error = '';
+
 		for (let i = 0; i < input.files.length; i++) {
 			let file = input.files[i];
 			let media_type = input.files[i].type.split('/');
@@ -26,7 +29,7 @@
 			};
 
 			const is_new = () => {
-				let a = [...files, ...error];
+				let a = [...files, ...bad_files];
 
 				for (let j = 0; j < a.length; j++) {
 					if (
@@ -44,7 +47,7 @@
 			};
 
 			if (is_new()) {
-				if (['image', 'video'].includes(temp.media) && !['svg+xml'].includes(temp.type)) {
+				if (['image', 'video'].includes(temp.media) && !['svg+xml', 'x-icon'].includes(temp.type)) {
 					let reader = new FileReader();
 					reader.readAsDataURL(input.files[i]);
 					reader.onload = () => {
@@ -54,32 +57,29 @@
 					files = files;
 				} else {
 					temp.error = 'invalid file';
-					error.push(temp);
-					error = error;
+					bad_files.push(temp);
+					bad_files = bad_files;
 				}
 			}
 		}
 	};
 
 	const validate = () => {
-		if (Object.keys(error).length == 0) {
+		error = '';
+		if (files.length != 0) {
 			submit();
 		} else {
-			error = { error: 'please select a photo' };
+			error = 'please select a photo';
 		}
 	};
 	const submit = async () => {
-		let f = [...files];
-		let files = [];
-		for (let j = 0; j < f.length; j++) {
-			files.push(files[i].file);
+		let formData = new FormData();
+		formData.append('slug', post.slug);
+		for (let i = 0; i < files.length; i++) {
+			formData.append('files', files[i].file);
 		}
 
-		let formData = new FormData();
-		formData.append('files', files);
-		formData.append('slug', post.slug);
-
-		const resp = await fetch(`${api_url}/${post_type}/photo/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post_type}/photo_many/${post.slug}`, {
 			method: 'post',
 			headers: {
 				// Authorization: $token
@@ -102,13 +102,15 @@
 					}
 				};
 			} else {
-				error = data.message;
+				bad_files = data.message;
 			}
 		}
 	};
 
-	let file_type = 'image';
-	let src = '/site/select_photo.png';
+	let active = {
+		media: 'image',
+		src: '/site/select_photo.png'
+	};
 	let dragover = false;
 </script>
 
@@ -116,9 +118,9 @@
 	<strong class="big"> Add Photo </strong>
 
 	<div class:dragover class="display">
-		{#if file_type == 'image'}
+		{#if active.media == 'image'}
 			<img
-				{src}
+				src={active.src}
 				alt={post.title}
 				on:click={() => {
 					input.click();
@@ -136,10 +138,10 @@
 					on_change();
 				}}
 			/>
-		{:else if file_type == 'video'}
+		{:else if active.media == 'video'}
 			<video
 				controls
-				{src}
+				src={active.src}
 				on:click={() => {
 					input.click();
 				}}
@@ -153,13 +155,12 @@
 	{#each files as f}
 		<Button
 			on:click={() => {
-				file_type = f.type;
-				src = f.src;
+				active = f;
 			}}
 			>{f.name}
 		</Button>
 	{/each}
-	{#each error as e}
+	{#each bad_files as e}
 		<div>
 			<span class="error">
 				{e.name} - {e.error} ({e.type})
@@ -175,6 +176,11 @@
 			id="img_input"
 			multiple
 		/>
+		{#if error}
+			<span class="error">
+				{error}
+			</span>
+		{/if}
 
 		<Button
 			class="primary"
@@ -201,9 +207,11 @@
 		border-bottom: 2px solid var(--mid_color);
 	}
 
+	video,
 	img {
 		cursor: pointer;
 		background-color: var(--foreground);
+		width: 100%;
 	}
 
 	#img_input {

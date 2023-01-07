@@ -27,13 +27,13 @@
 	let content = post.content;
 	$: {
 		content = post.content;
-		post.photo_count = 0;
+		post.photo_count = 1;
 		let is_available = content.search(/<photo>/) >= 0;
 		while (is_available) {
-			post.photo_count = post.photo_count + 1;
 			let photo = `![${post.title}](${api_url}/${post.photos[post.photo_count]})`;
 			content = content.replace(/<photo>/, photo);
 			is_available = content.search(/<photo>/) >= 0;
+			post.photo_count = post.photo_count + 1;
 		}
 	}
 </script>

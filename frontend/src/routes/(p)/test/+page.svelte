@@ -4,7 +4,7 @@
 
 	let data = {
 		post: {},
-		post_type: 'platy'
+		post_type: 'blog'
 	};
 </script>
 

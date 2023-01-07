@@ -100,13 +100,7 @@
 					placeholder="Content here"
 					{id}
 					bind:value={post.content}
-					on:keypress={(e) => {
-						// console.log(e.key);
-						// if (e.key == 'Tab') {
-						// 	e.preventDefault();
-						// 	console.log('here');
-						// }
-					}}
+					on:keypress
 				/>
 			{:else if post.format == 'url'}
 				<input placeholder="Content here" type="text" {id} bind:value={post.content} />

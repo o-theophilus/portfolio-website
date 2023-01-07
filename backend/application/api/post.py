@@ -205,7 +205,6 @@ def update_status(slug):
 
     status = request.json["temp_status"]
     if status not in ["draft", "publish"] or status == post["status"]:
-        print(1)
         return jsonify({
             "status": 401,
             "message": "invalid request"

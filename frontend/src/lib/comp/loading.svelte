@@ -6,22 +6,25 @@
 </script>
 
 {#if $loading}
-<section>
-	<div class="block" transition:scale|local={{ delay: 0, duration: 200, easing: backInOut }}>
-		<div class="circle" />
-	</div>
-</section>
-
+	<section>
+		<div class="block" transition:scale|local={{ delay: 0, duration: 200, easing: backInOut }}>
+			<div class="circle" />
+		</div>
+	</section>
 {/if}
+
 <style>
 	section {
 		display: flex;
 		justify-content: center;
+		align-items: center;
 
 		position: fixed;
 		inset: 0;
 
 		padding: var(--gap1);
+
+		background-color: var(--overlay);
 	}
 
 	.block {
@@ -40,7 +43,7 @@
 		width: var(--size);
 		height: var(--size);
 
-		background-image: url('/image/loading.png');
+		background-image: url('/site/loading.png');
 		background-size: contain;
 
 		animation: rotation 1s infinite linear;

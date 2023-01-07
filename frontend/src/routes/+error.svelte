@@ -5,8 +5,8 @@
 	import Button from '$lib/comp/button.svelte';
 
 	let error = $page.error.message;
-	export let data = '';
-	export let form = '';
+	export const data = '';
+	export const form = '';
 </script>
 
 <Meta title="{error} | Theophilus" description={error.message} image="/site/akropol_001.jpg" />
@@ -31,4 +31,3 @@
 		gap: var(--gap3);
 	}
 </style>
-

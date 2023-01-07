@@ -1,4 +1,3 @@
-add loading indicator
 tag page
 fluid gradient fade
 
@@ -8,7 +7,6 @@ email api
 
 
 add video
-add multiple photo
 modify date
 
 error when no network

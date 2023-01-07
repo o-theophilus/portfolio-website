@@ -26,7 +26,7 @@ def get(name, thumbnail=None):
 
 @bp.post("/blog/photo/<slug>")
 @bp.post("/project/photo/<slug>")
-def post_item(slug):
+def post(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
     if 'photo' not in request.files or 'slug' not in request.form:
@@ -74,7 +74,7 @@ def post_item(slug):
 
 @bp.put("/blog/photo/<slug>")
 @bp.put("/project/photo/<slug>")
-def put(slug):
+def arrange(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
     if "photos" not in request.json or not request.json["photos"]:
@@ -140,6 +140,55 @@ def delete(slug):
 
     dd.rem(ap, "post")
     post["photos"] = photos
+    db.add(post)
+
+    return jsonify({
+        "status": 200,
+        "message": "successful",
+        "data": {
+            "post": schema(post)
+        }
+    })
+
+
+@bp.post("/blog/photo_many/<slug>")
+@bp.post("/project/photo_many/<slug>")
+def post_many(slug):
+    post_type = f"{request.url_rule}"[1:].split("/")[0]
+
+    if 'files' not in request.files or 'slug' not in request.form:
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
+    files = request.files.getlist("files")
+
+    for file in files:
+        media, format = file.content_type.split("/")
+        if media not in ["image", "video"] or format in ['svg+xml', 'x-icon']:
+            return jsonify({
+                "status": 201,
+                "message": "invalid file type"
+            })
+
+    post = db.get(post_type, "slug", slug)
+    if not post:
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
+    count = post["content"].count("<photo>") + 1
+    if len(post["photos"]) + len(files) > count:
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
+    for file in files:
+        filename = dd.add(file, "post", True)
+        post["photos"].append(filename)
     db.add(post)
 
     return jsonify({
