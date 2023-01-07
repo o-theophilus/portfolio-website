@@ -51,6 +51,7 @@
 
 	.text {
 		position: relative;
+font-size: small;
 	}
 
 	.highlight {
