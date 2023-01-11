@@ -1,6 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import { theme } from '$lib/store.js';
+	import SVG from '$lib/comp/svg.svelte';
 
 	$: is_home = $page.url.pathname == '/';
 </script>
@@ -13,8 +14,12 @@
 	on:keypress
 >
 	<div class="switch" class:dark={$theme == 'dark'}>
-		<div class="state">☼</div>
-		<div class="state">☾</div>
+		<div class="state">
+			<SVG type="light" size="15" />
+		</div>
+		<div class="state">
+			<SVG type="dark" size="12" />
+		</div>
 	</div>
 </button>
 
@@ -32,7 +37,7 @@
 		position: relative;
 		overflow: hidden;
 
-		color: var(--font);
+		fill: var(--font);
 		border-radius: 50%;
 
 		height: var(--size);
@@ -46,7 +51,7 @@
 	}
 
 	.is_home {
-		color: var(--background);
+		fill: var(--background);
 	}
 
 	button:hover {
