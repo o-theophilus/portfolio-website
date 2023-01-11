@@ -48,24 +48,24 @@ def get_all():
     })
 
 
-# @bp.get("/blog_project")
-# def get_blog_project():
-#     data = db.data()
+@bp.get("/post")
+def get_blog_project():
+    data = db.data()
 
-#     blogs = []
-#     projects = []
-#     for row in data:
-#         if "type" in row:
-#             if row["type"] == "blog":
-#                 blogs.append(row)
-#             elif row["type"] == "project":
-#                 projects.append(row)
+    blogs = []
+    projects = []
+    for row in data:
+        if "type" in row:
+            if row["type"] == "blog":
+                blogs.append(row)
+            elif row["type"] == "project":
+                projects.append(row)
 
-#     return jsonify({
-#         "status": 200,
-#         "message": "successful",
-#         "data": {
-#             "blogs": [schema(a) for a in blogs],
-#             "projects": [schema(a) for a in projects]
-#         }
-#     })
+    return jsonify({
+        "status": 200,
+        "message": "successful",
+        "data": {
+            "blogs": [schema(a) for a in blogs],
+            "projects": [schema(a) for a in projects]
+        }
+    })

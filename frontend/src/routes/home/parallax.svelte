@@ -22,7 +22,6 @@
 
 		position: relative;
 		height: calc(100vh - var(--headerHeight));
-		/* height: 100vh; */
 		min-height: 800px;
 
 		background-color: #ffaf1b;

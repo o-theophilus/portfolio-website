@@ -2,11 +2,15 @@
 	import Parallax from './home/parallax.svelte';
 	import Hero_Text from './home/hero_text.svelte';
 	import Home from './home/home.svelte';
-	// import Projects from './project.svelte';
+	import Projects from './home/project.svelte';
 	import About from './home/about.svelte';
 	import Scroller from '$lib/comp/scroller.svelte';
 	import Meta from '$lib/comp/meta.svelte';
 	import Nav from '$lib/comp/nav.svelte';
+
+	export let data;
+	let { blogs } = data;
+	let { projects } = data;
 </script>
 
 <Meta
@@ -27,8 +31,11 @@
 	<div class="grad" />
 </section>
 <Home />
-<!-- <Projects /> -->
-<br /><br /><br /><br />
+<br /><br />
+<br /><br />
+<Projects {projects} />
+<br /><br />
+<br /><br />
 <About />
 
 <style>
