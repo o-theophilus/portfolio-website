@@ -38,7 +38,7 @@
 	}
 </script>
 
-<Meta title="{post.title} | Theophilus" description={post.description} image={post.photo} />
+<Meta title={post.title} description={post.description} image={post.photo} />
 
 <Content>
 	<img src="{api_url}/{post.photos[0]}" alt={post.title} onerror="this.src='/site/no_photo.png'" />

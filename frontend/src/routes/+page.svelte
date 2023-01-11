@@ -10,7 +10,7 @@
 </script>
 
 <Meta
-	title="Theophilus"
+	title="Home"
 	description="Welcome to my personal portfolio website."
 	image="akropol_001.jpg"
 />

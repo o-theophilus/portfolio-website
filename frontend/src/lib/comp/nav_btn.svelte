@@ -51,7 +51,12 @@
 
 	.text {
 		position: relative;
-font-size: small;
+		font-size: small;
+	}
+	@media screen and (min-width: 600px) {
+		.text {
+			font-size: unset;
+		}
 	}
 
 	.highlight {

@@ -9,7 +9,7 @@
 	export const form = '';
 </script>
 
-<Meta title="{error} | Theophilus" description={error.message} image="/site/akropol_001.jpg" />
+<Meta title={error} description={error.message} image="/site/akropol_001.jpg" />
 
 <Content>
 	<section>

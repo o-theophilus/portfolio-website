@@ -13,7 +13,7 @@
 		<nav>
 			<a href="/">
 				<SVG type="logo" />
-				<strong> Theophilus </strong>
+				<strong> Uncode </strong>
 			</a>
 
 			<Theme />

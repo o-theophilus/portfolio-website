@@ -23,7 +23,7 @@
 			</div>
 		</section>
 		<br /><br /><br /><br />
-		<div class="copyright">&copy theophilus.website 2021. All rights reserved.</div>
+		<div class="copyright">&copy Uncode 2021. All rights reserved.</div>
 		<br /><br />
 		<Nav />
 	</footer>

@@ -6,7 +6,7 @@
 	import Meta from '$lib/comp/meta.svelte';
 </script>
 
-<Meta title="Admin Dashboard | Theophilus" description="Admin Dashboard" />
+<Meta title="Admin Dashboard" description="Admin Dashboard" />
 
 <Content>
 	<Button

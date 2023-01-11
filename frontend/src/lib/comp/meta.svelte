@@ -6,14 +6,13 @@
 	export let image;
 
 	let imageAlt = image;
-	let url = `https://theophilus.website${$page.url.pathname}`;
 	let type = 'website';
 	let twitterCard = 'summary_large_image';
 </script>
 
 <svelte:head>
 	{#if title}
-		<title>{title}</title>
+		<title>{title} | Uncode</title>
 		<meta name="title" content={title} />
 		<meta property="og:title" content={title} />
 		<meta property="twitter:title" content={title} />
@@ -35,10 +34,8 @@
 		<meta property="twitter:image:alt" content={imageAlt} />
 	{/if}
 
-	{#if url}
-		<meta property="og:url" content={url} />
-		<meta property="twitter:url" content={url} />
-	{/if}
+	<meta property="og:url" content={$page.url.href} />
+	<meta property="twitter:url" content={$page.url.href} />
 
 	{#if type}
 		<meta property="og:type" content={type} />

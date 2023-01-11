@@ -19,7 +19,7 @@
 	}
 </script>
 
-<Meta title="{post_type} | Theophilus" description="{post_type} Posts" image="/site/home.jpg" />
+<Meta title={post_type} description="{post_type} Posts" image="/site/home.jpg" />
 
 <Content>
 	<br />
