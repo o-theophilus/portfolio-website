@@ -38,7 +38,7 @@
 	a {
 		display: flex;
 		align-items: center;
-		gap: var(--gap2);
+		gap: var(--gap1);
 
 		margin-right: auto;
 
