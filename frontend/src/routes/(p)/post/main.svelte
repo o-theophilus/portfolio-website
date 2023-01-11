@@ -6,10 +6,11 @@
 	import Meta from '$lib/comp/meta.svelte';
 	import Button from '$lib/comp/button.svelte';
 	import Add from '$lib/module/add.svelte';
+	import Tags from '$lib/comp/tags.svelte';
 
 	export let data;
 	let { posts } = data;
-	let { all_tags } = data;
+	let { tags } = data;
 	let { post_type } = data;
 
 	$: if ($_tick) {
@@ -23,7 +24,7 @@
 
 <Content>
 	<br />
-	<strong class="big">{post_type}</strong>
+	<strong class="big">{post_type}{posts.length > 1 ? 's' : ''}</strong>
 	<br /><br />
 	{#if $is_admin}
 		<Button
@@ -48,15 +49,8 @@
 		{/each}
 	</section>
 
-	<br /><br /><br /><br />
-
-	{#if all_tags}
-		<div class="row">
-			{#each all_tags.split(', ') as tag}
-				<Button class="tiny">{tag}</Button>
-			{/each}
-		</div>
-	{/if}
+	<br /><br /><br />
+	<Tags {tags} />
 </Content>
 
 <style>

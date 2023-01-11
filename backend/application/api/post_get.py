@@ -1,25 +1,9 @@
 from flask import Blueprint, jsonify, request
 from . import db
 from .schema import schema
+from .tag import get_tags
 
 bp = Blueprint("post_read", __name__)
-
-
-def get_all_tags(data, key=None):
-    all_tags = []
-    for row in data:
-        if (
-            row["type"] in ["blog", "project"]
-            and row["key"] != key
-            and row["tags"]
-        ):
-            all_tags.append(row["tags"])
-
-    all_tags = ", ".join(all_tags).split(", ")
-    all_tags = list(set(all_tags))
-    all_tags.sort()
-    all_tags = ", ".join(all_tags)
-    return all_tags
 
 
 @bp.get("/blog/<slug>")
@@ -41,7 +25,7 @@ def get(slug):
         "message": "successful",
         "data": {
             "post": schema(post),
-            "all_tags": get_all_tags(data, post["key"])
+            "tags": get_tags(data, post["key"])
         }
     })
 
@@ -59,14 +43,14 @@ def get_all():
         "message": "successful",
         "data": {
             "posts": [schema(a) for a in posts],
-            "all_tags": get_all_tags(data)
+            "tags": get_tags(data)
         }
     })
 
 
 # @bp.get("/blog_project")
-# def get_blog_projects():
-#     data = db.db()
+# def get_blog_project():
+#     data = db.data()
 
 #     blogs = []
 #     projects = []

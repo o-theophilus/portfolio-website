@@ -1,4 +1,3 @@
-tag page
 fluid gradient fade
 
 authentication

@@ -151,6 +151,7 @@
 
 	:hover {
 		background-color: var(--color1);
+		text-decoration: none;
 		/* color: var(--light_color); */
 		/* fill: var(--light_color); */
 	}

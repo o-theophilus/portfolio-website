@@ -5,18 +5,19 @@
 	import Marked from '$lib/comp/marked.svelte';
 	import Meta from '$lib/comp/meta.svelte';
 	import Button from '$lib/comp/button.svelte';
+	import Tags from '$lib/comp/tags.svelte';
 
 	import Delete from '$lib/module/delete.svelte';
 	import Title from '$lib/module/edit_title.svelte';
 	import Description from '$lib/module/edit_description.svelte';
-	import Tags from '$lib/module/edit_tags.svelte';
+	import Edit_Tags from '$lib/module/edit_tags.svelte';
 	import Edit_Content from '$lib/module/edit_content.svelte';
 	import Edit_Status from '$lib/module/edit_status.svelte';
 	import Photo_Man from '$lib/module/manage_photo.svelte';
 
 	export let data;
 	let { post } = data;
-	let { all_tags } = data;
+	let { tags } = data;
 	let { post_type } = data;
 
 	$: if ($_tick) {
@@ -116,23 +117,19 @@
 	{/if}
 
 	<br />
-	{#if post.tags}
-		<br />
-		<div class="row">
-			{#each post.tags.split(', ') as tag}
-				<Button class="tiny">{tag}</Button>
-			{/each}
-		</div>
-	{/if}
+
+	<Tags tags={post.tags} />
+
 	{#if $is_admin}
+		<br />
 		<Button
 			class="tiny"
 			on:click={() => {
 				$module = {
-					module: Tags,
+					module: Edit_Tags,
 					data: {
 						post,
-						all_tags,
+						all_tags: tags,
 						post_type
 					}
 				};

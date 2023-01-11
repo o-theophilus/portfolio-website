@@ -70,7 +70,7 @@
 
 	const reorder_delete = async (method) => {
 		error = '';
-		$loading= true
+		$loading = true;
 		const resp = await fetch(`${api_url}/${post_type}/photo/${post.slug}`, {
 			method: method,
 			headers: {
@@ -79,7 +79,7 @@
 			},
 			body: JSON.stringify(post)
 		});
-		$loading= false
+		$loading = false;
 
 		if (resp.ok) {
 			let data = await resp.json();
@@ -158,7 +158,7 @@
 			formData.append('files', files[i]);
 		}
 
-		$loading= true
+		$loading = true;
 		const resp = await fetch(`${api_url}/${post_type}/photo_many/${post.slug}`, {
 			method: 'post',
 			headers: {
@@ -166,7 +166,7 @@
 			},
 			body: formData
 		});
-		$loading= false
+		$loading = false;
 
 		if (resp.ok) {
 			let data = await resp.json();
@@ -178,6 +178,7 @@
 				post.active_photo = temp;
 				post.photo_count = temp2;
 
+				make_active();
 				tick(post);
 			} else {
 				error = data.message;

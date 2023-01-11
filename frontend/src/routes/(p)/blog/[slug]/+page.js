@@ -16,7 +16,7 @@ export const load = async ({ fetch, url, params }) => {
         if (resp.status == 200) {
             return {
                 post: data.data.post,
-                all_tags: data.data.all_tags,
+                tags: data.data.tags,
                 post_type
             }
         }

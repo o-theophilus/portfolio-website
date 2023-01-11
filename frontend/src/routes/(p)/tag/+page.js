@@ -1,9 +1,7 @@
 import { api_url } from '$lib/store.js';
 
-export const load = async ({ fetch, url, params }) => {
-    let post_type = url.pathname.split('/')[1];
-
-    const resp = await fetch(`${api_url}/${post_type}/${params.slug}`, {
+export const load = async ({ fetch, params }) => {
+    const resp = await fetch(`${api_url}/tag`, {
         method: 'get',
         headers: {
             'Content-Type': 'application/json'
@@ -15,10 +13,9 @@ export const load = async ({ fetch, url, params }) => {
 
         if (resp.status == 200) {
             return {
-                post: data.data.post,
-                all_tags: data.data.all_tags,
-                post_type
+                tags: data.data.tags,
             }
         }
     }
+
 }
