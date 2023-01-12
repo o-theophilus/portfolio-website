@@ -13,11 +13,11 @@
 		<nav>
 			<a href="/">
 				<SVG type="logo" />
-				<strong> Uncode </strong>
+				<strong> Incept </strong>
 			</a>
 
 			<Theme />
-			
+
 			<Link link="project">Project</Link>
 			<Link link="blog">Blog</Link>
 		</nav>
