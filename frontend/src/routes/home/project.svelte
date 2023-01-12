@@ -25,7 +25,7 @@
 
 <style>
 	section {
-		background-color: var(--mid_color);
+		background-color: var(--foreground);
 	}
 
 	.block {
