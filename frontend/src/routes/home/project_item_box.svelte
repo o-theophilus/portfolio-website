@@ -27,9 +27,7 @@
 		flex-shrink: 0;
 
 		height: 30vh;
-		width: 400px;
-
-		/* text-decoration: none; */
+		width: min(calc(100vw - var(--gap2) * 2), 400px);
 
 		border-radius: var(--gap1);
 		overflow: hidden;

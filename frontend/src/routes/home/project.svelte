@@ -55,6 +55,7 @@
 		<Content>
 			<div class="project-block" bind:this={block}>
 				<strong class="big title"> Project{projects.length > 1 ? 's' : ''} </strong>
+				
 				<div class="scroller" style:right="{pos.a}px" bind:this={scroller.a}>
 					{#each projects as post}
 						<ItemBox
@@ -75,6 +76,8 @@
 						more</Scroller
 					>
 				</div>
+				
+				
 				<div class="desc" class:show_desc>
 					<strong class="large">
 						{active_post.title}
@@ -129,11 +132,12 @@
 		font-size: 40px;
 		color: var(--color1);
 	}
-
+	
 	.sticky {
 		position: sticky;
-
+		
 		top: 0;
+		overflow: hidden;
 	}
 	.project-block {
 		display: flex;
@@ -141,6 +145,7 @@
 		justify-content: center;
 		height: 100vh;
 		/* pointer-events: none; */
+
 	}
 
 	.scroller {
