@@ -1,6 +1,5 @@
 <script>
 	import Content from '$lib/comp/content.svelte';
-	import Fluid from './fluid.svelte';
 
 	let sticky;
 	let block;
@@ -24,7 +23,6 @@
 </Content>
 <section bind:this={section}>
 	<div class="sticky" bind:this={sticky}>
-		<Fluid />
 		<Content>
 			<div class="block" bind:this={block}>
 				Project
