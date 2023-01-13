@@ -30,7 +30,7 @@
 					in_view = entries[0].isIntersecting;
 				},
 				{
-					threshold: 1
+					threshold: 0.95
 				}
 			);
 
@@ -112,14 +112,14 @@
 	.in_view {
 		background-color: unset;
 	}
-	.fluid {
+	/* .fluid {
 		opacity: 0;
 		transition: opacity var(--animTime3);
 		transition-timing-function: ease-in-out;
 	}
 	.in_view .fluid {
 		opacity: 1;
-	}
+	} */
 	.title {
 		font-size: 30px;
 		transition: all var(--animTime1);
