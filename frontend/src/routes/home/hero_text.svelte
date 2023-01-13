@@ -31,8 +31,10 @@
 
 <Content>
 	<div class="dymanic">
-		Welcome to my {#if visible}<strong class="color1" transition:typewriter>{states[count]}</strong>
-		{/if} Website
+		<strong>
+			Welcome to my {#if visible}<span class="color1" transition:typewriter>{states[count]}</span>
+			{/if} Website
+		</strong>
 	</div>
 </Content>
 
@@ -40,6 +42,7 @@
 	.dymanic {
 		color: var(--background);
 		font-size: xx-large;
+		font-size: 40px;
 		text-align: center;
 	}
 </style>

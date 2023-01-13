@@ -32,20 +32,20 @@
 	.home {
 		background-color: #ffaf1b;
 	}
-	.is_home nav a {
-		color: var(--background);
-	}
 	a {
 		display: flex;
 		align-items: center;
 		gap: var(--gap1);
-
+		
 		margin-right: auto;
-
+		
 		color: var(--font);
 		fill: var(--color1);
-		font-size: large;
+		font-size: x-large;
 
 		text-decoration: none;
+	}
+	.home nav a {
+		color: var(--background);
 	}
 </style>

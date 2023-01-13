@@ -49,8 +49,7 @@
 
 <style>
 	canvas {
-		position: fixed;
-		top: 0;
+		position: absolute;
 
 		width: 100vw;
 		height: 100vh;

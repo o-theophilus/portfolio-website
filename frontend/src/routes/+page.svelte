@@ -1,5 +1,5 @@
 <script>
-	import Parallax from './home/parallax.svelte';
+	import Parallax from './home/hero_parallax.svelte';
 	import Hero_Text from './home/hero_text.svelte';
 	import Home from './home/home.svelte';
 	import Projects from './home/project.svelte';
@@ -7,6 +7,7 @@
 	import Scroller from '$lib/comp/scroller.svelte';
 	import Meta from '$lib/comp/meta.svelte';
 	import Nav from '$lib/comp/nav.svelte';
+	import SVG from '$lib/comp/svg.svelte';
 
 	export let data;
 	let { blogs } = data;
@@ -26,14 +27,16 @@
 		<Hero_Text />
 	</div>
 	<div class="scroller">
-		<Scroller query=".scroll_1" invert />
+		<Scroller query=".scroll_1" invert>
+			<SVG type="down" size="20" />
+		</Scroller>
 	</div>
 	<div class="grad" />
 </section>
 <Home />
 <br /><br />
 <br /><br />
-<Projects {projects} />
+<Projects {projects} {blogs} />
 <br /><br />
 <br /><br />
 <About />

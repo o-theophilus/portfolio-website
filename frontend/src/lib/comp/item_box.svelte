@@ -20,7 +20,7 @@
 	/>
 	<div class="blocker" />
 	<div class="block">
-		<strong class="big">
+		<strong >
 			{post.title}
 		</strong>
 		<div class="details">
@@ -45,15 +45,16 @@
 		position: relative;
 
 		height: 300px;
-
+		
 		text-decoration: none;
-
+		
 		border-radius: var(--gap1);
 		overflow: hidden;
 
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;
 	}
+
 
 	a:hover .block {
 		top: 0;
@@ -101,6 +102,7 @@
 		overflow: hidden;
 	}
 	strong {
+		font-size: large;
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;
 	}

@@ -60,10 +60,7 @@
 
 		gap: var(--gap4);
 	}
-	strong {
-		text-transform: capitalize;
-	}
 	.big {
-		text-transform: uppercase;
+		text-transform: capitalize;
 	}
 </style>

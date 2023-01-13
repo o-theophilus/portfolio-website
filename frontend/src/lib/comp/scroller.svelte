@@ -1,23 +1,26 @@
 <script>
-	import SVG from '$lib/comp/svg.svelte';
+	import { goto } from '$app/navigation';
 	import { scroll } from '$lib/store.js';
 
 	export let query = '';
+	export let href = '';
 	export let invert = false;
 </script>
 
 <button
 	class:invert
 	on:click|stopPropagation={() => {
-		scroll(query);
+		if (query) {
+			scroll(query);
+		} else if (href) {
+			goto(href);
+		}
 	}}
 	on:keypress
 >
 	<div class="highlight" />
 	<div class="icon">
-		<slot>
-			<SVG type="down" size="20" />
-		</slot>
+		<slot />
 	</div>
 </button>
 

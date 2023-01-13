@@ -1,16 +1,8 @@
 <script>
-	// import { tweened } from 'svelte/motion';
-	// import { backOut } from 'svelte/easing';
-	// import IntersectionObserver from 'svelte-intersection-observer';
-	import IntersectionObserver from './observe.svelte';
+
+import IntersectionObserver from './observe.svelte';
 
 	export let num;
-	// let element;
-
-	// const progress = tweened(0, {
-	// 	duration: 2000,
-	// 	easing: backOut
-	// });
 </script>
 
 <IntersectionObserver let:intersecting>

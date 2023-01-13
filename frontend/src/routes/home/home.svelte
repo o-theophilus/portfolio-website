@@ -22,7 +22,8 @@
 		<div class="observe" class:intersecting>
 			<strong class="big color1"> What I can do. </strong>
 			<br /><br />
-			<strong>Design what you want.</strong>
+			<strong class="large">Design what you want.</strong>
+			<br />
 			<br />
 			I like to keep it simple. My goals are focused on details, content and conveying the message that
 			you want to send.
@@ -32,7 +33,8 @@
 	<br /><br />
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
-			<strong>Develop what you need.</strong>
+			<strong class="large">Develop what you need.</strong>
+			<br />
 			<br />
 			I am a developer, so I know how to create your website to run across devices using the latest technologies
 			available.
@@ -80,5 +82,9 @@
 	.intersecting {
 		opacity: 1;
 		transform: translate(0, 0) scale(1);
+	}
+
+	.large {
+		font-size: large;
 	}
 </style>
