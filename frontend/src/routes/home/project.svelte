@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 
 	import Content from '$lib/comp/content.svelte';
-	import Fluid from './project_fluid.svelte';
+	// import Fluid from './project_fluid.svelte';
 	import ItemBox from './project_item_box.svelte';
 	import Scroller from '$lib/comp/scroller.svelte';
 
@@ -48,9 +48,9 @@
 
 <section bind:this={section} class:in_view>
 	<div class="sticky" bind:this={sticky}>
-		<div class="fluid">
+		<!-- <div class="fluid">
 			<Fluid />
-		</div>
+		</div> -->
 
 		<Content>
 			<div class="project-block" bind:this={block}>
@@ -140,7 +140,7 @@
 		flex-direction: column;
 		justify-content: center;
 		height: 100vh;
-		pointer-events: none;
+		/* pointer-events: none; */
 	}
 
 	.scroller {
