@@ -5,7 +5,7 @@
 	import { cubicInOut } from 'svelte/easing';
 
 	import Content from '$lib/comp/content.svelte';
-	import Fluid from '$lib/fluid/fluid.svelte';
+	// import Fluid from '$lib/fluid/fluid.svelte';
 	import ItemBox from './project_item_box.svelte';
 	import Scroller from '$lib/comp/scroller.svelte';
 
@@ -83,7 +83,7 @@
 <section bind:this={section} class:intersecting>
 	<div class="sticky" bind:this={sticky}>
 		<div class="fluid">
-			<Fluid {...fluid_op} />
+			<!-- <Fluid {...fluid_op} /> -->
 		</div>
 
 		<Content>
