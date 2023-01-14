@@ -42,7 +42,6 @@
 	.dymanic {
 		color: var(--background);
 		font-size: xx-large;
-		font-size: 40px;
 		text-align: center;
 	}
 </style>

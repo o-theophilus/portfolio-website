@@ -7,6 +7,7 @@
 	});
 
 	$: if (WebGLFluid) {
+		console.log(WebGLFluid);
 		WebGLFluid(document.querySelector('canvas'), {
 			IMMEDIATE: false, // Whether to trigger multiple random splats when initialized
 			TRIGGER: 'hover', // Can be change to 'click'

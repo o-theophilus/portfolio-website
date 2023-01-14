@@ -36,9 +36,9 @@
 		display: flex;
 		align-items: center;
 		gap: var(--gap1);
-		
+
 		margin-right: auto;
-		
+
 		color: var(--font);
 		fill: var(--color1);
 		font-size: x-large;

@@ -1,9 +1,11 @@
 <script>
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import { cubicInOut } from 'svelte/easing';
 
 	import Content from '$lib/comp/content.svelte';
-	// import Fluid from './project_fluid.svelte';
+	// import Fluid from '$lib/fluid/fluid.svelte';
 	import ItemBox from './project_item_box.svelte';
 	import Scroller from '$lib/comp/scroller.svelte';
 
@@ -21,13 +23,12 @@
 		(sticky.offsetTop / (section.clientHeight - sticky.clientHeight)) *
 		(scroller.clientWidth - block.clientWidth);
 
-	let in_view = false;
-	let show_desc = false;
+	let intersecting = false;
 	onMount(() => {
 		if (browser) {
 			let ob = new IntersectionObserver(
 				(entries) => {
-					in_view = entries[0].isIntersecting;
+					intersecting = entries[0].isIntersecting;
 				},
 				{
 					threshold: 0.9
@@ -46,27 +47,24 @@
 	}}
 />
 
-<section bind:this={section} class:in_view>
+<section bind:this={section} class:intersecting>
 	<div class="sticky" bind:this={sticky}>
-		<!-- <div class="fluid">
-			<Fluid />
-		</div> -->
+		<!-- <div class="fluid"> -->
+			<!-- <Fluid /> -->
+		<!-- </div> -->
 
 		<Content>
 			<div class="project-block" bind:this={block}>
 				<strong class="big title"> Project{projects.length > 1 ? 's' : ''} </strong>
-				
+
 				<div class="scroller" style:right="{pos.a}px" bind:this={scroller.a}>
 					{#each projects as post}
 						<ItemBox
+							parent={block}
 							{post}
 							post_type="project"
-							on:mouseenter={() => {
+							on:ok={() => {
 								active_post = post;
-								show_desc = true;
-							}}
-							on:mouseleave={() => {
-								show_desc = false;
 							}}
 						/>
 					{/each}
@@ -76,14 +74,19 @@
 						more</Scroller
 					>
 				</div>
-				
-				
-				<div class="desc" class:show_desc>
-					<strong class="large">
-						{active_post.title}
-					</strong>
-					{active_post.description}
+
+				<div class="desc">
+					{#key active_post.slug}
+						<div in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}>
+							<strong class="large">
+								{active_post.title}
+							</strong>
+							<br />
+							{active_post.description}
+						</div>
+					{/key}
 				</div>
+
 				<!-- <br /><br />
 				<strong class="big"> Blogs </strong>
 				<br />
@@ -112,7 +115,7 @@
 		transition: all var(--animTime3);
 		transition-timing-function: ease-in-out;
 	}
-	.in_view {
+	.intersecting {
 		background-color: unset;
 	}
 	/* .fluid {
@@ -120,7 +123,7 @@
 		transition: opacity var(--animTime3);
 		transition-timing-function: ease-in-out;
 	}
-	.in_view .fluid {
+	.intersecting .fluid {
 		opacity: 1;
 	} */
 	.title {
@@ -128,14 +131,14 @@
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;
 	}
-	.in_view .title {
+	.intersecting .title {
 		font-size: 40px;
 		color: var(--color1);
 	}
-	
+
 	.sticky {
 		position: sticky;
-		
+
 		top: 0;
 		overflow: hidden;
 	}
@@ -145,7 +148,6 @@
 		justify-content: center;
 		height: 100vh;
 		/* pointer-events: none; */
-
 	}
 
 	.scroller {
@@ -167,20 +169,15 @@
 	.title,
 	.desc {
 		height: 30vh;
-		/* background-color: yellow; */
 		display: flex;
-		flex-direction: column;
+		/* flex-direction: column; */
 		justify-content: center;
 		align-items: center;
-	}
-	.desc {
-		opacity: 0;
 
-		transition: opacity var(--animTime3);
-		transition-timing-function: ease-in-out;
-	}
-	.desc.show_desc {
-		opacity: 1;
+		text-align: center;
+
+		/* position: relative; */
+		/* pointer-events: none; */
 	}
 
 	.large {

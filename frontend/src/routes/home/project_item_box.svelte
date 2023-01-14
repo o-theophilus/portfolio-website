@@ -1,4 +1,7 @@
 <script>
+	import { browser } from '$app/environment';
+	import { onMount, createEventDispatcher } from 'svelte';
+
 	import { api_url, is_admin } from '$lib/store.js';
 
 	export let post;
@@ -10,9 +13,29 @@
 		href = post.content;
 		target = '_blank';
 	}
+
+	let emit = createEventDispatcher();
+	let element;
+	export let parent;
+	onMount(() => {
+		let op = {
+			root: parent,
+			threshold: 0,
+			rootMargin: '0px -49%'
+		};
+		let cb = (elements, ob) => {
+			if (elements[0].isIntersecting) {
+				emit('ok', post);
+			}
+		};
+		if (browser) {
+			let ob = new IntersectionObserver(cb, op);
+			ob.observe(element);
+		}
+	});
 </script>
 
-<a {href} {target} data-sveltekit-preload-data on:mouseenter on:mouseleave>
+<a {href} {target} data-sveltekit-preload-data  bind:this={element}>
 	<img
 		src="{api_url}/{post.photos[0] || ''}"
 		alt={post.title}

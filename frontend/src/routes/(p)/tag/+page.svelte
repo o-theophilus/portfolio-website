@@ -18,10 +18,7 @@
 </Content>
 
 <style>
-	strong {
-		text-transform: capitalize;
-	}
 	.big {
-		text-transform: uppercase;
+		text-transform: capitalize;
 	}
 </style>
