@@ -5,7 +5,7 @@
 	import { cubicInOut } from 'svelte/easing';
 
 	import Content from '$lib/comp/content.svelte';
-	// import Fluid from '$lib/fluid/fluid.svelte';
+	import Fluid from '$lib/fluid/fluid.svelte';
 	import ItemBox from './project_item_box.svelte';
 	import Scroller from '$lib/comp/scroller.svelte';
 
@@ -38,6 +38,39 @@
 			ob.observe(document.querySelector('.project-block'));
 		}
 	});
+
+	let fluid_op = {
+		// SIM_RESOLUTION: 64, //128
+		// DYE_RESOLUTION: 256, //1024
+		// CAPTURE_RESOLUTION: 256, //512
+		// DENSITY_DISSIPATION: 1,
+		// VELOCITY_DISSIPATION: 0.1, //0.3
+		// PRESSURE: 0.8,
+		// PRESSURE_ITERATIONS: 20,
+
+		// CURL: 0.1, //30
+		// SPLAT_RADIUS: 1, //0.35
+		// SPLAT_FORCE: 6000,
+
+		// SHADING: true,
+		// COLORFUL: true,
+		// COLOR_UPDATE_SPEED: 10,
+		// PAUSED: false,
+
+		// BACK_COLOR: { r: 0, g: 0, b: 0 },
+		// TRANSPARENT: true,
+
+		BLOOM: false,
+		BLOOM_ITERATIONS: 8,
+		BLOOM_RESOLUTION: 256,
+		BLOOM_INTENSITY: 0.8,
+		BLOOM_THRESHOLD: 0.6,
+		BLOOM_SOFT_KNEE: 0.7,
+
+		// SUNRAYS: false,
+		// SUNRAYS_RESOLUTION: 196,
+		// SUNRAYS_WEIGHT: 1.0
+	};
 </script>
 
 <svelte:window
@@ -49,9 +82,9 @@
 
 <section bind:this={section} class:intersecting>
 	<div class="sticky" bind:this={sticky}>
-		<!-- <div class="fluid"> -->
-			<!-- <Fluid /> -->
-		<!-- </div> -->
+		<div class="fluid">
+			<Fluid {...fluid_op} />
+		</div>
 
 		<Content>
 			<div class="project-block" bind:this={block}>
@@ -98,7 +131,7 @@
 						more</Scroller
 					>
 					{#each blogs as post}
-						<ItemBox {post} post_type="blog" home />
+					<ItemBox {post} post_type="blog" home />
 					{/each}
 				</div> -->
 			</div>
@@ -118,14 +151,15 @@
 	.intersecting {
 		background-color: unset;
 	}
-	/* .fluid {
+	.fluid {
+		position: absolute;
 		opacity: 0;
 		transition: opacity var(--animTime3);
 		transition-timing-function: ease-in-out;
 	}
 	.intersecting .fluid {
 		opacity: 1;
-	} */
+	}
 	.title {
 		font-size: 30px;
 		transition: all var(--animTime1);
@@ -147,7 +181,8 @@
 		flex-direction: column;
 		justify-content: center;
 		height: 100vh;
-		/* pointer-events: none; */
+
+		pointer-events: none;
 	}
 
 	.scroller {
@@ -170,14 +205,11 @@
 	.desc {
 		height: 30vh;
 		display: flex;
-		/* flex-direction: column; */
 		justify-content: center;
 		align-items: center;
 
 		text-align: center;
-
-		/* position: relative; */
-		/* pointer-events: none; */
+		position: relative;
 	}
 
 	.large {

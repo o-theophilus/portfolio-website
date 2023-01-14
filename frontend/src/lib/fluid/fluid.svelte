@@ -9,21 +9,26 @@
 	export let VELOCITY_DISSIPATION = 0.2;
 	export let PRESSURE = 0.8;
 	export let PRESSURE_ITERATIONS = 20;
+
 	export let CURL = 30;
 	export let SPLAT_RADIUS = 0.25;
 	export let SPLAT_FORCE = 6000;
+
 	export let SHADING = true;
 	export let COLORFUL = true;
 	export let COLOR_UPDATE_SPEED = 10;
 	export let PAUSED = false;
+
 	export let BACK_COLOR = { r: 0, g: 0, b: 0 };
-	export let TRANSPARENT = false;
+	export let TRANSPARENT = true;
+
 	export let BLOOM = true;
 	export let BLOOM_ITERATIONS = 8;
 	export let BLOOM_RESOLUTION = 256;
 	export let BLOOM_INTENSITY = 0.8;
 	export let BLOOM_THRESHOLD = 0.6;
 	export let BLOOM_SOFT_KNEE = 0.7;
+
 	export let SUNRAYS = true;
 	export let SUNRAYS_RESOLUTION = 196;
 	export let SUNRAYS_WEIGHT = 1.0;
@@ -757,7 +762,7 @@
 		}
 
 		if (!TRANSPARENT) drawColor(target, normalizeColor(BACK_COLOR));
-		if (target == null && TRANSPARENT) drawCheckerboard(target);
+		// if (target == null && TRANSPARENT) drawCheckerboard(target);
 		drawDisplay(target);
 	}
 
@@ -1070,9 +1075,15 @@
 	});
 </script>
 
-<!-- on:mousedown={(e) => { -->
 <canvas
 	bind:this={canvas}
+	on:mousedown={(e) => {
+		const posX = scaleByPixelRatio(e.offsetX);
+		const posY = scaleByPixelRatio(e.offsetY);
+		let pointer = pointers.find((p) => p.id == -1);
+		if (pointer == null) pointer = createPointer();
+		updatePointerDownData(pointer, -1, posX, posY);
+	}}
 	on:mouseover={(e) => {
 		const posX = scaleByPixelRatio(e.offsetX);
 		const posY = scaleByPixelRatio(e.offsetY);
@@ -1089,26 +1100,25 @@
 		updatePointerMoveData(pointer, posX, posY);
 	}}
 	on:touchstart={(e) => {
-		console.log('start');
-		
-		e.preventDefault();
+		// e.preventDefault();
+		var rect = e.target.getBoundingClientRect();
 		const touches = e.targetTouches;
 		while (touches.length >= pointers.length) pointers.push(createPointer());
 		for (let i = 0; i < touches.length; i++) {
-			const posX = scaleByPixelRatio(touches[i].pageX);
-			const posY = scaleByPixelRatio(touches[i].pageY);
+			const posX = scaleByPixelRatio(touches[i].pageX - window.pageXOffset - rect.left);
+			const posY = scaleByPixelRatio(touches[i].pageY - window.pageYOffset - rect.top);
 			updatePointerDownData(pointers[i + 1], touches[i].identifier, posX, posY);
 		}
 	}}
 	on:touchmove={(e) => {
-		console.log('move');
-		e.preventDefault();
+		// e.preventDefault();
+		var rect = e.target.getBoundingClientRect();
 		const touches = e.targetTouches;
 		for (let i = 0; i < touches.length; i++) {
 			const pointer = pointers[i + 1];
 			if (!pointer.down) continue;
-			const posX = scaleByPixelRatio(touches[i].pageX);
-			const posY = scaleByPixelRatio(touches[i].pageY);
+			const posX = scaleByPixelRatio(touches[i].pageX - window.pageXOffset - rect.left);
+			const posY = scaleByPixelRatio(touches[i].pageY - window.pageYOffset - rect.top);
 			updatePointerMoveData(pointer, posX, posY);
 		}
 	}}
@@ -1129,13 +1139,10 @@
 		// if (e.key === ' ') splatStack.push(Math.trunc(Math.random() * 20) + 5);
 		// if (e.key === ' ') multipleSplats(Math.trunc(Math.random() * 20) + 5);
 	}}
-
 />
 
 <style>
 	canvas {
-		/* position: absolute; */
-		/* z-index: 10; */
 		width: 100vw;
 		height: 100vh;
 	}
