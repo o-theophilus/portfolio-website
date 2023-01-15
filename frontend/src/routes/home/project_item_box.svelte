@@ -58,9 +58,9 @@
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;
 	}
-	a:hover {
+	/* a:hover {
 		transform: scale(1.2);
-	}
+	} */
 
 	img {
 		display: block;

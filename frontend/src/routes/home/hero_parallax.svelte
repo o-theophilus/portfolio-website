@@ -1,35 +1,42 @@
 <script>
 	let scrollY;
-	let speed = 0.1;
 
+	let a;
+	let b;
+	let c;
+	let d;
+	let e;
+	let f;
+	let g;
+	let h;
 	let mul = (num) => num * 0.82;
-	$: a = mul(scrollY);
-	$: b = mul(a);
-	$: c = mul(b);
-	$: d = mul(c);
-	$: e = mul(d);
-	$: f = mul(e);
-	$: g = mul(f);
-	$: h = mul(g);
+	$: {
+		a = mul(scrollY);
+		b = mul(a);
+		c = mul(b);
+		d = mul(c);
+		e = mul(d);
+		f = mul(e);
+		g = mul(f);
+		h = mul(g);
+	}
 </script>
 
 <section>
-	<img style:top="{a}px" src="/site/parallax/parallax0.png" alt="parallax0" />
-	<img style:top="{b}px" src="/site/parallax/parallax1.png" alt="parallax1" />
-	<img style:top="{c}px" src="/site/parallax/parallax2.png" alt="parallax2" />
-	<img style:top="{d}px" src="/site/parallax/parallax3.png" alt="parallax3" />
-	<img style:top="{e}px" src="/site/parallax/parallax4.png" alt="parallax4" />
-	<img style:top="{f}px" src="/site/parallax/parallax5.png" alt="parallax5" />
-	<img style:top="{g}px" src="/site/parallax/parallax6.png" alt="parallax6" />
-	<img style:top="{h}px" src="/site/parallax/parallax7.png" alt="parallax7" />
+	<img style:--top="{a}px" src="/site/parallax/parallax0.png" alt="parallax0" />
+	<img style:--top="{b}px" src="/site/parallax/parallax1.png" alt="parallax1" />
+	<img style:--top="{c}px" src="/site/parallax/parallax2.png" alt="parallax2" />
+	<img style:--top="{d}px" src="/site/parallax/parallax3.png" alt="parallax3" />
+	<img style:--top="{e}px" src="/site/parallax/parallax4.png" alt="parallax4" />
+	<img style:--top="{f}px" src="/site/parallax/parallax5.png" alt="parallax5" />
+	<img style:--top="{g}px" src="/site/parallax/parallax6.png" alt="parallax6" />
+	<img style:--top="{h}px" src="/site/parallax/parallax7.png" alt="parallax7" />
 </section>
 
 <svelte:window bind:scrollY />
 
 <style>
 	section {
-		--speed: 0.1;
-
 		position: relative;
 		height: calc(100vh - var(--headerHeight));
 		min-height: 800px;
@@ -52,5 +59,9 @@
 
 		height: 100%;
 		object-fit: cover;
+		/* top: var(--top); */
+		transform: translateY(var(--top));
+
+		/* transition: top 500ms; */
 	}
 </style>

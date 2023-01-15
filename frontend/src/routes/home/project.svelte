@@ -84,6 +84,7 @@
 	<div class="sticky" bind:this={sticky}>
 		<div class="fluid">
 			<Fluid {...fluid_op} />
+			<div class="blocker" />
 		</div>
 
 		<Content>
@@ -143,22 +144,33 @@
 	section {
 		position: relative;
 		height: 300vh;
-		background-color: var(--foreground);
-
+		/* background-color: var(--foreground);
+		
 		transition: all var(--animTime3);
-		transition-timing-function: ease-in-out;
+		transition-timing-function: ease-in-out; */
 	}
-	.intersecting {
+	/* .intersecting {
 		background-color: unset;
-	}
+	} */
 	.fluid {
 		position: absolute;
-		opacity: 0;
+		/* opacity: 0;
 		transition: opacity var(--animTime3);
+		transition-timing-function: ease-in-out; */
+	}
+	/* .intersecting .fluid {
+		opacity: 1;
+	} */
+	.blocker {
+		position: absolute;
+		inset: 0;
+		background-color: var(--foreground);
+		pointer-events: none;
+		transition: background-color var(--animTime1);
 		transition-timing-function: ease-in-out;
 	}
-	.intersecting .fluid {
-		opacity: 1;
+	.intersecting .blocker {
+		background-color: transparent;
 	}
 	.title {
 		font-size: 30px;

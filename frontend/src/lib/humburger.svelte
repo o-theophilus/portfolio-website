@@ -9,6 +9,7 @@
 	on:click={() => {
 		$openMobileMenu = !$openMobileMenu;
 	}}
+	on:keypress
 >
 	<div class=" one" />
 	<div class=" two" />
