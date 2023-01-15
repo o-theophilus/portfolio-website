@@ -40,8 +40,8 @@
 	});
 
 	let fluid_op = {
-		SIM_RESOLUTION: 32, //128
-		DYE_RESOLUTION: 32, //1024
+		SIM_RESOLUTION: 8, //128
+		DYE_RESOLUTION: 64, //1024
 		CAPTURE_RESOLUTION: 256, //512
 		DENSITY_DISSIPATION: 1,
 		VELOCITY_DISSIPATION: 0.1, //0.3
@@ -153,13 +153,13 @@
 	}
 	.fluid {
 		position: absolute;
-		/* opacity: 0;
+		opacity: 0;
 		transition: opacity var(--animTime3);
-		transition-timing-function: ease-in-out; */
+		transition-timing-function: ease-in-out;
 	}
-	/* .intersecting .fluid {
+	.intersecting .fluid {
 		opacity: 1;
-	} */
+	}
 	.title {
 		font-size: 30px;
 		transition: all var(--animTime1);
