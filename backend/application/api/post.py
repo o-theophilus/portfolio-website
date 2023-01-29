@@ -242,3 +242,35 @@ def delete(slug):
         "status": 200,
         "message": "successful"
     })
+
+
+@bp.put("/blog/videos/<slug>")
+@bp.put("/project/videos/<slug>")
+def update_videos(slug):
+    post_type = f"{request.url_rule}"[1:].split("/")[0]
+
+    if "videos" not in request.json:
+        return jsonify({
+            "status": 201,
+            "message": "invalid request"
+        })
+
+    post = db.get(post_type, "slug", slug)
+    if not post:
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
+    post["updated_at"] = now()
+    post["videos"] = request.json["videos"]
+
+    db.add(post)
+
+    return jsonify({
+        "status": 200,
+        "message": "successful",
+        "data": {
+            "post": schema(post)
+        }
+    })

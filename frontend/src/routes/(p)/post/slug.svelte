@@ -13,7 +13,8 @@
 	import Edit_Tags from '$lib/module/edit_tags.svelte';
 	import Edit_Content from '$lib/module/edit_content.svelte';
 	import Edit_Status from '$lib/module/edit_status.svelte';
-	import Photo_Man from '$lib/module/manage_photo.svelte';
+	import MAnage_Photo from '$lib/module/manage_photo.svelte';
+	import Manage_Video from '$lib/module/manage_video.svelte';
 
 	export let data;
 	let { post } = data;
@@ -37,9 +38,26 @@
 			post.photo_count = post.photo_count + 1;
 		}
 	}
+
+	$: {
+		post.video_count = 0;
+		let is_available = content.search(/{video}/) >= 0;
+		while (is_available) {
+			let v = `<iframe 
+					width="100%" 
+					height="500px"
+					frameborder="0" 
+					src="https://www.youtube.com/embed/${post.videos[post.video_count]}">
+				</iframe>
+				`;
+			content = content.replace(/{video}/, v);
+			is_available = content.search(/{video}/) >= 0;
+			post.video_count = post.video_count + 1;
+		}
+	}
 </script>
 
-<Meta title={post.title} description={post.description} image={post.photo} />
+<Meta title={post.title} description={post.description} image={post.photos[0]} />
 
 <Content>
 	<img
@@ -50,18 +68,34 @@
 
 	{#if $_user.roles.includes('admin')}
 		<br />
-		<Button
-			class="tiny"
-			on:click={() => {
-				$module = {
-					module: Photo_Man,
-					data: {
-						post,
-						post_type
-					}
-				};
-			}}>Manage Photo</Button
-		>
+		<div class="row">
+			<Button
+				class="tiny"
+				on:click={() => {
+					$module = {
+						module: MAnage_Photo,
+						data: {
+							post,
+							post_type
+						}
+					};
+				}}>Manage Photo</Button
+			>
+			{#if post.video_count >= 0}
+				<Button
+					class="tiny"
+					on:click={() => {
+						$module = {
+							module: Manage_Video,
+							data: {
+								post,
+								post_type
+							}
+						};
+					}}>Manage Video</Button
+				>
+			{/if}
+		</div>
 	{/if}
 
 	<br /><br />
