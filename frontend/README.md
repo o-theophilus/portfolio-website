@@ -1,6 +1,3 @@
-fluid gradient fade
-
-authentication
 user comments
 email api
 
@@ -11,7 +8,7 @@ modify date
 error when no network
 filter by status (backend)
 
-disable space fluid splat
+set fluid resolution by device
 markdown textarea enable tab key
 
 

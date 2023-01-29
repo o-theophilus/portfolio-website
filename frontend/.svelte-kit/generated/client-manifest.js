@@ -13,13 +13,13 @@ export const nodes = [() => import('./nodes/0'),
 	() => import('./nodes/10'),
 	() => import('./nodes/11')];
 
-export const server_loads = [];
+export const server_loads = [0];
 
 export const dictionary = {
 	"/": [3],
-	"/(p)/admin9049": [4,[2]],
-	"/(p)/blog": [5,[2]],
-	"/(p)/blog/[slug]": [6,[2]],
+	"/(p)/blog": [4,[2]],
+	"/(p)/blog/[slug]": [5,[2]],
+	"/(p)/login": [6,[2]],
 	"/(p)/project": [7,[2]],
 	"/(p)/project/[slug]": [8,[2]],
 	"/(p)/tag": [9,[2]],

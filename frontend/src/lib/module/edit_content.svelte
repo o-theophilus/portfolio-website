@@ -27,9 +27,7 @@
 			error.content = 'cannot be empty';
 		}
 
-		if (Object.keys(error).length === 0) {
-			submit();
-		}
+		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {

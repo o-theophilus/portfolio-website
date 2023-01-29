@@ -1,5 +1,6 @@
 <script>
-	import { theme } from '$lib/store.js';
+	import { theme, _user } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
 
 	import '$lib/css/var.css';
 	import '$lib/css/main.css';
@@ -8,6 +9,10 @@
 	import Module from '$lib/module/module.svelte';
 	import Footer from './footer/footer.svelte';
 	import Loading from '$lib/comp/loading.svelte';
+
+	export let data;
+	$_user = data.data.locals.user;
+	$token = data.data.locals.token;
 </script>
 
 <main class:dark={$theme == 'dark'}>

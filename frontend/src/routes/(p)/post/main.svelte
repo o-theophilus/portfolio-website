@@ -1,5 +1,5 @@
 <script>
-	import { module, _tick, is_admin } from '$lib/store.js';
+	import { module, _tick, _user } from '$lib/store.js';
 
 	import Content from '$lib/comp/content.svelte';
 	import ItemBox from '$lib/comp/item_box.svelte';
@@ -26,7 +26,7 @@
 	<br />
 	<strong class="big">{post_type}{posts.length > 1 ? 's' : ''}</strong>
 	<br /><br />
-	{#if $is_admin}
+	{#if $_user.roles.includes('admin')}
 		<Button
 			on:click={() => {
 				$module = {

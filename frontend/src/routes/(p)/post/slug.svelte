@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, _tick, is_admin } from '$lib/store.js';
+	import { api_url, module, _tick, _user } from '$lib/store.js';
 
 	import Content from '$lib/comp/content.svelte';
 	import Marked from '$lib/comp/marked.svelte';
@@ -48,7 +48,7 @@
 		onerror="this.src='/site/no_photo.png'"
 	/>
 
-	{#if $is_admin}
+	{#if $_user.roles.includes('admin')}
 		<br />
 		<Button
 			class="tiny"
@@ -66,7 +66,7 @@
 
 	<br /><br />
 	<strong class="big">{post.title}</strong>
-	{#if $is_admin}
+	{#if $_user.roles.includes('admin')}
 		<Button
 			class="tiny"
 			on:click={() => {
@@ -84,7 +84,7 @@
 	<br /><br />
 	<span class="date">{post.updated_at}</span>
 
-	{#if $is_admin}
+	{#if $_user.roles.includes('admin')}
 		<br /><br />
 		{post.description}
 
@@ -105,7 +105,7 @@
 	<br /><br />
 	<Marked md={content} />
 
-	{#if $is_admin}
+	{#if $_user.roles.includes('admin')}
 		<Button
 			class="tiny"
 			on:click={() => {
@@ -124,7 +124,7 @@
 
 	<Tags tags={post.tags} />
 
-	{#if $is_admin}
+	{#if $_user.roles.includes('admin')}
 		<br />
 		<Button
 			class="tiny"
@@ -143,7 +143,7 @@
 		</Button>
 	{/if}
 
-	{#if $is_admin}
+	{#if $_user.roles.includes('admin')}
 		<br /> <br />
 		{post.status}
 		<div class="row">

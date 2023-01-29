@@ -2,14 +2,14 @@
 	import { browser } from '$app/environment';
 	import { onMount, createEventDispatcher } from 'svelte';
 
-	import { api_url, is_admin } from '$lib/store.js';
+	import { api_url, _user } from '$lib/store.js';
 
 	export let post;
 	export let post_type;
 
 	let href = `/${post_type}/${post.slug}`;
 	let target = '';
-	if (post.format == 'url' && !$is_admin) {
+	if (post.format == 'url' && !$_user.roles.includes('admin')) {
 		href = post.content;
 		target = '_blank';
 	}
@@ -35,7 +35,7 @@
 	});
 </script>
 
-<a {href} {target} data-sveltekit-preload-data  bind:this={element}>
+<a {href} {target} data-sveltekit-preload-data bind:this={element}>
 	<img
 		src="{api_url}/{post.photos[0] || ''}"
 		alt={post.title}

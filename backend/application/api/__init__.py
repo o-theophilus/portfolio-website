@@ -1,16 +1,9 @@
-from flask import Blueprint, jsonify, current_app
+from flask import Blueprint, jsonify, current_app, request
 from itsdangerous import URLSafeTimedSerializer
 from datetime import datetime, timedelta
-
+from . import db
 
 bp = Blueprint("api", __name__)
-
-
-# @bp.after_request
-# def add_headers(response):
-#     response.headers['Access-Control-Allow-Origin'] = '*'
-#     response.headers['Access-Control-Allow-Origin'] = "https://theophilus.vercel.app/"
-#     return response
 
 
 @bp.route("/")
@@ -26,6 +19,22 @@ def token_tool():
         current_app.config["SECRET_KEY"],
         current_app.config["SECURITY_PASSWORD_SALT"]
     )
+
+
+def token_to_user(data=None):
+    if (
+        "Authorization" not in request.headers or
+        not request.headers["Authorization"]
+    ):
+        return None
+
+    token = request.headers["Authorization"]
+    try:
+        token = token_tool().loads(token)
+    except Exception:
+        return None
+
+    return db.get("user", "key", token, data)
 
 
 def now(day=0):

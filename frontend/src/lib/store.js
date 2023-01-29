@@ -3,9 +3,7 @@ import { writable } from 'svelte/store';
 export const api_url = import.meta.env.VITE_API_URL;
 
 // app variables
-export const showHeader = writable(true);
-export const openMobileMenu = writable(false);
-export const isMobile = writable(true);
+export const _user = writable();
 
 // variables
 export const module = writable();
@@ -45,5 +43,4 @@ export const scroll = (query) => {
 };
 
 // temp fix
-export const is_admin = writable(false);
 export const theme = writable("dark");

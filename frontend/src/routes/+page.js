@@ -1,6 +1,6 @@
 import { api_url } from '$lib/store.js';
 
-export const load = async ({ fetch, url }) => {
+export const load = async ({ fetch }) => {
     const resp = await fetch(`${api_url}/post`, {
         method: 'get',
         headers: {

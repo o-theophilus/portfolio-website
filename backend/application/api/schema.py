@@ -1,5 +1,44 @@
 from . import now
 
+user = {
+    "key": "",
+    "version": "",
+    "status": "anon",
+    "type": "user",
+
+    "password": "",
+
+    "date_c": now(),
+    "date_u": now(),
+
+    "name": "",
+    "email": "",
+
+    "setting": {
+        "item_view": "grid",
+        "theme": "light"
+    },
+
+    "roles": [],
+    "login": False,
+}
+
+post = {
+    "key": "",
+    "version": "",
+    "status": "draft",
+    "created_at": now(),
+    "updated_at": now(),
+    "type": "",
+    "title": "",
+    "format": "markdown",
+    "photos": [],
+    "description": "",
+    "content": "",
+    "slug": "",
+    "tags": ""
+}
+
 
 def schema(p):
     photos = []
@@ -20,18 +59,16 @@ def schema(p):
     }
 
 
-post = {
-    "key": "",
-    "version": "",
-    "status": "draft",
-    "created_at": now(),
-    "updated_at": now(),
-    "type": "",
-    "title": "",
-    "format": "markdown",
-    "photos": [],
-    "description": "",
-    "content": "",
-    "slug": "",
-    "tags": ""
-}
+def user_schema(user):
+    return {
+        "status": user["status"],
+
+        "name": user["name"],
+        "email": user["email"],
+
+        "setting": user["setting"],
+
+        "roles": user["roles"],
+        "login": user["login"],
+
+    }

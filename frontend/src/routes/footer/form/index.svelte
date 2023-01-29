@@ -26,9 +26,7 @@
 			error.message = 'cannot be empty';
 		}
 
-		if (Object.keys(error).length === 0) {
-			submit();
-		}
+		Object.keys(error).length === 0 && submit();
 	};
 
 	let state = 0;
@@ -69,7 +67,7 @@
 			<input placeholder="Your Name" type="text" {id} bind:value={form.name} />
 		</Input>
 
-		<Input name="email" error={error.email} let:id svg="emailAddress">
+		<Input name="email address" error={error.email} let:id svg="emailAddress">
 			<input placeholder="Your Email Address" type="text" {id} bind:value={form.email} />
 		</Input>
 		<Input name="message" error={error.message} let:id>
