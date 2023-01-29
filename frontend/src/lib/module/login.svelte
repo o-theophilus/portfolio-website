@@ -34,9 +34,12 @@
 		if (resp.ok) {
 			const data = await resp.json();
 			if (data.status == 200) {
-				$module = '';
-				$_user = data.data.user;
+				// $module = '';
+				// $_user = data.data.user;
 				$token = data.data.token;
+
+				document.location = '/';
+			
 			} else {
 				error.form = data.message;
 			}

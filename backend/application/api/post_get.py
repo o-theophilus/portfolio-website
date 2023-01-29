@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from . import db
+from . import db, token_to_user
 from .schema import schema
 from .tag import get_tags
 
@@ -38,12 +38,20 @@ def get_all():
     post_type = f"{request.url_rule}"[1:]
     posts = db.get_type(post_type, data)
 
+    user = token_to_user(data)
+    if not user or "admin" not in user["roles"]:
+        temp = []
+        for p in posts:
+            if p["status"] == "publish":
+                temp.append(p)
+        posts = temp
+
     return jsonify({
         "status": 200,
         "message": "successful",
         "data": {
             "posts": [schema(a) for a in posts],
-            "tags": get_tags(data)
+            "tags": get_tags(posts)
         }
     })
 

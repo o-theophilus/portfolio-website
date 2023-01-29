@@ -1,12 +1,15 @@
 import { api_url } from '$lib/store.js';
 
-export const load = async ({ fetch, url }) => {
+export const load = async ({ fetch, url, parent }) => {
+    const { data } = await parent()
+    
     let post_type = url.pathname.split('/')[1];
 
     const resp = await fetch(`${api_url}/${post_type}`, {
         method: 'get',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: data.locals.token
         },
     });
 
