@@ -30,18 +30,18 @@
 	$: {
 		content = post.content;
 		post.photo_count = 1;
-		let is_available = content.search(/<photo>/) >= 0;
+		let is_available = content.search(/{#photo}/) >= 0;
 		while (is_available) {
 			let photo = `![${post.title}](${api_url}/${post.photos[post.photo_count]})`;
-			content = content.replace(/<photo>/, photo);
-			is_available = content.search(/<photo>/) >= 0;
+			content = content.replace(/{#photo}/, photo);
+			is_available = content.search(/{#photo}/) >= 0;
 			post.photo_count = post.photo_count + 1;
 		}
 	}
 
 	$: {
 		post.video_count = 0;
-		let is_available = content.search(/{video}/) >= 0;
+		let is_available = content.search(/{#video}/) >= 0;
 		while (is_available) {
 			let v = `<iframe 
 					width="100%" 
@@ -50,8 +50,8 @@
 					src="https://www.youtube.com/embed/${post.videos[post.video_count]}">
 				</iframe>
 				`;
-			content = content.replace(/{video}/, v);
-			is_available = content.search(/{video}/) >= 0;
+			content = content.replace(/{#video}/, v);
+			is_available = content.search(/{#video}/) >= 0;
 			post.video_count = post.video_count + 1;
 		}
 	}

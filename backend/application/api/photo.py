@@ -61,7 +61,7 @@ def post_many(slug):
             "message": "invalid request"
         })
 
-    count = post["content"].count("<photo>") + 1
+    count = post["content"].count("{#photo}") + 1
     if len(post["photos"]) + len(files) > count:
         return jsonify({
             "status": 401,
@@ -117,7 +117,7 @@ def post_many(slug):
 #             "message": "invalid request"
 #         })
 
-#     count = post["content"].count("<photo>")
+#     count = post["content"].count("{#photo}")
 #     if len(post["photos"]) > count:
 #         return jsonify({
 #             "status": 401,
