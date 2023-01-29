@@ -12,7 +12,6 @@ markdown textarea enable tab key
 change tags to array
 
 
-
 change <photo> to {photo}
 remove removed {photo} {video}
 
