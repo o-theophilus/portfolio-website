@@ -13,7 +13,7 @@ export const load = async ({ fetch, url, params }) => {
     if (resp.ok) {
         const data = await resp.json();
 
-        if (resp.status == 200) {
+        if (data.status == 200) {
             return {
                 post: data.data.post,
                 tags: data.data.tags,

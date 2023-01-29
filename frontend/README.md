@@ -14,4 +14,5 @@ change tags to array
 
 remove removed {#photo} {#video}
 add signup
+logout then go back ==> prevent login
 

@@ -89,8 +89,8 @@ def login():
             "message": "Your email or password is incorrect"
         })
 
-    # if anon_user["status"] == "anon":
-    #     db.rem(anon_user["key"])
+    if anon_user["status"] == "anon":
+        db.rem(anon_user["key"])
 
     user["login"] = True
     db.add(user)
@@ -197,21 +197,31 @@ def login():
 #     })
 
 
-# @bp.delete("/logout")
-# def logout():
-#     db = get_db()
+@bp.delete("/login")
+def logout():
 
-#     user = token_to_user(db)
-#     if user:
-#         user["login"] = False
+    user = token_to_user(db.data())
+    to_add = []
+    if user and user["status"] != "anon":
+        user["login"] = False
+        to_add.append(user)
+    else:
+        db.rem(user["key"])
 
-#     user = db_add(_user)
+    temp = uuid4().hex
+    _user["key"] = temp
+    _user["name"] = temp
+    _user["email"] = temp
+    _user["password"] = temp
+    to_add.append(_user)
 
-#     return jsonify({
-#         "status": 200,
-#         "message": "successful",
-#         "data": {
-#             "user": user_schema(user, db),
-#             "token": token_tool().dumps(user["key"])
-#         }
-#     })
+    db.add_many(to_add)
+
+    return jsonify({
+        "status": 200,
+        "message": "successful",
+        "data": {
+            "user": user_schema(_user),
+            "token": token_tool().dumps(_user["key"])
+        }
+    })
