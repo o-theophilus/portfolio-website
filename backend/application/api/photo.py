@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, send_file
-from . import db
+from . import db, token_to_user
 from . import dd
 from .schema import schema
 from PIL import Image, ImageOps
@@ -24,43 +24,53 @@ def get(name, thumbnail=None):
     return send_file(photo, mimetype="image/jpg")
 
 
-@bp.post("/blog/photo/<slug>")
-@bp.post("/project/photo/<slug>")
-def post(slug):
+@bp.post("/blog/photo_many/<slug>")
+@bp.post("/project/photo_many/<slug>")
+def post_many(slug):
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
-    if 'photo' not in request.files or 'slug' not in request.form:
+    if 'files' not in request.files or 'slug' not in request.form:
         return jsonify({
             "status": 401,
             "message": "invalid request"
         })
 
-    photo = request.files["photo"]
+    files = request.files.getlist("files")
 
-    ext = photo.filename.split(".")[-1]
-    if ext.lower() not in ['jpg', 'png', 'gif']:
-        return jsonify({
-            "status": 201,
-            "message": "invalid file type"
-        })
+    for file in files:
+        media, format = file.content_type.split("/")
+        if media not in ["image", "video"] or format in ['svg+xml', 'x-icon']:
+            return jsonify({
+                "status": 201,
+                "message": "invalid file type"
+            })
 
-    post = db.get(post_type, "slug", slug)
+    post = db.get(post_type, "slug", slug, data)
     if not post:
         return jsonify({
             "status": 401,
             "message": "invalid request"
         })
 
-    count = post["content"].count("<photo>")
-    if len(post["photos"]) > count:
+    count = post["content"].count("<photo>") + 1
+    if len(post["photos"]) + len(files) > count:
         return jsonify({
             "status": 401,
             "message": "invalid request"
         })
 
-    photo_name = dd.add(photo, "post", True)
-    post["photos"].append(photo_name)
-
+    for file in files:
+        filename = dd.add(file, "post", True)
+        post["photos"].append(filename)
     db.add(post)
 
     return jsonify({
@@ -71,11 +81,76 @@ def post(slug):
         }
     })
 
+# @bp.post("/blog/photo/<slug>")
+# @bp.post("/project/photo/<slug>")
+# def post(slug):
+#     data = db.data()
+
+#     user = token_to_user(data)
+#     if "admin" not in user["roles"]:
+#         return jsonify({
+#             "status": 102,
+#             "message": "unauthorised access"
+#         })
+
+#     post_type = f"{request.url_rule}"[1:].split("/")[0]
+
+#     if 'photo' not in request.files or 'slug' not in request.form:
+#         return jsonify({
+#             "status": 401,
+#             "message": "invalid request"
+#         })
+
+#     photo = request.files["photo"]
+
+#     ext = photo.filename.split(".")[-1]
+#     if ext.lower() not in ['jpg', 'png', 'gif']:
+#         return jsonify({
+#             "status": 201,
+#             "message": "invalid file type"
+#         })
+
+#     post = db.get(post_type, "slug", slug, data)
+#     if not post:
+#         return jsonify({
+#             "status": 401,
+#             "message": "invalid request"
+#         })
+
+#     count = post["content"].count("<photo>")
+#     if len(post["photos"]) > count:
+#         return jsonify({
+#             "status": 401,
+#             "message": "invalid request"
+#         })
+
+#     photo_name = dd.add(photo, "post", True)
+#     post["photos"].append(photo_name)
+
+#     db.add(post)
+
+#     return jsonify({
+#         "status": 200,
+#         "message": "successful",
+#         "data": {
+#             "post": schema(post)
+#         }
+#     })
+
 
 @bp.put("/blog/photo/<slug>")
 @bp.put("/project/photo/<slug>")
 def arrange(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
+
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
 
     if "photos" not in request.json or not request.json["photos"]:
         return jsonify({
@@ -83,7 +158,7 @@ def arrange(slug):
             "message": "invalid request"
         })
 
-    post = db.get(post_type, "slug", slug)
+    post = db.get(post_type, "slug", slug, data)
     if not post:
         return jsonify({
             "status": 401,
@@ -115,13 +190,22 @@ def arrange(slug):
 def delete(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
     if "active_photo" not in request.json or not request.json["active_photo"]:
         return jsonify({
             "status": 401,
             "message": "invalid request"
         })
 
-    post = db.get(post_type, "slug", slug)
+    post = db.get(post_type, "slug", slug, data)
     if not post:
         return jsonify({
             "status": 401,
@@ -140,55 +224,6 @@ def delete(slug):
 
     dd.rem(ap, "post")
     post["photos"] = photos
-    db.add(post)
-
-    return jsonify({
-        "status": 200,
-        "message": "successful",
-        "data": {
-            "post": schema(post)
-        }
-    })
-
-
-@bp.post("/blog/photo_many/<slug>")
-@bp.post("/project/photo_many/<slug>")
-def post_many(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
-
-    if 'files' not in request.files or 'slug' not in request.form:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
-    files = request.files.getlist("files")
-
-    for file in files:
-        media, format = file.content_type.split("/")
-        if media not in ["image", "video"] or format in ['svg+xml', 'x-icon']:
-            return jsonify({
-                "status": 201,
-                "message": "invalid file type"
-            })
-
-    post = db.get(post_type, "slug", slug)
-    if not post:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
-    count = post["content"].count("<photo>") + 1
-    if len(post["photos"]) + len(files) > count:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
-    for file in files:
-        filename = dd.add(file, "post", True)
-        post["photos"].append(filename)
     db.add(post)
 
     return jsonify({

@@ -1,6 +1,6 @@
 <script>
-	import { goto } from '$app/navigation';
 	import { api_url, module, tick } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/comp/input_group.svelte';
 	import Button from '$lib/comp/button.svelte';
@@ -17,15 +17,15 @@
 		const resp = await fetch(`${api_url}/${post_type}/videos/${post.slug}`, {
 			method: 'put',
 			headers: {
-				'Content-Type': 'application/json'
-				// Authorization: session.token
+				'Content-Type': 'application/json',
+				Authorization: $token
 			},
 			body: JSON.stringify({ videos })
 		});
 
 		if (resp.ok) {
 			const data = await resp.json();
-			if (resp.status == 200) {
+			if (data.status == 200) {
 				tick(data.data.post);
 
 				$module = {
@@ -42,7 +42,6 @@
 						]
 					}
 				};
-				goto(`/${post_type}/${data.data.post.slug}`);
 			} else {
 				error = data.message;
 			}

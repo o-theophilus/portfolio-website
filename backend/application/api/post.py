@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
-from . import reserved_words, now
+from . import reserved_words, now, token_to_user
+from . import db
 import re
 from uuid import uuid4
-from . import db
 from .schema import post, schema
 
 bp = Blueprint("post", __name__)
@@ -11,6 +11,15 @@ bp = Blueprint("post", __name__)
 @bp.post("/blog")
 @bp.post("/project")
 def add_post():
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
     if "title" not in request.json or not request.json["title"]:
         return jsonify({
             "status": 201,
@@ -22,7 +31,7 @@ def add_post():
     slug = re.sub('-+', '-', re.sub(
         '[^a-zA-Z0-9]', '-', request.json["title"].lower()))
 
-    slug_in_use = db.get(post_type, "slug", slug)
+    slug_in_use = db.get(post_type, "slug", slug, data)
     if slug_in_use or slug in reserved_words:
         slug = f"{slug}-{str(uuid4().hex)[:10]}"
 
@@ -48,6 +57,13 @@ def add_post():
 def update_title(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
     data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
 
     post = db.get(post_type, "slug", slug, data)
     if not post:
@@ -93,7 +109,16 @@ def update_title(slug):
 def update_description(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
-    post = db.get(post_type, "slug", slug)
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
+    post = db.get(post_type, "slug", slug, data)
     if not post:
         return jsonify({
             "status": 401,
@@ -125,7 +150,16 @@ def update_description(slug):
 def update_tags(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
-    post = db.get(post_type, "slug", slug)
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
+    post = db.get(post_type, "slug", slug, data)
     if not post:
         return jsonify({
             "status": 401,
@@ -151,7 +185,16 @@ def update_tags(slug):
 def update_content(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
-    post = db.get(post_type, "slug", slug)
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
+    post = db.get(post_type, "slug", slug, data)
     if not post:
         return jsonify({
             "status": 401,
@@ -190,7 +233,16 @@ def update_content(slug):
 def update_status(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
-    post = db.get(post_type, "slug", slug)
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
+    post = db.get(post_type, "slug", slug, data)
     if not post:
         return jsonify({
             "status": 401,
@@ -228,7 +280,17 @@ def update_status(slug):
 @bp.delete("/project/<slug>")
 def delete(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
-    post = db.get(post_type, "slug", slug)
+
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
+    post = db.get(post_type, "slug", slug, data)
 
     if not post:
         return jsonify({
@@ -249,13 +311,22 @@ def delete(slug):
 def update_videos(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
     if "videos" not in request.json:
         return jsonify({
             "status": 201,
             "message": "invalid request"
         })
 
-    post = db.get(post_type, "slug", slug)
+    post = db.get(post_type, "slug", slug, data)
     if not post:
         return jsonify({
             "status": 401,

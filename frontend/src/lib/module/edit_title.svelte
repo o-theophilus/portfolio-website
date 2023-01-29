@@ -1,6 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { api_url, module, tick } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/comp/input_group.svelte';
 	import Button from '$lib/comp/button.svelte';
@@ -25,8 +26,8 @@
 		const resp = await fetch(`${api_url}/${post_type}/title/${post.slug}`, {
 			method: 'put',
 			headers: {
-				'Content-Type': 'application/json'
-				// Authorization: session.token
+				'Content-Type': 'application/json',
+				Authorization: $token
 			},
 			body: JSON.stringify(post)
 		});
@@ -40,9 +41,9 @@
 				$module = {
 					module: Info,
 					data: {
-						title: "Done",
+						title: 'Done',
 						status: 'good',
-						message: "Title Saved",
+						message: 'Title Saved',
 						button: [
 							{
 								name: 'OK',

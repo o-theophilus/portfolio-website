@@ -1,6 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { api_url, module, tick } from '$lib/store.js';
+	import { api_url, module } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/comp/button.svelte';
 	import Info from '$lib/module/info.svelte';
@@ -15,8 +16,8 @@
 		const resp = await fetch(`${api_url}/${post_type}/${post.slug}`, {
 			method: 'delete',
 			headers: {
-				'Content-Type': 'application/json'
-				// Authorization: session.token
+				'Content-Type': 'application/json',
+				Authorization: $token
 			}
 		});
 

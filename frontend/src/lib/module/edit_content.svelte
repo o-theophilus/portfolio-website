@@ -1,5 +1,6 @@
 <script>
 	import { api_url, module, tick } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/comp/input_group.svelte';
 	import Button from '$lib/comp/button.svelte';
@@ -34,8 +35,8 @@
 		const resp = await fetch(`${api_url}/${post_type}/content/${post.slug}`, {
 			method: 'put',
 			headers: {
-				'Content-Type': 'application/json'
-				// Authorization: session.token
+				'Content-Type': 'application/json',
+				Authorization: $token
 			},
 			body: JSON.stringify(post)
 		});

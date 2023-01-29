@@ -1,5 +1,6 @@
 <script>
 	import { api_url, loading, tick } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/comp/button.svelte';
 
@@ -74,8 +75,8 @@
 		const resp = await fetch(`${api_url}/${post_type}/photo/${post.slug}`, {
 			method: method,
 			headers: {
-				'Content-Type': 'application/json'
-				// Authorization: $token
+				'Content-Type': 'application/json',
+				Authorization: $token
 			},
 			body: JSON.stringify(post)
 		});
@@ -162,7 +163,7 @@
 		const resp = await fetch(`${api_url}/${post_type}/photo_many/${post.slug}`, {
 			method: 'post',
 			headers: {
-				// Authorization: $token
+				Authorization: $token
 			},
 			body: formData
 		});

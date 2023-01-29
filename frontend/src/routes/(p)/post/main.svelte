@@ -5,7 +5,7 @@
 	import ItemBox from '$lib/comp/item_box.svelte';
 	import Meta from '$lib/comp/meta.svelte';
 	import Button from '$lib/comp/button.svelte';
-	import Add from '$lib/module/add.svelte';
+	import Add from '$lib/module/add_post.svelte';
 	import Tags from '$lib/comp/tags.svelte';
 
 	export let data;
