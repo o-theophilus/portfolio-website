@@ -12,7 +12,7 @@
 	}
 </script>
 
-<a {href} {target} data-sveltekit-preload-data>
+<a {href} {target} data-sveltekit-preload-data class:draft={post.status == 'draft'}>
 	<img
 		src="{api_url}/{post.photos[0] || ''}"
 		alt={post.title}
@@ -53,6 +53,9 @@
 
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;
+	}
+	a.draft {
+		border: 2px solid var(--color2);
 	}
 
 	a:hover .block {
