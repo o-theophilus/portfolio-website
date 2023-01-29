@@ -52,7 +52,7 @@
 <section>
 	<strong class="big"> Manage Video </strong>
 	<form on:submit|preventDefault novalidate autocomplete="off">
-		<Input name="video{post.video_count > 1 && 's'}" {error} let:id>
+		<Input name="video{post.video_count > 1 ? 's' : ''}" {error} let:id>
 			{#each Array(post.video_count) as v, i}
 				<input placeholder="video {i + 1} here " type="text" bind:value={videos[i]} />
 			{/each}

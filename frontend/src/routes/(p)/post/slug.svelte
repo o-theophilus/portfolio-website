@@ -81,7 +81,7 @@
 					};
 				}}>Manage Photo</Button
 			>
-			{#if post.video_count >= 0}
+			{#if post.video_count > 0}
 				<Button
 					class="tiny"
 					on:click={() => {
