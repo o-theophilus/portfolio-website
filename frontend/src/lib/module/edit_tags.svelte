@@ -9,9 +9,9 @@
 	export let data;
 	let { post_type } = data;
 	let { post } = data;
-	let { tags } = post;
-	let { all_tags } = data;
-	let all_tags_list = [];
+
+	let tags = post.tags.join(', ');
+	let all_tags = [...data.all_tags];
 	let error = '';
 
 	const submit = async () => {
@@ -21,7 +21,7 @@
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify({ tags })
+			body: JSON.stringify({ tags: tags.split(', ') })
 		});
 
 		if (resp.ok) {
@@ -30,8 +30,8 @@
 			if (data.status == 200) {
 				tick(data.data.post);
 
-				let s = data.data.post.tags.split(',').length > 1;
-				
+				let s = data.data.post.tags.length > 1;
+
 				$module = {
 					module: Info,
 					data: {
@@ -54,24 +54,24 @@
 
 	const add_tag = (tag = '') => {
 		tags = `${tags}, ${tag}`;
-		tags = tags.replace(/\r?\n/g, ', ');
+		tags = tags.replace(/\r?\n/g, ',');
+		let a = tags.split(',');
+		let b = [];
 
-		let temp = tags.split(',');
-		tags = [];
-		for (let i in temp) {
-			temp[i] = temp[i].trim().toLowerCase();
-			if (temp[i] && !tags.includes(temp[i])) {
-				tags.push(temp[i]);
+		for (let i in a) {
+			i = a[i].trim().toLowerCase();
+			if (i && !b.includes(i)) {
+				b.push(i);
 			}
 		}
-		tags = tags.join(', ');
+		tags = b.join(', ');
 
-		temp = all_tags.split(', ');
-		all_tags_list = [];
-		for (let i in temp) {
-			temp[i] = temp[i].trim().toLowerCase();
-			if (temp[i] && !tags.includes(temp[i]) && !all_tags_list.includes(temp[i])) {
-				all_tags_list.push(temp[i]);
+		let c = [...data.all_tags];
+		all_tags = [];
+		for (let i in c) {
+			i = c[i];
+			if (!b.includes(i)) {
+				all_tags.push(i);
 			}
 		}
 	};
@@ -96,9 +96,7 @@
 			/>
 			<form on:submit|preventDefault>
 				<div class="h">
-					<!-- {#if all_tags} -->
-					<!-- {#each all_tags.split(', ') as tag} -->
-					{#each all_tags_list as tag}
+					{#each all_tags as tag}
 						<Button
 							name={tag}
 							class="tiny"
@@ -107,7 +105,6 @@
 							}}
 						/>
 					{/each}
-					<!-- {/if} -->
 				</div>
 			</form>
 		</Input>

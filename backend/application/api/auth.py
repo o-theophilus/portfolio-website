@@ -35,6 +35,27 @@ def init():
     })
 
 
+@bp.get("/fix")
+def fix():
+    many = []
+    for row in db.data():
+        if (
+            row["type"] in ["blog", "project"]
+            and type(row["tags"]) == str
+        ):
+            tags = row["tags"].split(", ")
+            tags = [t for t in tags if t]
+            row["tags"] = tags
+
+            many.append(row)
+    db.add_many(many)
+
+    return jsonify({
+        "status": 200,
+        "message": "successful",
+    })
+
+
 def omni(data):
     email = current_app.config["ADMIN_EMAIL"]
     user = db.get("user", "email", email, data)

@@ -8,8 +8,8 @@ user = {
 
     "password": "",
 
-    "date_c": now(),
-    "date_u": now(),
+    "created_at": now(),
+    "updated_at": now(),
 
     "name": "",
     "email": "",
@@ -37,7 +37,7 @@ post = {
     "description": "",
     "content": "",
     "slug": "",
-    "tags": ""
+    "tags": []
 }
 
 
@@ -57,7 +57,7 @@ def schema(p):
         "content": p["content"],
         "slug": p["slug"],
         "tags": p["tags"],
-        "updated_at": p["updated_at"],
+        "created_at": p["created_at"],
     }
 
 

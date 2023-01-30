@@ -11,18 +11,15 @@ def get_tags(data, key=None):
         if (
             row["type"] in ["blog", "project"]
             and row["key"] != key
-            and row["tags"]
         ):
-            tags.append(row["tags"])
+            tags = [*tags, *row["tags"]]
 
-    tags = ", ".join(tags).split(", ")
     tags = list(set(tags))
     tags.sort()
-    tags = ", ".join(tags)
     return tags
 
 
-@bp.get("/tag")
+@bp.get("/tags")
 def get_all():
     return jsonify({
         "status": 200,
@@ -33,14 +30,14 @@ def get_all():
     })
 
 
-@bp.get("/tag/<tag>")
+@bp.get("/tags/<tag>")
 def get(tag):
     data = db.data()
 
     blogs = []
     projects = []
     for row in data:
-        if tag in row["tags"]:
+        if "tags" in row and tag in row["tags"]:
             if row["type"] == "blog":
                 blogs.append(row)
             elif row["type"] == "project":

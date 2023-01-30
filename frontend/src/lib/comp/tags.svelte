@@ -6,8 +6,8 @@
 
 {#if tags}
 	<div class="row">
-		{#each tags.split(', ') as tag}
-			<Button class="tiny" href="/tag/{tag}">{tag}</Button>
+		{#each tags as tag}
+			<Button class="tiny" href="/tags/{tag}">{tag}</Button>
 		{/each}
 	</div>
 {/if}

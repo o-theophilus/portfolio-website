@@ -345,3 +345,52 @@ def update_videos(slug):
             "post": schema(post)
         }
     })
+
+
+@bp.put("/blog/date/<slug>")
+@bp.put("/project/date/<slug>")
+def update_date(slug):
+    post_type = f"{request.url_rule}"[1:].split("/")[0]
+
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
+    error = {}
+
+    if "date" not in request.json or not request.json["date"]:
+        error["date"] = "this field is required"
+
+    if "time" not in request.json or not request.json["time"]:
+        error["time"] = "this field is required"
+
+    if error != {}:
+        return jsonify({
+            "status": 201,
+            "message": error
+        })
+
+    post = db.get(post_type, "slug", slug, data)
+    if not post:
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
+    post["updated_at"] = now()
+    post["created_at"] = f"{request.json['date']}T{request.json['time']}"
+
+    db.add(post)
+
+    return jsonify({
+        "status": 200,
+        "message": "successful",
+        "data": {
+            "post": schema(post)
+        }
+    })

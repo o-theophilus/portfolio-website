@@ -2,42 +2,46 @@
 	import { api_url, module, tick } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/comp/input_group.svelte';
 	import Button from '$lib/comp/button.svelte';
+	import Input from '$lib/comp/input_group.svelte';
 	import Info from '$lib/module/info.svelte';
 
 	export let data;
 	let { post_type } = data;
-
 	let { post } = data;
 
+	let form = {
+		date: post.created_at.split('T')[0],
+		time: post.created_at.split('T')[1]
+	};
 	let error = {};
 
-	const validate = () => {
+	const validate = async () => {
 		error = {};
 
-		if (!post.format) {
-			error.format = 'cannot be empty';
+		if (!form.date) {
+			error.date = 'cannot be empty';
 		}
-		if (!post.content) {
-			error.content = 'cannot be empty';
+
+		if (!form.time) {
+			error.time = 'cannot be empty';
 		}
 
 		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post_type}/content/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post_type}/date/${post.slug}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify(post)
+			body: JSON.stringify(form)
 		});
 
 		if (resp.ok) {
-			const data = await resp.json();
+			let data = await resp.json();
 
 			if (data.status == 200) {
 				tick(data.data.post);
@@ -47,7 +51,7 @@
 					data: {
 						title: 'Done',
 						status: 'good',
-						message: 'Content Saved',
+						message: 'Date Saved',
 						button: [
 							{
 								name: 'OK',
@@ -64,27 +68,13 @@
 </script>
 
 <section>
-	<strong class="big">
-		Edit {post_type} content
-	</strong>
+	<strong class="big"> Edit Date & Time </strong>
 	<form on:submit|preventDefault novalidate autocomplete="off">
-		<Input name="format" error={error.format} let:id>
-			<label>
-				<input type="radio" bind:group={post.format} value="markdown" />
-				Markdown
-			</label>
-
-			<label>
-				<input type="radio" bind:group={post.format} value="url" />
-				URL
-			</label>
+		<Input name="date" error={error.date} let:id>
+			<input type="date" bind:value={form.date} {id} placeholder="date here" />
 		</Input>
-		<Input name="content" error={error.content} let:id>
-			{#if post.format == 'markdown'}
-				<textarea placeholder="Content here" {id} bind:value={post.content} on:keypress />
-			{:else if post.format == 'url'}
-				<input placeholder="Content here" type="text" {id} bind:value={post.content} />
-			{/if}
+		<Input name="time" error={error.time} let:id>
+			<input type="time" bind:value={form.time} {id} placeholder="time here" />
 		</Input>
 
 		<Button
@@ -108,11 +98,5 @@
 	}
 	strong {
 		border-bottom: 2px solid var(--mid_color);
-	}
-
-	textarea {
-		width: calc(100vw - var(--gap5) * 2);
-		min-height: 160px;
-		height: calc(100vh - var(--gap5) * 8);
 	}
 </style>

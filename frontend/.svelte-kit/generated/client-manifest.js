@@ -24,8 +24,8 @@ export const dictionary = {
 	"/(p)/logout": [7,[2]],
 	"/(p)/project": [8,[2]],
 	"/(p)/project/[slug]": [9,[2]],
-	"/(p)/tag": [10,[2]],
-	"/(p)/tag/[slug]": [11,[2]],
+	"/(p)/tags": [10,[2]],
+	"/(p)/tags/[slug]": [11,[2]],
 	"/(p)/test": [12,[2]]
 };
 

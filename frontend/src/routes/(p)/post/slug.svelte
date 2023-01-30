@@ -12,8 +12,9 @@
 	import Description from '$lib/module/edit_description.svelte';
 	import Edit_Tags from '$lib/module/edit_tags.svelte';
 	import Edit_Content from '$lib/module/edit_content.svelte';
+	import Edit_Date from '$lib/module/edit_date.svelte';
 	import Edit_Status from '$lib/module/edit_status.svelte';
-	import MAnage_Photo from '$lib/module/manage_photo.svelte';
+	import Manage_Photo from '$lib/module/manage_photo.svelte';
 	import Manage_Video from '$lib/module/manage_video.svelte';
 
 	export let data;
@@ -73,7 +74,7 @@
 				class="tiny"
 				on:click={() => {
 					$module = {
-						module: MAnage_Photo,
+						module: Manage_Photo,
 						data: {
 							post,
 							post_type
@@ -116,7 +117,22 @@
 	{/if}
 
 	<br /><br />
-	<span class="date">{post.updated_at}</span>
+	<span class="date">{post.created_at}</span>
+	{#if $_user.roles.includes('admin')}
+		<br />
+		<Button
+			class="tiny"
+			on:click={() => {
+				$module = {
+					module: Edit_Date,
+					data: {
+						post,
+						post_type
+					}
+				};
+			}}>Edit Date</Button
+		>
+	{/if}
 
 	{#if $_user.roles.includes('admin')}
 		<br /><br />
