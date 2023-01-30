@@ -63,7 +63,7 @@ def get_blog_project():
     blogs = []
     projects = []
     for row in data:
-        if "type" in row:
+        if "type" in row and "status" in row and row["status"] == "publish":
             if row["type"] == "blog":
                 blogs.append(row)
             elif row["type"] == "project":

@@ -218,7 +218,10 @@ def update_content(slug):
     post["content"] = request.json["content"]
 
     count = post["content"].count("{#video}")
-    post["videos"] = post["videos"][:count]
+    if count == 0:
+        post["videos"] = []
+    else:
+        post["videos"] = post["videos"][:count]
 
     db.add(post)
 

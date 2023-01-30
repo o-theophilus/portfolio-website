@@ -31,6 +31,7 @@
 	</Observe>
 
 	<br /><br />
+	
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
 			<strong class="large">Develop what you need.</strong>
