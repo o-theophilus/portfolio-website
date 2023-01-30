@@ -117,7 +117,7 @@
 	{/if}
 
 	<br /><br />
-	<span class="date">{post.created_at}</span>
+	<span class="date">{post.created_at.split('T')[0]}</span>
 	{#if $_user.roles.includes('admin')}
 		<br />
 		<Button

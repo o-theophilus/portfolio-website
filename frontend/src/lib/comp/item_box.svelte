@@ -32,7 +32,7 @@
 			{/if}
 			<br />
 			<div class="date">
-				{post.updated_at}
+				{post.created_at.split('T')[0]}
 			</div>
 		</div>
 	</div>
