@@ -1,5 +1,3 @@
-remove removed {#photo} {#video}
-
 error when no network
 
 set fluid resolution by device

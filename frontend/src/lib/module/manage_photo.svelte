@@ -22,8 +22,10 @@
 	let dragover = false;
 	let error = '';
 
-	const make_active = (photo = '') => {
-		error = '';
+	const make_active = (photo = '', clear_error = true) => {
+		if (clear_error) {
+			error = '';
+		}
 		show_left_btn = true;
 		show_right_btn = true;
 		post.active_photo = photo || post.photos[0] || '';
@@ -111,51 +113,46 @@
 		excess_files = [];
 		invalid_files = [];
 		error = '';
+
 		for (let i = 0; i < input.files.length; i++) {
 			let file = input.files[i];
-			let media_type = input.files[i].type.split('/');
-			let media = media_type[0];
-			let type = media_type[1];
-
+			let [media, type] = file.type.split('/');
 			if (media == 'image' && !['svg+xml', 'x-icon'].includes(type)) {
 				if (files.length < post.photo_count - post.photos.length) {
 					files.push(file);
 				} else {
-					excess_files.push(file);
+					excess_files.push(file.name);
 				}
 			} else {
-				invalid_files.push(file);
+				invalid_files.push(file.name);
 			}
 		}
 
 		files.length > 0 && upload_input();
 
 		if (excess_files.length > 0) {
-			let names = [];
-			for (let i = 0; i < excess_files.length; i++) {
-				names.push(excess_files[i].name);
-			}
 			error = `
-			Excess File${excess_files.length > 1 ? 's' : ''}:
+			<strong>
+				Excess File${excess_files.length > 1 ? 's' : ''}:
+			</strong>
 			<br/>
-			${names.join(', ')}`;
+			${excess_files.join(', ')}`;
 		}
 		if (invalid_files.length > 0) {
-			let names = [];
-			for (let i = 0; i < invalid_files.length; i++) {
-				names.push(invalid_files[i].name);
-			}
 			error = `${excess_files.length > 0 ? `${error}<br/><br/>` : ''}
-			Invalid File${invalid_files.length > 1 ? 's' : ''}:
+
+			<strong>
+				Invalid File${invalid_files.length > 1 ? 's' : ''}:
+			</strong>
 			<br/>
-			${names.join(', ')}`;
+			${invalid_files.join(', ')}`;
 		}
 	};
 
 	const upload_input = async () => {
 		let formData = new FormData();
 		formData.append('slug', post.slug);
-		for (let i = 0; i < files.length; i++) {
+		for (let i in files) {
 			formData.append('files', files[i]);
 		}
 
@@ -179,7 +176,7 @@
 				post.active_photo = temp;
 				post.photo_count = temp2;
 
-				make_active();
+				make_active((clear_error = false));
 				tick(post);
 			} else {
 				error = data.message;
@@ -207,6 +204,16 @@
 			on:drop|preventDefault={(e) => {
 				dragover = false;
 				input.files = e.dataTransfer.files;
+				on_input();
+			}}
+		/>
+		<input
+			style:display="none"
+			type="file"
+			accept="image/*"
+			multiple
+			bind:this={input}
+			on:change={(e) => {
 				on_input();
 			}}
 		/>
@@ -239,7 +246,7 @@
 			<div class="row">
 				{#if show_left_btn}
 					<Button
-						name="Left"
+						name="<<"
 						on:click={() => {
 							order_left();
 						}}
@@ -247,7 +254,7 @@
 				{/if}
 				{#if show_right_btn}
 					<Button
-						name="Right"
+						name=">>"
 						on:click={() => {
 							order_right();
 						}}
@@ -273,23 +280,13 @@
 						input.click();
 					}}
 				/>
-
-				<input
-					style:display="none"
-					type="file"
-					accept="image/*"
-					bind:this={input}
-					on:change={() => {
-						on_input();
-					}}
-					id="img_input"
-					multiple
-				/>
 			{/if}
 
 			{#if post.photos.length > 0}
 				<Button
-					name="Remove"
+					name="Remove {post.photos.length > post.photo_count
+						? `(${post.photos.length - post.photo_count} excess)`
+						: ''}"
 					on:click={() => {
 						reorder_delete('delete');
 					}}
