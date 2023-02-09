@@ -7,8 +7,7 @@
 	import Button from '$lib/comp/button.svelte';
 	import Info from '$lib/module/info.svelte';
 
-	export let data;
-	let { post_type } = data;
+	export let post_type;
 
 	let title;
 	let error;
@@ -37,17 +36,15 @@
 			if (data.status == 200) {
 				$module = {
 					module: Info,
-					data: {
-						title: 'Done',
-						status: 'good',
-						message: `${post_type} Created`,
-						button: [
-							{
-								name: 'OK',
-								href: ''
-							}
-						]
-					}
+					title: 'Done',
+					status: 'good',
+					message: `${post_type} Created`,
+					button: [
+						{
+							name: 'OK',
+							href: ''
+						}
+					]
 				};
 				goto(`/${post_type}/${data.data.post.slug}`);
 			} else {
@@ -59,7 +56,7 @@
 
 <section>
 	<strong class="big">
-		add {post_type}
+		Add {post_type}
 	</strong>
 	<form on:submit|preventDefault novalidate autocomplete="off">
 		<Input name="title" {error} let:id>

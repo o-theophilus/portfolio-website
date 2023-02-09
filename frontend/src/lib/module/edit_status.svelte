@@ -5,14 +5,12 @@
 	import Button from '$lib/comp/button.svelte';
 	import Info from '$lib/module/info.svelte';
 
-	export let data;
-	let { post } = data;
-	let { post_type } = data;
+	export let post;
 
 	let error = '';
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post_type}/status/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post.type}/status/${post.slug}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -29,17 +27,15 @@
 
 				$module = {
 					module: Info,
-					data: {
-						title: 'Done',
-						status: 'good',
-						message: 'Status Changed',
-						button: [
-							{
-								name: 'Ok',
-								href: ''
-							}
-						]
-					}
+					title: 'Done',
+					status: 'good',
+					message: 'Status Changed',
+					button: [
+						{
+							name: 'Ok',
+							href: ''
+						}
+					]
 				};
 			} else {
 				error = data.message;
@@ -53,7 +49,7 @@
 </script>
 
 <section>
-	<strong class="big">Status</strong>
+	<strong class="big">Change Status</strong>
 	<div class="content">
 		<div>Status: {post.status}</div>
 		<br />

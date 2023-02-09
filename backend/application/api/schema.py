@@ -23,6 +23,22 @@ user = {
     "login": False,
 }
 
+
+def user_schema(u):
+    return {
+        "status": u["status"],
+
+        "name": u["name"],
+        "email": u["email"],
+
+        "setting": u["setting"],
+
+        "roles": u["roles"],
+        "login": u["login"],
+
+    }
+
+
 post = {
     "key": "",
     "version": "",
@@ -41,7 +57,7 @@ post = {
 }
 
 
-def schema(p):
+def post_schema(p):
     photos = []
     if "photos" in p:
         for photo in p['photos']:
@@ -57,20 +73,39 @@ def schema(p):
         "content": p["content"],
         "slug": p["slug"],
         "tags": p["tags"],
+        "comments": p['comments'] if "comments" in p else [],
+        "type": p["type"],
         "created_at": p["created_at"],
     }
 
 
-def user_schema(user):
+comment = {
+    "key": "",
+    "version": "",
+    "status": "active",
+    "created_at": now(),
+    "updated_at": now(),
+    "type": "comment",
+
+    "post_key": "",
+
+    "comment_key": "",
+
+    "name": "",
+    "email": "",
+    "comment": ""
+}
+
+
+def comment_schema(c):
     return {
-        "status": user["status"],
+        "key": c["key"],
 
-        "name": user["name"],
-        "email": user["email"],
+        "name": c["name"],
+        "email": c["email"],
+        "comment": c["comment"],
+        "comment_key": c["comment_key"],
 
-        "setting": user["setting"],
-
-        "roles": user["roles"],
-        "login": user["login"],
+        "created_at": c["created_at"],
 
     }

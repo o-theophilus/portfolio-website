@@ -31,9 +31,7 @@
 			on:click={() => {
 				$module = {
 					module: Add,
-					data: {
-						post_type
-					}
+					post_type
 				};
 			}}
 		>
@@ -43,7 +41,7 @@
 	{/if}
 	<section>
 		{#each posts as post}
-			<ItemBox {post} {post_type} />
+			<ItemBox {post} />
 		{:else}
 			No {post_type} post found
 		{/each}

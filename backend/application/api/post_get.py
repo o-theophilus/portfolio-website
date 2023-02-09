@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from . import db, token_to_user
-from .schema import schema
+from .schema import post_schema
 from .tag import get_tags
+from .post import get_comments
 
 bp = Blueprint("post_read", __name__)
 
@@ -20,11 +21,13 @@ def get(slug):
             "message": "invalid request"
         })
 
+    post["comments"] = get_comments(data, post["key"])
+
     return jsonify({
         "status": 200,
         "message": "successful",
         "data": {
-            "post": schema(post),
+            "post": post_schema(post),
             "tags": get_tags(data, post["key"])
         }
     })
@@ -50,7 +53,7 @@ def get_all():
         "status": 200,
         "message": "successful",
         "data": {
-            "posts": [schema(a) for a in posts],
+            "posts": [post_schema(a) for a in posts],
             "tags": get_tags(posts)
         }
     })
@@ -73,7 +76,7 @@ def get_blog_project():
         "status": 200,
         "message": "successful",
         "data": {
-            "blogs": [schema(a) for a in blogs],
-            "projects": [schema(a) for a in projects]
+            "blogs": [post_schema(a) for a in blogs],
+            "projects": [post_schema(a) for a in projects]
         }
     })

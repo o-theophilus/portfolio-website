@@ -3,7 +3,7 @@ from . import reserved_words, now, token_to_user
 from . import db
 import re
 from uuid import uuid4
-from .schema import post, schema
+from .schema import post, post_schema, comment, comment_schema
 
 bp = Blueprint("post", __name__)
 
@@ -23,7 +23,7 @@ def add_post():
     if "title" not in request.json or not request.json["title"]:
         return jsonify({
             "status": 201,
-            "message": "this field is required"
+            "message": "cannot be empty"
         })
 
     post_type = f"{request.url_rule}"[1:]
@@ -47,7 +47,7 @@ def add_post():
         "status": 200,
         "message": "successful",
         "data": {
-            "post": schema(post)
+            "post": post_schema(post)
         }
     })
 
@@ -75,7 +75,7 @@ def update_title(slug):
     if "title" not in request.json or not request.json["title"]:
         return jsonify({
             "status": 201,
-            "message": "this field is required"
+            "message": "cannot be empty"
         })
 
     slug = re.sub('-+', '-', re.sub(
@@ -99,7 +99,7 @@ def update_title(slug):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": schema(post)
+            "post": post_schema(post)
         }
     })
 
@@ -128,7 +128,7 @@ def update_description(slug):
     if "description" not in request.json or not request.json["description"]:
         return jsonify({
             "status": 201,
-            "message": "this field is required"
+            "message": "cannot be empty"
         })
 
     post["updated_at"] = now()
@@ -140,7 +140,110 @@ def update_description(slug):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": schema(post)
+            "post": post_schema(post)
+        }
+    })
+
+
+@bp.put("/blog/content/<slug>")
+@bp.put("/project/content/<slug>")
+def update_content(slug):
+    post_type = f"{request.url_rule}"[1:].split("/")[0]
+
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
+    post = db.get(post_type, "slug", slug, data)
+    if not post:
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
+    error = {}
+    if "format" not in request.json or not request.json["format"]:
+        error["format"] = "cannot be empty"
+    if "content" not in request.json or not request.json["content"]:
+        error["content"] = "cannot be empty"
+
+    if len(error):
+        return jsonify({
+            "status": 201,
+            "message": error
+        })
+
+    post["updated_at"] = now()
+    post["format"] = request.json["format"]
+    post["content"] = request.json["content"]
+
+    count = post["content"].count("{#video}")
+    if count == 0:
+        post["videos"] = []
+    else:
+        post["videos"] = post["videos"][:count]
+
+    db.add(post)
+
+    return jsonify({
+        "status": 200,
+        "message": "successful",
+        "data": {
+            "post": post_schema(post)
+        }
+    })
+
+
+@bp.put("/blog/date/<slug>")
+@bp.put("/project/date/<slug>")
+def update_date(slug):
+    post_type = f"{request.url_rule}"[1:].split("/")[0]
+
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
+    error = {}
+
+    if "date" not in request.json or not request.json["date"]:
+        error["date"] = "cannot be empty"
+
+    if "time" not in request.json or not request.json["time"]:
+        error["time"] = "cannot be empty"
+
+    if error != {}:
+        return jsonify({
+            "status": 201,
+            "message": error
+        })
+
+    post = db.get(post_type, "slug", slug, data)
+    if not post:
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
+    post["updated_at"] = now()
+    post["created_at"] = f"{request.json['date']}T{request.json['time']}"
+
+    db.add(post)
+
+    return jsonify({
+        "status": 200,
+        "message": "successful",
+        "data": {
+            "post": post_schema(post)
         }
     })
 
@@ -175,68 +278,29 @@ def update_tags(slug):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": schema(post)
+            "post": post_schema(post)
         }
     })
 
 
-@bp.put("/blog/content/<slug>")
-@bp.put("/project/content/<slug>")
-def update_content(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
+def get_comments(data, post_key):
+    comments = []
+    for row in data:
+        if (
+            "type" in row and "post_key" in row
+            and row["type"] == "comment"
+            and row["post_key"] == post_key
+        ):
+            comments.append(row)
 
-    data = db.data()
-
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
-        return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
-        })
-
-    post = db.get(post_type, "slug", slug, data)
-    if not post:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
-    error = {}
-    if "format" not in request.json or not request.json["format"]:
-        error["format"] = "this field is required"
-    if "content" not in request.json or not request.json["content"]:
-        error["content"] = "this field is required"
-
-    if len(error):
-        return jsonify({
-            "status": 201,
-            "message": error
-        })
-
-    post["updated_at"] = now()
-    post["format"] = request.json["format"]
-    post["content"] = request.json["content"]
-
-    count = post["content"].count("{#video}")
-    if count == 0:
-        post["videos"] = []
-    else:
-        post["videos"] = post["videos"][:count]
-
-    db.add(post)
-
-    return jsonify({
-        "status": 200,
-        "message": "successful",
-        "data": {
-            "post": schema(post)
-        }
-    })
+    comments = sorted(comments, key=lambda d: d["created_at"], reverse=True)
+    comments = [comment_schema(c) for c in comments]
+    return comments
 
 
-@bp.put("/blog/date/<slug>")
-@bp.put("/project/date/<slug>")
-def update_date(slug):
+@bp.post("/blog/comment/<slug>")
+@bp.post("/project/comment/<slug>")
+def add_comment(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
     data = db.data()
@@ -250,11 +314,14 @@ def update_date(slug):
 
     error = {}
 
-    if "date" not in request.json or not request.json["date"]:
-        error["date"] = "this field is required"
-
-    if "time" not in request.json or not request.json["time"]:
-        error["time"] = "this field is required"
+    if "name" not in request.json or not request.json["name"]:
+        error["name"] = "cannot be empty"
+    if "email" not in request.json or not request.json["email"]:
+        error["email"] = "cannot be empty"
+    elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
+        error = "invalid email"
+    if "comment" not in request.json or not request.json["comment"]:
+        error["comment"] = "cannot be empty"
 
     if error != {}:
         return jsonify({
@@ -269,22 +336,43 @@ def update_date(slug):
             "message": "invalid request"
         })
 
-    post["updated_at"] = now()
-    post["created_at"] = f"{request.json['date']}T{request.json['time']}"
+    comment["key"] = uuid4().hex
+    comment["version"] = uuid4().hex
+    comment["post_key"] = post["key"]
+    comment["created_at"] = now()
+    comment["updated_at"] = now()
+    comment["name"] = request.json["name"]
+    comment["email"] = request.json["email"]
+    comment["comment"] = request.json["comment"]
 
-    db.add(post)
+    comment["comment_key"] = ""
+    if request.json["comment_key"]:
+        for row in data:
+            if (
+                "type" in row and "post_key" in row
+                and row["type"] == "comment"
+                and row["post_key"] == post["key"]
+                and row["key"] == request.json["comment_key"]
+            ):
+                comment["comment_key"] = request.json["comment_key"]
+                break
+
+    db.add(comment)
+
+    data.append(comment)
+    post["comments"] = get_comments(data, post["key"])
 
     return jsonify({
         "status": 200,
         "message": "successful",
         "data": {
-            "post": schema(post)
+            "post": post_schema(post)
         }
     })
 
 
-@bp.put("/blog/status/<slug>")
-@bp.put("/project/status/<slug>")
+@ bp.put("/blog/status/<slug>")
+@ bp.put("/project/status/<slug>")
 def update_status(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
@@ -307,7 +395,7 @@ def update_status(slug):
     if "status" not in request.json or not request.json["temp_status"]:
         return jsonify({
             "status": 201,
-            "message": "this field is required"
+            "message": "cannot be empty"
         })
 
     status = request.json["temp_status"]
@@ -326,13 +414,13 @@ def update_status(slug):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": schema(post)
+            "post": post_schema(post)
         }
     })
 
 
-@bp.put("/blog/videos/<slug>")
-@bp.put("/project/videos/<slug>")
+@ bp.put("/blog/videos/<slug>")
+@ bp.put("/project/videos/<slug>")
 def update_videos(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 
@@ -367,13 +455,13 @@ def update_videos(slug):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": schema(post)
+            "post": post_schema(post)
         }
     })
 
 
-@bp.delete("/blog/<slug>")
-@bp.delete("/project/<slug>")
+@ bp.delete("/blog/<slug>")
+@ bp.delete("/project/<slug>")
 def delete(slug):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 

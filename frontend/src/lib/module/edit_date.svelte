@@ -6,9 +6,7 @@
 	import Input from '$lib/comp/input_group.svelte';
 	import Info from '$lib/module/info.svelte';
 
-	export let data;
-	let { post_type } = data;
-	let { post } = data;
+	export let post;
 
 	let form = {
 		date: post.created_at.split('T')[0],
@@ -31,7 +29,7 @@
 	};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post_type}/date/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post.type}/date/${post.slug}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -48,17 +46,15 @@
 
 				$module = {
 					module: Info,
-					data: {
-						title: 'Done',
-						status: 'good',
-						message: 'Date Saved',
-						button: [
-							{
-								name: 'OK',
-								href: ''
-							}
-						]
-					}
+					title: 'Done',
+					status: 'good',
+					message: 'Date Saved',
+					button: [
+						{
+							name: 'OK',
+							href: ''
+						}
+					]
 				};
 			} else {
 				error = data.message;

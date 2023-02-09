@@ -4,9 +4,7 @@
 
 	import Button from '$lib/comp/button.svelte';
 
-	export let data;
-	let { post } = data;
-	let { post_type } = data;
+	export let post;
 
 	let init_order = [...post.photos];
 
@@ -74,7 +72,7 @@
 	const reorder_delete = async (method) => {
 		error = '';
 		$loading = true;
-		const resp = await fetch(`${api_url}/${post_type}/photo/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post.type}/photo/${post.slug}`, {
 			method: method,
 			headers: {
 				'Content-Type': 'application/json',
@@ -157,7 +155,7 @@
 		}
 
 		$loading = true;
-		const resp = await fetch(`${api_url}/${post_type}/photo_many/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post.type}/photo_many/${post.slug}`, {
 			method: 'post',
 			headers: {
 				Authorization: $token

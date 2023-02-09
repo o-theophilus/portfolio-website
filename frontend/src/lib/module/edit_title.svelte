@@ -7,10 +7,8 @@
 	import Button from '$lib/comp/button.svelte';
 	import Info from '$lib/module/info.svelte';
 
-	export let data;
-	let { post_type } = data;
+	export let post;
 
-	let { post } = data;
 	let error = '';
 
 	const validate = () => {
@@ -23,7 +21,7 @@
 	};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post_type}/title/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post.type}/title/${post.slug}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -40,19 +38,17 @@
 
 				$module = {
 					module: Info,
-					data: {
-						title: 'Done',
-						status: 'good',
-						message: 'Title Saved',
-						button: [
-							{
-								name: 'OK',
-								href: ''
-							}
-						]
-					}
+					title: 'Done',
+					status: 'good',
+					message: 'Title Saved',
+					button: [
+						{
+							name: 'OK',
+							href: ''
+						}
+					]
 				};
-				goto(`/${post_type}/${data.data.post.slug}`);
+				goto(`/${post.type}/${data.data.post.slug}`);
 			} else {
 				error = data.message;
 			}
@@ -62,7 +58,7 @@
 
 <section>
 	<strong class="big">
-		Edit {post_type} title
+		Edit title
 	</strong>
 	<form on:submit|preventDefault novalidate autocomplete="off">
 		<Input name="title" {error} let:id>

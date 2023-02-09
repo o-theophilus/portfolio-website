@@ -6,16 +6,15 @@
 	import Button from '$lib/comp/button.svelte';
 	import Info from '$lib/module/info.svelte';
 
-	export let data;
-	let { post_type } = data;
-	let { post } = data;
+	export let post;
+	export let tags_in;
 
 	let tags = post.tags.join(', ');
-	let all_tags = [...data.all_tags];
+	let all_tags = [...tags_in];
 	let error = '';
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post_type}/tags/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post.type}/tags/${post.slug}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -34,17 +33,15 @@
 
 				$module = {
 					module: Info,
-					data: {
-						title: 'Done',
-						status: 'good',
-						message: `Tag${s ? 's' : ''} Saved`,
-						button: [
-							{
-								name: 'OK',
-								href: ''
-							}
-						]
-					}
+					title: 'Done',
+					status: 'good',
+					message: `Tag${s ? 's' : ''} Saved`,
+					button: [
+						{
+							name: 'OK',
+							href: ''
+						}
+					]
 				};
 			} else {
 				error = data.message;
@@ -66,7 +63,7 @@
 		}
 		tags = b.join(', ');
 
-		let c = [...data.all_tags];
+		let c = [...tags_in];
 		all_tags = [];
 		for (let i in c) {
 			i = c[i];
@@ -81,7 +78,7 @@
 
 <section>
 	<strong class="big">
-		Edit {post_type} tags
+		Edit tags
 	</strong>
 	<form class="form" on:submit|preventDefault novalidate autocomplete="off">
 		<Input name="tags" {error} let:id>

@@ -87,9 +87,9 @@ def login():
 
     error = {}
     if "email" not in request.json or not request.json["email"]:
-        error["email"] = "This field is required"
+        error["email"] = "cannot be empty"
     if "password" not in request.json or not request.json["password"]:
-        error["password"] = "This field is required"
+        error["password"] = "cannot be empty"
 
     if error != {}:
         return jsonify({
@@ -155,10 +155,10 @@ def login():
 #     error = {}
 
 #     if "name" not in request.json or not request.json["name"]:
-#         error["name"] = "this field is required"
+#         error["name"] = "cannot be empty"
 
 #     if "email" not in request.json or not request.json["email"]:
-#         error["email"] = "this field is required"
+#         error["email"] = "cannot be empty"
 #     elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
 #         error["email"] = "Please enter a valid email"
 
@@ -166,7 +166,7 @@ def login():
 #         error["email"] = "email taken"
 
 #     if "password" not in request.json or not request.json["password"]:
-#         error["password"] = "this field is required"
+#         error["password"] = "cannot be empty"
 #     elif (
 #         not re.search("[a-z]", request.json["password"]) or
 #         not re.search("[A-Z]", request.json["password"]) or
@@ -178,7 +178,7 @@ def login():
 #         characters"""
 
 #     if "confirm" not in request.json or not request.json["confirm"]:
-#         error["confirm"] = "This field is required"
+#         error["confirm"] = "cannot be empty"
 #     elif (
 #             request.json["password"]
 #             and "password" not in error

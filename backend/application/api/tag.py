@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 from . import db
-from .schema import schema
+from .schema import post_schema
 
 bp = Blueprint("tag", __name__)
 
@@ -47,8 +47,8 @@ def get(tag):
         "status": 200,
         "message": "successful",
         "data": {
-            "blogs": [schema(a) for a in blogs],
-            "projects": [schema(a) for a in projects],
+            "blogs": [post_schema(a) for a in blogs],
+            "projects": [post_schema(a) for a in projects],
             "tags": get_tags(data)
         }
     })

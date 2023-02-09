@@ -5,10 +5,10 @@
 	import SVG from '$lib/comp/svg.svelte';
 	import Button from '$lib/comp/button.svelte';
 
-	export let data;
-	let title = data?.title ? data.title : 'no title';
-	let status = data?.status;
-	let message = data?.message ? data.message : 'no message';
+	export let title;
+	export let status;
+	export let message;
+	export let button = [];
 </script>
 
 <strong
@@ -31,15 +31,15 @@
 		{@html message}
 	</div>
 	<div class="row">
-		{#each data?.button as button}
+		{#each button as b}
 			<Button
-				name={button.name}
-				icon={button.icon}
+				name={b.name}
+				icon={b.icon}
 				class="wide"
 				on:click={() => {
-					if (button.href) {
+					if (b.href) {
 						$module = '';
-						goto(button.href);
+						goto(b.href);
 					} else {
 						$module = '';
 					}

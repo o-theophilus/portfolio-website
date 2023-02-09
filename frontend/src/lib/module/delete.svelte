@@ -6,14 +6,12 @@
 	import Button from '$lib/comp/button.svelte';
 	import Info from '$lib/module/info.svelte';
 
-	export let data;
-	let { post } = data;
-	let { post_type } = data;
+	export let post;
 
 	let error = '';
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post_type}/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post.type}/${post.slug}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
@@ -27,19 +25,17 @@
 			if (data.status == 200) {
 				$module = {
 					module: Info,
-					data: {
-						title: "Done",
-						status: 'good',
-						message: `${post_type} Deleted`,
-						button: [
-							{
-								name: 'Ok',
-								href: ''
-							}
-						]
-					}
+					title: 'Done',
+					status: 'good',
+					message: `${post.type} Deleted`,
+					button: [
+						{
+							name: 'Ok',
+							href: ''
+						}
+					]
 				};
-				goto(`/${post_type}/`);
+				goto(`/${post.type}/`);
 			} else {
 				error = data.message;
 			}

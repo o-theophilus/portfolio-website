@@ -17,10 +17,11 @@
 	import Manage_Photo from '$lib/module/manage_photo.svelte';
 	import Manage_Video from '$lib/module/manage_video.svelte';
 
+	import Comment from './comment_area.svelte';
+
 	export let data;
 	let { post } = data;
 	let { tags } = data;
-	let { post_type } = data;
 
 	$: if ($_tick) {
 		post = $_tick;
@@ -75,10 +76,8 @@
 				on:click={() => {
 					$module = {
 						module: Manage_Photo,
-						data: {
-							post,
-							post_type
-						}
+
+						post
 					};
 				}}>Manage Photo</Button
 			>
@@ -88,10 +87,7 @@
 					on:click={() => {
 						$module = {
 							module: Manage_Video,
-							data: {
-								post,
-								post_type
-							}
+							post
 						};
 					}}>Manage Video</Button
 				>
@@ -107,10 +103,7 @@
 			on:click={() => {
 				$module = {
 					module: Title,
-					data: {
-						post,
-						post_type
-					}
+					post
 				};
 			}}>Edit Title</Button
 		>
@@ -125,10 +118,7 @@
 			on:click={() => {
 				$module = {
 					module: Edit_Date,
-					data: {
-						post,
-						post_type
-					}
+					post
 				};
 			}}>Edit Date</Button
 		>
@@ -143,10 +133,7 @@
 			on:click={() => {
 				$module = {
 					module: Description,
-					data: {
-						post,
-						post_type
-					}
+					post
 				};
 			}}>Edit Description</Button
 		>
@@ -161,10 +148,7 @@
 			on:click={() => {
 				$module = {
 					module: Edit_Content,
-					data: {
-						post,
-						post_type
-					}
+					post
 				};
 			}}>Edit Content</Button
 		>
@@ -181,11 +165,8 @@
 			on:click={() => {
 				$module = {
 					module: Edit_Tags,
-					data: {
-						post,
-						all_tags: tags,
-						post_type
-					}
+					post,
+					tags_in: tags
 				};
 			}}
 		>
@@ -201,10 +182,7 @@
 				on:click={() => {
 					$module = {
 						module: Edit_Status,
-						data: {
-							post,
-							post_type
-						}
+						post
 					};
 				}}>Edit Status</Button
 			>
@@ -212,10 +190,7 @@
 				on:click={() => {
 					$module = {
 						module: Delete,
-						data: {
-							post,
-							post_type
-						}
+						post
 					};
 				}}>Delete</Button
 			>
@@ -223,6 +198,7 @@
 	{/if}
 </Content>
 
+<!-- <Comment {post} /> -->
 <style>
 	.big {
 		font-size: x-large;

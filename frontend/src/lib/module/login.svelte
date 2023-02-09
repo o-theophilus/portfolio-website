@@ -85,6 +85,5 @@
 	}
 	strong {
 		border-bottom: 2px solid var(--mid_color);
-		text-transform: capitalize;
 	}
 </style>

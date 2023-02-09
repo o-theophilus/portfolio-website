@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, send_file
 from . import db, token_to_user
 from . import dd
-from .schema import schema
+from .schema import post_schema
 from PIL import Image, ImageOps
 from io import BytesIO
 
@@ -77,7 +77,7 @@ def post_many(slug):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": schema(post)
+            "post": post_schema(post)
         }
     })
 
@@ -133,7 +133,7 @@ def post_many(slug):
 #         "status": 200,
 #         "message": "successful",
 #         "data": {
-#             "post": schema(post)
+#             "post": post_schema(post)
 #         }
 #     })
 
@@ -180,7 +180,7 @@ def arrange(slug):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": schema(post)
+            "post": post_schema(post)
         }
     })
 
@@ -230,6 +230,6 @@ def delete(slug):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": schema(post)
+            "post": post_schema(post)
         }
     })

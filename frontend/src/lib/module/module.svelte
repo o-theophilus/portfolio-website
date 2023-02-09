@@ -20,7 +20,7 @@
 				/>
 			</div>
 			<div class="content">
-				<svelte:component this={$module.module} data={$module.data} />
+				<svelte:component this={$module.module} {...$module} />
 			</div>
 		</div>
 	</section>

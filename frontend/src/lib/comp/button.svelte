@@ -71,6 +71,8 @@
 		font-weight: 500;
 
 		width: fit-content;
+
+		cursor: pointer;
 	}
 
 	/* .active,
@@ -90,7 +92,7 @@
 		padding: 0;
 		border-radius: 0;
 		color: var(--font);
-
+		
 		background-color: transparent;
 		border-bottom: 2px solid var(--background);
 	} */
@@ -105,6 +107,19 @@
 		gap: var(--gap1);
 		padding: var(--gap1);
 		font-size: small;
+	}
+	.secondary {
+		font-size: small;
+		padding: 0;
+		background-color: transparent;
+		border-bottom: 1px solid var(--mid_color);
+		color: var(--mid_color);
+		border-radius: 0;
+	}
+	.secondary:hover {
+		background-color: transparent;
+		color: var(--color1);
+		border-bottom-color: var(--color1);
 	}
 
 	/* .tag {

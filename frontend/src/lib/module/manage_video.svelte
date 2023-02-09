@@ -6,15 +6,13 @@
 	import Button from '$lib/comp/button.svelte';
 	import Info from '$lib/module/info.svelte';
 
-	export let data;
-	let { post_type } = data;
-	let { post } = data;
+	export let post;
 
 	let videos = [...post.videos];
 	let error;
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post_type}/videos/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post.type}/videos/${post.slug}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -30,17 +28,15 @@
 
 				$module = {
 					module: Info,
-					data: {
-						title: 'Done',
-						status: 'good',
-						message: `Videos Updated`,
-						button: [
-							{
-								name: 'OK',
-								href: ''
-							}
-						]
-					}
+					title: 'Done',
+					status: 'good',
+					message: `Videos Updated`,
+					button: [
+						{
+							name: 'OK',
+							href: ''
+						}
+					]
 				};
 			} else {
 				error = data.message;
@@ -81,6 +77,5 @@
 	}
 	strong {
 		border-bottom: 2px solid var(--mid_color);
-		text-transform: capitalize;
 	}
 </style>

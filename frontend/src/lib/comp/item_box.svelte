@@ -2,9 +2,8 @@
 	import { api_url, _user } from '$lib/store.js';
 
 	export let post;
-	export let post_type;
 
-	let href = `/${post_type}/${post.slug}`;
+	let href = `/${post.type}/${post.slug}`;
 	let target = '';
 	if (post.format == 'url' && !$_user.roles.includes('admin')) {
 		href = post.content;

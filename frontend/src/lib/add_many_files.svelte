@@ -4,9 +4,7 @@
 	import Button from '$lib/comp/button.svelte';
 	import Photo_Man from '$lib/module/manage_photo.svelte';
 
-	export let data;
-	let { post } = data;
-	let { post_type } = data;
+	export let post;
 
 	let input;
 	let files = [];
@@ -79,7 +77,7 @@
 			formData.append('files', files[i].file);
 		}
 
-		const resp = await fetch(`${api_url}/${post_type}/photo_many/${post.slug}`, {
+		const resp = await fetch(`${api_url}/${post.type}/photo_many/${post.slug}`, {
 			method: 'post',
 			headers: {
 				// Authorization: $token
@@ -96,10 +94,7 @@
 
 				$module = {
 					module: Photo_Man,
-					data: {
-						post,
-						post_type
-					}
+					post
 				};
 			} else {
 				bad_files = data.message;

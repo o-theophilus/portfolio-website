@@ -18,25 +18,23 @@
 	<strong class="big">{$page.params.slug} - Tag</strong>
 	<br />
 	{#if blogs.length > 0}
-		{@const post_type = 'blog'}
 		<br />
-		<strong class="big">{post_type}{blogs.length > 1 ? 's' : ''}</strong>
+		<strong class="big">Blog{blogs.length > 1 ? 's' : ''}</strong>
 		<br /><br />
 		<section>
 			{#each blogs as post}
-				<ItemBox {post} {post_type} />
+				<ItemBox {post} />
 			{/each}
 		</section>
 	{/if}
 	<br /> <br />
 	{#if projects.length > 0}
-		{@const post_type = 'project'}
 		<br />
-		<strong class="big">{post_type}{projects.length > 1 ? 's' : ''}</strong>
+		<strong class="big">Project{projects.length > 1 ? 's' : ''}</strong>
 		<br /><br />
 		<section>
 			{#each projects as post}
-				<ItemBox {post} {post_type} />
+				<ItemBox {post} />
 			{/each}
 		</section>
 	{/if}

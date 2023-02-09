@@ -96,7 +96,6 @@
 						<ItemBox
 							parent={block}
 							{post}
-							post_type="project"
 							on:ok={() => {
 								active_post = post;
 							}}
@@ -132,7 +131,7 @@
 						more</Scroller
 					>
 					{#each blogs as post}
-					<ItemBox {post} post_type="blog" home />
+					<ItemBox {post} home />
 					{/each}
 				</div> -->
 			</div>

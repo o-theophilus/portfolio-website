@@ -7,30 +7,40 @@
 	import Info from '$lib/module/info.svelte';
 
 	export let post;
+	export let comment_key = '';
+	console.log(comment_key);
 
+	let form = {
+		comment_key
+	};
 	let error = {};
 
 	const validate = () => {
 		error = {};
 
-		if (!post.format) {
-			error.format = 'cannot be empty';
+		if (!form.name) {
+			error.name = 'cannot be empty';
 		}
-		if (!post.content) {
-			error.content = 'cannot be empty';
+		if (!form.email) {
+			error.email = 'cannot be empty';
+		} else if (!/\S+@\S+\.\S+/.test(form.email)) {
+			error.email = 'invalid email';
+		}
+		if (!form.comment) {
+			error.comment = 'cannot be empty';
 		}
 
 		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post.type}/content/${post.slug}`, {
-			method: 'put',
+		const resp = await fetch(`${api_url}/${post.type}/comment/${post.slug}`, {
+			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify(post)
+			body: JSON.stringify(form)
 		});
 
 		if (resp.ok) {
@@ -43,7 +53,7 @@
 					module: Info,
 					title: 'Done',
 					status: 'good',
-					message: 'Content Saved',
+					message: 'Comment Added',
 					button: [
 						{
 							name: 'OK',
@@ -59,27 +69,16 @@
 </script>
 
 <section>
-	<strong class="big">
-		Edit Content
-	</strong>
+	<strong class="big"> Add Comment </strong>
 	<form on:submit|preventDefault novalidate autocomplete="off">
-		<Input name="format" error={error.format} let:id>
-			<label>
-				<input type="radio" bind:group={post.format} value="markdown" />
-				Markdown
-			</label>
-
-			<label>
-				<input type="radio" bind:group={post.format} value="url" />
-				URL
-			</label>
+		<Input name="name" error={error.name} let:id>
+			<input placeholder="Name here" type="text" {id} bind:value={form.name} />
 		</Input>
-		<Input name="content" error={error.content} let:id>
-			{#if post.format == 'markdown'}
-				<textarea placeholder="Content here" {id} bind:value={post.content} on:keypress />
-			{:else if post.format == 'url'}
-				<input placeholder="Content here" type="text" {id} bind:value={post.content} />
-			{/if}
+		<Input name="email" error={error.email} let:id>
+			<input placeholder="Email here" type="text" {id} bind:value={form.email} />
+		</Input>
+		<Input name="comment" error={error.comment} let:id>
+			<textarea placeholder="Comment here" {id} bind:value={form.comment} on:keypress />
 		</Input>
 
 		<Button
@@ -96,6 +95,8 @@
 	section {
 		display: flex;
 		flex-direction: column;
+
+		width: 100%;
 	}
 	strong,
 	form {
@@ -103,12 +104,5 @@
 	}
 	strong {
 		border-bottom: 2px solid var(--mid_color);
-	}
-
-	textarea {
-		max-width: 600px;
-		width: calc(100vw - var(--gap5) * 2);
-		min-height: 160px;
-		height: calc(100vh - var(--gap5) * 9);
 	}
 </style>
