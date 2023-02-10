@@ -13,7 +13,7 @@
 		<nav>
 			<a href="/">
 				<SVG type="logo" />
-				<strong> Incept </strong>
+				<strong> Digital Trybe </strong>
 			</a>
 
 			<Theme />
