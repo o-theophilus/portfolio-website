@@ -1004,7 +1004,9 @@
 		};
 
 		if (isMobile()) {
-			DYE_RESOLUTION = 512;
+			SIM_RESOLUTION = 8;
+			DYE_RESOLUTION = 64;
+			// DYE_RESOLUTION = 512;
 		}
 		if (!ext.supportLinearFiltering) {
 			DYE_RESOLUTION = 512;

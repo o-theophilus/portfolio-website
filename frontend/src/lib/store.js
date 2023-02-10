@@ -16,6 +16,8 @@ export const tick = (data) => {
 
 
 // tools
+export const isMobile = writable(false);
+
 export const scroll = (query) => {
 	let e = document.querySelector(query);
 
