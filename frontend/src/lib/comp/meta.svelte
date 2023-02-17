@@ -12,7 +12,7 @@
 
 <svelte:head>
 	{#if title}
-		<title>{title} | Digital Trybe</title>
+		<title>{title} | Designerdev</title>
 		<meta name="title" content={title} />
 		<meta property="og:title" content={title} />
 		<meta property="twitter:title" content={title} />

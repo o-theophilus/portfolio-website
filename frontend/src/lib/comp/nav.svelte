@@ -13,7 +13,7 @@
 		<nav>
 			<a href="/">
 				<SVG type="logo" />
-				<strong> Digital Trybe </strong>
+				<strong> Designerdev </strong>
 			</a>
 
 			<Theme />
