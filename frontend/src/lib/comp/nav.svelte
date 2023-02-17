@@ -13,7 +13,7 @@
 		<nav>
 			<a href="/">
 				<SVG type="logo" />
-				<strong> Designerdev </strong>
+				<strong> Designdev </strong>
 			</a>
 
 			<Theme />
