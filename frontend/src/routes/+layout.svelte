@@ -2,9 +2,9 @@
 	import { theme, _user } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import '$lib/css/var.css';
-	import '$lib/css/main.css';
-	import '$lib/css/form.css';
+	import './css/var.css';
+	import './css/main.css';
+	import './css/form.css';
 
 	import Module from '$lib/module/module.svelte';
 	import Footer from './footer/footer.svelte';
@@ -16,23 +16,16 @@
 </script>
 
 <main class:dark={$theme == 'dark'}>
-	<div class="page">
-		<slot />
-		<Footer />
-	</div>
+	<slot />
+	<Footer />
+
 	<Module />
 	<Loading />
 </main>
 
 <style>
 	main {
-		background-color: var(--background);
-	}
-	.page {
-		position: relative;
-		left: 0;
-
-		transition: left var(--animTime1);
-		transition-timing-function: ease-in-out;
+		background-color: var(--accent5);
+		color: var(--accent2);
 	}
 </style>

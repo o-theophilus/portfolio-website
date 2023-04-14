@@ -1,26 +1,22 @@
+<script>
+	import Button from '$lib/comp/button.svelte';
+</script>
+
 <div class="block">
-	<a href="/">Home</a> &#8226;
-	<a href="/project">Project</a> &#8226;
-	<a href="/blog">Blog</a>
+	<Button class="secondary" href="/">Home</Button>
+	&#8226;
+	<Button class="secondary" href="/project">Project</Button>
+	&#8226;
+	<Button class="secondary" href="/blog">Blog</Button>
 </div>
 
 <style>
 	.block {
 		text-align: center;
 	}
-
-	a {
-		padding-bottom: var(--gap0);
-		border-bottom: 2px solid transparent;
-		margin: 0;
-
-		color: var(--font);
-		text-decoration: none;
-
-		transition: all var(--animTime1);
-		transition-timing-function: ease-in-out;
-	}
-	a:hover {
-		border-color: var(--color1);
+	@media screen and (min-width: 500px) {
+		.block {
+			text-align: unset;
+		}
 	}
 </style>

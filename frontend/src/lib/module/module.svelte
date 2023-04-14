@@ -4,6 +4,14 @@
 
 	import { module } from '$lib/store.js';
 	import Button from '$lib/comp/button.svelte';
+
+	let comp;
+	let data;
+	$: if ($module) {
+		comp = $module.module;
+		delete $module.module;
+		data = $module;
+	}
 </script>
 
 {#if $module}
@@ -20,7 +28,8 @@
 				/>
 			</div>
 			<div class="content">
-				<svelte:component this={$module.module} {...$module} />
+				<!-- <svelte:component this={$module.module} {...$module} /> -->
+				<svelte:component this={comp} {...data} />
 			</div>
 		</div>
 	</section>
@@ -38,7 +47,7 @@
 		padding: var(--gap5) var(--gap3);
 		overflow-y: auto;
 
-		color: var(--font);
+		color: var(--accent1);
 		background-color: var(--overlay);
 	}
 
@@ -54,7 +63,7 @@
 		/* width: 100%; */
 	}
 	.content {
-		background-color: var(--foreground);
+		background-color: var(--accent5);
 		box-shadow: var(--shad1);
 		border-radius: var(--gap1);
 

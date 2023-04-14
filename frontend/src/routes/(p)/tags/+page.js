@@ -1,10 +1,13 @@
 import { api_url } from '$lib/store.js';
 
-export const load = async ({ fetch }) => {
+export const load = async ({ fetch, parent }) => {
+    const { data } = await parent()
+
     const resp = await fetch(`${api_url}/tags`, {
         method: 'get',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: data.locals.token
         },
     });
 

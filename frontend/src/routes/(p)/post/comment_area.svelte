@@ -1,37 +1,37 @@
 <script>
-	import { module } from '$lib/store.js';
+	import { module, _user } from '$lib/store.js';
 
 	import Content from '$lib/comp/content.svelte';
 	import Button from '$lib/comp/button.svelte';
 	import Comment from './comment.svelte';
-	import Add_Comment from '$lib/module/add_comment.svelte';
+	import Add_Comment from './module/add_comment.svelte';
 
-	export let post;
+	export let post = {};
 </script>
 
 <Content>
 	<section>
+		<div class="hr v2" />
+		<br />
 		<strong class="big">Comment Section</strong>
-		<Button
-			name="Add comment"
-			class="secondary"
-			on:click={() => {
-				$module = {
-					module: Add_Comment,
-					post
-				};
-			}}
-		/>
+		{#if $_user.login}
+			<Button
+				name="Add comment"
+				class="secondary"
+				on:click={() => {
+					$module = {
+						module: Add_Comment,
+						post
+					};
+				}}
+			/>
+		{/if}
 		<div class="block">
-			<Comment {post} key="" let:key>
-				<Comment {post} {key} let:key>
-					<Comment {post} {key} let:key>
-						<Comment {post} let:key>
-							<Comment {post} let:key />
-						</Comment>
-					</Comment>
-				</Comment>
-			</Comment>
+			{#each post.comments as c}
+				{#if c.path[c.path.length - 1] == post.key}
+					<Comment {post} comment={c} />
+				{/if}
+			{/each}
 		</div>
 	</section>
 </Content>
@@ -42,14 +42,13 @@
 		flex-direction: column;
 		gap: var(--gap2);
 
-		margin-top: var(--gap5);
-		padding-top: var(--gap5);
-		border-top: 2px solid var(--mid_color);
+	}
+	.big {
+		color: var(--accent1);
 	}
 	.block {
-		/* margin-top: var(--gap5); */
 		display: flex;
 		flex-direction: column;
-		gap: var(--gap2);
+		/* gap: var(--gap2); */
 	}
 </style>

@@ -1,7 +1,5 @@
 from flask import Blueprint, jsonify, request, send_file
-from . import db, token_to_user
-from . import dd
-from .schema import post_schema
+from . import db, token_to_user, dd, post_schema
 from PIL import Image, ImageOps
 from io import BytesIO
 

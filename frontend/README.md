@@ -1,10 +1,12 @@
-error when no network
+save theme
+live email
+mobile menu
+upvote, downvote, edit and delete comment
 
-set fluid resolution by device
+login time tracking
+post sorting
 markdown textarea enable tab key
 
-user comments
-add signup
-logout then go back ==> prevent login
+set fluid resolution by device
+npm update
 
-email api

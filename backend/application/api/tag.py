@@ -1,16 +1,22 @@
 from flask import Blueprint, jsonify
-from . import db
-from .schema import post_schema
+from . import db, post_schema, token_to_user
 
 bp = Blueprint("tag", __name__)
 
 
 def get_tags(data, key=None):
+
+    user = token_to_user(data)
+
     tags = []
     for row in data:
         if (
             row["type"] in ["blog", "project"]
             and row["key"] != key
+            and (
+                row["status"] == "publish"
+                or user and "admin" in user["roles"]
+            )
         ):
             tags = [*tags, *row["tags"]]
 
@@ -34,10 +40,18 @@ def get_all():
 def get(tag):
     data = db.data()
 
+    user = token_to_user(data)
     blogs = []
     projects = []
     for row in data:
-        if "tags" in row and tag in row["tags"]:
+        if (
+            row["type"] in ["blog", "project"]
+            and tag in row["tags"]
+            and (
+                row["status"] == "publish"
+                or user and "admin" in user["roles"]
+            )
+        ):
             if row["type"] == "blog":
                 blogs.append(row)
             elif row["type"] == "project":

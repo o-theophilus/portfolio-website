@@ -13,47 +13,59 @@
 
 <Meta title="{$page.params.slug} - Tags" description="tags" image="/site/home.jpg" />
 
-<Content>
-	<br />
-	<strong class="big">{$page.params.slug} - Tag</strong>
-	<br />
-	{#if blogs.length > 0}
+<section class="background">
+	<Content>
 		<br />
-		<strong class="big">Blog{blogs.length > 1 ? 's' : ''}</strong>
-		<br /><br />
-		<section>
-			{#each blogs as post}
-				<ItemBox {post} />
-			{/each}
-		</section>
-	{/if}
-	<br /> <br />
-	{#if projects.length > 0}
+		<strong class="big">Tag: <span class="color1"> {$page.params.slug}</span></strong>
 		<br />
-		<strong class="big">Project{projects.length > 1 ? 's' : ''}</strong>
-		<br /><br />
-		<section>
-			{#each projects as post}
-				<ItemBox {post} />
-			{/each}
-		</section>
-	{/if}
+		{#if blogs.length > 0}
+			<br /><br />
+			<strong class="big">Blog{blogs.length > 1 ? 's' : ''}</strong>
+			<br /><br />
+			<section class="block">
+				{#each blogs as post}
+					<ItemBox {post} />
+				{/each}
+			</section>
+		{/if}
+		{#if projects.length > 0}
+			<br /><br />
+			<strong class="big">Project{projects.length > 1 ? 's' : ''}</strong>
+			<br /><br />
+			<section class="block">
+				{#each projects as post}
+					<ItemBox {post} />
+				{/each}
+			</section>
+		{/if}
 
-	{#if blogs.length + projects.length == 0}
-		No post found
-	{/if}
-	<br /> <br /> <br />
-	<Tags {tags} />
-</Content>
+		{#if blogs.length + projects.length == 0}
+			<br />
+			No post found
+			<br />
+		{/if}
+		<br />
+		<Tags {tags} />
+		<br />
+	</Content>
+</section>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-
-		gap: var(--gap4);
+	.background {
+		background-color: var(--accent4);
+	}
+	.block {
+		display: grid;
+		gap: var(--gap2);
 	}
 	.big {
+		color: var(--accent1);
 		text-transform: capitalize;
+	}
+
+	@media screen and (min-width: 600px) {
+		.block {
+			grid-template-columns: 1fr 1fr;
+		}
 	}
 </style>

@@ -1,7 +1,7 @@
 <script>
 </script>
 
-<section class="content_no_margin">
+<section>
 	<slot />
 </section>
 
@@ -11,7 +11,5 @@
 		width: 100%;
 		margin: auto;
 		padding: 0 var(--gap2);
-
-		color: var(--font);
 	}
 </style>

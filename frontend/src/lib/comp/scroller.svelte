@@ -32,23 +32,23 @@
 		justify-content: center;
 		align-items: center;
 
-		border: 2px solid var(--font);
+		border: 2px solid var(--accent1);
 		border-radius: 50%;
 		width: var(--size);
 		height: var(--size);
 
-		fill: var(--font);
-		color: var(--font);
+		fill: var(--accent1);
+		color: var(--accent1);
 
 		background-color: transparent;
 	}
 	.invert {
-		fill: var(--background);
-		border-color: var(--background);
+		fill: var(--accent5);
+		border-color: var(--accent5);
 	}
 	button:hover {
-		fill: var(--light_color);
-		color: var(--light_color);
+		fill: var(--accent5_);
+		color: var(--accent5_);
 		border-color: transparent;
 	}
 	button:hover .highlight {

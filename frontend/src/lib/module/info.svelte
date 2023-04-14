@@ -37,12 +37,7 @@
 				icon={b.icon}
 				class="wide"
 				on:click={() => {
-					if (b.href) {
-						$module = '';
-						goto(b.href);
-					} else {
-						$module = '';
-					}
+					b.fn();
 				}}
 			/>
 		{/each}
@@ -57,8 +52,8 @@
 
 		padding: var(--gap2);
 		padding-right: var(--gap5);
-		color: var(--light_color);
-		fill: var(--light_color);
+		color: var(--accent5_);
+		fill: var(--accent5_);
 
 		text-transform: capitalize;
 	}

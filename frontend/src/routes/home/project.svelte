@@ -5,7 +5,7 @@
 	import { cubicInOut } from 'svelte/easing';
 
 	import Content from '$lib/comp/content.svelte';
-	import Fluid from '$lib/fluid/fluid.svelte';
+	import Fluid from './fluid.svelte';
 	import ItemBox from './project_item_box.svelte';
 	import Scroller from '$lib/comp/scroller.svelte';
 
@@ -16,8 +16,9 @@
 	let pos = {};
 
 	export let projects = [];
-	// export let blogs = [];
-	let active_post = projects[0];
+	export let blogs = [];
+	blogs = blogs; //fix unknown prop
+	let active_post = projects.length > 0 ? projects[0] : {};
 
 	const set_pos = (scroller) =>
 		(sticky.offsetTop / (section.clientHeight - sticky.clientHeight)) *
@@ -82,10 +83,10 @@
 
 <section bind:this={section} class:intersecting>
 	<div class="sticky" bind:this={sticky}>
-		<div class="fluid">
+		<!-- <div class="fluid">
 			<Fluid {...fluid_op} />
 			<div class="blocker" />
-		</div>
+		</div> -->
 
 		<Content>
 			<div class="project-block" bind:this={block}>
@@ -111,7 +112,7 @@
 				<div class="desc">
 					{#key active_post.slug}
 						<div in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}>
-							<strong class="large">
+							<strong class="big color1">
 								{active_post.title}
 							</strong>
 							<br />
@@ -143,7 +144,7 @@
 	section {
 		position: relative;
 		height: 300vh;
-		/* background-color: var(--foreground);
+		/* background-color: var(--accent4);
 		
 		transition: all var(--animTime3);
 		transition-timing-function: ease-in-out; */
@@ -163,7 +164,7 @@
 	.blocker {
 		position: absolute;
 		inset: 0;
-		background-color: var(--foreground);
+		background-color: var(--accent4);
 		pointer-events: none;
 		transition: background-color var(--animTime1);
 		transition-timing-function: ease-in-out;
@@ -178,7 +179,7 @@
 	}
 	.intersecting .title {
 		font-size: 40px;
-		color: var(--color1);
+		color: var(--accent1);
 	}
 
 	.sticky {
@@ -193,7 +194,7 @@
 		justify-content: center;
 		height: 100vh;
 
-		pointer-events: none;
+		/* pointer-events: none; */
 	}
 
 	.scroller {
@@ -221,9 +222,5 @@
 
 		text-align: center;
 		position: relative;
-	}
-
-	.large {
-		font-size: large;
 	}
 </style>

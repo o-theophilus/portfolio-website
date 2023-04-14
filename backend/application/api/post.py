@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, request
-from . import reserved_words, now, token_to_user
-from . import db
+from . import (reserved_words, now, token_to_user, db, post_template,
+               post_schema)
 import re
 from uuid import uuid4
-from .schema import post, post_schema, comment, comment_schema
 
 bp = Blueprint("post", __name__)
 
@@ -35,13 +34,11 @@ def add_post():
     if slug_in_use or slug in reserved_words:
         slug = f"{slug}-{str(uuid4().hex)[:10]}"
 
-    post["key"] = uuid4().hex
-    post["version"] = uuid4().hex
-    post["title"] = request.json["title"]
-    post["slug"] = slug
-    post["type"] = post_type
-
-    db.add(post)
+    post = db.add(post_template(
+        post_type,
+        request.json["title"],
+        slug
+    ))
 
     return jsonify({
         "status": 200,
@@ -283,94 +280,6 @@ def update_tags(slug):
     })
 
 
-def get_comments(data, post_key):
-    comments = []
-    for row in data:
-        if (
-            "type" in row and "post_key" in row
-            and row["type"] == "comment"
-            and row["post_key"] == post_key
-        ):
-            comments.append(row)
-
-    comments = sorted(comments, key=lambda d: d["created_at"], reverse=True)
-    comments = [comment_schema(c) for c in comments]
-    return comments
-
-
-@bp.post("/blog/comment/<slug>")
-@bp.post("/project/comment/<slug>")
-def add_comment(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
-
-    data = db.data()
-
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
-        return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
-        })
-
-    error = {}
-
-    if "name" not in request.json or not request.json["name"]:
-        error["name"] = "cannot be empty"
-    if "email" not in request.json or not request.json["email"]:
-        error["email"] = "cannot be empty"
-    elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
-        error = "invalid email"
-    if "comment" not in request.json or not request.json["comment"]:
-        error["comment"] = "cannot be empty"
-
-    if error != {}:
-        return jsonify({
-            "status": 201,
-            "message": error
-        })
-
-    post = db.get(post_type, "slug", slug, data)
-    if not post:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
-    comment["key"] = uuid4().hex
-    comment["version"] = uuid4().hex
-    comment["post_key"] = post["key"]
-    comment["created_at"] = now()
-    comment["updated_at"] = now()
-    comment["name"] = request.json["name"]
-    comment["email"] = request.json["email"]
-    comment["comment"] = request.json["comment"]
-
-    comment["comment_key"] = ""
-    if request.json["comment_key"]:
-        for row in data:
-            if (
-                "type" in row and "post_key" in row
-                and row["type"] == "comment"
-                and row["post_key"] == post["key"]
-                and row["key"] == request.json["comment_key"]
-            ):
-                comment["comment_key"] = request.json["comment_key"]
-                break
-
-    db.add(comment)
-
-    data.append(comment)
-    post["comments"] = get_comments(data, post["key"])
-
-    return jsonify({
-        "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post)
-        }
-    })
-
-
 @ bp.put("/blog/status/<slug>")
 @ bp.put("/project/status/<slug>")
 def update_status(slug):
@@ -392,14 +301,15 @@ def update_status(slug):
             "message": "invalid request"
         })
 
-    if "status" not in request.json or not request.json["temp_status"]:
+    if "post_status" not in request.json or not request.json["post_status"]:
         return jsonify({
-            "status": 201,
-            "message": "cannot be empty"
+            "status": 401,
+            "message": "invalid request"
         })
 
-    status = request.json["temp_status"]
-    if status not in ["draft", "publish"] or status == post["status"]:
+    status = request.json["post_status"]
+    if (status not in ["draft", "publish", "deleted"]
+            or status == post["status"]):
         return jsonify({
             "status": 401,
             "message": "invalid request"

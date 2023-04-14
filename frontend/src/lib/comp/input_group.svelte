@@ -8,10 +8,10 @@
 </script>
 
 <div class="inputGroup" class:svgi={!!svg}>
+	<slot name="label" />
 	{#if !$$slots.label}
 		<label for={id}>{name}</label>
 	{/if}
-	<slot name="label" />
 	{#if error}
 		<span class="error">
 			{error}

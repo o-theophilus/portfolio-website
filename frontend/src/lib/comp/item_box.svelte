@@ -12,43 +12,42 @@
 </script>
 
 <a {href} {target} data-sveltekit-preload-data class:draft={post.status == 'draft'}>
-	<img
-		src="{api_url}/{post.photos[0] || ''}"
-		alt={post.title}
-		onerror="this.src='/site/no_photo.png'"
-	/>
-	<div class="blocker" />
-	<div class="block">
-		<strong>
+	<div class="img">
+		<img
+			src="{api_url}/{post.photos[0] || ''}"
+			alt={post.title}
+			onerror="this.src='/site/no_photo.png'"
+		/>
+	</div>
+	<div class="details">
+		<strong class="big color1">
 			{post.title}
 		</strong>
-		<div class="details">
-			{#if post.description}
-				<br />
-				<div class="description">
-					{post.description}
-				</div>
-			{/if}
+		{#if post.description}
 			<br />
-			<div class="date">
-				{post.created_at.split('T')[0]}
+			<div class="description">
+				{post.description}
 			</div>
+		{:else}
+			<br />
+		{/if}
+		<br />
+		<div class="date">
+			{post.created_at.split('T')[0]}
 		</div>
 	</div>
 </a>
 
 <style>
 	a {
-		display: block;
+		padding: var(--gap3);
 
-		position: relative;
-
-		height: 300px;
-
+		background-color: var(--accent5);
+		color: var(--accent2);
 		text-decoration: none;
 
 		border-radius: var(--gap1);
-		overflow: hidden;
+		border: 2px solid transparent;
 
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;
@@ -56,67 +55,36 @@
 	a.draft {
 		border: 2px solid var(--color2);
 	}
-
-	a:hover .block {
-		top: 0;
-		background-color: var(--overlay);
-	}
-	a:hover .details {
-		height: initial;
-	}
-	a:hover strong {
-		color: var(--color1);
+	a:hover {
+		border-color: var(--accent2);
 	}
 
+	.img {
+		border-radius: var(--gap1);
+		overflow: hidden;
+		
+	}
 	img {
 		display: block;
-		width: 100%;
-		height: 100%;
-
+		/* width: 100%; */
+		/* height: 100%; */
+		
 		object-fit: cover;
+		aspect-ratio: 1 / 1;
+		background-color: var(--accent4);
 
-		background-color: var(--foreground);
-	}
-
-	.block {
-		position: absolute;
-
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-
-		color: var(--light_color);
-
-		inset: 0;
-		top: 80%;
-
-		background-color: rgba(0, 0, 0, 0.3);
-		text-align: center;
-
-		transition: all var(--animTime1);
+		transition: transform var(--animTime3);
 		transition-timing-function: ease-in-out;
-
-		padding: 0 20px;
 	}
+	a:hover img {
+		transform: scale(1.2);
+	}
+
 	.details {
-		height: 0;
-		overflow: hidden;
+		padding-top: var(--gap3);
 	}
 	strong {
 		font-size: large;
-		transition: all var(--animTime1);
-		transition-timing-function: ease-in-out;
-	}
-
-	@media screen and (min-width: 500px) {
-		.block {
-			padding: 0 20%;
-		}
-	}
-	@media screen and (min-width: 600px) {
-		a {
-			height: 400px;
-			line-height: unset;
-		}
+		/* color: var(--color1); */
 	}
 </style>

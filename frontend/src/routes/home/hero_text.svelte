@@ -40,7 +40,7 @@
 
 <style>
 	.dymanic {
-		color: var(--background);
+		color: var(--accent5);
 		font-size: xx-large;
 		text-align: center;
 	}

@@ -67,6 +67,6 @@
 		height: 100%;
 
 		object-fit: cover;
-		background-color: var(--foreground);
+		background-color: var(--accent4);
 	}
 </style>

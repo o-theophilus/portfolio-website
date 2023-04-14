@@ -2,10 +2,10 @@
 	import { module, _tick, _user } from '$lib/store.js';
 
 	import Content from '$lib/comp/content.svelte';
-	import ItemBox from '$lib/comp/item_box.svelte';
+	import ItemBox from '../../../lib/comp/item_box.svelte';
 	import Meta from '$lib/comp/meta.svelte';
 	import Button from '$lib/comp/button.svelte';
-	import Add from '$lib/module/add_post.svelte';
+	import Add from './module/add_post.svelte';
 	import Tags from '$lib/comp/tags.svelte';
 
 	export let data;
@@ -22,43 +22,54 @@
 
 <Meta title={post_type} description="{post_type} Posts" image="/site/home.jpg" />
 
-<Content>
-	<br />
-	<strong class="big">{post_type}{posts.length > 1 ? 's' : ''}</strong>
-	<br /><br />
-	{#if $_user.roles.includes('admin')}
-		<Button
-			on:click={() => {
-				$module = {
-					module: Add,
-					post_type
-				};
-			}}
-		>
-			Add
-		</Button>
+<section class="background">
+	<Content>
 		<br />
-	{/if}
-	<section>
-		{#each posts as post}
-			<ItemBox {post} />
-		{:else}
-			No {post_type} post found
-		{/each}
-	</section>
+		<strong class="big">{post_type}{posts.length > 1 ? 's' : ''}</strong>
+		{#if $_user.roles.includes('admin')}
+			<br /><br />
+			<Button
+				on:click={() => {
+					$module = {
+						module: Add,
+						post_type
+					};
+				}}
+			>
+				Add
+			</Button>
+		{/if}
+		<br /> <br />
+		<section class="block">
+			{#each posts as post}
+				<ItemBox {post} />
+			{:else}
+				No {post_type} post found
+			{/each}
+		</section>
 
-	<br /><br /><br />
-	<Tags {tags} />
-</Content>
+		<br />
+		<Tags {tags} />
+		<br />
+	</Content>
+</section>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-
-		gap: var(--gap4);
+	.background {
+		background-color: var(--accent4);
+	}
+	.block {
+		display: grid;
+		gap: var(--gap2);
 	}
 	.big {
+		color: var(--accent1);
 		text-transform: capitalize;
+	}
+
+	@media screen and (min-width: 600px) {
+		.block {
+			grid-template-columns: 1fr 1fr;
+		}
 	}
 </style>

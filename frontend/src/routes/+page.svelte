@@ -1,17 +1,89 @@
 <script>
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { module, api_url } from '$lib/store.js';
+
 	import Parallax from './home/hero_parallax.svelte';
 	import Hero_Text from './home/hero_text.svelte';
-	import Home from './home/home.svelte';
+	import Home from './home/what_i_do.svelte';
 	import Projects from './home/project.svelte';
-	import About from './home/about.svelte';
+	import AboutMe from './home/about_me.svelte';
+	import About from './home/about_skill.svelte';
+	import AboutWebsite from './home/about_website.svelte';
 	import Scroller from '$lib/comp/scroller.svelte';
 	import Meta from '$lib/comp/meta.svelte';
 	import Nav from '$lib/comp/nav.svelte';
 	import SVG from '$lib/comp/svg.svelte';
+	// import Triangle from '$lib/comp/triangle.svelte';
+
+	import Info from '$lib/module/info.svelte';
+	import Login from '$lib/module/auth_login.svelte';
+	import Forgot from '$lib/module/auth_forgot2.svelte';
 
 	export let data;
 	let { blogs } = data;
 	let { projects } = data;
+
+	onMount(async () => {
+		let _module = $page.url.searchParams.get('module');
+
+		if (_module == 'confirm') {
+			let _token = $page.url.searchParams.get('token');
+			const resp = await fetch(`${api_url}/confirm/${_token}`);
+
+			if (resp.ok) {
+				const data = await resp.json();
+
+				if ([200, 201].includes(data.status)) {
+					$module = {
+						module: Info,
+						title: 'Done',
+						status: 'good',
+						message: data.message,
+						button: [
+							{
+								name: 'Login',
+								fn: () => {
+									$module = {
+										module: Login,
+										email: data.data.user.email
+									};
+								}
+							}
+						]
+					};
+				} else if (data.status == 101) {
+					$module = {
+						module: Info,
+						title: 'Failed',
+						status: 'bad',
+						message: data.message,
+						button: [
+							{
+								name: 'OK',
+								fn: () => {
+									$module = '';
+								}
+							}
+						]
+					};
+				}
+			} else {
+				throw new Error('invalid request');
+			}
+		} else if (_module == 'password') {
+			$module = {
+				module: Forgot,
+				_token: $page.url.searchParams.get('token')
+			};
+		} else if (_module == 'login') {
+			$module = {
+				module: Login,
+				email: $page.url.searchParams.get('email')
+			};
+		}
+		window.history.replaceState('', '', '/');
+	});
 </script>
 
 <Meta
@@ -36,10 +108,18 @@
 <Home />
 <br /><br />
 <br /><br />
+<!-- <Triangle style="1" color1="foreground" /> -->
 <Projects {projects} {blogs} />
+<!-- <Triangle style="3" color1="foreground" color2="font" /> -->
 <br /><br />
+<AboutMe />
 <br /><br />
+<!-- <Triangle style="3" color1="font" /> -->
 <About />
+<!-- <Triangle style="3" color1="foreground" /> -->
+<br /><br />
+<AboutWebsite />
+<br /><br />
 
 <style>
 	section {

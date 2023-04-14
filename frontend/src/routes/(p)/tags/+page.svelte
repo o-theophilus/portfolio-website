@@ -15,10 +15,12 @@
 	<br /><br />
 
 	<Tags {tags} />
+	<br />
 </Content>
 
 <style>
 	.big {
 		text-transform: capitalize;
+		color: var(--accent1);
 	}
 </style>

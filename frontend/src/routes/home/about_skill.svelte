@@ -1,36 +1,76 @@
 <script>
+	import Observe from './observe.svelte';
+	import Content from '$lib/comp/content.svelte';
+	import Skill from './about_skill_item.svelte';
 
-import IntersectionObserver from './observe.svelte';
+	let skills = [
+		{ name: 'HTML', value: 95 },
+		{ name: 'CSS', value: 90 },
+		{ name: 'JavaScript', value: 65 },
+		{ name: 'React', value: 50 },
+		{ name: 'Svelte / SvelteKit', value: 87 },
+		{ name: 'Python', value: 90 },
+		{ name: 'Flask', value: 85 }
+	];
 
-	export let num;
+	let tools = [
+		{ name: 'Figma', value: 80 },
+		{ name: 'CorelDRAW', value: 94 },
+		{ name: 'Photoshop', value: 79 },
+		{ name: 'Premiere Pro', value: 53 },
+		{ name: 'Blender 3D', value: 80 },
+		{ name: 'Verge3D', value: 80 },
+		{ name: 'SketchUp', value: 85 },
+		{ name: 'Godot', value: 30 }
+	];
 </script>
 
-<IntersectionObserver let:intersecting>
-	<div class="block">
-		<div class="filler" class:intersecting style:--width="{num}%">
-			<!-- {num} -->
+<Content>
+	<br /> <br />
+	<strong class="big">Programming Skills / Stack</strong>
+	<br /><br />
+	{#each skills as ent}
+		<div class="skill">
+			<div class="name">
+				{ent.name}
+			</div>
+			<div class="chat">
+				<Skill num={ent.value} />
+			</div>
 		</div>
-	</div>
-</IntersectionObserver>
+	{/each}
+	<br /><br />
+
+	<strong class="big">Software Skills</strong>
+	<br /> <br />
+	{#each tools as ent}
+		<div class="skill">
+			<div class="name">
+				{ent.name}
+			</div>
+			<div class="chat">
+				<Skill num={ent.value} />
+			</div>
+		</div>
+	{/each}
+	<br /> <br />
+</Content>
 
 <style>
-	.block {
+	strong {
+		color: var(--accent1);
+	}
+	.skill {
+		display: flex;
+		gap: 20px;
+		align-items: center;
+	}
+	.name {
+		width: 150px;
+		flex-shrink: 0;
+
+	}
+	.chat {
 		width: 100%;
-	}
-	.filler {
-		width: 0;
-
-		margin: 2px;
-		height: 12px;
-		border-radius: var(--gap0);
-
-		background-color: var(--mid_color);
-
-		transition: width 2000ms;
-		transition-timing-function: cubic-bezier(.47,1.64,.41,.8);
-	}
-
-	.intersecting {
-		width: var(--width);
 	}
 </style>

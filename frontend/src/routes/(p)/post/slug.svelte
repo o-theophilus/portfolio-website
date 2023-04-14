@@ -7,15 +7,15 @@
 	import Button from '$lib/comp/button.svelte';
 	import Tags from '$lib/comp/tags.svelte';
 
-	import Delete from '$lib/module/delete.svelte';
-	import Title from '$lib/module/edit_title.svelte';
-	import Description from '$lib/module/edit_description.svelte';
-	import Edit_Tags from '$lib/module/edit_tags.svelte';
-	import Edit_Content from '$lib/module/edit_content.svelte';
-	import Edit_Date from '$lib/module/edit_date.svelte';
-	import Edit_Status from '$lib/module/edit_status.svelte';
-	import Manage_Photo from '$lib/module/manage_photo.svelte';
-	import Manage_Video from '$lib/module/manage_video.svelte';
+	import Delete from './module/delete_post.svelte';
+	import Title from './module/edit_title.svelte';
+	import Description from './module/edit_description.svelte';
+	import Edit_Tags from './module/edit_tags.svelte';
+	import Edit_Content from './module/edit_content.svelte';
+	import Edit_Date from './module/edit_date.svelte';
+	import Edit_Status from './module/edit_status.svelte';
+	import Manage_Photo from './module/manage_photo.svelte';
+	import Manage_Video from './module/manage_video.svelte';
 
 	import Comment from './comment_area.svelte';
 
@@ -57,19 +57,30 @@
 			post.video_count = post.video_count + 1;
 		}
 	}
+
+	let edit_mode = false;
 </script>
 
 <Meta title={post.title} description={post.description} image={post.photos[0]} />
 
 <Content>
+	{#if $_user.roles.includes('admin')}
+		<Button
+			class="tiny"
+			on:click={() => {
+				edit_mode = !edit_mode;
+			}}>Edit Mode: {edit_mode}</Button
+		>
+		<br />
+		<br />
+	{/if}
 	<img
 		src="{api_url}/{post.photos[0] || ''}"
 		alt={post.title}
 		onerror="this.src='/site/no_photo.png'"
 	/>
 
-	{#if $_user.roles.includes('admin')}
-		<br />
+	{#if $_user.roles.includes('admin') && edit_mode}
 		<div class="row">
 			<Button
 				class="tiny"
@@ -95,72 +106,72 @@
 		</div>
 	{/if}
 
-	<br /><br />
+	<br />
 	<strong class="big">{post.title}</strong>
-	{#if $_user.roles.includes('admin')}
+	{#if $_user.roles.includes('admin') && edit_mode}
 		<Button
+			icon="edit"
 			class="tiny"
 			on:click={() => {
 				$module = {
 					module: Title,
 					post
 				};
-			}}>Edit Title</Button
-		>
+			}}
+		/>
 	{/if}
 
-	<br /><br />
+	<br />
 	<span class="date">{post.created_at.split('T')[0]}</span>
-	{#if $_user.roles.includes('admin')}
-		<br />
+	{#if $_user.roles.includes('admin') && edit_mode}
 		<Button
+			icon="edit"
 			class="tiny"
 			on:click={() => {
 				$module = {
 					module: Edit_Date,
 					post
 				};
-			}}>Edit Date</Button
-		>
+			}}
+		/>
 	{/if}
 
-	{#if $_user.roles.includes('admin')}
+	{#if $_user.roles.includes('admin') && edit_mode}
 		<br /><br />
 		{post.description}
 
 		<Button
+			icon="edit"
 			class="tiny"
 			on:click={() => {
 				$module = {
 					module: Description,
 					post
 				};
-			}}>Edit Description</Button
-		>
+			}}
+		/>
 	{/if}
 
 	<br /><br />
-	<Marked md={content} />
-
-	{#if $_user.roles.includes('admin')}
+	{#if $_user.roles.includes('admin') && edit_mode}
 		<Button
+			icon="edit"
 			class="tiny"
 			on:click={() => {
 				$module = {
 					module: Edit_Content,
 					post
 				};
-			}}>Edit Content</Button
-		>
+			}}
+		/>
 	{/if}
+	<Marked md={content} />
 
 	<br />
 
-	<Tags tags={post.tags} />
-
-	{#if $_user.roles.includes('admin')}
-		<br />
+	{#if $_user.roles.includes('admin') && edit_mode}
 		<Button
+			icon="edit"
 			class="tiny"
 			on:click={() => {
 				$module = {
@@ -169,14 +180,13 @@
 					tags_in: tags
 				};
 			}}
-		>
-			Edit Tags
-		</Button>
+		/>
 	{/if}
+	<Tags tags={post.tags} />
 
-	{#if $_user.roles.includes('admin')}
+	{#if $_user.roles.includes('admin') && edit_mode}
 		<br /> <br />
-		{post.status}
+		Status: <strong> {post.status}</strong>
 		<div class="row">
 			<Button
 				on:click={() => {
@@ -196,14 +206,19 @@
 			>
 		</div>
 	{/if}
+	<br /><br />
 </Content>
 
-<!-- <Comment {post} /> -->
+<Comment {post} />
+<br />
+<br />
+
 <style>
 	.big {
 		font-size: x-large;
+		color: var(--accent1);
 	}
 	img {
-		background-color: var(--foreground);
+		background-color: var(--accent4);
 	}
 </style>

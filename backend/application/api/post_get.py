@@ -1,8 +1,6 @@
 from flask import Blueprint, jsonify, request
-from . import db, token_to_user
-from .schema import post_schema
+from . import db, token_to_user, post_schema
 from .tag import get_tags
-from .post import get_comments
 
 bp = Blueprint("post_read", __name__)
 
@@ -21,13 +19,11 @@ def get(slug):
             "message": "invalid request"
         })
 
-    post["comments"] = get_comments(data, post["key"])
-
     return jsonify({
         "status": 200,
         "message": "successful",
         "data": {
-            "post": post_schema(post),
+            "post": post_schema(post, data),
             "tags": get_tags(data, post["key"])
         }
     })

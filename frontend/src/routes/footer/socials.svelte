@@ -25,26 +25,28 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
+		gap: var(--gap2);
 
 		max-width: var(--mobileWidth);
 	}
-	@media screen and (min-width: 900px) {
+	@media screen and (min-width: 500px) {
 		.block {
 			justify-content: unset;
 		}
 	}
 
 	a {
+		--size: 20px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 
-		width: 50px;
-		height: 50px;
+		width: var(--size);
+		height: var(--size);
 
 		border-radius: 50%;
 
-		fill: var(--font);
+		fill: var(--accent3);
 
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;

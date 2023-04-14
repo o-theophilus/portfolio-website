@@ -14,5 +14,5 @@ flask run
 101 -- invalid toke
 102 -- unauthorised access
 200 -- successful
-201 -- show error
+201/202 -- show error
 401 -- invalid request (app tampered)

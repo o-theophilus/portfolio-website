@@ -1,74 +1,61 @@
 <script>
 	import { page } from '$app/stores';
 
-	export let link;
-	$: path = $page.url.pathname.split('/')[1];
-	$: is_home = $page.url.pathname == '/';
+	export let href = '';
+	export let home = false;
 </script>
 
-<a class:active={link == path} class:is_home href="/{link}" data-sveltekit-preload-data>
-	<div class="highlight" />
-	<div class="text">
+{#if href}
+	<a
+		class:active={href.split('/')[1] == $page.url.pathname.split('/')[1]}
+		class:home
+		{href}
+		data-sveltekit-preload-data
+	>
 		<slot />
-	</div>
-</a>
+	</a>
+{:else}
+	<button class:home on:click|stopPropagation> <slot /></button>
+{/if}
 
 <style>
+	button {
+		all: unset;
+		cursor: pointer;
+	}
+	button,
 	a {
 		position: relative;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 
-		padding: var(--gap2);
-
-		text-decoration: none;
-		color: var(--font);
+		color: var(--accent2);
 
 		border-bottom: 2px solid transparent;
 
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;
+		text-decoration: none;
 	}
-	.is_home {
-		color: var(--background);
-	}
+	
+	button:hover,
 	a:hover {
-		color: var(--light_color);
+		color: var(--accent1);
+		border-color: var(--color1);
+		text-decoration: none;
 	}
 
-	a:hover .highlight {
-		width: 100%;
-		height: 100%;
-		opacity: 1;
-
-		border-radius: var(--gap1);
+	.home {
+		color: var(--accent5);
 	}
+	a.home:hover,
+	button.home:hover {
+		color: var(--accent5);
+	}
+
 	.active {
 		font-weight: bold;
-		border-color: var(--mid_color);
-	}
-
-	.text {
-		position: relative;
-		font-size: small;
-	}
-	@media screen and (min-width: 600px) {
-		.text {
-			font-size: unset;
-		}
-	}
-
-	.highlight {
-		position: absolute;
-		border-radius: 100%;
-
-		width: 0%;
-		height: 0%;
-		background-color: var(--color1);
-		opacity: 0;
-
-		transition: all var(--animTime1);
-		transition-timing-function: ease-in-out;
+		color: var(--accent1);
 	}
 </style>

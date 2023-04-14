@@ -37,13 +37,14 @@
 		position: relative;
 		overflow: hidden;
 
-		fill: var(--font);
+		fill: var(--accent1);
 		border-radius: 50%;
 
 		height: var(--size);
 		width: var(--size);
 
-		margin: auto var(--gap2);
+		margin: auto;
+		/* margin-left: var(--gap1); */
 		background-color: transparent;
 		border: none;
 
@@ -51,11 +52,11 @@
 	}
 
 	.is_home {
-		fill: var(--background);
+		fill: var(--accent5);
 	}
 
 	button:hover {
-		color: var(--light_color);
+		color: var(--accent5_);
 		background-color: var(--color1);
 	}
 

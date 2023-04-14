@@ -62,7 +62,7 @@ content-type: application/json
 
 
 ### Init
-get {{host}}/fix HTTP/1.1
+get {{host}}/clonedb HTTP/1.1
 content-type: application/json
 
 ###
@@ -77,34 +77,3 @@ content-type: application/json
 
 
 
-
-
-### Init
-post https://staging-api-test.kwik.delivery/vendor_login HTTP/1.1
-content-type: application/json
-
-{
-    "domain_name": "staging-client-panel.kwik.delivery",
-    "email": "theophilus.ogbolu@gmail.com",
-    "password": "thehipsoul",
-    "api_login" :1
-}
-###
-
-### Init
-post https://staging-api-test.kwik.delivery/vendor_login HTTP/1.1
-content-type: application/json
-
-{
-    "domain_name": "staging-client-panel.kwik.delivery",
-    "email": "theophilus.ogbolu@gmail.com",
-    "password": "thehipsoul",
-    "api_login" :1
-}
-###
-
-#Fix
-post  {{host}}/fix HTTP/1.1
-content-type: application/json
-
-###
