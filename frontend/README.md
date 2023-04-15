@@ -11,4 +11,3 @@ markdown textarea enable tab key
 
 set fluid resolution by device
 npm update
-
