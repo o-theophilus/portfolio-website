@@ -1,5 +1,5 @@
 <script>
-	import { api_url, _user, module } from '$lib/store.js';
+	import { api_url, _user, module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/comp/input_group.svelte';
@@ -53,6 +53,8 @@
 	const submit = async () => {
 		form.email_template = email_template.innerHTML;
 		form.error_message = error_message;
+
+		$loading = 'Loading . . .';
 		const resp = await fetch(`${api_url}/signup`, {
 			method: 'post',
 			headers: {
@@ -61,6 +63,7 @@
 			},
 			body: JSON.stringify(form)
 		});
+		$loading = false;
 
 		if (resp.ok) {
 			const data = await resp.json();

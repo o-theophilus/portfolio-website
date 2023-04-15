@@ -34,7 +34,7 @@
 		form.email_template = email_template.innerHTML;
 		form.error_message = error_message;
 
-		$loading = 'loading . . .';
+		$loading = 'Loading . . .';
 		const resp = await fetch(`${api_url}/login`, {
 			method: 'post',
 			headers: {

@@ -1,13 +1,24 @@
-upvote, downvote, edit and delete comment
-sort comment
-post likes
-post share
-delete: delete ripple effect
+FIX:
+
 fix upload post photo not updating
+markdown textarea enable tab key
+
+##########################################
+
+FEATURES:
+
+comment: upvote, downvote, delete
+comment: sort
+post: likes, share
+post: sorting
 
 login time tracking
-post sorting
-markdown textarea enable tab key
+delete ripple effect
+
+
+##########################################
+
+OTHERS:
 
 set fluid resolution by device
 npm update
