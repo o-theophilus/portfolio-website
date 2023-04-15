@@ -13,7 +13,7 @@
 	<section>
 		<div class="hr v2" />
 		<br />
-		<strong class="big">Comment{post.omments.length > 1 ? 's' : ''}</strong>
+		<strong class="big">Comment{post.comments.length > 1 ? 's' : ''}</strong>
 		{#if $_user.login}
 			<Button
 				name="Add comment"
