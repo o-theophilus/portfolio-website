@@ -1,12 +1,13 @@
 from flask import current_app
 from deta import Deta
+import os
 
 
 def base():
     name = "live"
     if current_app.config["DEBUG"]:
         name = "test"
-    return Deta(current_app.config["DETA_KEY"]).Base(name)
+    return Deta(os.environ["DETA_KEY"]).Base(name)
 
 
 def data():

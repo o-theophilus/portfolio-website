@@ -13,7 +13,7 @@
 	<section>
 		<div class="hr v2" />
 		<br />
-		<strong class="big">Comment Section</strong>
+		<strong class="big">Comment{post.omments.length > 1 ? 's' : ''}</strong>
 		{#if $_user.login}
 			<Button
 				name="Add comment"
@@ -41,7 +41,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--gap2);
-
 	}
 	.big {
 		color: var(--accent1);

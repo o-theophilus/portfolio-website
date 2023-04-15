@@ -92,8 +92,8 @@ def signup():
 
     message = request.json['email_template'].format(
         token=token_tool().dumps(new_user["key"]),
-        name=user["name"])
-    send_mail(new_user["email"], "Welcome!", message)
+        name=new_user["name"])
+    send_mail(new_user["email"], new_user["name"], "Welcome!", message)
 
     return jsonify({
         "status": 200,
@@ -200,7 +200,7 @@ def login():
         message = request.json['email_template'].format(
             token=token_tool().dumps(user["key"]),
             name=user["name"])
-        send_mail(user["email"], "Welcome!", message)
+        send_mail(user["email"], user["name"], "Welcome!", message)
 
         return jsonify({
             "status": 202,

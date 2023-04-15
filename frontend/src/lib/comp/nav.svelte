@@ -73,4 +73,9 @@
 	.home a {
 		color: var(--accent5);
 	}
+
+	nav,
+	div {
+		flex-wrap: wrap;
+	}
 </style>

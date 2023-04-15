@@ -30,7 +30,7 @@ def email():
 
     token = token_tool().dumps(user["key"])
     mail = request.json['mail_content'].format(token=token)
-    send_mail(user["email"], "Welcome!", mail)
+    send_mail(user["email"], user["name"], "Welcome!", mail)
 
     return jsonify({
         "status": 200,

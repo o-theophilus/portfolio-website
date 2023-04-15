@@ -1,10 +1,11 @@
-from deta import Deta
 from flask import Blueprint, jsonify, current_app, request
 from itsdangerous import URLSafeTimedSerializer
 from datetime import datetime, timedelta
 from . import db
 from werkzeug.security import generate_password_hash
 from uuid import uuid4
+import re
+from .mail import send_mail
 
 
 bp = Blueprint("api", __name__)
@@ -68,7 +69,7 @@ def user_template(
         "login": False,
         "roles": roles,
         "setting": {
-                "theme": "light"
+                "theme": "dark"
         }
     }
 
@@ -191,15 +192,15 @@ def comment_schema(c):
 
 
 def create_default_admin():
-    email = current_app.config["MAIL_DEFAULT_SENDER"][1]
+    email = current_app.config["DEFAULT_ADMIN"][1]
     user = db.get("user", "email", email)
 
     if not user:
         db.add(
             user_template(
-                current_app.config["MAIL_DEFAULT_SENDER"][0],
+                current_app.config["DEFAULT_ADMIN"][0],
                 email,
-                current_app.config["ADMIN_PASSWORD"],
+                current_app.config["DEFAULT_ADMIN"][2],
                 "verified",
                 ["admin", "dashboard", "omni"]
             )
@@ -216,17 +217,48 @@ def index():
     })
 
 
-@bp.route("/clonedb")
-def clonedb():
+@bp.post("/send_email")
+def send_email():
 
-    live = Deta(current_app.config["DETA_KEY"]).Base("live").fetch().items
-    test = Deta(current_app.config["DETA_KEY"]).Base("test")
+    if (
+        "email_template" not in request.json
+        or not request.json["email_template"]
+    ):
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
 
-    while len(live) > 0:
-        test.put_many(live[:25])
-        live = live[25:]
+    error = {}
+
+    if "name" not in request.json or not request.json["name"]:
+        error["name"] = "cannot be empty"
+    if "email" not in request.json or not request.json["email"]:
+        error["email"] = "cannot be empty"
+    elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
+        error["email"] = "invalid email"
+    if "message" not in request.json or not request.json["message"]:
+        error["message"] = "cannot be empty"
+
+    if error != {}:
+        return jsonify({
+            "status": 201,
+            "message": error
+        })
+
+    message = request.json['email_template'].format(
+        name=request.json["name"],
+        email=request.json["email"],
+        message=request.json["message"])
+
+    send_mail(
+        current_app.config["DEFAULT_ADMIN"][1],
+        current_app.config["DEFAULT_ADMIN"][0],
+        f"{request.json['name']} from Designdev",
+        message
+    )
 
     return jsonify({
         "status": 200,
-        "message": "successful"
+        "message": "successful",
     })

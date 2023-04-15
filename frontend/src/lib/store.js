@@ -44,5 +44,3 @@ export const scroll = (query) => {
 	return unsubscribe;
 };
 
-// temp fix
-export const theme = writable("dark");

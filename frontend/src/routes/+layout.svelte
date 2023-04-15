@@ -1,5 +1,5 @@
 <script>
-	import { theme, _user } from '$lib/store.js';
+	import { _user } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import './css/var.css';
@@ -15,7 +15,7 @@
 	$token = data.data.locals.token;
 </script>
 
-<main class:dark={$theme == 'dark'}>
+<main class:dark={$_user.setting.theme == 'dark'}>
 	<slot />
 	<Footer />
 

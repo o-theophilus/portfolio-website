@@ -30,7 +30,7 @@ def password():
 
     message = request.json['email_template'].format(
         token=token_tool().dumps(user["key"]))
-    send_mail(user["email"], "Welcome!", message)
+    send_mail(user["email"], user["name"], "Welcome!", message)
 
     return jsonify({
         "status": 200,

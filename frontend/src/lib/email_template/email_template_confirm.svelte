@@ -7,8 +7,8 @@
 	<b> Hello {'{'}name{'}'}, </b>
 	<br />
 	<br />
-	Thanks for signing up with Meji! Before you get started shopping on Meji, we need you to confirm your
-	email address. Please click the button below to complete your signup.
+	Thanks for signing up with Designdev! Before you get started shopping on Designdev, we need you to
+	confirm your email address. Please click the button below to complete your signup.
 	<br />
 	<br />
 	<a

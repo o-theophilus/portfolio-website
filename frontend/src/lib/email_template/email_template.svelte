@@ -17,7 +17,7 @@ margin: auto;
 	>
 		<img
 			src="{$page.url.origin}/favicon.png"
-			alt="Meji Logo"
+			alt="favicon"
 			style="
 		width: 30px;
 		height: 30px;
@@ -28,7 +28,7 @@ margin: auto;
 		font-size: x-large;
 		margin-left: 10px;
 	"
-			>Meji
+			>Designdev
 		</b>
 	</div>
 
@@ -49,7 +49,7 @@ margin: auto;
 	font-size: x-small;
 	color: grey;"
 	>
-		© Meji 2022
+		© Designdev 2022
 		<br />
 		Modern Shopping for Africa
 	</div>

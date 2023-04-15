@@ -1,7 +1,9 @@
-save theme
-live email
-mobile menu
 upvote, downvote, edit and delete comment
+sort comment
+post likes
+post share
+delete: delete ripple effect
+fix upload post photo not updating
 
 login time tracking
 post sorting

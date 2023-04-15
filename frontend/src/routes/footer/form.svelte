@@ -1,13 +1,20 @@
 <script>
-	export const prerender = true;
+	import { api_url, _user, loading, module } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
 
 	import { template } from './form_template.js';
 	import Input from '$lib/comp/input_group.svelte';
 	import Button from '$lib/comp/button.svelte';
+	import Info from '$lib/module/info.svelte';
 
-	import Sending from './form_sending.svelte';
+	import EmailTemplate from '$lib/email_template/email_template.svelte';
+	let email_template;
 
 	let form = {};
+	if ($_user.status == 'verified') {
+		form.name = $_user.name;
+		form.email = $_user.email;
+	}
 	let error = {};
 
 	const validate = () => {
@@ -29,75 +36,101 @@
 		Object.keys(error).length === 0 && submit();
 	};
 
-	let state = 0;
 	const submit = async () => {
-		state = 1;
-		const resp = await fetch('https://formspree.io/f/xknkjbpb', {
+		form.email_template = email_template.innerHTML;
+
+		$loading = 'Sending Email . . .';
+		const resp = await fetch(`${api_url}/send_email`, {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: $token
+			},
 			body: JSON.stringify(form)
 		});
-
-		const data = await resp.json();
+		$loading = false;
 
 		if (resp.ok) {
-			state = 2;
-		} else {
-			state = 0;
-			error.form = data.error;
+			const data = await resp.json();
+
+			if (data.status == 401) {
+				error.form = data.message;
+			} else if (data.status == 201) {
+				error = data.message;
+			} else if (data.status == 200) {
+				form = {};
+				_form.reset();
+
+				$module = {
+					module: Info,
+					title: 'Message Sent',
+					status: 'good',
+					message: `
+					Thank you for contacting us,
+					<br/>
+					We will get back to you shortly
+					`,
+					button: [
+						{
+							name: 'OK',
+							fn: () => {
+								$module = '';
+							}
+						}
+					]
+				};
+			} else {
+				throw new Error('invalid request');
+			}
 		}
 	};
 
 	let msgStore = '';
+	let _form;
 </script>
 
-<div class="form_position">
-	{#if state > 0}
-		<Sending
-			{state}
-			on:closed={() => {
-				state = 0;
-				form = {};
-			}}
+<form on:submit|preventDefault={validate} novalidate autocomplete="off" bind:this={_form}>
+	<Input name="full name" error={error.name} let:id svg="username">
+		<input placeholder="Your Name" type="text" {id} bind:value={form.name} />
+	</Input>
+
+	<Input name="email address" error={error.email} let:id svg="emailAddress">
+		<input placeholder="Your Email Address" type="text" {id} bind:value={form.email} />
+	</Input>
+	<Input name="message" error={error.message} let:id>
+		<svelte:fragment slot="label">
+			<select bind:value={form.message}>
+				<option value={msgStore}>Message</option>
+				{#each template as temp}
+					<option value={temp.text}>{temp.name}</option>
+				{/each}
+			</select>
+		</svelte:fragment>
+
+		<textarea
+			placeholder="Your Message"
+			{id}
+			bind:value={form.message}
+			on:input={() => (msgStore = form.message)}
 		/>
+	</Input>
+	{#if error.form}
+		<div class="err">
+			{error.form}
+		</div>
 	{/if}
+	<Button class="wide">Send</Button>
+</form>
 
-	<form on:submit|preventDefault={validate} novalidate autocomplete="off">
-		<Input name="full name" error={error.name} let:id svg="username">
-			<input placeholder="Your Name" type="text" {id} bind:value={form.name} />
-		</Input>
-
-		<Input name="email address" error={error.email} let:id svg="emailAddress">
-			<input placeholder="Your Email Address" type="text" {id} bind:value={form.email} />
-		</Input>
-		<Input name="message" error={error.message} let:id>
-			<svelte:fragment slot="label">
-				<select name="template" id="" bind:value={form.message}>
-					<option value={msgStore}>Message</option>
-					{#each template as temp}
-						<option value={temp.text}>{temp.name}</option>
-					{/each}
-				</select>
-			</svelte:fragment>
-
-			<textarea
-				placeholder="Your Message"
-				{id}
-				bind:value={form.message}
-				on:input={() => (msgStore = form.message)}
-			/>
-		</Input>
-		{#if error.form}
-			<div class="err">
-				{error.form}
-			</div>
-		{/if}
-		<Button class="wide">Send</Button>
-	</form>
+<div bind:this={email_template} style="display: none;">
+	<EmailTemplate>
+		Name: {'{'}name{'}'}
+		<br />
+		Email: {'{'}email{'}'}
+		<br /><br />
+		{'{'}message{'}'}
+	</EmailTemplate>
 </div>
 
 <style>
-	.form_position {
-		position: relative;
-	}
 </style>

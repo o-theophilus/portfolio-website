@@ -1,19 +1,40 @@
 from flask import current_app
-from flask_mail import Mail, Message
 import re
+from mailjet_rest import Client
+import os
 
-mail = Mail()
+mailjet = Client(auth=(
+    os.environ["MAILJET_API_KEY"],
+    os.environ["MAILJET_SECRET_KEY"]),
+    version='v3.1')
 
 
-def send_mail(to, subject, body):
-    body = re.sub('&amp;', '&', body)
-
+def send_mail(
+    to,
+    name,
+    subject,
+    body
+):
+    data = {
+        'Messages': [
+            {
+                "From": {
+                    "Email": current_app.config["DEFAULT_ADMIN"][1],
+                    "Name": current_app.config["DEFAULT_ADMIN"][0]
+                },
+                "To": [
+                    {
+                        "Email": to,
+                        "Name": name
+                    }
+                ],
+                "Subject": subject,
+                "HTMLPart": re.sub('&amp;', '&', body)
+            }
+        ]
+    }
     if current_app.config["DEBUG"]:
-        print(body)
+        print(data)
     else:
-        msg = Message(
-            subject,
-            recipients=[to],
-            html=body
-        )
-        mail.send(msg)
+        result = mailjet.send.create(data=data)
+        print(result.json())

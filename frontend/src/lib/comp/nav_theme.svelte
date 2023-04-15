@@ -1,7 +1,29 @@
 <script>
+	import { api_url, _user } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
+
 	import { page } from '$app/stores';
-	import { theme } from '$lib/store.js';
 	import SVG from '$lib/comp/svg.svelte';
+
+	const submit = async () => {
+		const resp = await fetch(`${api_url}/user/theme`, {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: $token
+			}
+		});
+
+		if (resp.ok) {
+			const data = await resp.json();
+
+			if (data.status == 200) {
+				$_user = data.data.user;
+			} else {
+				throw new Error('invalid request');
+			}
+		}
+	};
 
 	$: is_home = $page.url.pathname == '/';
 </script>
@@ -9,11 +31,12 @@
 <button
 	class:is_home
 	on:click={() => {
-		$theme = $theme == 'dark' ? 'light' : 'dark';
+		submit();
+		$_user.setting.theme = $_user.setting.theme == 'dark' ? 'light' : 'dark';
 	}}
 	on:keypress
 >
-	<div class="switch" class:dark={$theme == 'dark'}>
+	<div class="switch" class:dark={$_user.setting.theme == 'dark'}>
 		<div class="state">
 			<SVG type="light" size="15" />
 		</div>
@@ -44,7 +67,6 @@
 		width: var(--size);
 
 		margin: auto;
-		/* margin-left: var(--gap1); */
 		background-color: transparent;
 		border: none;
 

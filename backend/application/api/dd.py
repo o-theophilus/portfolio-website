@@ -3,14 +3,14 @@ from deta import Deta
 from PIL import Image
 from io import BytesIO
 from uuid import uuid4
-# from os.path import splitext
+import os
 
 
 def drive():
     name = "live"
     if current_app.config["DEBUG"]:
         name = "test"
-    return Deta(current_app.config["DETA_KEY"]).Drive(name)
+    return Deta(os.environ["DETA_KEY"]).Drive(name)
 
 
 def add(file, path="", compress=False):

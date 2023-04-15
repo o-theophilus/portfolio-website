@@ -11,6 +11,7 @@ flask-mail = "*"
 pillow = "*"
 requests = "*"
 deta = "*"
+mailjet-rest = "*"
 
 [dev-packages]
 flake8 = "*"
