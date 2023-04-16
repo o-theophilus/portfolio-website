@@ -1,6 +1,5 @@
 FIX:
 
-fix upload post photo not updating
 markdown textarea enable tab key
 
 ##########################################
@@ -9,8 +8,7 @@ FEATURES:
 
 comment: upvote, downvote, delete
 comment: sort
-post: likes, share
-post: sorting
+post: sort
 
 login time tracking
 delete ripple effect

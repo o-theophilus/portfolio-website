@@ -11,7 +11,14 @@ def base():
 
 
 def data():
-    return base().fetch().items
+    res = base().fetch()
+    items = res.items
+
+    while res.last:
+        res = base().fetch(last=res.last)
+        items += res.items
+
+    return items
 
 
 def get(type_, ppt, val, db=None):

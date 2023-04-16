@@ -76,6 +76,7 @@ def user_template(
 
 def user_schema(u):
     return {
+        "key": u["key"],
         "status": u["status"],
 
         "name": u["name"],
@@ -120,22 +121,28 @@ def post_schema(p, data=[]):
             photos.append(f"/photo/{photo}")
 
     comments = []
-    # if data:
+    ratings = []
     for row in data:
         if (
             row["type"] == "comment"
             and row["path"][0] == p["key"]
         ):
             comments.append(row)
+        elif (
+            row["type"] == "rating"
+            and row["post_key"] == p["key"]
+        ):
+            ratings.append(row)
 
-    comments = sorted(comments, key=lambda d: d["created_at"], reverse=True)
     comments = [comment_schema(c) for c in comments]
-
     for comm in comments:
         for row in data:
             if row["type"] == "user" and comm["user_key"] == row["key"]:
                 comm["name"] = row["name"]
                 continue
+
+    comments = sorted(comments, key=lambda d: d["created_at"], reverse=True)
+    ratings = [rating_schema(c) for c in ratings]
 
     return {
         "key": p["key"],
@@ -149,6 +156,7 @@ def post_schema(p, data=[]):
         "slug": p["slug"],
         "tags": p["tags"],
         "comments": comments,
+        "ratings": ratings,
         "type": p["type"],
         "created_at": p["created_at"],
     }
@@ -157,7 +165,7 @@ def post_schema(p, data=[]):
 def comment_template(
         comment: str,
         user_key: str,
-        path: list = [],
+        path: list = []
 ):
     return {
         "type": "comment",
@@ -184,7 +192,31 @@ def comment_schema(c):
         "path": c["path"],
 
         "created_at": c["created_at"],
+    }
 
+
+def rating_template(
+        rating: str,
+        user_key: str,
+        post_key: str,
+):
+    return {
+        "type": "rating",
+        "key": uuid4().hex,
+        "version": uuid4().hex,
+        "created_at": now(),
+        "updated_at": now(),
+
+        "rating": rating,
+        "user_key": user_key,
+        "post_key": post_key,
+    }
+
+
+def rating_schema(rating):
+    return {
+        "rating": rating["rating"],
+        "user_key": rating["user_key"]
     }
 
 

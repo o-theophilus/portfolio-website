@@ -20,7 +20,7 @@
 	<slot {id} />
 	{#if svg}
 		<div class="svg">
-			<SVG type={svg} size="25" />
+			<SVG type={svg} size="20" />
 		</div>
 	{/if}
 </div>

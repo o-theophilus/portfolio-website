@@ -71,7 +71,8 @@
 
 	const reorder_delete = async (method) => {
 		error = '';
-		$loading = true;
+
+		$loading = method == 'delete' ? 'Deleting . . .' : 'Reordering . . .';
 		const resp = await fetch(`${api_url}/${post.type}/photo/${post.slug}`, {
 			method: method,
 			headers: {
@@ -154,7 +155,7 @@
 			formData.append('files', files[i]);
 		}
 
-		$loading = true;
+		$loading = 'Uploading . . .';
 		const resp = await fetch(`${api_url}/${post.type}/photo_many/${post.slug}`, {
 			method: 'post',
 			headers: {
@@ -174,7 +175,7 @@
 				post.active_photo = temp;
 				post.photo_count = temp2;
 
-				make_active((clear_error = false));
+				make_active('', false);
 				tick(post);
 			} else {
 				error = data.message;
@@ -185,128 +186,116 @@
 	make_active();
 </script>
 
-<section>
+<div class="content">
 	<strong class="big"> Manage Photo </strong>
-	<div class="content">
-		<img
-			class:dragover
-			src="{api_url}/{post.active_photo}"
-			alt={post.title}
-			onerror="this.src='/site/no_photo.png'"
-			on:dragover|preventDefault={() => {
-				dragover = true;
-			}}
-			on:dragleave|preventDefault={() => {
-				dragover = false;
-			}}
-			on:drop|preventDefault={(e) => {
-				dragover = false;
-				input.files = e.dataTransfer.files;
-				on_input();
-			}}
-		/>
-		<input
-			style:display="none"
-			type="file"
-			accept="image/*"
-			multiple
-			bind:this={input}
-			on:change={(e) => {
-				on_input();
-			}}
-		/>
-		<br />
-		{#if post.photos.length > 1}
-			<div class="slide">
-				{#each post.photos as photo}
-					<img
-						src="{api_url}/{photo}"
-						alt={post.name}
-						class:active={post.active_photo == photo}
-						on:click={() => {
-							make_active(photo);
-						}}
-						on:keypress
-						onerror="this.src='/site/no_photo.png'"
-					/>
-				{/each}
-			</div>
-		{/if}
+	<img
+		class:dragover
+		src="{api_url}/{post.active_photo}"
+		alt={post.title}
+		onerror="this.src='/site/no_photo.png'"
+		on:dragover|preventDefault={() => {
+			dragover = true;
+		}}
+		on:dragleave|preventDefault={() => {
+			dragover = false;
+		}}
+		on:drop|preventDefault={(e) => {
+			dragover = false;
+			input.files = e.dataTransfer.files;
+			on_input();
+		}}
+	/>
+	<input
+		style:display="none"
+		type="file"
+		accept="image/*"
+		multiple
+		bind:this={input}
+		on:change={(e) => {
+			on_input();
+		}}
+	/>
+	<br />
+	{#if post.photos.length > 1}
+		<div class="slide">
+			{#each post.photos as photo}
+				<img
+					src="{api_url}/{photo}"
+					alt={post.name}
+					class:active={post.active_photo == photo}
+					on:click={() => {
+						make_active(photo);
+					}}
+					on:keypress
+					onerror="this.src='/site/no_photo.png'"
+				/>
+			{/each}
+		</div>
+	{/if}
 
-		{#if error}
-			<span class="error">
-				{@html error}
-			</span>
-		{/if}
+	{#if error}
+		<span class="error">
+			{@html error}
+		</span>
+	{/if}
 
-		{#if post.photos.length > 1}
-			<br />
-			<div class="row">
-				{#if show_left_btn}
-					<Button
-						name="<<"
-						on:click={() => {
-							order_left();
-						}}
-					/>
-				{/if}
-				{#if show_right_btn}
-					<Button
-						name=">>"
-						on:click={() => {
-							order_right();
-						}}
-					/>
-				{/if}
-				{#if order_changed}
-					<Button
-						name="Save Order"
-						on:click={() => {
-							reorder_delete('put');
-						}}
-					/>
-				{/if}
-			</div>
-		{/if}
+	{#if post.photos.length > 1}
 		<br />
 		<div class="row">
-			{#if post.photos.length < post.photo_count}
+			{#if show_left_btn}
 				<Button
-					name="Add ({post.photo_count - post.photos.length})"
-					class="primary"
+					name="<<"
 					on:click={() => {
-						input.click();
+						order_left();
 					}}
 				/>
 			{/if}
-
-			{#if post.photos.length > 0}
+			{#if show_right_btn}
 				<Button
-					name="Remove {post.photos.length > post.photo_count
-						? `(${post.photos.length - post.photo_count} excess)`
-						: ''}"
+					name=">>"
 					on:click={() => {
-						reorder_delete('delete');
+						order_right();
+					}}
+				/>
+			{/if}
+			{#if order_changed}
+				<Button
+					name="Save Order"
+					on:click={() => {
+						reorder_delete('put');
 					}}
 				/>
 			{/if}
 		</div>
+	{/if}
+	<br />
+	<div class="row">
+		{#if post.photos.length < post.photo_count}
+			<Button
+				name="Add ({post.photo_count - post.photos.length})"
+				class="primary"
+				on:click={() => {
+					input.click();
+				}}
+			/>
+		{/if}
+
+		{#if post.photos.length > 0}
+			<Button
+				name="Remove {post.photos.length > post.photo_count
+					? `(${post.photos.length - post.photo_count} excess)`
+					: ''}"
+				on:click={() => {
+					reorder_delete('delete');
+				}}
+			/>
+		{/if}
 	</div>
-</section>
+</div>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-
-		width: 100%;
-	}
-	strong,
 	.content {
 		padding: var(--gap3);
-	}
-	strong {
-		border-bottom: 2px solid var(--accent3);
 	}
 
 	.slide {
@@ -314,9 +303,6 @@
 		justify-content: center;
 		gap: var(--gap1);
 		flex-wrap: wrap;
-
-		/* border: 2px solid var(--accent5); */
-		/* padding: var(--gap3); */
 	}
 	.slide > * {
 		display: flex;

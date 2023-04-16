@@ -36,7 +36,6 @@
 
 		if (resp.ok) {
 			const data = await resp.json();
-			// console.log(data);
 
 			if (data.status == 201) {
 				error = data.message;
@@ -66,6 +65,7 @@
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Add Comment </strong>
+
 	<Input name="comment" error={error.comment} let:id>
 		<textarea placeholder="Comment here" {id} bind:value={form.comment} on:keypress />
 	</Input>

@@ -16,7 +16,9 @@
 	import Edit_Status from './module/edit_status.svelte';
 	import Manage_Photo from './module/manage_photo.svelte';
 	import Manage_Video from './module/manage_video.svelte';
+	import Share from './module/share.svelte';
 
+	import Rating from './module/add_rating.svelte';
 	import Comment from './comment_area.svelte';
 
 	export let data;
@@ -59,6 +61,13 @@
 	}
 
 	let edit_mode = false;
+	let ratings = 0;
+	$: {
+		ratings = 0;
+		for (const i in post.ratings) {
+			ratings += post.ratings[i].rating;
+		}
+	}
 </script>
 
 <Meta title={post.title} description={post.description} image={post.photos[0]} />
@@ -207,11 +216,32 @@
 		</div>
 	{/if}
 	<br /><br />
+
+	<Button
+		name="Overall Rating: {ratings}"
+		icon="heart"
+		on:click={() => {
+			$module = {
+				module: Rating,
+				post
+			};
+		}}
+	/>
+	<Button
+		name="share"
+		icon="share"
+		on:click={() => {
+			$module = {
+				module: Share,
+				post
+			};
+		}}
+	/>
+	<br /><br /><br />
 </Content>
 
 <Comment {post} />
-<br />
-<br />
+<br /><br />
 
 <style>
 	.big {
