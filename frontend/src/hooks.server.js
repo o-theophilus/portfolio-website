@@ -12,6 +12,7 @@ export async function handle({ event, resolve }) {
 
     if (resp.ok) {
         let data = await resp.json();
+        console.log(data);
 
         if (data.status == 200) {
             // event.cookies.set("session", data.data.token)
