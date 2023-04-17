@@ -21,7 +21,13 @@ export async function handle({ event, resolve }) {
     // }
 
     // throw new Error(404, `Error status: ${resp.status}`)
-    event.locals = {};
+    event.locals = {
+        user: {
+            setting: {
+                theme: 'dark'
+            }
+        }
+    };
     return await resolve(event);
 }
 
