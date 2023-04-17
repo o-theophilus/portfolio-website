@@ -11,11 +11,11 @@ bp = Blueprint("photo", __name__)
 def get(name, thumbnail=None):
     photo = dd.get(name, "post")
 
-    if not photo:
-        return jsonify({
-            "status": 201,
-            "message": "not found"
-        })
+    # if not photo:
+    #     return jsonify({
+    #         "status": 201,
+    #         "message": "not found"
+    #     })
 
     if thumbnail:
         temp = Image.open(BytesIO(photo.read()))
