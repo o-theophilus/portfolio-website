@@ -25,7 +25,7 @@
 
 		gap: var(--gap1);
 	}
-	@media screen and (min-width: 500px) {
+	@media screen and (min-width: 600px) {
 		.block {
 			align-items: unset;
 		}

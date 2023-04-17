@@ -29,7 +29,7 @@
 
 		max-width: var(--mobileWidth);
 	}
-	@media screen and (min-width: 500px) {
+	@media screen and (min-width: 600px) {
 		.block {
 			justify-content: unset;
 		}

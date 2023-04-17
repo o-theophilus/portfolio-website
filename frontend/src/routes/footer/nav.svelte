@@ -14,7 +14,7 @@
 	.block {
 		text-align: center;
 	}
-	@media screen and (min-width: 500px) {
+	@media screen and (min-width: 600px) {
 		.block {
 			text-align: unset;
 		}
