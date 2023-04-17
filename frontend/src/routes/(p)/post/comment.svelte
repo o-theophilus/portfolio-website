@@ -30,7 +30,7 @@
 		<Marked md={comment.comment} />
 		{#if $_user.login}
 			<Button
-				name="Add comment"
+				name="Reply"
 				class="secondary"
 				on:click={() => {
 					$module = {
@@ -41,7 +41,18 @@
 				}}
 			/> |
 			<Button
-				name="Edit"
+				name="A"
+				class="secondary"
+				on:click={() => {
+					$module = {
+						module: Add_Comment,
+						post,
+						for_comment_key: comment.key
+					};
+				}}
+			/> |
+			<Button
+				name="V"
 				class="secondary"
 				on:click={() => {
 					$module = {

@@ -43,10 +43,13 @@
 			},
 			body: JSON.stringify(form)
 		});
-		// $loading = false;
 
 		if (resp.ok) {
 			const data = await resp.json();
+
+			if (data.status != 200) {
+				$loading = false;
+			}
 
 			if ([101, 401].includes(data.status)) {
 				error.form = data.message;
