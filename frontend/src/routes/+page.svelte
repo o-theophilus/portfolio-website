@@ -14,7 +14,6 @@
 	import Meta from '$lib/comp/meta.svelte';
 	import Nav from '$lib/comp/nav.svelte';
 	import SVG from '$lib/comp/svg.svelte';
-	// import Triangle from '$lib/comp/triangle.svelte';
 
 	import Info from '$lib/module/info.svelte';
 	import Login from '$lib/module/auth_login.svelte';
@@ -108,15 +107,11 @@
 <Home />
 <br /><br />
 <br /><br />
-<!-- <Triangle style="1" color1="foreground" /> -->
-<Projects {projects} {blogs} />
-<!-- <Triangle style="3" color1="foreground" color2="font" /> -->
+<!-- <Projects {projects} {blogs} /> -->
 <br /><br />
 <AboutMe />
 <br /><br />
-<!-- <Triangle style="3" color1="font" /> -->
 <About />
-<!-- <Triangle style="3" color1="foreground" /> -->
 <br /><br />
 <AboutWebsite />
 <br /><br />
