@@ -17,7 +17,7 @@
 
 <main class:dark={$_user.setting.theme == 'dark'}>
 	<slot />
-	<Footer />
+	<!-- <Footer /> -->
 
 	<Module />
 	<Loading />
