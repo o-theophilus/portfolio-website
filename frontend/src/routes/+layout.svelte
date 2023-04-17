@@ -11,12 +11,7 @@
 	import Loading from '$lib/comp/loading.svelte';
 
 	export let data;
-	// $_user = data.data.locals.user;
-	$_user = {
-		setting: {
-			theme: 'dark'
-		}
-	};
+	$_user = data.data.locals.user;
 	$token = data.data.locals.token;
 </script>
 
