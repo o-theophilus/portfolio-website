@@ -37,7 +37,7 @@
 						Login
 					</Link>
 				{/if}
-				<!-- <Theme /> -->
+				<Theme />
 			</div>
 		</nav>
 	</Content>
