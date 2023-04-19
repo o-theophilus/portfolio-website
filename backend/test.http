@@ -5,8 +5,9 @@
 
 
 ### Init
-get {{host}} HTTP/1.1
+post {{host}}/init HTTP/1.1
 content-type: application/json
+authorization: lll
 
 ###
 
