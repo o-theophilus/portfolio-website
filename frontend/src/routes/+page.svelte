@@ -1,7 +1,7 @@
 <script>
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
-	import { module, api_url } from '$lib/store.js';
+	// import { onMount } from 'svelte';
+	// import { page } from '$app/stores';
+	// import { module, api_url } from '$lib/store.js';
 
 	// import Parallax from './home/hero_parallax.svelte';
 	// import Hero_Text from './home/hero_text.svelte';
@@ -15,9 +15,9 @@
 	// import Nav from '$lib/comp/nav.svelte';
 	// import SVG from '$lib/comp/svg.svelte';
 
-	import Info from '$lib/module/info.svelte';
-	import Login from '$lib/module/auth_login.svelte';
-	import Forgot from '$lib/module/auth_forgot2.svelte';
+	// import Info from '$lib/module/info.svelte';
+	// import Login from '$lib/module/auth_login.svelte';
+	// import Forgot from '$lib/module/auth_forgot2.svelte';
 
 	// export let data;
 	// let { blogs } = data;
