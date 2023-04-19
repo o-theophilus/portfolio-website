@@ -93,7 +93,7 @@
 	image="akropol_001.jpg"
 />
 
-<!-- <Nav home /> -->
+<Nav home />
 <section>
 	<Parallax />
 	<div class="text">
