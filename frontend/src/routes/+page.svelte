@@ -19,72 +19,72 @@
 	import Login from '$lib/module/auth_login.svelte';
 	import Forgot from '$lib/module/auth_forgot2.svelte';
 
-	// export let data;
+	export let data;
 	// let { blogs } = data;
 	// let { projects } = data;
 	let blogs = [];
 	let projects = [];
 
-	// onMount(async () => {
-	// 	let _module = $page.url.searchParams.get('module');
+	onMount(async () => {
+		let _module = $page.url.searchParams.get('module');
 
-	// 	if (_module == 'confirm') {
-	// 		let _token = $page.url.searchParams.get('token');
-	// 		const resp = await fetch(`${api_url}/confirm/${_token}`);
+		if (_module == 'confirm') {
+			let _token = $page.url.searchParams.get('token');
+			const resp = await fetch(`${api_url}/confirm/${_token}`);
 
-	// 		if (resp.ok) {
-	// 			const data = await resp.json();
+			if (resp.ok) {
+				const data = await resp.json();
 
-	// 			if ([200, 201].includes(data.status)) {
-	// 				$module = {
-	// 					module: Info,
-	// 					title: 'Done',
-	// 					status: 'good',
-	// 					message: data.message,
-	// 					button: [
-	// 						{
-	// 							name: 'Login',
-	// 							fn: () => {
-	// 								$module = {
-	// 									module: Login,
-	// 									email: data.data.user.email
-	// 								};
-	// 							}
-	// 						}
-	// 					]
-	// 				};
-	// 			} else if (data.status == 101) {
-	// 				$module = {
-	// 					module: Info,
-	// 					title: 'Failed',
-	// 					status: 'bad',
-	// 					message: data.message,
-	// 					button: [
-	// 						{
-	// 							name: 'OK',
-	// 							fn: () => {
-	// 								$module = '';
-	// 							}
-	// 						}
-	// 					]
-	// 				};
-	// 			}
-	// 		} else {
-	// 			throw new Error('invalid request');
-	// 		}
-	// 	} else if (_module == 'password') {
-	// 		$module = {
-	// 			module: Forgot,
-	// 			_token: $page.url.searchParams.get('token')
-	// 		};
-	// 	} else if (_module == 'login') {
-	// 		$module = {
-	// 			module: Login,
-	// 			email: $page.url.searchParams.get('email')
-	// 		};
-	// 	}
-	// 	window.history.replaceState('', '', '/');
-	// });
+				if ([200, 201].includes(data.status)) {
+					$module = {
+						module: Info,
+						title: 'Done',
+						status: 'good',
+						message: data.message,
+						button: [
+							{
+								name: 'Login',
+								fn: () => {
+									$module = {
+										module: Login,
+										email: data.data.user.email
+									};
+								}
+							}
+						]
+					};
+				} else if (data.status == 101) {
+					$module = {
+						module: Info,
+						title: 'Failed',
+						status: 'bad',
+						message: data.message,
+						button: [
+							{
+								name: 'OK',
+								fn: () => {
+									$module = '';
+								}
+							}
+						]
+					};
+				}
+			} else {
+				throw new Error('invalid request');
+			}
+		} else if (_module == 'password') {
+			$module = {
+				module: Forgot,
+				_token: $page.url.searchParams.get('token')
+			};
+		} else if (_module == 'login') {
+			$module = {
+				module: Login,
+				email: $page.url.searchParams.get('email')
+			};
+		}
+		window.history.replaceState('', '', '/');
+	});
 </script>
 
 <Meta
