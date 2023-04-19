@@ -5,34 +5,34 @@
 	import { page } from '$app/stores';
 	import SVG from '$lib/comp/svg.svelte';
 
-	const submit = async () => {
-		const resp = await fetch(`${api_url}/user/theme`, {
-			method: 'post',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: $token
-			}
-		});
+	// const submit = async () => {
+	// 	const resp = await fetch(`${api_url}/user/theme`, {
+	// 		method: 'post',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			Authorization: $token
+	// 		}
+	// 	});
 
-		if (resp.ok) {
-			const data = await resp.json();
+	// 	if (resp.ok) {
+	// 		const data = await resp.json();
 
-			if (data.status == 200) {
-				$_user = data.data.user;
-			} else {
-				throw new Error('invalid request');
-			}
-		}
-	};
+	// 		if (data.status == 200) {
+	// 			$_user = data.data.user;
+	// 		} else {
+	// 			throw new Error('invalid request');
+	// 		}
+	// 	}
+	// };
 
-	$: is_home = $page.url.pathname == '/';
+	// $: is_home = $page.url.pathname == '/';
 </script>
 
 <button
-	class:is_home
+	class:is_home={false}
 	on:click={() => {
-		submit();
-		$_user.setting.theme = $_user.setting.theme == 'dark' ? 'light' : 'dark';
+		// submit();
+		// $_user.setting.theme = $_user.setting.theme == 'dark' ? 'light' : 'dark';
 	}}
 	on:keypress
 >
