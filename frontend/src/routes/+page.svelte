@@ -1,19 +1,19 @@
 <script>
-	// import { onMount } from 'svelte';
-	// import { page } from '$app/stores';
-	// import { module, api_url } from '$lib/store.js';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { module, api_url } from '$lib/store.js';
 
-	// import Parallax from './home/hero_parallax.svelte';
-	// import Hero_Text from './home/hero_text.svelte';
-	// import Home from './home/what_i_do.svelte';
-	// import Projects from './home/project.svelte';
-	// import AboutMe from './home/about_me.svelte';
-	// import About from './home/about_skill.svelte';
-	// import AboutWebsite from './home/about_website.svelte';
-	// import Scroller from '$lib/comp/scroller.svelte';
-	// import Meta from '$lib/comp/meta.svelte';
-	// import Nav from '$lib/comp/nav.svelte';
-	// import SVG from '$lib/comp/svg.svelte';
+	import Parallax from './home/hero_parallax.svelte';
+	import Hero_Text from './home/hero_text.svelte';
+	import Home from './home/what_i_do.svelte';
+	import Projects from './home/project.svelte';
+	import AboutMe from './home/about_me.svelte';
+	import About from './home/about_skill.svelte';
+	import AboutWebsite from './home/about_website.svelte';
+	import Scroller from '$lib/comp/scroller.svelte';
+	import Meta from '$lib/comp/meta.svelte';
+	import Nav from '$lib/comp/nav.svelte';
+	import SVG from '$lib/comp/svg.svelte';
 
 	// import Info from '$lib/module/info.svelte';
 	// import Login from '$lib/module/auth_login.svelte';
