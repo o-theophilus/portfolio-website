@@ -13,6 +13,7 @@
 	export let data;
 	$_user = data.data.locals.user;
 	$token = data.data.locals.token;
+	console.log($_user);
 </script>
 
 <main class:dark={$_user.setting.theme == 'dark'}>
