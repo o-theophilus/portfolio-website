@@ -36,8 +36,7 @@
 	}}
 	on:keypress
 >
-	<div class="switch">
-	<!-- <div class="switch" class:dark={$_user.setting.theme == 'dark'}> -->
+	<div class="switch" class:dark={$_user.setting.theme == 'dark'}>
 		<div class="state">
 			<SVG type="light" size="15" />
 		</div>
