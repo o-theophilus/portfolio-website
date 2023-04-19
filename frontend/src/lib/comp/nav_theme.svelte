@@ -32,7 +32,7 @@
 	class:is_home
 	on:click={() => {
 		submit();
-		// $_user.setting.theme = $_user.setting.theme == 'dark' ? 'light' : 'dark';
+		$_user.setting.theme = $_user.setting.theme == 'dark' ? 'light' : 'dark';
 	}}
 	on:keypress
 >
