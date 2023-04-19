@@ -20,10 +20,10 @@
 	import Forgot from '$lib/module/auth_forgot2.svelte';
 
 	export let data;
-	// let { blogs } = data;
-	// let { projects } = data;
-	let blogs = [];
-	let projects = [];
+	let { blogs } = data;
+	let { projects } = data;
+	// let blogs = [];
+	// let projects = [];
 
 	onMount(async () => {
 		let _module = $page.url.searchParams.get('module');
