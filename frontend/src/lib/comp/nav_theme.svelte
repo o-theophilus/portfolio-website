@@ -25,18 +25,19 @@
 	// 	}
 	// };
 
-	// $: is_home = $page.url.pathname == '/';
+	$: is_home = $page.url.pathname == '/';
 </script>
 
 <button
-	class:is_home={false}
+	class:is_home
 	on:click={() => {
 		// submit();
 		// $_user.setting.theme = $_user.setting.theme == 'dark' ? 'light' : 'dark';
 	}}
 	on:keypress
 >
-	<div class="switch" class:dark={$_user.setting.theme == 'dark'}>
+	<div class="switch">
+	<!-- <div class="switch" class:dark={$_user.setting.theme == 'dark'}> -->
 		<div class="state">
 			<SVG type="light" size="15" />
 		</div>
