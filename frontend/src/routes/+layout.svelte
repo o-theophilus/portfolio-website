@@ -20,8 +20,8 @@
 	<slot />
 	<!-- <Footer /> -->
 
-	<!-- <Module /> -->
-	<!-- <Loading /> -->
+	<Module />
+	<Loading />
 <!-- </main> -->
 
 <style>
