@@ -87,35 +87,35 @@
 	// });
 </script>
 
-<Meta
+<!-- <Meta
 	title="Home"
 	description="Welcome to my personal portfolio website."
 	image="akropol_001.jpg"
-/>
+/> -->
 
-<Nav home />
+<!-- <Nav home /> -->
 <section>
-	<Parallax />
+	<!-- <Parallax /> -->
 	<div class="text">
-		<Hero_Text />
+		<!-- <Hero_Text /> -->
 	</div>
 	<div class="scroller">
-		<Scroller query=".scroll_1" invert>
+		<!-- <Scroller query=".scroll_1" invert>
 			<SVG type="down" size="20" />
-		</Scroller>
+		</Scroller> -->
 	</div>
 	<div class="grad" />
 </section>
-<Home />
+<!-- <Home /> -->
 <br /><br />
 <br /><br />
 <!-- <Projects {projects} {blogs} /> -->
 <br /><br />
-<AboutMe />
+<!-- <AboutMe /> -->
 <br /><br />
-<About />
+<!-- <About /> -->
 <br /><br />
-<AboutWebsite />
+<!-- <AboutWebsite /> -->
 <br /><br />
 
 <style>
