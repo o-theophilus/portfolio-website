@@ -87,11 +87,11 @@
 	// });
 </script>
 
-<!-- <Meta
+<Meta
 	title="Home"
 	description="Welcome to my personal portfolio website."
 	image="akropol_001.jpg"
-/> -->
+/>
 
 <!-- <Nav home /> -->
 <section>
