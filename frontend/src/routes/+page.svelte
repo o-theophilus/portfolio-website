@@ -106,7 +106,7 @@
 	</div>
 	<div class="grad" />
 </section>
-<!-- <Home /> -->
+<Home />
 <br /><br />
 <br /><br />
 <!-- <Projects {projects} {blogs} /> -->
