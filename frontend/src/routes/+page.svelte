@@ -95,14 +95,14 @@
 
 <!-- <Nav home /> -->
 <section>
-	<!-- <Parallax /> -->
+	<Parallax />
 	<div class="text">
-		<!-- <Hero_Text /> -->
+		<Hero_Text />
 	</div>
 	<div class="scroller">
-		<!-- <Scroller query=".scroll_1" invert>
+		<Scroller query=".scroll_1" invert>
 			<SVG type="down" size="20" />
-		</Scroller> -->
+		</Scroller>
 	</div>
 	<div class="grad" />
 </section>
