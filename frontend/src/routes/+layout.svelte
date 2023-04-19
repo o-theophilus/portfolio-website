@@ -10,7 +10,7 @@
 	import Footer from './footer/footer.svelte';
 	import Loading from '$lib/comp/loading.svelte';
 
-	// export let data;
+	export let data;
 	// $_user = data.data.locals.user;
 	// $token = data.data.locals.token;
 </script>
