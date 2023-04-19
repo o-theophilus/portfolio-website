@@ -3,11 +3,12 @@ import { writable } from 'svelte/store';
 export const api_url = import.meta.env.VITE_API_URL;
 
 // app variables
-export const _user = writable({
-	setting: {
-		theme: "dark"
-	}
-});
+export const _user = writable();
+// {
+// setting: {
+// 	theme: "dark"
+// }
+// }
 
 // variables
 export const module = writable();
