@@ -26,7 +26,7 @@
 				{#if $_user && $_user.login}
 					<Link {home} href="/user">User</Link>
 				{:else}
-					<!-- <Link
+					<Link
 						{home}
 						on:click={() => {
 							$module = {
@@ -35,7 +35,7 @@
 						}}
 					>
 						Login
-					</Link> -->
+					</Link>
 				{/if}
 				<!-- <Theme /> -->
 			</div>
