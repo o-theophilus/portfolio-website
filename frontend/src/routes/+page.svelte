@@ -111,11 +111,11 @@
 <br /><br />
 <!-- <Projects {projects} {blogs} /> -->
 <br /><br />
-<!-- <AboutMe /> -->
+<AboutMe />
 <br /><br />
-<!-- <About /> -->
+<About />
 <br /><br />
-<!-- <AboutWebsite /> -->
+<AboutWebsite />
 <br /><br />
 
 <style>
