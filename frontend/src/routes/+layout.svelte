@@ -13,16 +13,15 @@
 	// export let data;
 	// $_user = data.data.locals.user;
 	// $token = data.data.locals.token;
-	// console.log($_user);
 </script>
 
-<!-- <main class:dark={$_user.setting.theme == 'dark'}> -->
+<main class:dark={$_user.setting.theme == 'dark'}>
 	<slot />
-	<!-- <Footer /> -->
+	<Footer />
 
 	<Module />
 	<Loading />
-<!-- </main> -->
+</main>
 
 <style>
 	main {
