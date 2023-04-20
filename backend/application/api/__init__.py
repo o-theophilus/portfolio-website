@@ -118,7 +118,7 @@ def post_schema(p, data=[]):
     photos = []
     if "photos" in p:
         for photo in p['photos']:
-            photos.append(f"/photo/{photo}")
+            photos.append(f"photo/{photo}")
 
     comments = []
     ratings = []
