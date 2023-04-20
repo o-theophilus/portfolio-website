@@ -11,6 +11,8 @@ pillow = "*"
 requests = "*"
 deta = "*"
 mailjet-rest = "*"
+flask-graphql = "*"
+graphene = "*"
 
 [dev-packages]
 flake8 = "*"

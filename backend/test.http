@@ -13,68 +13,21 @@ authorization: lll
 
 
 #Create
-post  {{host}}/blog HTTP/1.1
+post  {{host}}/graphql HTTP/1.1
 content-type: application/json
 
 {
-    "title": "How I met Svelte",
-    "description": "The new reactive component based approach to web design without a virtual DOM.",
-    "photo": "how-i-met-svelte-01.jpg",
-    "content": "<a href='{0}'> Click here </a>",
-    "format": "markdown",
-    "tags": ""
+    "query": "{ ttt { typen } }"
 }
 
 ###
 
-### Init
-get {{host}}/blog HTTP/1.1
+#Create
+post  {{host}}/graphql HTTP/1.1
 content-type: application/json
 
-###
-
-
-### Init
-get {{host}}/project HTTP/1.1
-content-type: application/json
+{
+    "query": "mutation { createUser (name: \"John Doe\") { success, user } }"
+}
 
 ###
-
-### Init
-get {{host}}/blog_project HTTP/1.1
-content-type: application/json
-
-###
-
-###
-
-### Init
-get {{host}}/blog/eee HTTP/1.1
-content-type: application/json
-
-###
-
-
-### Init
-get {{host}}/project/eee HTTP/1.1
-content-type: application/json
-
-###
-
-
-### Init
-get {{host}}/clonedb HTTP/1.1
-content-type: application/json
-
-###
-
-
-
-
-
-
-
-
-
-
-
