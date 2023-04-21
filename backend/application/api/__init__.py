@@ -134,13 +134,7 @@ def post_schema(p, data=[]):
         ):
             ratings.append(row)
 
-    comments = [comment_schema(c) for c in comments]
-    for comm in comments:
-        for row in data:
-            if row["type"] == "user" and comm["user_key"] == row["key"]:
-                comm["name"] = row["name"]
-                continue
-
+    comments = [comment_schema(c, data) for c in comments]
     comments = sorted(comments, key=lambda d: d["created_at"], reverse=True)
     ratings = [rating_schema(c) for c in ratings]
 
@@ -184,12 +178,20 @@ def comment_template(
     }
 
 
-def comment_schema(c):
+def comment_schema(c, data=[]):
+    for row in data:
+        if row["type"] == "user" and c["user_key"] == row["key"]:
+            c["user_name"] = row["name"]
+            break
+
     return {
         "key": c["key"],
         "comment": c["comment"],
         "user_key": c["user_key"],
+        "user_name": c["user_name"],
         "path": c["path"],
+        "upvote": c["upvote"],
+        "downvote": c["downvote"],
 
         "created_at": c["created_at"],
     }

@@ -7,11 +7,9 @@
 	import Info from '$lib/__info__.svelte';
 
 	export let post;
-	export let for_comment_key = '';
+	export let owner = '';
 
-	let form = {
-		for_comment_key
-	};
+	let form = {};
 	let error = {};
 
 	const validate = () => {
@@ -25,7 +23,7 @@
 	};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post.type}/comment/${post.key}`, {
+		const resp = await fetch(`${api_url}/comment/${owner}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -40,7 +38,8 @@
 			if (data.status == 201) {
 				error = data.message;
 			} else if (data.status == 200) {
-				tick(data.data.post);
+				post.comments.push(data.data.comment);
+				tick(post);
 
 				$module = {
 					module: Info,

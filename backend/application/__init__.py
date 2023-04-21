@@ -5,6 +5,7 @@ from .api import bp as api
 from .api.post import bp as post
 from .api.post_get import bp as post_get
 from .api.post_comment import bp as comment
+from .api.post_rating import bp as rating
 from .api.photo import bp as photo
 from .api.tag import bp as tag
 from .api.user import bp as user
@@ -21,6 +22,7 @@ def create_app(config_file="config.py"):
     app.register_blueprint(post)
     app.register_blueprint(post_get)
     app.register_blueprint(comment)
+    app.register_blueprint(rating)
     app.register_blueprint(photo)
     app.register_blueprint(user)
     app.register_blueprint(tag)

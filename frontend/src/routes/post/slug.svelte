@@ -17,9 +17,9 @@
 	import Manage_Photo from './slug__manage_photo__.svelte';
 	import Manage_Video from './slug__manage_video__.svelte';
 	import Share from './slug__share__.svelte';
-
 	import Rating from './slug__add_rating__.svelte';
 	import Comment from './slug.comment.svelte';
+	import Author from './slug.author.svelte';
 
 	export let data;
 	let { post } = data;
@@ -193,6 +193,8 @@
 		/>
 	{/if}
 	<Tags tags={post.tags} />
+	<br /><br />
+	<Author />
 
 	{#if $_user.roles.includes('admin') && edit_mode}
 		<br /> <br />
@@ -216,6 +218,7 @@
 			>
 		</div>
 	{/if}
+
 	<br /><br />
 
 	{#if $_user.login}

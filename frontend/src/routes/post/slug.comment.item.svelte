@@ -1,5 +1,6 @@
 <script>
-	import { module, _user } from '$lib/store.js';
+	import { module, _user, api_url, tick } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
 
 	import Marked from '$lib/marked.svelte';
 	import Button from '$lib/button.svelte';
@@ -8,6 +9,55 @@
 
 	export let post = {};
 	export let comment = {};
+
+	const validate = async (vote) => {
+		if (comment.upvote.includes($_user.key)) {
+			comment.upvote = comment.upvote.filter((e) => e != $_user.key);
+		} else if (comment.downvote.includes($_user.key)) {
+			comment.downvote = comment.downvote.filter((e) => e != $_user.key);
+		}
+
+		if (vote == 'up') {
+			comment.upvote.push($_user.key);
+		} else if (vote == 'down') {
+			comment.downvote.push($_user.key);
+		} else {
+			return;
+		}
+		comment = comment;
+
+		submit(vote);
+	};
+
+	const submit = async (vote) => {
+		const resp = await fetch(`${api_url}/comment/vote/${comment.key}`, {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: $token
+			},
+			body: JSON.stringify({ vote })
+		});
+
+		if (resp.ok) {
+			const data = await resp.json();
+
+			if (data.status == 201) {
+				error = data.message;
+			} else if (data.status == 200) {
+				for (const i in post.comments) {
+					if (post.comments[i]['key'] == data.data.comment['key']) {
+						post.comments[i] = data.data.comment;
+						break;
+					}
+				}
+
+				tick(post);
+			} else {
+				error.form = data.message;
+			}
+		}
+	};
 
 	let saturation = Math.floor(Math.random() * (360 + 1));
 </script>
@@ -20,9 +70,9 @@
 				class:light={saturation > 29 && saturation < 189}
 				style:--saturation={saturation}
 			>
-				{comment.name[0]}
+				{comment.user_name[0]}
 			</div>
-			<div class="name">{comment.name}</div>
+			<div class="name">{comment.user_name}</div>
 		</div>
 		<div class="date">{comment.created_at.split('T')[0]}</div>
 	</div>
@@ -35,42 +85,23 @@
 				on:click={() => {
 					$module = {
 						module: Add_Comment,
-						post,
-						for_comment_key: comment.key
+						owner: comment.key,
+						post
 					};
 				}}
 			/> |
 			<Button
-				name="A"
+				name="upvote ({comment.upvote.length})"
 				class="secondary"
 				on:click={() => {
-					$module = {
-						module: Add_Comment,
-						post,
-						for_comment_key: comment.key
-					};
+					validate('up');
 				}}
 			/> |
 			<Button
-				name="V"
+				name="downvote ({comment.downvote.length})"
 				class="secondary"
 				on:click={() => {
-					$module = {
-						module: Add_Comment,
-						post,
-						for_comment_key: comment.key
-					};
-				}}
-			/> |
-			<Button
-				name="Delete"
-				class="secondary"
-				on:click={() => {
-					$module = {
-						module: Add_Comment,
-						post,
-						for_comment_key: comment.key
-					};
+					validate('down');
 				}}
 			/>
 		{/if}
@@ -86,7 +117,6 @@
 	.comment {
 		display: flex;
 		flex-direction: column;
-		/* gap: var(--gap2); */
 
 		padding: var(--gap2);
 		padding-right: 0;

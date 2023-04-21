@@ -24,13 +24,22 @@ def data():
 def get(type_, ppt, val, db=None):
     if not db:
         db = data()
-    item = None
+
     for row in db:
         if "type" in row and ppt in row:
             if row["type"] == type_ and row[ppt] == val:
-                item = row
-                break
-    return item
+                return row
+    return None
+
+
+def get_key(key, db=None):
+    if not db:
+        db = data()
+
+    for row in db:
+        if row["key"] == key:
+            return row
+    return None
 
 
 def get_type(type_, db=None):

@@ -6,14 +6,13 @@ markdown textarea enable tab key
 
 FEATURES:
 
-comment: upvote, downvote, delete
+comment: delete
 comment: sort
 post: sort
 
 login time tracking
 delete ripple effect
 
-Add author to post
 display all backend form error in frontend
 user profile
 
