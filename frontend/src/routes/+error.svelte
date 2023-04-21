@@ -1,8 +1,8 @@
 <script>
 	import { page } from '$app/stores';
-	import Content from '$lib/comp/content.svelte';
-	import Meta from '$lib/comp/meta.svelte';
-	import Button from '$lib/comp/button.svelte';
+	import Content from '$lib/content.svelte';
+	import Meta from '$lib/meta.svelte';
+	import Button from '$lib/button.svelte';
 
 	let error = $page.error.message;
 	export const data = '';
@@ -12,6 +12,8 @@
 <Meta title={error} description={error.message} image="/site/akropol_001.jpg" />
 
 <Content>
+	<br>
+	<br>
 	<section>
 		<div>
 			<strong class="big">{$page.status}</strong>
@@ -23,6 +25,8 @@
 		<Button href="/">Back to Home</Button>
 	</section>
 </Content>
+<br>
+<br>
 
 <style>
 	section {

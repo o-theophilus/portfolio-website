@@ -13,6 +13,8 @@ post: sort
 login time tracking
 delete ripple effect
 
+Add author to post
+display all backend form error in frontend
 
 ##########################################
 

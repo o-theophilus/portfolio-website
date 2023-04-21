@@ -3,21 +3,20 @@
 	import { page } from '$app/stores';
 	import { module, api_url } from '$lib/store.js';
 
-	import Parallax from './home/hero_parallax.svelte';
-	import Hero_Text from './home/hero_text.svelte';
-	import Home from './home/what_i_do.svelte';
-	import Projects from './home/project.svelte';
-	import AboutMe from './home/about_me.svelte';
-	import About from './home/about_skill.svelte';
-	import AboutWebsite from './home/about_website.svelte';
-	import Scroller from '$lib/comp/scroller.svelte';
-	import Meta from '$lib/comp/meta.svelte';
-	import Nav from '$lib/comp/nav.svelte';
-	import SVG from '$lib/comp/svg.svelte';
+	import Parallax from './page.1_hero_parallax.svelte';
+	import Hero_Text from './page.1_hero_text.svelte';
+	import Home from './page.2_what_i_do.svelte';
+	import Projects from './page.3_project.svelte';
+	import AboutMe from './page.4_about_me.svelte';
+	import About from './page.5_about_skill.svelte';
+	import AboutWebsite from './page.6_about_website.svelte';
+	import Scroller from '$lib/scroller.svelte';
+	import Meta from '$lib/meta.svelte';
+	import SVG from '$lib/svg.svelte';
 
-	import Info from '$lib/module/info.svelte';
-	import Login from '$lib/module/auth_login.svelte';
-	import Forgot from '$lib/module/auth_forgot2.svelte';
+	import Info from '$lib/__info__.svelte';
+	import Login from '$lib/__auth_login__.svelte';
+	import Forgot from '$lib/__auth_forgot2__.svelte';
 
 	export let data;
 	let { blogs } = data;
@@ -91,7 +90,6 @@
 	image="akropol_001.jpg"
 />
 
-<Nav home /> 
 <section>
 	<Parallax />
 	<div class="text">
