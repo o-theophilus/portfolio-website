@@ -7,7 +7,7 @@
 	<b> Hello {'{'}name{'}'}, </b>
 	<br />
 	<br />
-	Thanks for signing up with Designdev! Before you get started shopping on Designdev, we need you to
+	Thanks for signing up with Theophilus! Before you get started shopping on Theophilus, we need you to
 	confirm your email address. Please click the button below to complete your signup.
 	<br />
 	<br />

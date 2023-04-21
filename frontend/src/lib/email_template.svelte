@@ -28,7 +28,7 @@ margin: auto;
 		font-size: x-large;
 		margin-left: 10px;
 	"
-			>Designdev
+			>Theophilus
 		</b>
 	</div>
 
@@ -49,7 +49,7 @@ margin: auto;
 	font-size: x-small;
 	color: grey;"
 	>
-		© Designdev 2022
+		© Theophilus 2023
 		<br />
 		Modern Shopping for Africa
 	</div>

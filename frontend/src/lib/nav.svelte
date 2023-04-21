@@ -16,7 +16,7 @@
 		<nav>
 			<a href="/">
 				<SVG type="logo" />
-				<strong> Designdev </strong>
+				<strong> Theophilus </strong>
 			</a>
 			<div>
 				<Link {home} href="/project">Project</Link>

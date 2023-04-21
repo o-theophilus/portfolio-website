@@ -29,7 +29,7 @@
 			</div>
 		</section>
 		<br /><br />
-		<div class="copyright">&copy Designdev 2021. All rights reserved.</div>
+		<div class="copyright">&copy Theophilus 2023. All rights reserved.</div>
 		<br /><br />
 	</footer>
 </Content>

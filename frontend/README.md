@@ -15,6 +15,7 @@ delete ripple effect
 
 Add author to post
 display all backend form error in frontend
+user profile
 
 ##########################################
 
