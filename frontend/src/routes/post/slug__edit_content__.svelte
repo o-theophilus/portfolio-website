@@ -5,16 +5,24 @@
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
 	import Info from '$lib/__info__.svelte';
+	import { onMount } from 'svelte';
 
 	export let post;
 
 	let form = {
-		format: post.format,
-		content: post.content
+		format: post.format
 	};
+
+	let textarea;
+	onMount(() => {
+		textarea.value = post.content;
+	});
+
 	let error = {};
 
 	const validate = () => {
+		form.content = textarea.value;
+
 		error = {};
 
 		if (!form.format) {
@@ -88,7 +96,23 @@
 	</Input>
 	<Input name="content" error={error.content} let:id>
 		{#if form.format == 'markdown'}
-			<textarea placeholder="Content here" {id} bind:value={form.content} on:keypress />
+			<textarea
+				placeholder="Content here"
+				{id}
+				bind:this={textarea}
+				on:keydown={(e) => {
+					if (e.key === 'Tab') {
+						e.preventDefault();
+						const start = e.target.selectionStart;
+						const end = e.target.selectionEnd;
+
+						const text = textarea.value;
+						textarea.value = `${text.substring(0, start)}\t${text.substring(end)}`;
+
+						e.target.selectionStart = e.target.selectionEnd = start + 1;
+					}
+				}}
+			/>
 		{:else if form.format == 'url'}
 			<input placeholder="Content here" type="text" {id} bind:value={form.content} />
 		{/if}
