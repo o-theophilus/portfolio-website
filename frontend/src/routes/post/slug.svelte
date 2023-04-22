@@ -97,7 +97,6 @@
 				on:click={() => {
 					$module = {
 						module: Manage_Photo,
-
 						post
 					};
 				}}>Manage Photo</Button
@@ -122,13 +121,16 @@
 		<Button
 			icon="edit"
 			class="tiny"
+			icon_size={15}
 			on:click={() => {
 				$module = {
 					module: Title,
 					post
 				};
 			}}
-		/>
+		>
+			title
+		</Button>
 	{/if}
 
 	<br />
@@ -137,13 +139,16 @@
 		<Button
 			icon="edit"
 			class="tiny"
+			icon_size={15}
 			on:click={() => {
 				$module = {
 					module: Edit_Date,
 					post
 				};
 			}}
-		/>
+		>
+			date
+		</Button>
 	{/if}
 
 	{#if $_user.roles.includes('admin') && edit_mode}
@@ -153,13 +158,16 @@
 		<Button
 			icon="edit"
 			class="tiny"
+			icon_size={15}
 			on:click={() => {
 				$module = {
 					module: Description,
 					post
 				};
 			}}
-		/>
+		>
+			description
+		</Button>
 	{/if}
 
 	<br /><br />
@@ -167,22 +175,26 @@
 		<Button
 			icon="edit"
 			class="tiny"
+			icon_size={15}
 			on:click={() => {
 				$module = {
 					module: Edit_Content,
 					post
 				};
 			}}
-		/>
+		>
+			content
+		</Button>
 	{/if}
 	<Marked md={content} />
 
-	<br />
-
+	
 	{#if $_user.roles.includes('admin') && edit_mode}
+	<br />
 		<Button
 			icon="edit"
 			class="tiny"
+			icon_size={15}
 			on:click={() => {
 				$module = {
 					module: Edit_Tags,
@@ -190,7 +202,9 @@
 					tags_in: tags
 				};
 			}}
-		/>
+		>
+			tags
+		</Button>
 	{/if}
 	<Tags tags={post.tags} />
 	<br /><br />
@@ -201,6 +215,7 @@
 		Status: <strong> {post.status}</strong>
 		<div class="row">
 			<Button
+				class="tiny"
 				on:click={() => {
 					$module = {
 						module: Edit_Status,
@@ -209,6 +224,7 @@
 				}}>Edit Status</Button
 			>
 			<Button
+				class="tiny"
 				on:click={() => {
 					$module = {
 						module: Delete,
@@ -223,6 +239,7 @@
 
 	{#if $_user.login}
 		<Button
+			class="tiny"
 			name="Overall Rating: {ratings}"
 			icon="heart"
 			on:click={() => {
@@ -235,6 +252,7 @@
 	{/if}
 
 	<Button
+		class="tiny"
 		name="share"
 		icon="share"
 		on:click={() => {

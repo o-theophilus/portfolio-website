@@ -52,7 +52,7 @@ def add_post():
         "status": 200,
         "message": "successful",
         "data": {
-            "post": post_schema(post)
+            "post": post_schema(post, data)
         }
     })
 
@@ -104,7 +104,7 @@ def update_title(key):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": post_schema(post)
+            "post": post_schema(post, data)
         }
     })
 
@@ -137,7 +137,7 @@ def update_description(key):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": post_schema(post)
+            "post": post_schema(post, data)
         }
     })
 
@@ -188,7 +188,7 @@ def update_content(key):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": post_schema(post)
+            "post": post_schema(post, data)
         }
     })
 
@@ -232,7 +232,7 @@ def update_date(key):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": post_schema(post)
+            "post": post_schema(post, data)
         }
     })
 
@@ -265,7 +265,7 @@ def update_tags(key):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": post_schema(post)
+            "post": post_schema(post, data)
         }
     })
 
@@ -303,7 +303,7 @@ def update_status(key):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": post_schema(post)
+            "post": post_schema(post, data)
         }
     })
 
@@ -339,7 +339,7 @@ def update_videos(key):
         "status": 200,
         "message": "successful",
         "data": {
-            "post": post_schema(post)
+            "post": post_schema(post, data)
         }
     })
 

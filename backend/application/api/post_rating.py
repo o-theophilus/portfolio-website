@@ -8,12 +8,11 @@ bp = Blueprint("rating", __name__)
 
 @bp.post("/rating/<key>")
 def add_rating(key):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
 
     data = db.data()
 
     user = token_to_user(data)
-    post = db.get(post_type, "key", key, data)
+    post = db.get_key(key, data)
     if not user or not post:
         return jsonify({
             "status": 401,
