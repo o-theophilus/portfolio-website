@@ -1,9 +1,9 @@
 import { api_url } from '$lib/store.js';
 
 export const load = async ({ fetch, url, params }) => {
-    let post_type = url.pathname.split('/')[1];
+    let type = url.pathname.split('/')[1];
 
-    const resp = await fetch(`${api_url}/${post_type}/${params.slug}`, {
+    const resp = await fetch(`${api_url}/${type}/${params.slug}`, {
         method: 'get',
         headers: {
             'Content-Type': 'application/json'

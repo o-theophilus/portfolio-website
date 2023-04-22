@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { api_url, module } from '$lib/store.js';
+	import { api_url, module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
@@ -11,13 +11,17 @@
 	let error = '';
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post.type}/${post.slug}`, {
+		error = '';
+
+		$loading = `Deleting ${post.type} . . .`;
+		const resp = await fetch(`${api_url}/post/${post.key}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			}
 		});
+		$loading = false;
 
 		if (resp.ok) {
 			const data = await resp.json();

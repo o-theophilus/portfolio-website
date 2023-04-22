@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, tick } from '$lib/store.js';
+	import { api_url, module, tick, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
@@ -14,7 +14,10 @@
 	let error = '';
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post.type}/tags/${post.slug}`, {
+		error = '';
+
+		$loading = `Saving ${post.type} . . .`;
+		const resp = await fetch(`${api_url}/post/tags/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -22,6 +25,7 @@
 			},
 			body: JSON.stringify({ tags: tags.split(', ') })
 		});
+		$loading = false;
 
 		if (resp.ok) {
 			const data = await resp.json();
@@ -80,7 +84,13 @@
 
 <form class="form" on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Edit tags </strong>
-	<Input name="tags" {error} let:id>
+	{#if error}
+		<span class="error">
+			{error}
+		</span>
+	{/if}
+
+	<Input name="tags" let:id>
 		<textarea
 			type="text"
 			bind:value={tags}

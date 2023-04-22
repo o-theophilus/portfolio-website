@@ -1,44 +1,49 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { api_url, module } from '$lib/store.js';
+	import { api_url, module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
 	import Info from '$lib/__info__.svelte';
 
-	export let post_type;
+	export let type;
 
-	let title;
-	let error;
+	let form = {
+		type
+	};
+	let error = {};
 
 	const validate = () => {
-		error = '';
-		if (!title) {
-			error = 'cannot be empty';
+		error = {};
+		if (!form.title) {
+			error.title = 'cannot be empty';
 		}
 
-		!error && submit();
+		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post_type}`, {
+		$loading = `Creating ${type} . . .`;
+		const resp = await fetch(`${api_url}/post`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify({ title })
+			body: JSON.stringify(form)
 		});
+		$loading = false;
 
 		if (resp.ok) {
 			const data = await resp.json();
+
 			if (data.status == 200) {
 				$module = {
 					module: Info,
 					title: 'Done',
 					status: 'good',
-					message: `${post_type} Created`,
+					message: `${type} Created`,
 					button: [
 						{
 							name: 'OK',
@@ -48,20 +53,25 @@
 						}
 					]
 				};
-				goto(`/${post_type}/${data.data.post.slug}`);
-			} else {
+				goto(`/${type}/${data.data.post.slug}`);
+			} else if (data.status == 201) {
 				error = data.message;
+			} else {
+				error.form = data.message;
 			}
 		}
 	};
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big">
-		Add {post_type}
-	</strong>
-	<Input name="title" {error} let:id>
-		<input placeholder="Title here" type="text" {id} bind:value={title} />
+	<strong class="big"> Add {type} </strong>
+	{#if error.form}
+		<span class="error">
+			{error.form}
+		</span>
+	{/if}
+	<Input name="title" error={error.title} let:id>
+		<input placeholder="Title here" type="text" {id} bind:value={form.title} />
 	</Input>
 
 	<Button

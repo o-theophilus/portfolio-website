@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, current_app
-from . import (db, token_tool, token_to_user, user_schema,
-               user_template)
+from . import db, token_tool, token_to_user
+from .schema import user_schema, user_template
 from uuid import uuid4
 from werkzeug.security import check_password_hash
 from .mail import send_mail
@@ -43,7 +43,6 @@ def signup():
     if (
         "email_template" not in request.json
         or not request.json["email_template"]
-        or "error_message" not in request.json
         or user["status"] != "anonymous"
         or user["login"]
     ):
@@ -55,28 +54,28 @@ def signup():
     error = {}
 
     if "name" not in request.json or not request.json["name"]:
-        error["name"] = request.json["error_message"]["empty"]
+        error["name"] = 'cannot be empty'
     if "email" not in request.json or not request.json["email"]:
-        error["email"] = request.json["error_message"]["empty"]
+        error["email"] = 'cannot be empty'
     elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
-        error["email"] = request.json["error_message"]["email"]
+        error["email"] = 'invalid email'
     elif db.get("user", "email", request.json["email"], data):
         error["email"] = "email taken"
     if "password" not in request.json or not request.json["password"]:
-        error["password"] = request.json["error_message"]["empty"]
+        error["password"] = 'cannot be empty'
     elif (
         not re.search("[a-z]", request.json["password"]) or
         not re.search("[A-Z]", request.json["password"]) or
         not re.search("[0-9]", request.json["password"]) or
         len(request.json["password"]) not in range(8, 19)
     ):
-        error["password"] = request.json["error_message"]["password"]
+        error["password"] = """must include at least 1 lowercase letter,
+            1 uppercase letter, 1 number and must contain 8 - 18 characters"""
     elif ("confirm_password" not in request.json
           or not request.json["confirm_password"]):
-        error["confirm_password"] = request.json["error_message"]["empty"]
+        error["confirm_password"] = 'cannot be empty'
     elif request.json["confirm_password"] != request.json["password"]:
-        error["confirm_password"] = request.json["error_message"][
-            "confirm_password"]
+        error["confirm_password"] = 'does not match password'
 
     if error != {}:
         return jsonify({
@@ -132,7 +131,7 @@ def confirm(token):
         })
 
     user["status"] = "verified"
-    user = db.add(user)
+    db.add(user)
 
     return jsonify({
         "status": 200,
@@ -145,6 +144,18 @@ def confirm(token):
 
 @bp.post("/login")
 def login():
+    error = {}
+    if "email" not in request.json or not request.json["email"]:
+        error["email"] = 'cannot be empty'
+    if "password" not in request.json or not request.json["password"]:
+        error["password"] = 'cannot be empty'
+
+    if error != {}:
+        return jsonify({
+            "status": 201,
+            "message": error
+        })
+
     data = db.data()
 
     anon_user = token_to_user(data)
@@ -153,34 +164,19 @@ def login():
             "status": 101,
             "message": "invalid token"
         })
-    elif (anon_user["status"] != "anonymous"
-          or "error_message" not in request.json
-          ):
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
-    error = {}
-    if "email" not in request.json or not request.json["email"]:
-        error["email"] = request.json["error_message"]["empty"]
-    if "password" not in request.json or not request.json["password"]:
-        error["password"] = request.json["error_message"]["empty"]
-
-    if error != {}:
-        return jsonify({
-            "status": 201,
-            "message": error
-        })
-
-    if ("email_template" not in request.json
-            or not request.json["email_template"]):
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
 
     user = db.get("user", "email", request.json["email"], data)
+
+    if (
+        anon_user["status"] != "anonymous"
+        or user and user["login"]
+        or "email_template" not in request.json
+        or not request.json["email_template"]
+    ):
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
 
     if (
         not user

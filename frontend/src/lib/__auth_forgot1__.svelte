@@ -16,6 +16,7 @@
 
 	const validate = () => {
 		error = {};
+		
 		if (!form.email) {
 			error.email = 'cannot be empty';
 		} else if (!/\S+@\S+\.\S+/.test(form.email)) {
@@ -38,6 +39,7 @@
 
 		if (resp.ok) {
 			const data = await resp.json();
+
 			if (data.status == 200) {
 				$module = {
 					module: Info,
@@ -56,7 +58,7 @@
 			} else if (data.status == 201) {
 				error = data.message;
 			} else {
-				throw new Error('invalid request');
+				error.form = data.message;
 			}
 		}
 	};

@@ -9,8 +9,11 @@
 
 	export let post = {};
 	export let comment = {};
+	let error = '';
 
 	const validate = async (vote) => {
+		error = '';
+
 		if (comment.upvote.includes($_user.key)) {
 			comment.upvote = comment.upvote.filter((e) => e != $_user.key);
 		} else if (comment.downvote.includes($_user.key)) {
@@ -42,19 +45,16 @@
 		if (resp.ok) {
 			const data = await resp.json();
 
-			if (data.status == 201) {
-				error = data.message;
-			} else if (data.status == 200) {
+			if (data.status == 200) {
 				for (const i in post.comments) {
 					if (post.comments[i]['key'] == data.data.comment['key']) {
 						post.comments[i] = data.data.comment;
 						break;
 					}
 				}
-
 				tick(post);
 			} else {
-				error.form = data.message;
+				error = data.message;
 			}
 		}
 	};
@@ -78,28 +78,34 @@
 	</div>
 	<div>
 		<Marked md={comment.comment} />
+		{#if error}
+			<span class="error">
+				{error}
+			</span>
+			<br />
+		{/if}
 		{#if $_user.login}
 			<Button
 				name="Reply"
-				class="secondary"
+				class="secondary tiny"
 				on:click={() => {
 					$module = {
 						module: Add_Comment,
-						owner: comment.key,
+						owner_key: comment.key,
 						post
 					};
 				}}
 			/> |
 			<Button
 				name="upvote ({comment.upvote.length})"
-				class="secondary"
+				class="secondary tiny"
 				on:click={() => {
 					validate('up');
 				}}
 			/> |
 			<Button
 				name="downvote ({comment.downvote.length})"
-				class="secondary"
+				class="secondary tiny"
 				on:click={() => {
 					validate('down');
 				}}

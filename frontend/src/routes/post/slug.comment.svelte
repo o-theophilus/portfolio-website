@@ -21,7 +21,7 @@
 				on:click={() => {
 					$module = {
 						module: Add_Comment,
-						owner: post.key,
+						owner_key: post.key,
 						post
 					};
 				}}

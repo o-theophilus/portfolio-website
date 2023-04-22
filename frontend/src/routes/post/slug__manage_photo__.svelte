@@ -79,7 +79,10 @@
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify(post)
+			body: JSON.stringify({
+				photos: post.photos,
+				active_photo: post.active_photo
+			})
 		});
 		$loading = false;
 
@@ -150,13 +153,12 @@
 
 	const upload_input = async () => {
 		let formData = new FormData();
-		formData.append('slug', post.slug);
 		for (let i in files) {
 			formData.append('files', files[i]);
 		}
 
 		$loading = 'Uploading . . .';
-		const resp = await fetch(`${api_url}/${post.type}/photo_many/${post.slug}`, {
+		const resp = await fetch(`${api_url}/photo/${post.key}`, {
 			method: 'post',
 			headers: {
 				Authorization: $token

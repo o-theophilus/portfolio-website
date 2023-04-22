@@ -12,19 +12,19 @@
 	let email_template;
 
 	export let email = '';
-	let form = { email: email };
-	let error = {};
-	let error_message = {
-		empty: 'cannot be empty'
+	let form = {
+		email
 	};
+	let error = {};
 
 	const validate = () => {
 		error = {};
+
 		if (!form.email) {
-			error.email = error_message.empty;
+			error.email = 'cannot be empty';
 		}
 		if (!form.password) {
-			error.password = error_message.empty;
+			error.password = 'cannot be empty';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -51,10 +51,9 @@
 				$loading = false;
 			}
 
-			if ([101, 401].includes(data.status)) {
-				error.form = data.message;
-			} else if (data.status == 201) {
-				error = data.message;
+			if (data.status == 200) {
+				$token = data.data.token;
+				document.location = '/';
 			} else if (data.status == 202) {
 				$module = {
 					module: Info,
@@ -70,11 +69,10 @@
 						}
 					]
 				};
-			} else if (data.status == 200) {
-				$token = data.data.token;
-				document.location = '/';
+			} else if (data.status == 201) {
+				error = data.message;
 			} else {
-				throw new Error('invalid request');
+				error.form = data.message;
 			}
 		}
 	};

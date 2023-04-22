@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, tick } from '$lib/store.js';
+	import { api_url, module, tick, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
@@ -20,7 +20,6 @@
 		if (!form.date) {
 			error.date = 'cannot be empty';
 		}
-
 		if (!form.time) {
 			error.time = 'cannot be empty';
 		}
@@ -29,7 +28,8 @@
 	};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post.type}/date/${post.slug}`, {
+		$loading = `Saving ${post.type} . . .`;
+		const resp = await fetch(`${api_url}/post/date/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -37,6 +37,7 @@
 			},
 			body: JSON.stringify(form)
 		});
+		$loading = false;
 
 		if (resp.ok) {
 			let data = await resp.json();
@@ -58,8 +59,10 @@
 						}
 					]
 				};
-			} else {
+			} else if (data.status == 201) {
 				error = data.message;
+			} else {
+				error.form = data.message;
 			}
 		}
 	};

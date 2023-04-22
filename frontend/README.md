@@ -6,14 +6,13 @@ markdown textarea enable tab key
 
 FEATURES:
 
-comment: delete
 comment: sort
 post: sort
 
 login time tracking
+comment: delete
 delete ripple effect
 
-display all backend form error in frontend
 user profile
 
 ##########################################
@@ -21,4 +20,5 @@ user profile
 OTHERS:
 
 set fluid resolution by device
+or remove fluid
 npm update

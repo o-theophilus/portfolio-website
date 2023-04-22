@@ -1,6 +1,6 @@
 <script>
 	import { api_url, _user, module } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { token as _token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
@@ -11,20 +11,14 @@
 	import EmailTemplate from './email_template.confirm.svelte';
 	let email_template;
 
-	export let _token = '';
+	export let token = '';
 	let form = {};
 	let error = {};
-	let error_message = {
-		empty: 'cannot be empty',
-		password:
-			'must include at least 1 lowercase letter, 1 uppercase letter, 1 number and must contain 8 - 18 characters',
-		confirm_password: 'does not match password'
-	};
 
 	const validate = () => {
 		error = {};
 		if (!form.password) {
-			error.password = error_message.empty;
+			error.password = 'cannot be empty';
 		} else if (
 			!/[a-z]/.test(form.password) ||
 			!/[A-Z]/.test(form.password) ||
@@ -32,11 +26,12 @@
 			form.password.length < 8 ||
 			form.password.length > 18
 		) {
-			error.password = error_message.password;
+			error.password =
+				'must include at least 1 lowercase letter, 1 uppercase letter, 1 number and must contain 8 - 18 characters';
 		} else if (!form.confirm_password) {
-			error.confirm_password = error_message.empty;
+			error.confirm_password = 'cannot be empty';
 		} else if (form.password != form.confirm_password) {
-			error.confirm_password = error_message.confirm_password;
+			error.confirm_password = 'does not match password';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -44,25 +39,21 @@
 
 	const submit = async () => {
 		form.email_template = email_template.innerHTML;
-		form.error_message = error_message;
-		form.token = _token;
+		form.token = token;
 
 		const resp = await fetch(`${api_url}/password_forgot2`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: $_token
 			},
 			body: JSON.stringify(form)
 		});
 
 		if (resp.ok) {
 			const data = await resp.json();
-			if (data.status == 101) {
-				error.form = data.message;
-			} else if (data.status == 201) {
-				error = data.message;
-			} else if (data.status == 200) {
+
+			if (data.status == 200) {
 				$module = {
 					module: Info,
 					title: 'Done',
@@ -77,8 +68,10 @@
 						}
 					]
 				};
+			} else if (data.status == 201) {
+				error = data.message;
 			} else {
-				throw new Error('invalid request');
+				error.form = data.message;
 			}
 		}
 	};

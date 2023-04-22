@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, tick } from '$lib/store.js';
+	import { api_url, module, tick, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
@@ -8,15 +8,19 @@
 
 	export let post;
 
+	let form = {
+		format: post.format,
+		content: post.content
+	};
 	let error = {};
 
 	const validate = () => {
 		error = {};
 
-		if (!post.format) {
+		if (!form.format) {
 			error.format = 'cannot be empty';
 		}
-		if (!post.content) {
+		if (!form.content) {
 			error.content = 'cannot be empty';
 		}
 
@@ -24,14 +28,16 @@
 	};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post.type}/content/${post.slug}`, {
+		$loading = `Saving ${post.type} . . .`;
+		const resp = await fetch(`${api_url}/post/content/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify(post)
+			body: JSON.stringify(form)
 		});
+		$loading = false;
 
 		if (resp.ok) {
 			const data = await resp.json();
@@ -53,8 +59,10 @@
 						}
 					]
 				};
-			} else {
+			} else if (data.status == 201) {
 				error = data.message;
+			} else {
+				error.form = data.message;
 			}
 		}
 	};
@@ -62,22 +70,27 @@
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Edit Content </strong>
+	{#if error.form}
+		<span class="error">
+			{error.form}
+		</span>
+	{/if}
 	<Input name="format" error={error.format} let:id>
 		<label>
-			<input type="radio" bind:group={post.format} value="markdown" />
+			<input type="radio" bind:group={form.format} value="markdown" />
 			Markdown
 		</label>
 
 		<label>
-			<input type="radio" bind:group={post.format} value="url" />
+			<input type="radio" bind:group={form.format} value="url" />
 			URL
 		</label>
 	</Input>
 	<Input name="content" error={error.content} let:id>
-		{#if post.format == 'markdown'}
-			<textarea placeholder="Content here" {id} bind:value={post.content} on:keypress />
-		{:else if post.format == 'url'}
-			<input placeholder="Content here" type="text" {id} bind:value={post.content} />
+		{#if form.format == 'markdown'}
+			<textarea placeholder="Content here" {id} bind:value={form.content} on:keypress />
+		{:else if form.format == 'url'}
+			<input placeholder="Content here" type="text" {id} bind:value={form.content} />
 		{/if}
 	</Input>
 

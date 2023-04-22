@@ -22,13 +22,11 @@
 		if (!form.name) {
 			error.name = 'cannot be empty';
 		}
-
 		if (!form.email) {
 			error.email = 'cannot be empty';
 		} else if (!/\S+@\S+\.\S+/.test(form.email)) {
 			error.email = 'invalid email';
 		}
-
 		if (!form.message) {
 			error.message = 'cannot be empty';
 		}
@@ -53,11 +51,7 @@
 		if (resp.ok) {
 			const data = await resp.json();
 
-			if (data.status == 401) {
-				error.form = data.message;
-			} else if (data.status == 201) {
-				error = data.message;
-			} else if (data.status == 200) {
+			if (data.status == 200) {
 				form = {};
 				_form.reset();
 
@@ -79,8 +73,11 @@
 						}
 					]
 				};
+			} else if (data.status == 201) {
+				error = data.message;
 			} else {
-				throw new Error('invalid request');
+				error.form = data.message;
+				// throw new Error(data.message);
 			}
 		}
 	};
@@ -90,6 +87,12 @@
 </script>
 
 <form on:submit|preventDefault={validate} novalidate autocomplete="off" bind:this={_form}>
+	{#if error.form}
+		<div class="err">
+			{error.form}
+		</div>
+	{/if}
+	
 	<Input name="full name" error={error.name} let:id svg="username">
 		<input placeholder="Your Name" type="text" {id} bind:value={form.name} />
 	</Input>
@@ -114,11 +117,6 @@
 			on:input={() => (msgStore = form.message)}
 		/>
 	</Input>
-	{#if error.form}
-		<div class="err">
-			{error.form}
-		</div>
-	{/if}
 	<Button class="wide">Send</Button>
 </form>
 

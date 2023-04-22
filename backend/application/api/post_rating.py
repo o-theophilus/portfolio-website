@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
-from . import token_to_user, db, post_schema,  rating_template
+from . import token_to_user, db
+from .schema import post_schema,  rating_template
 
 
 bp = Blueprint("rating", __name__)
 
 
-@bp.post("/blog/rating/<key>")
-@bp.post("/project/rating/<key>")
+@bp.post("/rating/<key>")
 def add_rating(key):
     post_type = f"{request.url_rule}"[1:].split("/")[0]
 

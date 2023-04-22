@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, tick } from '$lib/store.js';
+	import { api_url, module, tick, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
@@ -8,26 +8,24 @@
 
 	export let post;
 
-	let error = '';
-
-	const validate = () => {
-		error = '';
-		if (!post.description) {
-			error = 'cannot be empty';
-		}
-
-		!error && submit();
+	let form = {
+		description: post.description
 	};
+	let error = {};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post.type}/description/${post.slug}`, {
+		error = {};
+
+		$loading = `Saving ${post.type} . . .`;
+		const resp = await fetch(`${api_url}/post/description/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify(post)
+			body: JSON.stringify(form)
 		});
+		$loading = false;
 
 		if (resp.ok) {
 			const data = await resp.json();
@@ -49,8 +47,10 @@
 						}
 					]
 				};
-			} else {
+			} else if (data.status == 201) {
 				error = data.message;
+			} else {
+				error.form = data.message;
 			}
 		}
 	};
@@ -58,13 +58,18 @@
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Edit Description </strong>
-	<Input name="description" {error} let:id>
-		<textarea placeholder="description here" {id} bind:value={post.description} />
+	{#if error.form}
+		<span class="error">
+			{error.form}
+		</span>
+	{/if}
+	<Input name="description" error={error.description} let:id>
+		<textarea placeholder="description here" {id} bind:value={form.description} />
 	</Input>
 
 	<Button
 		on:click={() => {
-			validate();
+			submit();
 		}}
 	>
 		Submit

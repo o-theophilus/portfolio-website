@@ -1,15 +1,31 @@
 from flask import Blueprint, jsonify, request
-from . import (reserved_words, now, token_to_user, db, post_template,
-               post_schema)
+from . import reserved_words, token_to_user, db
+from .schema import now, post_template, post_schema
 import re
 from uuid import uuid4
 
 bp = Blueprint("post", __name__)
 
 
-@bp.post("/blog")
-@bp.post("/project")
+@bp.post("/post")
 def add_post():
+    if (
+        "type" not in request.json or not request.json["type"]
+        or request.json["type"] not in ["blog", "project"]
+    ):
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
+    if "title" not in request.json or not request.json["title"]:
+        return jsonify({
+            "status": 201,
+            "message": {
+                "title": "cannot be empty"
+            }
+        })
+
     data = db.data()
 
     user = token_to_user(data)
@@ -19,23 +35,15 @@ def add_post():
             "message": "unauthorised access"
         })
 
-    if "title" not in request.json or not request.json["title"]:
-        return jsonify({
-            "status": 201,
-            "message": "cannot be empty"
-        })
-
-    post_type = f"{request.url_rule}"[1:]
-
     slug = re.sub('-+', '-', re.sub(
         '[^a-zA-Z0-9]', '-', request.json["title"].lower()))
 
-    slug_in_use = db.get(post_type, "slug", slug, data)
+    slug_in_use = db.get(request.json["type"], "slug", slug, data)
     if slug_in_use or slug in reserved_words:
         slug = f"{slug}-{str(uuid4().hex)[:10]}"
 
     post = db.add(post_template(
-        post_type,
+        request.json["type"],
         request.json["title"],
         slug
     ))
@@ -49,10 +57,16 @@ def add_post():
     })
 
 
-@bp.put("/blog/title/<slug>")
-@bp.put("/project/title/<slug>")
-def update_title(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
+@bp.put("/post/title/<key>")
+def update_title(key):
+    if "title" not in request.json or not request.json["title"]:
+        return jsonify({
+            "status": 201,
+            "message": {
+                "title": "cannot be empty"
+            }
+        })
+
     data = db.data()
 
     user = token_to_user(data)
@@ -62,23 +76,17 @@ def update_title(slug):
             "message": "unauthorised access"
         })
 
-    post = db.get(post_type, "slug", slug, data)
+    post = db.get_key(key, data)
     if not post:
         return jsonify({
             "status": 401,
             "message": "invalid request"
         })
 
-    if "title" not in request.json or not request.json["title"]:
-        return jsonify({
-            "status": 201,
-            "message": "cannot be empty"
-        })
-
     slug = re.sub('-+', '-', re.sub(
         '[^a-zA-Z0-9]', '-', request.json["title"].lower()))
 
-    slug_in_use = db.get(post_type, "slug", slug, data)
+    slug_in_use = db.get(post["type"], "slug", slug, data)
 
     if (
         (slug_in_use and slug_in_use['key'] != post["key"])
@@ -101,10 +109,8 @@ def update_title(slug):
     })
 
 
-@bp.put("/blog/description/<slug>")
-@bp.put("/project/description/<slug>")
-def update_description(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
+@bp.put("/post/description/<key>")
+def update_description(key):
 
     data = db.data()
 
@@ -115,17 +121,11 @@ def update_description(slug):
             "message": "unauthorised access"
         })
 
-    post = db.get(post_type, "slug", slug, data)
-    if not post:
+    post = db.get_key(key, data)
+    if not post or "description" not in request.json:
         return jsonify({
             "status": 401,
             "message": "invalid request"
-        })
-
-    if "description" not in request.json or not request.json["description"]:
-        return jsonify({
-            "status": 201,
-            "message": "cannot be empty"
         })
 
     post["updated_at"] = now()
@@ -142,27 +142,8 @@ def update_description(slug):
     })
 
 
-@bp.put("/blog/content/<slug>")
-@bp.put("/project/content/<slug>")
-def update_content(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
-
-    data = db.data()
-
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
-        return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
-        })
-
-    post = db.get(post_type, "slug", slug, data)
-    if not post:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
+@bp.put("/post/content/<key>")
+def update_content(key):
     error = {}
     if "format" not in request.json or not request.json["format"]:
         error["format"] = "cannot be empty"
@@ -173,6 +154,22 @@ def update_content(slug):
         return jsonify({
             "status": 201,
             "message": error
+        })
+
+    data = db.data()
+
+    user = token_to_user(data)
+    if "admin" not in user["roles"]:
+        return jsonify({
+            "status": 102,
+            "message": "unauthorised access"
+        })
+
+    post = db.get_key(key, data)
+    if not post:
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
         })
 
     post["updated_at"] = now()
@@ -196,10 +193,19 @@ def update_content(slug):
     })
 
 
-@bp.put("/blog/date/<slug>")
-@bp.put("/project/date/<slug>")
-def update_date(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
+@bp.put("/post/date/<key>")
+def update_date(key):
+    error = {}
+    if "date" not in request.json or not request.json["date"]:
+        error["date"] = "cannot be empty"
+    if "time" not in request.json or not request.json["time"]:
+        error["time"] = "cannot be empty"
+
+    if error != {}:
+        return jsonify({
+            "status": 201,
+            "message": error
+        })
 
     data = db.data()
 
@@ -210,21 +216,7 @@ def update_date(slug):
             "message": "unauthorised access"
         })
 
-    error = {}
-
-    if "date" not in request.json or not request.json["date"]:
-        error["date"] = "cannot be empty"
-
-    if "time" not in request.json or not request.json["time"]:
-        error["time"] = "cannot be empty"
-
-    if error != {}:
-        return jsonify({
-            "status": 201,
-            "message": error
-        })
-
-    post = db.get(post_type, "slug", slug, data)
+    post = db.get_key(key, data)
     if not post:
         return jsonify({
             "status": 401,
@@ -245,10 +237,8 @@ def update_date(slug):
     })
 
 
-@bp.put("/blog/tags/<slug>")
-@bp.put("/project/tags/<slug>")
-def update_tags(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
+@bp.put("/post/tags/<key>")
+def update_tags(key):
 
     data = db.data()
 
@@ -259,8 +249,8 @@ def update_tags(slug):
             "message": "unauthorised access"
         })
 
-    post = db.get(post_type, "slug", slug, data)
-    if not post:
+    post = db.get_key(key, data)
+    if not post or "tags" not in request.json:
         return jsonify({
             "status": 401,
             "message": "invalid request"
@@ -280,10 +270,8 @@ def update_tags(slug):
     })
 
 
-@ bp.put("/blog/status/<slug>")
-@ bp.put("/project/status/<slug>")
-def update_status(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
+@ bp.put("/post/status/<key>")
+def update_status(key):
 
     data = db.data()
 
@@ -294,29 +282,20 @@ def update_status(slug):
             "message": "unauthorised access"
         })
 
-    post = db.get(post_type, "slug", slug, data)
-    if not post:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
-    if "post_status" not in request.json or not request.json["post_status"]:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
-    status = request.json["post_status"]
-    if (status not in ["draft", "publish", "deleted"]
-            or status == post["status"]):
+    post = db.get_key(key, data)
+    if (
+        not post
+        or "status" not in request.json or not request.json["status"]
+        or request.json["status"] not in ["draft", "publish", "deleted"]
+        or request.json["status"] == post["status"]
+    ):
         return jsonify({
             "status": 401,
             "message": "invalid request"
         })
 
     post["updated_at"] = now()
-    post["status"] = status
+    post["status"] = request.json["status"]
 
     db.add(post)
 
@@ -329,10 +308,8 @@ def update_status(slug):
     })
 
 
-@ bp.put("/blog/videos/<slug>")
-@ bp.put("/project/videos/<slug>")
-def update_videos(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
+@ bp.put("/post/videos/<key>")
+def update_videos(key):
 
     data = db.data()
 
@@ -343,16 +320,13 @@ def update_videos(slug):
             "message": "unauthorised access"
         })
 
-    if "videos" not in request.json:
+    post = db.get_key(key, data)
+    if (
+        not post or "videos" not in request.json
+        or type(request.json["videos"]) != "list"
+    ):
         return jsonify({
             "status": 201,
-            "message": "invalid request"
-        })
-
-    post = db.get(post_type, "slug", slug, data)
-    if not post:
-        return jsonify({
-            "status": 401,
             "message": "invalid request"
         })
 
@@ -370,10 +344,8 @@ def update_videos(slug):
     })
 
 
-@ bp.delete("/blog/<slug>")
-@ bp.delete("/project/<slug>")
-def delete(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
+@ bp.delete("/post/<key>")
+def delete(key):
 
     data = db.data()
 
@@ -384,8 +356,7 @@ def delete(slug):
             "message": "unauthorised access"
         })
 
-    post = db.get(post_type, "slug", slug, data)
-
+    post = db.get_key(key, data)
     if not post:
         return jsonify({
             "status": 401,

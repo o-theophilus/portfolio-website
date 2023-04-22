@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, tick } from '$lib/store.js';
+	import { api_url, module, tick, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
@@ -9,15 +9,19 @@
 
 	let error = '';
 
-	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post.type}/status/${post.slug}`, {
+	const submit = async (status) => {
+		error = '';
+
+		$loading = `Saving ${post.type} . . .`;
+		const resp = await fetch(`${api_url}/post/status/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify(post)
+			body: JSON.stringify({ status })
 		});
+		$loading = false;
 
 		if (resp.ok) {
 			const data = await resp.json();
@@ -44,10 +48,6 @@
 			}
 		}
 	};
-	let status = ['draft', 'publish'];
-	status = status.filter(function (s) {
-		return s != post.status;
-	});
 </script>
 
 <div class="content">
@@ -61,15 +61,16 @@
 		</span>
 	{/if}
 	<div class="row">
-		{#each status as s}
-			<Button
-				on:click={() => {
-					post.temp_status = s;
-					submit();
-				}}
-			>
-				{s}
-			</Button>
+		{#each ['draft', 'publish', 'deleted'] as status}
+			{#if status != post.status}
+				<Button
+					on:click={() => {
+						submit(status);
+					}}
+				>
+					{status}
+				</Button>
+			{/if}
 		{/each}
 	</div>
 </div>

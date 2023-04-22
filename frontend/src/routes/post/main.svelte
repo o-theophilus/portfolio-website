@@ -11,7 +11,7 @@
 	export let data;
 	let { posts } = data;
 	let { tags } = data;
-	let { post_type } = data;
+	let { type } = data;
 
 	$: if ($_tick) {
 		posts.push($_tick);
@@ -20,19 +20,19 @@
 	}
 </script>
 
-<Meta title={post_type} description="{post_type} Posts" image="/site/home.jpg" />
+<Meta title={type} description="{type} Posts" image="/site/home.jpg" />
 
 <section class="background">
 	<Content>
 		<br />
-		<strong class="big">{post_type}{posts.length > 1 ? 's' : ''}</strong>
+		<strong class="big">{type}{posts.length > 1 ? 's' : ''}</strong>
 		{#if $_user.roles.includes('admin')}
 			<br /><br />
 			<Button
 				on:click={() => {
 					$module = {
 						module: Add,
-						post_type
+						type
 					};
 				}}
 			>
@@ -44,7 +44,7 @@
 			{#each posts as post}
 				<ItemBox {post} />
 			{:else}
-				No {post_type} post found
+				No {type} post found
 			{/each}
 		</section>
 

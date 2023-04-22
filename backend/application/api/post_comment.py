@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
-from . import token_to_user, db, comment_template, comment_schema
+from . import token_to_user, db
+from .schema import comment_template, comment_schema
 
 
 bp = Blueprint("comment", __name__)
@@ -7,6 +8,14 @@ bp = Blueprint("comment", __name__)
 
 @bp.post("/comment/<key>")
 def comment_add(key):
+    if "comment" not in request.json or not request.json["comment"]:
+        return jsonify({
+            "status": 201,
+            "message": {
+                "comment": "cannot be empty"
+            }
+        })
+
     data = db.data()
 
     owner = db.get_key(key)
@@ -24,12 +33,6 @@ def comment_add(key):
         return jsonify({
             "status": 102,
             "message": "unauthorised access"
-        })
-
-    if "comment" not in request.json or not request.json["comment"]:
-        return jsonify({
-            "status": 201,
-            "message": {"comment": "cannot be empty"}
         })
 
     path = [owner["key"]]
@@ -52,7 +55,7 @@ def comment_add(key):
 
 
 @bp.post("/comment/vote/<key>")
-def comment_upvote(key):
+def comment_vote(key):
     data = db.data()
 
     user = token_to_user(data)

@@ -21,8 +21,9 @@
 
 	const submit = async () => {
 		error = '';
+
 		$loading = 'Saving . . .';
-		const resp = await fetch(`${api_url}/${post.type}/rating/${post.key}`, {
+		const resp = await fetch(`${api_url}/rating/${post.key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -35,14 +36,12 @@
 		if (resp.ok) {
 			const data = await resp.json();
 
-			if ([401, 102].includes(data.status)) {
-				error = data.message;
-			} else if (data.status == 200) {
+			if (data.status == 200) {
 				tick(data.data.post);
 
 				$module = '';
 			} else {
-				throw new Error('something went wrong');
+				error = data.message;
 			}
 		}
 	};

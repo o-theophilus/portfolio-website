@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, tick } from '$lib/store.js';
+	import { api_url, module, tick, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
@@ -7,7 +7,7 @@
 	import Info from '$lib/__info__.svelte';
 
 	export let post;
-	export let owner = '';
+	export let owner_key = '';
 
 	let form = {};
 	let error = {};
@@ -23,7 +23,8 @@
 	};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/comment/${owner}`, {
+		$loading = 'Adding Comment . . .';
+		const resp = await fetch(`${api_url}/comment/${owner_key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -31,13 +32,12 @@
 			},
 			body: JSON.stringify(form)
 		});
+		$loading = false;
 
 		if (resp.ok) {
 			const data = await resp.json();
 
-			if (data.status == 201) {
-				error = data.message;
-			} else if (data.status == 200) {
+			if (data.status == 200) {
 				post.comments.push(data.data.comment);
 				tick(post);
 
@@ -55,6 +55,8 @@
 						}
 					]
 				};
+			} else if (data.status == 201) {
+				error = data.message;
 			} else {
 				error.form = data.message;
 			}
@@ -64,7 +66,11 @@
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Add Comment </strong>
-
+	{#if error.form}
+		<span class="error">
+			{error.form}
+		</span>
+	{/if}
 	<Input name="comment" error={error.comment} let:id>
 		<textarea placeholder="Comment here" {id} bind:value={form.comment} on:keypress />
 	</Input>

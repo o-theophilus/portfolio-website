@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, send_file
-from . import db, token_to_user, dd, post_schema
+from . import db, token_to_user, dd
+from .schema import post_schema
 from PIL import Image, ImageOps
 from io import BytesIO
 
@@ -28,9 +29,14 @@ def get(name, thumbnail=None):
     return send_file(photo, mimetype="image/jpg")
 
 
-@bp.post("/blog/photo_many/<slug>")
-@bp.post("/project/photo_many/<slug>")
-def post_many(slug):
+@bp.post("/photo/<key>")
+def post_many(key):
+    if 'files' not in request.files:
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
     data = db.data()
 
     user = token_to_user(data)
@@ -38,14 +44,6 @@ def post_many(slug):
         return jsonify({
             "status": 102,
             "message": "unauthorised access"
-        })
-
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
-
-    if 'files' not in request.files or 'slug' not in request.form:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
         })
 
     files = request.files.getlist("files")
@@ -58,15 +56,9 @@ def post_many(slug):
                 "message": "invalid file type"
             })
 
-    post = db.get(post_type, "slug", slug, data)
-    if not post:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
+    post = db.get_key(key, data)
     count = post["content"].count("{#photo}") + 1
-    if len(post["photos"]) + len(files) > count:
+    if not post or len(post["photos"]) + len(files) > count:
         return jsonify({
             "status": 401,
             "message": "invalid request"
@@ -86,10 +78,8 @@ def post_many(slug):
     })
 
 
-@bp.put("/blog/photo/<slug>")
-@bp.put("/project/photo/<slug>")
-def arrange(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
+@bp.put("/photo/<key>")
+def arrange(key):
 
     data = db.data()
 
@@ -100,28 +90,22 @@ def arrange(slug):
             "message": "unauthorised access"
         })
 
-    if "photos" not in request.json or not request.json["photos"]:
+    def get_photo_names():
+        return [p.split("/")[-1] for p in request.json["photos"]]
+
+    post = db.get_key(key, data)
+    if (
+        not post
+        or "photos" not in request.json
+        or type(request.json["photos"]) != "list"
+        or set(post["photos"]) != set(get_photo_names())
+    ):
         return jsonify({
             "status": 401,
             "message": "invalid request"
         })
 
-    post = db.get(post_type, "slug", slug, data)
-    if not post:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
-    photos = [p.split("/")[-1] for p in request.json["photos"]]
-
-    if set(post["photos"]) != set(photos):
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
-    post["photos"] = photos
+    post["photos"] = get_photo_names()
     db.add(post)
 
     return jsonify({
@@ -133,10 +117,8 @@ def arrange(slug):
     })
 
 
-@bp.delete("/blog/photo/<slug>")
-@bp.delete("/project/photo/<slug>")
-def delete(slug):
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
+@bp.delete("/photo/<key>")
+def delete(key):
 
     data = db.data()
 
@@ -147,31 +129,24 @@ def delete(slug):
             "message": "unauthorised access"
         })
 
-    if "active_photo" not in request.json or not request.json["active_photo"]:
+    def active_photo():
+        return request.json["active_photo"].split("/")[-1]
+
+    post = db.get_key(key, data)
+    if (
+        not post
+        or "active_photo" not in request.json
+        or not request.json["active_photo"]
+        or active_photo() not in post["photos"]
+    ):
         return jsonify({
             "status": 401,
             "message": "invalid request"
         })
 
-    post = db.get(post_type, "slug", slug, data)
-    if not post:
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
+    post["photos"].remove(active_photo())
+    dd.rem(active_photo(), "post")
 
-    ap = request.json["active_photo"]
-    ap = ap.split("/")[-1]
-
-    photos = [p for p in post["photos"] if p != ap]
-    if len(photos) == len(post["photos"]):
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
-
-    dd.rem(ap, "post")
-    post["photos"] = photos
     db.add(post)
 
     return jsonify({

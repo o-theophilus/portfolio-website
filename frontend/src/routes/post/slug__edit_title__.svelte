@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { api_url, module, tick } from '$lib/store.js';
+	import { api_url, module, tick, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
@@ -9,26 +9,32 @@
 
 	export let post;
 
-	let error = '';
+	let form = {
+		title: post.title
+	};
+	let error = {};
 
 	const validate = () => {
-		error = '';
-		if (!post.title) {
-			error = 'cannot be empty';
+		error = {};
+		if (!form.title) {
+			error.title = 'cannot be empty';
 		}
 
-		!error && submit();
+		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/${post.type}/title/${post.slug}`, {
+		
+		$loading = `Saving ${post.type} . . .`;
+		const resp = await fetch(`${api_url}/post/title/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify(post)
+			body: JSON.stringify(form)
 		});
+		$loading = false;
 
 		if (resp.ok) {
 			const data = await resp.json();
@@ -51,8 +57,10 @@
 					]
 				};
 				goto(`/${post.type}/${data.data.post.slug}`);
-			} else {
+			} else if (data.status == 201) {
 				error = data.message;
+			} else {
+				error.form = data.message;
 			}
 		}
 	};
@@ -60,8 +68,14 @@
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Edit title </strong>
-	<Input name="title" {error} let:id>
-		<input placeholder="Title here" type="text" {id} bind:value={post.title} />
+	{#if error.form}
+		<span class="error">
+			{error.form}
+		</span>
+	{/if}
+
+	<Input name="title" error={error.title} let:id>
+		<input placeholder="Title here" type="text" {id} bind:value={form.title} />
 	</Input>
 
 	<Button

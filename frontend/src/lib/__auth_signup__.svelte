@@ -13,26 +13,20 @@
 
 	let form = {};
 	let error = {};
-	let error_message = {
-		empty: 'cannot be empty',
-		email: 'invalid email',
-		password:
-			'must include at least 1 lowercase letter, 1 uppercase letter, 1 number and must contain 8 - 18 characters',
-		confirm_password: 'does not match password'
-	};
 
 	const validate = () => {
 		error = {};
+
 		if (!form.name) {
-			error.name = error_message.empty;
+			error.name = 'cannot be empty';
 		}
 		if (!form.email) {
-			error.email = error_message.empty;
+			error.email = 'cannot be empty';
 		} else if (!/\S+@\S+\.\S+/.test(form.email)) {
-			error.email = error_message.email;
+			error.email = 'invalid email';
 		}
 		if (!form.password) {
-			error.password = error_message.empty;
+			error.password = 'cannot be empty';
 		} else if (
 			!/[a-z]/.test(form.password) ||
 			!/[A-Z]/.test(form.password) ||
@@ -40,11 +34,12 @@
 			form.password.length < 8 ||
 			form.password.length > 18
 		) {
-			error.password = error_message.password;
+			error.password =
+				'must include at least 1 lowercase letter, 1 uppercase letter, 1 number and must contain 8 - 18 characters';
 		} else if (!form.confirm_password) {
-			error.confirm_password = error_message.empty;
+			error.confirm_password = 'cannot be empty';
 		} else if (form.password != form.confirm_password) {
-			error.confirm_password = error_message.confirm_password;
+			error.confirm_password = 'does not match password';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -52,7 +47,6 @@
 
 	const submit = async () => {
 		form.email_template = email_template.innerHTML;
-		form.error_message = error_message;
 
 		$loading = 'Loading . . .';
 		const resp = await fetch(`${api_url}/signup`, {
@@ -67,11 +61,8 @@
 
 		if (resp.ok) {
 			const data = await resp.json();
-			if ([101, 401].includes(data.status)) {
-				error.form = data.message;
-			} else if (data.status == 201) {
-				error = data.message;
-			} else if (data.status == 200) {
+
+			if (data.status == 200) {
 				$module = {
 					module: Info,
 					title: 'Done',
@@ -86,8 +77,10 @@
 						}
 					]
 				};
+			} else if (data.status == 201) {
+				error = data.message;
 			} else {
-				throw new Error('invalid request');
+				error.form = data.message;
 			}
 		}
 	};

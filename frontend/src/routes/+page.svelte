@@ -26,8 +26,8 @@
 		let _module = $page.url.searchParams.get('module');
 
 		if (_module == 'confirm') {
-			let _token = $page.url.searchParams.get('token');
-			const resp = await fetch(`${api_url}/confirm/${_token}`);
+			let token = $page.url.searchParams.get('token');
+			const resp = await fetch(`${api_url}/confirm/${token}`);
 
 			if (resp.ok) {
 				const data = await resp.json();
@@ -72,7 +72,7 @@
 		} else if (_module == 'password') {
 			$module = {
 				module: Forgot,
-				_token: $page.url.searchParams.get('token')
+				token: $page.url.searchParams.get('token')
 			};
 		} else if (_module == 'login') {
 			$module = {
