@@ -9,10 +9,10 @@
 <Content>
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
-			<strong class="big dark"> Hi. </strong>
-			<br /><br />
-			I am a web developer/graphic designer based in Lagos. I have a passion for designing, and I love
-			to create for the web and mobile devices.
+			<strong class="big dark"> Hi there! </strong>
+			<br />
+			I am multidisciplinary designer with a passion for creating impactful designs for web and print.
+			From logos to brochures, websites to social media graphics, I've got you covered.
 		</div>
 	</Observe>
 
@@ -20,25 +20,25 @@
 
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
-			<strong class="big color1"> What I can do. </strong>
+			<strong class="big color1"> What I Can Do: </strong>
 			<br /><br />
-			<strong class="large">Design what you want.</strong>
+			<strong class="large">Design What You Want</strong>
 			<br />
-			<br />
-			I like to keep it simple. My goals are focused on details, content and conveying the message that
-			you want to send.
+			My design philosophy centers on simplicity and clarity. I believe in creating designs that are
+			not only aesthetically pleasing, but also easy to understand and effective in communicating your
+			message.
 		</div>
 	</Observe>
 
-	<br /><br />
+	<br />
 
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
-			<strong class="large">Develop what you need.</strong>
+			<strong class="large">Develop What You Need</strong>
 			<br />
-			<br />
-			I am a developer, so I know how to create your website to run across devices using the latest technologies
-			available.
+			While I focus primarily on graphic design, I also have experience with web development and programming.
+			I can work with you to create a website that not only looks great, but also functions seamlessly
+			across devices.
 		</div>
 	</Observe>
 
@@ -48,11 +48,10 @@
 		<div class="observe" class:intersecting>
 			<div class="h">
 				<div>
-					<strong class="big color1"> I can help. </strong>
-					<br /><br />
-					I am currently available for freelance work. If you have a project that you want to get started,
-					think you need my help with something or just fancy saying hey...
-					<!--, then get in touch.-->
+					<strong class="big color1"> How I Can Help </strong>
+					<br />
+					I am currently available for freelance work and collaborations. Whether you're looking to refresh
+					your branding, create a new website, or design marketing materials, I'm here to help.
 				</div>
 				<div>
 					<Scroller query="footer">

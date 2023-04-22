@@ -8,20 +8,20 @@
 		<div class="observe" class:intersecting>
 			<strong class="big">About Me</strong>
 			<br /><br />
-			My name is <strong>Theophilus</strong>, I am a self-taught student of programming and software
-			development, and I spend way too much time and money pursuing this interest.
+
+			My name is <strong>Theophilus</strong>, and I am a self-taught programmer and designer with a
+			passion for learning and growing. I am always seeking new challenges and opportunities to
+			expand my skills and knowledge.
+
 			<br /> <br />
-			I spend most of my free time working on building my skillset, contributing to Open Source projects,
-			and trying to learn as much as I can. There have been many good people who have assisted me in
-			learning this craft, and I try to pay that forward by helping others who may be newer than I.
+			I spend most of my time working on personal projects, contributing to open source projects, and
+			sharing my knowledge with others. I believe in the power of community and collaboration and have
+			benefited greatly from the support and mentorship of others.
 			<br /> <br />
-			I have benefited in massive ways from the work of those who took the time to share their know-how
-			on the internet. From various bloggers to programming forums, to the now ubiquitous Stack Overflow,
-			I have, in Borg-like fashion, assimilated the experience and college education of some of the biggest
-			(and not so big) names in the technology arena. Shamelessly!
-			<br /> <br />
-			When I’m not writing code or designing, I tend to be playing music (my other passion), exploring
-			my surroundings, and doing my best to experience life beyond the code editor.
+
+			When I am not designing or programming, you can find me playing music, exploring my
+			surroundings, or spending time with my family and friends. I believe that a balanced and
+			fulfilling life is essential to creative inspiration and success.
 		</div>
 	</Observe>
 </Content>

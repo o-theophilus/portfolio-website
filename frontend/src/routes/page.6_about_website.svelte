@@ -8,16 +8,21 @@
 		<div class="observe" class:intersecting>
 			<strong class="big">This Website</strong>
 			<br /><br />
-			This website was made with Svelte<span class="heart">&#10084</span> and deployed on Vercel.
-			It's entirely static through the SvelteKit's SSG feature.
+
+			I built this website using Svelte<span class="heart">&#10084</span> and SvelteKit, two
+			cutting-edge technologies that make it easy to create fast, responsive web applications.
+			Unlike traditional static sites, this website is dynamic and interactive, which means it can
+			be updated in real-time without needing to refresh the page.
 			<br /> <br />
-			Posts are written in Markdown, in-page codes are formatted using Highlight.js and then converted
-			to nice-looking HTML at build-time.
-			<br /> <br />
-			This website was originally built with C# and Razor then ported to React and now to SvelteKit because
-			of its simplicity and ease of use.
+			Posts are written in Markdown, a lightweight markup language that's easy to learn and use. Markdown
+			simplifies the process of formatting text, so you can focus on creating great content without worrying
+			about complex HTML syntax. Thanks to the integration of Highlight.js, the code snippets on this
+			website are beautifully highlighted, making it easy for you to follow along and understand the
+			technical details.
 			<br /><br />
-			This website is an all-in-one blog, portfolio and pet project to try out new shiny things.
+			Whether you're browsing my portfolio, reading my blog, or just exploring, I hope you'll enjoy your
+			experience on this site. This website is an all-in-one platform where I showcase my work and try
+			out new shiny things.
 		</div>
 	</Observe>
 </Content>
