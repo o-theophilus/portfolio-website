@@ -85,31 +85,37 @@
 			<br />
 		{/if}
 		{#if $_user.login}
-			<Button
-				name="Reply"
-				class="secondary tiny"
-				on:click={() => {
-					$module = {
-						module: Add_Comment,
-						owner_key: comment.key,
-						post
-					};
-				}}
-			/> |
-			<Button
-				name="upvote ({comment.upvote.length})"
-				class="secondary tiny"
-				on:click={() => {
-					validate('up');
-				}}
-			/> |
-			<Button
-				name="downvote ({comment.downvote.length})"
-				class="secondary tiny"
-				on:click={() => {
-					validate('down');
-				}}
-			/>
+			<div class="buttons">
+				<Button
+					name="Reply"
+					class="secondary tiny"
+					on:click={() => {
+						$module = {
+							module: Add_Comment,
+							owner_key: comment.key,
+							post
+						};
+					}}
+				/>
+				|
+				<Button
+					name={comment.downvote.length}
+					class="secondary tiny"
+					icon="dislike"
+					on:click={() => {
+						validate('down');
+					}}
+				/>
+				|
+				<Button
+					name={comment.upvote.length}
+					class="secondary tiny"
+					icon="like"
+					on:click={() => {
+						validate('up');
+					}}
+				/>
+			</div>
 		{/if}
 	</div>
 	{#each post.comments as c}
@@ -170,5 +176,9 @@
 	}
 	.date {
 		color: var(--accent3);
+	}
+	.buttons {
+		display: flex;
+		gap: var(--gap1);
 	}
 </style>
