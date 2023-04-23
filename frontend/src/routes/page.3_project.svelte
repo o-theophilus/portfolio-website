@@ -33,7 +33,7 @@
 					intersecting = entries[0].isIntersecting;
 				},
 				{
-					threshold: 1
+					threshold: 0.9
 				}
 			);
 
