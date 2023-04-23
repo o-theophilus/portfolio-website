@@ -1,7 +1,5 @@
 FIX:
 
-
-
 ##########################################
 
 FEATURES:
@@ -15,6 +13,8 @@ comment: delete
 delete ripple effect
 
 user profile
+
+home project background
 
 ##########################################
 

@@ -9,7 +9,7 @@
 <Content>
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
-			<strong class="big dark"> Hi there! </strong>
+			<strong class="big dark"> Hi There! </strong>
 			<br />
 			I am multidisciplinary designer with a passion for creating impactful designs for web and print.
 			From logos to brochures, websites to social media graphics, I've got you covered.

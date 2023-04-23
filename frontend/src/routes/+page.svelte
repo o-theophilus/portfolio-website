@@ -105,7 +105,7 @@
 <Home />
 <br /><br />
 <br /><br />
-<Projects {projects} {blogs} />
+<Projects {projects} />
 <br /><br />
 <AboutMe />
 <br /><br />

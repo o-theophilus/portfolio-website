@@ -73,7 +73,7 @@
 		error = '';
 
 		$loading = method == 'delete' ? 'Deleting . . .' : 'Reordering . . .';
-		const resp = await fetch(`${api_url}/${post.type}/photo/${post.slug}`, {
+		const resp = await fetch(`${api_url}/photo/${post.key}`, {
 			method: method,
 			headers: {
 				'Content-Type': 'application/json',

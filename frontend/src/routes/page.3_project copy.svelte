@@ -1,11 +1,11 @@
 <script>
 	import { browser } from '$app/environment';
-	import { api_url } from '$lib/store.js';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 
 	import Content from '$lib/content.svelte';
+	import Fluid from './page.3_fluid.svelte';
 	import ItemBox from './page.3_project.item_box.svelte';
 	import Scroller from '$lib/scroller.svelte';
 
@@ -16,10 +16,9 @@
 	let pos = {};
 
 	export let projects = [];
-
-	let observe_post = projects.length > 0 ? projects[0] : {};
-	let hover_post = {};
-	$: active_post = Object.keys(hover_post).length > 0 ? hover_post : observe_post;
+	export let blogs = [];
+	blogs = blogs; //fix unknown prop
+	let active_post = projects.length > 0 ? projects[0] : {};
 
 	const set_pos = (scroller) =>
 		(sticky.offsetTop / (section.clientHeight - sticky.clientHeight)) *
@@ -33,32 +32,62 @@
 					intersecting = entries[0].isIntersecting;
 				},
 				{
-					threshold: 1
+					threshold: 0.9
 				}
 			);
 
 			ob.observe(document.querySelector('.project-block'));
 		}
 	});
+
+	let fluid_op = {
+		SIM_RESOLUTION: 8, //128
+		DYE_RESOLUTION: 64, //1024
+		CAPTURE_RESOLUTION: 256, //512
+		DENSITY_DISSIPATION: 1,
+		VELOCITY_DISSIPATION: 0.1, //0.3
+		PRESSURE: 0.8,
+		PRESSURE_ITERATIONS: 20,
+
+		CURL: 0.1, //30
+		SPLAT_RADIUS: 1, //0.35
+		SPLAT_FORCE: 6000,
+
+		SHADING: true,
+		COLORFUL: true,
+		COLOR_UPDATE_SPEED: 10,
+		PAUSED: false,
+
+		BACK_COLOR: { r: 0, g: 0, b: 0 },
+		TRANSPARENT: true,
+
+		BLOOM: false,
+		BLOOM_ITERATIONS: 8,
+		BLOOM_RESOLUTION: 256,
+		BLOOM_INTENSITY: 0.8,
+		BLOOM_THRESHOLD: 0.6,
+		BLOOM_SOFT_KNEE: 0.7,
+
+		SUNRAYS: false,
+		SUNRAYS_RESOLUTION: 196,
+		SUNRAYS_WEIGHT: 1.0
+	};
 </script>
 
 <svelte:window
 	on:scroll={(e) => {
 		pos.a = set_pos(scroller.a);
+		// pos.b = set_pos(scroller.b);
 	}}
 />
 
 <section bind:this={section} class:intersecting>
 	<div class="sticky" bind:this={sticky}>
-		<div class="bg-area">
-			{#key active_post.key}
-				<div
-					class="bg"
-					style:--fff="url({api_url}/{active_post.photos[0]})"
-					in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}
-				/>
-			{/key}
-		</div>
+		<!-- <div class="fluid">
+			<Fluid {...fluid_op} />
+			<div class="blocker" />
+		</div> -->
+
 		<Content>
 			<div class="project-block" bind:this={block}>
 				<strong class="big title"> Project{projects.length > 1 ? 's' : ''} </strong>
@@ -68,15 +97,8 @@
 						<ItemBox
 							parent={block}
 							{post}
-							{active_post}
-							on:active={() => {
-								observe_post = post;
-							}}
-							on:mouseenter={() => {
-								hover_post = post;
-							}}
-							on:mouseleave={() => {
-								hover_post = {};
+							on:ok={() => {
+								active_post = post;
 							}}
 						/>
 					{/each}
@@ -88,16 +110,31 @@
 				</div>
 
 				<div class="desc">
-					{#key hover_post.key || observe_post.key}
+					{#key active_post.slug}
 						<div in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}>
 							<strong class="big color1">
-								{hover_post.title || observe_post.title}
+								{active_post.title}
 							</strong>
 							<br />
-							{hover_post.description || observe_post.description}
+							{active_post.description}
 						</div>
 					{/key}
 				</div>
+
+				<!-- <br /><br />
+				<strong class="big"> Blogs </strong>
+				<br />
+
+				<div class="scroller left" style:left="{pos.b}px" bind:this={scroller.b}>
+					<Scroller href="/blog"
+						>view
+						<br />
+						more</Scroller
+					>
+					{#each blogs as post}
+					<ItemBox {post} home />
+					{/each}
+				</div> -->
 			</div>
 		</Content>
 	</div>
@@ -107,8 +144,34 @@
 	section {
 		position: relative;
 		height: 300vh;
+		/* background-color: var(--accent4);
+		
+		transition: all var(--animTime3);
+		transition-timing-function: ease-in-out; */
 	}
-
+	/* .intersecting {
+		background-color: unset;
+	} */
+	.fluid {
+		position: absolute;
+		/* opacity: 0;
+		transition: opacity var(--animTime3);
+		transition-timing-function: ease-in-out; */
+	}
+	/* .intersecting .fluid {
+		opacity: 1;
+	} */
+	.blocker {
+		position: absolute;
+		inset: 0;
+		background-color: var(--accent4);
+		pointer-events: none;
+		transition: background-color var(--animTime1);
+		transition-timing-function: ease-in-out;
+	}
+	.intersecting .blocker {
+		background-color: transparent;
+	}
 	.title {
 		font-size: 30px;
 		transition: all var(--animTime1);
@@ -125,27 +188,13 @@
 		top: 0;
 		overflow: hidden;
 	}
-	.bg-area {
-		opacity: 0;
-	}
-	.intersecting .bg-area {
-		opacity: 0.2;
-	}
-	.bg {
-		position: absolute;
-		inset: 0;
-		background-image: var(--fff);
-		background-repeat: no-repeat;
-		background-size: cover;
-		background-position: center;
-		filter: blur(6px);
-	}
-
 	.project-block {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		height: 100vh;
+
+		/* pointer-events: none; */
 	}
 
 	.scroller {
@@ -156,9 +205,13 @@
 		gap: var(--gap5);
 		width: fit-content;
 
-		/* padding-right: var(--gap5); */
-		padding: 0 var(--gap5);
+		padding-right: var(--gap5);
 	}
+	/* .left {
+		align-self: flex-end;
+		padding: 0;
+		padding-left: var(--gap5);
+	} */
 
 	.title,
 	.desc {
