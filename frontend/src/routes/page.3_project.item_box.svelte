@@ -66,8 +66,8 @@
 		transition: all var(--animTime3);
 		transition-timing-function: ease-in-out;
 
-		box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.131);
-		border: 0 solid transparent;
+		/* box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.131); */
+		border: 2px solid transparent;
 	}
 
 	img {
@@ -83,8 +83,8 @@
 	}
 
 	a.active {
-		transform: scale(1.05);
-		border: 2px solid var(--color1);
+		/* transform: scale(1.05); */
+		border-color:  var(--color1);
 	}
 	a.active img {
 		transform: scale(1.2);
