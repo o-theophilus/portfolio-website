@@ -1,16 +1,17 @@
 <script>
-	import { api_url, module, tick, _user, loading } from '$lib/store.js';
+	import { api_url, module, portal, _user, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
 
-	export let post;
+	export let ratings;
+	export let post_key;
 	let rating = 0;
 	let error = '';
 
-	for (const i in post.ratings) {
-		if (post.ratings[i].user_key == $_user.key) {
-			rating = post.ratings[i].rating;
+	for (const i in ratings) {
+		if (ratings[i].user_key == $_user.key) {
+			rating = ratings[i].rating;
 			break;
 		}
 	}
@@ -23,7 +24,7 @@
 		error = '';
 
 		$loading = 'Saving . . .';
-		const resp = await fetch(`${api_url}/rating/${post.key}`, {
+		const resp = await fetch(`${api_url}/rating/${post_key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -37,7 +38,10 @@
 			const data = await resp.json();
 
 			if (data.status == 200) {
-				tick(data.data.post);
+				portal({
+					for: 'rating',
+					data: data.data.ratings
+				});
 
 				$module = '';
 			} else {

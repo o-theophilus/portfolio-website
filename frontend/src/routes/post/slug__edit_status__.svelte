@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, tick, loading } from '$lib/store.js';
+	import { api_url, module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
@@ -27,7 +27,10 @@
 			const data = await resp.json();
 
 			if (data.status == 200) {
-				tick(data.data.post);
+				portal({
+					for: 'post',
+					data: data.data.post
+				});
 
 				$module = {
 					module: Info,

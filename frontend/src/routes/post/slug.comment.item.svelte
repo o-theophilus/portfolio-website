@@ -1,5 +1,5 @@
 <script>
-	import { module, _user, api_url, tick } from '$lib/store.js';
+	import { module, _user, api_url, portal } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Marked from '$lib/marked.svelte';
@@ -7,8 +7,8 @@
 	import Add_Comment from './slug.comment__add__.svelte';
 	import Comment from './slug.comment.item.svelte';
 
-	export let post = {};
 	export let comment = {};
+	export let comments = [];
 	let error = '';
 
 	const validate = async (vote) => {
@@ -46,13 +46,15 @@
 			const data = await resp.json();
 
 			if (data.status == 200) {
-				for (const i in post.comments) {
-					if (post.comments[i]['key'] == data.data.comment['key']) {
-						post.comments[i] = data.data.comment;
-						break;
+				for (const i in comments) {
+					if (comments[i].key == data.data.comment.key) {
+						comments[i] = data.data.comment;
 					}
 				}
-				tick(post);
+				portal({
+					for: 'comment',
+					data: comments
+				});
 			} else {
 				error = data.message;
 			}
@@ -87,13 +89,13 @@
 		{#if $_user.login}
 			<div class="buttons">
 				<Button
-					name="Reply"
+					icon="quote"
 					class="secondary tiny"
 					on:click={() => {
 						$module = {
 							module: Add_Comment,
 							owner_key: comment.key,
-							post
+							comments
 						};
 					}}
 				/>
@@ -118,9 +120,9 @@
 			</div>
 		{/if}
 	</div>
-	{#each post.comments as c}
+	{#each comments as c}
 		{#if c.path[c.path.length - 1] == comment.key}
-			<Comment {post} comment={c} />
+			<Comment comment={c} {comments} />
 		{/if}
 	{/each}
 </div>

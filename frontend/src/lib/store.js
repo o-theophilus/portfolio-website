@@ -9,9 +9,9 @@ export const _user = writable();
 export const module = writable();
 export const loading = writable(false);
 
-export const _tick = writable("");
-export const tick = (data) => {
-	_tick.set(data);
+export const _portal = writable("");
+export const portal = (data) => {
+	_portal.set(data);
 }
 
 

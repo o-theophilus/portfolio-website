@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, tick, loading } from '$lib/store.js';
+	import { api_url, module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
@@ -31,7 +31,7 @@
 			const data = await resp.json();
 
 			if (data.status == 200) {
-				tick(data.data.post);
+				portal(data.data.post);
 
 				let s = data.data.post.tags.length > 1;
 

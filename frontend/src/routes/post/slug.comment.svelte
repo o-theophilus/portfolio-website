@@ -6,14 +6,15 @@
 	import Comment from './slug.comment.item.svelte';
 	import Add_Comment from './slug.comment__add__.svelte';
 
-	export let post = {};
+	export let post_key = '';
+	export let comments = [];
 </script>
 
 <Content>
 	<section>
 		<div class="hr v2" />
 		<br />
-		<strong class="big">Comment{post.comments.length > 1 ? 's' : ''}</strong>
+		<strong class="big">Comment{comments.length > 1 ? 's' : ''}</strong>
 		{#if $_user.login}
 			<Button
 				name="Add comment"
@@ -21,16 +22,16 @@
 				on:click={() => {
 					$module = {
 						module: Add_Comment,
-						owner_key: post.key,
-						post
+						owner_key: post_key,
+						comments
 					};
 				}}
 			/>
 		{/if}
 		<div class="block">
-			{#each post.comments as c}
-				{#if c.path[c.path.length - 1] == post.key}
-					<Comment {post} comment={c} />
+			{#each comments as c}
+				{#if c.path[c.path.length - 1] == post_key}
+					<Comment comment={c} {comments} />
 				{/if}
 			{:else}
 				No comment

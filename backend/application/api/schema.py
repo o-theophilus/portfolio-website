@@ -83,24 +83,6 @@ def post_schema(p, data=[]):
         for photo in p['photos']:
             photos.append(f"photo/{photo}")
 
-    comments = []
-    ratings = []
-    for row in data:
-        if (
-            row["type"] == "comment"
-            and row["path"][0] == p["key"]
-        ):
-            comments.append(row)
-        elif (
-            row["type"] == "rating"
-            and row["post_key"] == p["key"]
-        ):
-            ratings.append(row)
-
-    comments = [comment_schema(c, data) for c in comments]
-    comments = sorted(comments, key=lambda d: d["created_at"], reverse=True)
-    ratings = [rating_schema(c) for c in ratings]
-
     return {
         "key": p["key"],
         "status": p["status"],
@@ -112,8 +94,6 @@ def post_schema(p, data=[]):
         "content": p["content"],
         "slug": p["slug"],
         "tags": p["tags"],
-        "comments": comments,
-        "ratings": ratings,
         "type": p["type"],
         "created_at": p["created_at"],
     }

@@ -1,13 +1,13 @@
 <script>
-	import { api_url, module, tick, loading } from '$lib/store.js';
+	import { api_url, module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
 	import Info from '$lib/__info__.svelte';
 
-	export let post;
 	export let owner_key = '';
+	export let comments;
 
 	let form = {};
 	let error = {};
@@ -36,10 +36,14 @@
 
 		if (resp.ok) {
 			const data = await resp.json();
+			console.log(data);
 
 			if (data.status == 200) {
-				post.comments.push(data.data.comment);
-				tick(post);
+				comments.push(data.data.comment);
+				portal({
+					for: 'comment',
+					data: comments
+				});
 
 				$module = {
 					module: Info,

@@ -1,5 +1,5 @@
 <script>
-	import { module, _tick, _user } from '$lib/store.js';
+	import { module, _user } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import ItemBox from '$lib/item_box.svelte';
@@ -13,11 +13,6 @@
 	let { tags } = data;
 	let { type } = data;
 
-	$: if ($_tick) {
-		posts.push($_tick);
-		posts = posts;
-		$_tick = '';
-	}
 </script>
 
 <Meta title={type} description="{type} Posts" image="/site/home.jpg" />

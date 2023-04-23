@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, _tick, _user } from '$lib/store.js';
+	import { api_url, module, _portal, _user } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import Marked from '$lib/marked.svelte';
@@ -24,10 +24,19 @@
 	export let data;
 	let { post } = data;
 	let { tags } = data;
+	let { comments } = data;
+	let { ratings } = data;
 
-	$: if ($_tick) {
-		post = $_tick;
-		$_tick = '';
+	$: if ($_portal) {
+		if ($_portal.for == 'post') {
+			post = $_portal.data;
+		} else if ($_portal.for == 'comment') {
+			comments = $_portal.data;
+		} else if ($_portal.for == 'rating') {
+			ratings = $_portal.data;
+		}
+
+		$_portal = {};
 	}
 
 	let content = post.content;
@@ -60,11 +69,11 @@
 		}
 	}
 
-	let ratings = 0;
+	let ratings_value = 0;
 	$: {
-		ratings = 0;
-		for (const i in post.ratings) {
-			ratings += post.ratings[i].rating;
+		ratings_value = 0;
+		for (const i in ratings) {
+			ratings_value += ratings[i].rating;
 		}
 	}
 
@@ -188,9 +197,8 @@
 	{/if}
 	<Marked md={content} />
 
-	
 	{#if $_user.roles.includes('admin') && edit_mode}
-	<br />
+		<br />
 		<Button
 			icon="edit"
 			class="tiny"
@@ -240,12 +248,13 @@
 	{#if $_user.login}
 		<Button
 			class="tiny"
-			name="Overall Rating: {ratings}"
+			name="Overall Rating: {ratings_value}"
 			icon="heart"
 			on:click={() => {
 				$module = {
 					module: Rating,
-					post
+					post_key: post.key,
+					ratings
 				};
 			}}
 		/>
@@ -265,7 +274,7 @@
 	<br /><br /><br />
 </Content>
 
-<Comment {post} />
+<Comment {comments} post_key={post.key} />
 <br /><br />
 
 <style>

@@ -1,5 +1,5 @@
 <script>
-	import { api_url, loading, tick } from '$lib/store.js';
+	import { api_url, loading, portal } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
@@ -96,7 +96,10 @@
 				post.active_photo = temp;
 				post.photo_count = temp2;
 
-				tick(post);
+				portal({
+					for: 'post',
+					data: post
+				});
 
 				if (method == 'delete') {
 					post.active_photo = post.photos[0] || '';
@@ -178,7 +181,10 @@
 				post.photo_count = temp2;
 
 				make_active('', false);
-				tick(post);
+				portal({
+					for: 'post',
+					data: post
+				});
 			} else {
 				error = data.message;
 			}

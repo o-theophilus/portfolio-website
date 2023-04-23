@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from . import db, token_to_user
-from .schema import post_schema
+from .schema import post_schema, comment_schema, rating_schema
 from .tag import get_tags
 
 bp = Blueprint("post_read", __name__)
@@ -20,12 +20,50 @@ def get(slug):
             "message": "invalid request"
         })
 
+    comments = []
+    ratings = []
+    for row in data:
+        if (
+            row["type"] == "comment"
+            and row["path"][0] == post["key"]
+        ):
+            comments.append(row)
+        elif (
+            row["type"] == "rating"
+            and row["post_key"] == post["key"]
+        ):
+            ratings.append(row)
+
+    comments = [comment_schema(c, data) for c in comments]
+    comments = sorted(comments, key=lambda d: d["created_at"], reverse=False)
+    ratings = [rating_schema(c) for c in ratings]
+
+    # people = [
+    #     {
+    #         'name': 'Alice',
+    #         'age': 25
+    #     }, {
+    #         'name': 'Bob',
+    #         'age': 30
+    #     }, {
+    #         'name': 'Charlie',
+    #         'age': 20
+    #     }, {
+    #         'name': 'Alice',
+    #         'age': 20
+    #      }
+    # ]
+    # sorted_people = sorted(people, key=lambda p: (p['name'], p['age']))
+    # print(sorted_people)
+
     return jsonify({
         "status": 200,
         "message": "successful",
         "data": {
             "post": post_schema(post, data),
-            "tags": get_tags(data, post["key"])
+            "tags": get_tags(data, post["key"]),
+            "comments": comments,
+            "ratings": ratings
         }
     })
 

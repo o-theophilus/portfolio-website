@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from . import token_to_user, db
-from .schema import post_schema,  rating_template
+from .schema import rating_schema, rating_template
 
 
 bp = Blueprint("rating", __name__)
@@ -34,15 +34,16 @@ def add_rating(key):
         rating_value = request.json["rating"]
 
     rating = None
+    ratings = []
     for row in data:
         if (
             row["type"] == "rating"
-            and row["user_key"] == user["key"]
             and row["post_key"] == post["key"]
         ):
-            row["rating"] = rating_value
-            rating = row
-            break
+            ratings.append(row)
+            if row["user_key"] == user["key"]:
+                row["rating"] = rating_value
+                rating = row
 
     if not rating:
         rating = rating_template(
@@ -54,10 +55,12 @@ def add_rating(key):
 
     db.add(rating)
 
+    ratings = [rating_schema(c) for c in ratings]
+
     return jsonify({
         "status": 200,
         "message": "successful",
         "data": {
-            "post": post_schema(post, data)
+            "ratings": ratings
         }
     })
