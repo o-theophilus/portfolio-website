@@ -32,7 +32,6 @@
 
 	const submit = async () => {
 		form.email_template = email_template.innerHTML;
-		form.error_message = error_message;
 
 		$loading = 'Loading . . .';
 		const resp = await fetch(`${api_url}/login`, {
