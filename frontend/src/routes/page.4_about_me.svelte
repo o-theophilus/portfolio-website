@@ -39,7 +39,7 @@
 		transform: translate(0, 0) scale(1);
 	}
 
-	strong {
+	.big {
 		color: var(--accent1);
 	}
 </style>
