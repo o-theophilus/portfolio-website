@@ -7,17 +7,36 @@
 	import Button from '$lib/button.svelte';
 
 	// export let data;
-	let user = {};
 </script>
 
-<Meta title={user.name} description="{user.name} profile" image="/site/home.jpg" />
+<Meta title={$_user.name} description="{$_user.name} profile" image="/favicon.png" />
 
 <Content>
-	Profile
 	<br />
-	Likes
+	<strong class="big">Profile</strong>
+	<br /><br />
+	Name:
 	<br />
-	Comments
+	<strong>
+		{$_user.name}
+	</strong>
+	<br /><br />
+	Email:
+	<br />
+	<strong>
+		{$_user.email}
+	</strong>
+	<br /><br />
+	<div class="hr" />
+	<br />
+	<strong class="big">Likes</strong>
+
+	<br /><br />
+	<div class="hr" />
+	<br />
+	<strong class="big">Comments</strong>
+	<br /><br />
+	<div class="hr" />
 	<br />
 	<Button
 		on:click={async () => {
@@ -43,4 +62,7 @@
 </Content>
 
 <style>
+	.big {
+		color: var(--accent1);
+	}
 </style>

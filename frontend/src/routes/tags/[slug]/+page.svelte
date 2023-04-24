@@ -11,7 +11,7 @@
 	let { tags } = data;
 </script>
 
-<Meta title="{$page.params.slug} - Tags" description="tags" image="/site/home.jpg" />
+<Meta title="{$page.params.slug} - Tags" description="tags" image="/favicon.png" />
 
 <section class="background">
 	<Content>

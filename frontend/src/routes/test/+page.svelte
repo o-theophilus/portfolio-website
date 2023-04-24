@@ -10,7 +10,7 @@
 	let user = {};
 </script>
 
-<Meta title={user.name} description="{user.name} profile" image="/site/home.jpg" />
+<Meta title={user.name} description="{user.name} profile" image="/favicon.png" />
 
 <Content>
 	<Button class="secondary" on:click={async () => {}}>Logout</Button>

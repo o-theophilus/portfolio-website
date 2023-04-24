@@ -1,8 +1,6 @@
 
 FEATURES:
 
-user profile
-
 comment: delete
 delete ripple effect
 

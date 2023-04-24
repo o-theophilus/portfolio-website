@@ -7,7 +7,7 @@
 	let { tags } = data;
 </script>
 
-<Meta title="Tags" description="tags" image="/site/home.jpg" />
+<Meta title="Tags" description="tags" image="/favicon.png" />
 
 <Content>
 	<br />

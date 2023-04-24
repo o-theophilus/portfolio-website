@@ -25,7 +25,7 @@
 
 </script>
 
-<Meta title={type} description="{type} Posts" image="/site/home.jpg" />
+<Meta title={type} description="{type} Posts" image="/favicon.png" />
 
 <section class="background">
 	<Content>

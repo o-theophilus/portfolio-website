@@ -87,7 +87,7 @@
 <Meta
 	title="Home"
 	description="Welcome to my personal portfolio website."
-	image="akropol_001.jpg"
+	image="/favicon.png"
 />
 
 <section>
