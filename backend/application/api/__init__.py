@@ -108,3 +108,25 @@ def send_email():
         "status": 200,
         "message": "successful",
     })
+
+
+# @bp.get("/fix")
+# def fix():
+#     users = db.get_type("user")
+#     for u in users:
+#         u["setting"] = {
+#             "theme": "dark",
+#             "sort_post_by": "date",
+#             "sort_post_reverse": False,
+#             "sort_comment_by": "date",
+#             "sort_comment_reverse": False
+#         }
+
+#     while len(users) > 0:
+#         db.add_many(users[:25])
+#         users = users[25:]
+
+#     return jsonify({
+#         "status": 200,
+#         "message": "successful",
+#     })

@@ -6,8 +6,46 @@ from .schema import comment_template, comment_schema
 bp = Blueprint("comment", __name__)
 
 
+@bp.get("/comment/<key>")
+def get_comments(key, data=None, user=None):
+    data = data if data else db.data()
+    user = user if user else token_to_user(data)
+    if not user:
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
+    setting = user["setting"]
+
+    comments = []
+    for row in data:
+        if (
+            row["type"] == "comment"
+            and row["path"][0] == key
+        ):
+            if setting["sort_comment_by"] == "vote":
+                row["vote"] = len(row["upvote"]) - len(row["downvote"])
+            comments.append(row)
+
+    if setting["sort_comment_by"] == "date":
+        setting["sort_comment_by"] = "created_at"
+    comments = sorted(
+        comments,
+        key=lambda d: d[setting["sort_comment_by"]],
+        reverse=setting["sort_comment_reverse"])
+
+    return jsonify({
+        "status": 200,
+        "message": "successful",
+        "data": {
+            "comments": [comment_schema(c, data) for c in comments]
+        }
+    })
+
+
 @bp.post("/comment/<key>")
-def comment_add(key):
+def add(key):
     if "comment" not in request.json or not request.json["comment"]:
         return jsonify({
             "status": 201,
@@ -45,17 +83,12 @@ def comment_add(key):
         path,
     ))
 
-    return jsonify({
-        "status": 200,
-        "message": "successful",
-        "data": {
-            "comment": comment_schema(comment, data)
-        }
-    })
+    data.append(comment)
+    return get_comments(comment["path"][0], data, user)
 
 
 @bp.post("/comment/vote/<key>")
-def comment_vote(key):
+def vote(key):
     data = db.data()
 
     user = token_to_user(data)
@@ -83,12 +116,10 @@ def comment_vote(key):
         comment["downvote"].remove(user["key"])
 
     comment[f"{request.json['vote']}vote"].append(user["key"])
-    comment = db.add(comment)
+    db.add(comment)
 
-    return jsonify({
-        "status": 200,
-        "message": "successful",
-        "data": {
-            "comment": comment_schema(comment, data)
-        }
-    })
+    for row in data:
+        if row["key"] == comment["key"]:
+            row = comment
+
+    return get_comments(comment["path"][0], data, user)

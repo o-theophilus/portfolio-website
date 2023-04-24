@@ -48,22 +48,9 @@ content-type: application/json
 
 ###
 
-### Init
-get {{host}}/blog/eee HTTP/1.1
-content-type: application/json
-
-###
-
 
 ### Init
-get {{host}}/project/eee HTTP/1.1
-content-type: application/json
-
-###
-
-
-### Init
-get {{host}}/clonedb HTTP/1.1
+get {{host}}/fix HTTP/1.1
 content-type: application/json
 
 ###

@@ -46,14 +46,9 @@
 			const data = await resp.json();
 
 			if (data.status == 200) {
-				for (const i in comments) {
-					if (comments[i].key == data.data.comment.key) {
-						comments[i] = data.data.comment;
-					}
-				}
 				portal({
 					for: 'comment',
-					data: comments
+					data: data.data.comments
 				});
 			} else {
 				error = data.message;
@@ -94,8 +89,7 @@
 					on:click={() => {
 						$module = {
 							module: Add_Comment,
-							owner_key: comment.key,
-							comments
+							owner_key: comment.key
 						};
 					}}
 				/>

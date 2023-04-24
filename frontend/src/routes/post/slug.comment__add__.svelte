@@ -7,7 +7,6 @@
 	import Info from '$lib/__info__.svelte';
 
 	export let owner_key = '';
-	export let comments;
 
 	let form = {};
 	let error = {};
@@ -39,10 +38,9 @@
 			console.log(data);
 
 			if (data.status == 200) {
-				comments.push(data.data.comment);
 				portal({
 					for: 'comment',
-					data: comments
+					data: data.data.comments
 				});
 
 				$module = {

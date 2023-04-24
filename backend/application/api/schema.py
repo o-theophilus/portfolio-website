@@ -32,7 +32,11 @@ def user_template(
         "login": False,
         "roles": roles,
         "setting": {
-                "theme": "dark"
+            "theme": "dark",
+            "sort_post_by": "date",  # rating, date, title
+            "sort_post_reverse": False,
+            "sort_comment_by": "date",  # vote, date
+            "sort_comment_reverse": False
         }
     }
 

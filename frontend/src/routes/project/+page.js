@@ -2,7 +2,6 @@ import { api_url } from '$lib/store.js';
 
 export const load = async ({ fetch, url, parent }) => {
     const { data } = await parent()
-
     let type = url.pathname.split('/')[1];
 
     const resp = await fetch(`${api_url}/${type}`, {

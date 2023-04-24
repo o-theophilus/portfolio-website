@@ -1,17 +1,27 @@
 <script>
-	import { module, _user } from '$lib/store.js';
+	import { module, _user ,_portal} from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import ItemBox from '$lib/item_box.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Button from '$lib/button.svelte';
 	import Add from './main__add__.svelte';
+	import Sort from './main.sort.svelte';
 	import Tags from '$lib/tags.svelte';
 
 	export let data;
 	let { posts } = data;
 	let { tags } = data;
 	let { type } = data;
+
+
+	$: if ($_portal) {
+		if ($_portal.for == 'posts') {
+			posts = $_portal.data;
+		}
+
+		$_portal = {};
+	}
 
 </script>
 
@@ -20,7 +30,12 @@
 <section class="background">
 	<Content>
 		<br />
-		<strong class="big">{type}{posts.length > 1 ? 's' : ''}</strong>
+
+		<div class="title">
+			<strong class="big">{type}{posts.length > 1 ? 's' : ''}</strong>
+			<Sort {type}/>
+		</div>
+
 		{#if $_user.roles.includes('admin')}
 			<br /><br />
 			<Button
@@ -34,6 +49,7 @@
 				Add
 			</Button>
 		{/if}
+
 		<br /> <br />
 		<section class="block">
 			{#each posts as post}
@@ -50,6 +66,11 @@
 </section>
 
 <style>
+	.title{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
 	.background {
 		background-color: var(--accent4);
 	}

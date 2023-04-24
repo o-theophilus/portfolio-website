@@ -4,7 +4,7 @@ from flask_cors import CORS
 from .api import bp as api
 from .api.post import bp as post
 from .api.post_get import bp as post_get
-from .api.post_comment import bp as comment
+from .api.comment import bp as comment
 from .api.post_rating import bp as rating
 from .api.photo import bp as photo
 from .api.tag import bp as tag

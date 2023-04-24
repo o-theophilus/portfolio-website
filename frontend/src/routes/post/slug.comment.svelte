@@ -5,6 +5,7 @@
 	import Button from '$lib/button.svelte';
 	import Comment from './slug.comment.item.svelte';
 	import Add_Comment from './slug.comment__add__.svelte';
+	import Sort from './slug.comment.sort.svelte';
 
 	export let post_key = '';
 	export let comments = [];
@@ -14,7 +15,13 @@
 	<section>
 		<div class="hr v2" />
 		<br />
-		<strong class="big">Comment{comments.length > 1 ? 's' : ''}</strong>
+
+		<div class="title">
+			<strong class="big">Comment{comments.length > 1 ? 's' : ''}</strong>
+			<Sort {post_key}/>
+		</div>
+
+		
 		{#if $_user.login}
 			<Button
 				name="Add comment"
@@ -22,8 +29,7 @@
 				on:click={() => {
 					$module = {
 						module: Add_Comment,
-						owner_key: post_key,
-						comments
+						owner_key: post_key
 					};
 				}}
 			/>
@@ -45,6 +51,11 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--gap2);
+	}
+	.title{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 	.big {
 		color: var(--accent1);

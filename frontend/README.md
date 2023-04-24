@@ -1,20 +1,12 @@
-FIX:
-
-##########################################
 
 FEATURES:
 
-comment: sort
-post: sort
-
-login time tracking
+user profile
 
 comment: delete
 delete ripple effect
 
-user profile
-
-home project background
+login time tracking
 
 ##########################################
 
