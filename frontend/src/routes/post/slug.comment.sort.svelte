@@ -131,23 +131,11 @@
 		gap: var(--gap2);
 	}
 
-	select,
-	.dir {
-		cursor: pointer;
-	}
 	select {
 		background-color: transparent;
 		border: none;
 		color: var(--accent2);
+		cursor: pointer;
 	}
-	.dir {
-		--size: 30px;
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		width: var(--size);
-		height: var(--size);
-	}
+	
 </style>

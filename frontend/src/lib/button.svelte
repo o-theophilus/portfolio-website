@@ -52,7 +52,7 @@
 		display: inline-flex;
 		justify-content: center;
 		align-items: center;
-		gap: var(--gap2);
+		gap: var(--gap1);
 
 		border: none;
 		padding: var(--gap2);
@@ -69,7 +69,7 @@
 	}
 
 	.tiny {
-		gap: var(--gap1);
+		/* gap: var(--gap1); */
 		padding: var(--gap1);
 		font-size: small;
 	}

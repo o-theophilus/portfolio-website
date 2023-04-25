@@ -18,12 +18,12 @@
 
 		<div class="title">
 			<strong class="big">Comment{comments.length > 1 ? 's' : ''}</strong>
-			<Sort {post_key}/>
+			<Sort {post_key} />
 		</div>
 
-		
 		{#if $_user.login}
 			<Button
+				icon="quote"
 				name="Add comment"
 				class="secondary"
 				on:click={() => {
@@ -52,7 +52,7 @@
 		flex-direction: column;
 		gap: var(--gap2);
 	}
-	.title{
+	.title {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
