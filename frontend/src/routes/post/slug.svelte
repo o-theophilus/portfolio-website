@@ -214,6 +214,9 @@
 			tags
 		</Button>
 	{/if}
+	{#if post.tags.length > 0}
+		<br />
+	{/if}
 	<Tags tags={post.tags} />
 	<br /><br />
 	<Author />

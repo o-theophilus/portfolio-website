@@ -8,7 +8,10 @@
 	let error = '';
 
 	let form = { ...$_user.setting };
-	let sort = ['date', 'vote'];
+	let sort = {
+		date: ['old', 'new'],
+		vote: ['low', 'high']
+	};
 
 	let changed = false;
 	const compare = () => {
@@ -84,25 +87,19 @@
 					compare();
 				}}
 			>
-				{#each sort as temp}
-					<option value={temp}>{temp}</option>
+				{#each Object.entries(sort) as [name, op]}
+					<option value={name}>{name}</option>
 				{/each}
 			</select>
-
-			<div
-				class="dir"
-				on:click={() => {
-					form.sort_comment_reverse = !form.sort_comment_reverse;
+			<select
+				bind:value={form.sort_comment_reverse}
+				on:change={() => {
 					compare();
 				}}
-				on:keypress
 			>
-				{#if form.sort_comment_reverse}
-					↓
-				{:else}
-					↑
-				{/if}
-			</div>
+				<option value={true}>{sort[form.sort_comment_by][1]}-{sort[form.sort_comment_by][0]}</option>
+				<option value={false}>{sort[form.sort_comment_by][0]}-{sort[form.sort_comment_by][1]}</option>
+			</select>
 		</div>
 
 		{#if changed}

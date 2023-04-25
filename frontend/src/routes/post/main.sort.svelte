@@ -8,7 +8,11 @@
 	let error = '';
 
 	let form = { ...$_user.setting };
-	let sort = ['date', 'title', 'rating'];
+	let sort = {
+		date: ['old', 'new'],
+		title: ['a', 'z'],
+		rating: ['low', 'high']
+	};
 
 	let changed = false;
 	const compare = () => {
@@ -83,25 +87,19 @@
 					compare();
 				}}
 			>
-				{#each sort as temp}
-					<option value={temp}>{temp}</option>
+				{#each Object.entries(sort) as [name, op]}
+					<option value={name}>{name}</option>
 				{/each}
 			</select>
-
-			<div
-				class="dir"
-				on:click={() => {
-					form.sort_post_reverse = !form.sort_post_reverse;
+			<select
+				bind:value={form.sort_post_reverse}
+				on:change={() => {
 					compare();
 				}}
-				on:keypress
 			>
-				{#if form.sort_post_reverse}
-					↓
-				{:else}
-					↑
-				{/if}
-			</div>
+				<option value={true}>{sort[form.sort_post_by][1]}-{sort[form.sort_post_by][0]}</option>
+				<option value={false}>{sort[form.sort_post_by][0]}-{sort[form.sort_post_by][1]}</option>
+			</select>
 		</div>
 
 		{#if changed}
@@ -133,23 +131,10 @@
 		gap: var(--gap2);
 	}
 
-	select,
-	.dir {
-		cursor: pointer;
-	}
 	select {
 		background-color: transparent;
 		border: none;
 		color: var(--accent2);
-	}
-	.dir {
-		--size: 30px;
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		width: var(--size);
-		height: var(--size);
+		cursor: pointer;
 	}
 </style>

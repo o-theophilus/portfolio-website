@@ -18,6 +18,6 @@ npm update
 
 IMPROVEMENTS:
 
-Backend shod only send edited field on edit
+Backend should only send edited field on edit
 
 
