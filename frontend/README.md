@@ -2,9 +2,17 @@
 FEATURES:
 
 comment: delete
-delete ripple effect
+delete ripple effec
+report comment
 
 login time tracking
+
+##########################################
+
+IMPROVEMENTS:
+
+npm update
+Backend should only send edited field on edit
 
 ##########################################
 
@@ -12,12 +20,4 @@ OTHERS:
 
 set fluid resolution by device
 or remove fluid
-npm update
-
-##########################################
-
-IMPROVEMENTS:
-
-Backend should only send edited field on edit
-
 

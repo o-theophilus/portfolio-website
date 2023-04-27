@@ -1,11 +1,12 @@
 <script>
-	import { module, _user, api_url, portal } from '$lib/store.js';
+	import { module, _user, api_url, portal, timeAgo } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Marked from '$lib/marked.svelte';
 	import Button from '$lib/button.svelte';
 	import Add_Comment from './slug.comment__add__.svelte';
 	import Comment from './slug.comment.item.svelte';
+	import { onMount } from 'svelte';
 
 	export let comment = {};
 	export let comments = [];
@@ -57,9 +58,19 @@
 	};
 
 	let saturation = Math.floor(Math.random() * (360 + 1));
+
+
+	let time = timeAgo(comment.created_at);
+	onMount(() => {
+		const intervalId = setInterval(() => {
+			time = timeAgo(comment.created_at);
+		}, 1000);
+
+		return () => clearInterval(intervalId);
+	});
 </script>
 
-<div class="comment">
+<section>
 	<div class="top">
 		<div class="left">
 			<div
@@ -71,10 +82,12 @@
 			</div>
 			<div class="name">{comment.user_name}</div>
 		</div>
-		<div class="date">{comment.created_at.split('T')[0]}</div>
+		<div class="date">{time}</div>
 	</div>
 	<div>
-		<Marked md={comment.comment} />
+		<div class="comment">
+			<Marked md={comment.comment} />
+		</div>
 		{#if error}
 			<span class="error">
 				{error}
@@ -119,10 +132,10 @@
 			<Comment comment={c} {comments} />
 		{/if}
 	{/each}
-</div>
+</section>
 
 <style>
-	.comment {
+	section {
 		display: flex;
 		flex-direction: column;
 
@@ -173,6 +186,11 @@
 	.date {
 		color: var(--accent3);
 	}
+	.comment,
+	.name {
+		color: var(--accent1);
+	}
+
 	.buttons {
 		display: flex;
 		gap: var(--gap1);

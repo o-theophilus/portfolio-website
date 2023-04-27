@@ -169,7 +169,7 @@ def login():
 
     if (
         anon_user["status"] != "anonymous"
-        or user and user["login"]
+        # or user and user["login"]
         or "email_template" not in request.json
         or not request.json["email_template"]
     ):

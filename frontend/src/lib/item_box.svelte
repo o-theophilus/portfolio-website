@@ -1,5 +1,6 @@
 <script>
-	import { api_url, _user } from '$lib/store.js';
+	import { api_url, _user, timeAgo } from '$lib/store.js';
+	import { onMount } from 'svelte';
 
 	export let post;
 
@@ -9,6 +10,15 @@
 		href = post.content;
 		target = '_blank';
 	}
+
+	let time = timeAgo(post.created_at);
+	onMount(() => {
+		const intervalId = setInterval(() => {
+			time = timeAgo(post.created_at);
+		}, 1000);
+
+		return () => clearInterval(intervalId);
+	});
 </script>
 
 <a {href} {target} data-sveltekit-preload-data class:draft={post.status == 'draft'}>
@@ -33,7 +43,7 @@
 		{/if}
 		<br />
 		<div class="date">
-			{post.created_at.split('T')[0]}
+			{time}
 		</div>
 	</div>
 </a>
@@ -62,13 +72,10 @@
 	.img {
 		border-radius: var(--gap1);
 		overflow: hidden;
-		
 	}
 	img {
 		display: block;
-		/* width: 100%; */
-		/* height: 100%; */
-		
+
 		object-fit: cover;
 		aspect-ratio: 1 / 1;
 		background-color: var(--accent4);
@@ -85,6 +92,5 @@
 	}
 	strong {
 		font-size: large;
-		/* color: var(--color1); */
 	}
 </style>
