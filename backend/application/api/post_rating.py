@@ -13,7 +13,10 @@ def add_rating(key):
 
     user = token_to_user(data)
     post = db.get_key(key, data)
-    if not user or not post:
+    if (
+        not user or not post
+        or post["type"] not in ["blog", "project"]
+    ):
         return jsonify({
             "status": 401,
             "message": "invalid request"

@@ -85,6 +85,9 @@
 	.wide {
 		width: 100%;
 	}
+	.careful {
+		background-color: var(--color2);
+	}
 
 	:hover {
 		background-color: var(--color1);
@@ -98,17 +101,8 @@
 		border-bottom-color: var(--color1);
 	}
 
-	/* .icon_only { */
-		/* padding: 0; */
-		/* fill: var(--accent5); */
-		/* background-color: transparent; */
-	/* } */
 
-	/* .icon_only:hover { */
-		/* fill: var(--color1); */
-	/* } */
-
-	:hover.hover.red {
+	:hover.red {
 		background-color: var(--color2);
 	}
 </style>

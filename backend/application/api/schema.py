@@ -167,3 +167,21 @@ def rating_schema(rating):
         "rating": rating["rating"],
         "user_key": rating["user_key"]
     }
+
+
+def report_template(
+        user_key: str,
+        entity_key: str,
+        comment: str,
+):
+    return {
+        "type": "report",
+        "key": uuid4().hex,
+        "version": uuid4().hex,
+        "created_at": now(),
+        "updated_at": now(),
+
+        "user_key": user_key,
+        "entity_key": entity_key,
+        "comment": comment,
+    }

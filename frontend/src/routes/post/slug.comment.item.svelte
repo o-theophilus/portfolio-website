@@ -1,12 +1,13 @@
 <script>
 	import { module, _user, api_url, portal, timeAgo } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
+	import { onMount } from 'svelte';
 
 	import Marked from '$lib/marked.svelte';
 	import Button from '$lib/button.svelte';
 	import Add_Comment from './slug.comment__add__.svelte';
 	import Comment from './slug.comment.item.svelte';
-	import { onMount } from 'svelte';
+	import Menu from './slug.comment.item__menu__.svelte';
 
 	export let comment = {};
 	export let comments = [];
@@ -59,7 +60,6 @@
 
 	let saturation = Math.floor(Math.random() * (360 + 1));
 
-
 	let time = timeAgo(comment.created_at);
 	onMount(() => {
 		const intervalId = setInterval(() => {
@@ -82,7 +82,21 @@
 			</div>
 			<div class="name">{comment.user_name}</div>
 		</div>
-		<div class="date">{time}</div>
+		<div class="right">
+			<div class="date">{time}</div>
+			<div
+				class="menu"
+				on:keypress
+				on:click={() => {
+					$module = {
+						module: Menu,
+						comment
+					};
+				}}
+			>
+				&#8226;&#8226;&#8226;
+			</div>
+		</div>
 	</div>
 	<div>
 		<div class="comment">
@@ -151,6 +165,7 @@
 	}
 
 	.top,
+	.right,
 	.left {
 		display: flex;
 		align-items: center;
@@ -185,6 +200,12 @@
 	}
 	.date {
 		color: var(--accent3);
+	}
+	.menu {
+		cursor: pointer;
+	}
+	.menu:hover {
+		color: var(--color1);
 	}
 	.comment,
 	.name {

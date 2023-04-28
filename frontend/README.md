@@ -1,11 +1,9 @@
 
 FEATURES:
 
-comment: delete
-delete ripple effec
-report comment
-
 login time tracking
+featured home page projects
+add blog to home
 
 ##########################################
 

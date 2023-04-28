@@ -132,7 +132,22 @@ def delete(key):
     data = db.data()
 
     user = token_to_user(data)
-    comment = db.get("comment", "key", key, data)
+
+    comment = None
+    to_delete = []
+
+    for row in data:
+        if (
+            row["key"] == key
+            and row["type"] == "comment"
+        ):
+            comment = row
+        elif (
+            row["type"] == "comment"
+            and key in row["path"]
+        ):
+            to_delete.append(row)
+
     if (
         not user or not comment
         or comment["status"] == "deleted"
@@ -143,11 +158,17 @@ def delete(key):
             "message": "invalid request"
         })
 
-    comment["status"] = "deleted"
-    db.add(comment)
+    to_delete.append(comment)
+    for row in to_delete:
+        row["status"] = "deleted"
+
+    while len(to_delete) > 0:
+        db.add_many(to_delete[:25])
+        to_delete = to_delete[25:]
 
     for row in data:
-        if row["key"] == comment["key"]:
-            row = comment
+        for rox in to_delete:
+            if row["key"] == rox["key"]:
+                row = rox
 
     return get_comments(comment["path"][0], data, user)

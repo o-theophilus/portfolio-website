@@ -1,25 +1,25 @@
 <script>
-	import { api_url, module, portal, loading } from '$lib/store.js';
+	import { goto } from '$app/navigation';
+	import { api_url, module, loading, portal } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
 	import Info from '$lib/__info__.svelte';
 
-	export let post;
+	export let comment_key;
 
 	let error = '';
 
-	const submit = async (status) => {
+	const submit = async () => {
 		error = '';
 
-		$loading = `Saving ${post.type} . . .`;
-		const resp = await fetch(`${api_url}/post/status/${post.key}`, {
-			method: 'put',
+		$loading = `Deleting comment . . .`;
+		const resp = await fetch(`${api_url}/comment/${comment_key}`, {
+			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
-			},
-			body: JSON.stringify({ status })
+			}
 		});
 		$loading = false;
 
@@ -28,15 +28,15 @@
 
 			if (data.status == 200) {
 				portal({
-					for: 'post',
-					data: data.data.post
+					for: 'comment',
+					data: data.data.comments
 				});
 
 				$module = {
 					module: Info,
 					title: 'Done',
 					status: 'good',
-					message: 'Status Changed',
+					message: 'Comment Deleted',
 					button: [
 						{
 							name: 'Ok',
@@ -53,33 +53,35 @@
 	};
 </script>
 
-<div class="content">
-	<strong class="big">Change Status</strong>
-	<br /><br />
-	<div>Status: <strong>{post.status}</strong></div>
-	<div>Change to:</div>
+<form on:submit|preventDefault novalidate autocomplete="off">
+	<strong class="big error">Delete</strong>
+	<div class="error">Are you sure you want to delete</div>
 	{#if error}
 		<span class="error">
 			{error}
 		</span>
 	{/if}
-	<div class="row">
-		{#each ['draft', 'publish'] as status}
-			{#if status != post.status}
-				<Button
-					on:click={() => {
-						submit(status);
-					}}
-				>
-					{status}
-				</Button>
-			{/if}
-		{/each}
+
+	<div class="h">
+		<Button
+			on:click={() => {
+				submit();
+			}}
+		>
+			Yes
+		</Button>
+		<Button
+			on:click={() => {
+				$module = '';
+			}}
+		>
+			No
+		</Button>
 	</div>
-</div>
+</form>
 
 <style>
-	.content {
+	form {
 		padding: var(--gap3);
 	}
 </style>

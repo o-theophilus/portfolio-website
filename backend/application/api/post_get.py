@@ -28,7 +28,11 @@ def get(slug):
     post = db.get(post_type, "slug", slug, data)
 
     user = token_to_user(data)
-    if not post or not user:
+    if (
+        not user
+        or not post
+        or post["status"] == "deleted"
+    ):
         return jsonify({
             "status": 401,
             "message": "invalid request"
@@ -62,15 +66,26 @@ def get(slug):
 def get_all():
     data = db.data()
     post_type = f"{request.url_rule}"[1:]
-    posts = db.get_type(post_type, data)
 
     user = token_to_user(data)
-    if not user or "admin" not in user["roles"]:
-        temp = []
-        for p in posts:
-            if p["status"] == "publish":
-                temp.append(p)
-        posts = temp
+    if not user:
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
+    posts = []
+    for row in data:
+        if (
+            row["type"] == post_type
+            and row["status"] != "deleted"
+        ):
+            if (
+                row["status"] != "publish"
+                and "admin" not in user["roles"]
+            ):
+                continue
+            posts.append(row)
 
     if user["setting"]["sort_post_by"] == "rating":
         posts = add_rating(posts, data)

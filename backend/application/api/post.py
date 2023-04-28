@@ -356,14 +356,36 @@ def delete(key):
             "message": "unauthorised access"
         })
 
-    post = db.get_key(key, data)
-    if not post:
+    post = None
+    to_delete = []
+
+    for row in data:
+        if (
+            row["key"] == key
+            and row["type"] in ["blog", "project"]
+        ):
+            post = row
+        elif (
+            row["type"] == "comment"
+            and row["path"][0] == key
+            and row["status"] != "deleted"
+        ):
+            to_delete.append(row)
+
+    if not post or post["status"] == "deleted":
         return jsonify({
             "status": 401,
             "message": "invalid request"
         })
 
-    db.rem(post["key"])
+    to_delete.append(post)
+    for row in to_delete:
+        row["status"] = "deleted"
+        row["updated_at"] = now()
+
+    while len(to_delete) > 0:
+        db.add_many(to_delete[:25])
+        to_delete = to_delete[25:]
 
     return jsonify({
         "status": 200,
