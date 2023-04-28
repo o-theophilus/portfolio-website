@@ -18,7 +18,9 @@
 
 		<div class="title">
 			<strong class="big">Comment{comments.length > 1 ? 's' : ''}</strong>
-			<Sort {post_key} />
+			{#if comments.length > 2}
+				<Sort {post_key} />
+			{/if}
 		</div>
 
 		{#if $_user.login}
@@ -40,7 +42,11 @@
 					<Comment comment={c} {comments} />
 				{/if}
 			{:else}
-				No comment
+				No comment{#if !$_user.login},
+					<span>
+						<a href="/?module=login"> Login </a>to add comment
+					</span>
+				{/if}
 			{/each}
 		</div>
 	</section>
