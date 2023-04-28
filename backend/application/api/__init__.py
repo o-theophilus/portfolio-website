@@ -126,3 +126,29 @@ def cron():
         "status": 200,
         "message": "successful",
     })
+
+
+# @bp.get("/fix")
+# def fix():
+#     data = db.data()
+
+#     users = []
+#     for row in data:
+#         if row["type"] == "user":
+#             row["setting"] = {
+#                 "theme": "dark",
+#                 "sort_post_by": "date",
+#                 "sort_post_reverse": False,
+#                 "sort_comment_by": "date",
+#                 "sort_comment_reverse": False
+#             }
+#             users.append(row)
+
+#     while len(users) > 0:
+#         db.add_many(users[:25])
+#         users = users[25:]
+
+#     return jsonify({
+#         "status": 200,
+#         "message": "successful",
+#     })

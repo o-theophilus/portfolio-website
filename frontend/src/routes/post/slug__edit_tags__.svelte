@@ -31,7 +31,10 @@
 			const data = await resp.json();
 
 			if (data.status == 200) {
-				portal(data.data.post);
+				portal({
+					for: 'post',
+					data: data.data.post
+				});
 
 				let s = data.data.post.tags.length > 1;
 
