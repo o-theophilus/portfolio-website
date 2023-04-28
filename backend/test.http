@@ -50,18 +50,7 @@ content-type: application/json
 
 
 ### Init
-get {{host}}/fix HTTP/1.1
+get {{host}}/cron HTTP/1.1
 content-type: application/json
 
 ###
-
-
-
-
-
-
-
-
-
-
-

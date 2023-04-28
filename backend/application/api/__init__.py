@@ -110,23 +110,19 @@ def send_email():
     })
 
 
-# @bp.get("/fix")
-# def fix():
-#     users = db.get_type("user")
-#     for u in users:
-#         u["setting"] = {
-#             "theme": "dark",
-#             "sort_post_by": "date",
-#             "sort_post_reverse": False,
-#             "sort_comment_by": "date",
-#             "sort_comment_reverse": False
-#         }
+@bp.get("/cron")
+def cron():
+    print("cron is running")
+    data = db.data()
 
-#     while len(users) > 0:
-#         db.add_many(users[:25])
-#         users = users[25:]
+    for row in data:
+        if (
+            row["type"] == "user"
+            and row["status"] == "anonymous"
+        ):
+            db.rem(row["key"])
 
-#     return jsonify({
-#         "status": 200,
-#         "message": "successful",
-#     })
+    return jsonify({
+        "status": 200,
+        "message": "successful",
+    })
