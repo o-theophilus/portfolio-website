@@ -16,3 +16,9 @@ flask run
 200 -- successful
 201/202 -- show error
 401 -- invalid request (app tampered)
+
+
+  "crons": [{
+    "path": "/cron",
+    "schedule": "*/10 * * * *"
+    }]
