@@ -22,6 +22,7 @@ def get_comments(key, data=None, user=None):
     for row in data:
         if (
             row["type"] == "comment"
+            and row["status"] != "deleted"
             and row["path"][0] == key
         ):
             if setting["sort_comment_by"] == "vote":
@@ -95,6 +96,7 @@ def vote(key):
     comment = db.get("comment", "key", key, data)
     if (
         not user or not comment
+        or comment["status"] == "deleted"
         or "vote" not in request.json
         or not request.json["vote"]
         or request.json["vote"] not in ["up", "down"]
@@ -116,6 +118,32 @@ def vote(key):
         comment["downvote"].remove(user["key"])
 
     comment[f"{request.json['vote']}vote"].append(user["key"])
+    db.add(comment)
+
+    for row in data:
+        if row["key"] == comment["key"]:
+            row = comment
+
+    return get_comments(comment["path"][0], data, user)
+
+
+@bp.delete("/comment/<key>")
+def delete(key):
+    data = db.data()
+
+    user = token_to_user(data)
+    comment = db.get("comment", "key", key, data)
+    if (
+        not user or not comment
+        or comment["status"] == "deleted"
+        or comment["user_key"] != user["key"]
+    ):
+        return jsonify({
+            "status": 401,
+            "message": "invalid request"
+        })
+
+    comment["status"] = "deleted"
     db.add(comment)
 
     for row in data:
