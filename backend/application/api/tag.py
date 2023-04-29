@@ -48,6 +48,7 @@ def get(tag):
         if (
             row["type"] in ["blog", "project"]
             and tag in row["tags"]
+            and row["status"] != "deleted"
             and (
                 row["status"] == "publish"
                 or user and "admin" in user["roles"]

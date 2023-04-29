@@ -79,12 +79,11 @@ def get_all():
         if (
             row["type"] == post_type
             and row["status"] != "deleted"
+            and (
+                row["status"] == "publish"
+                or "admin" in user["roles"]
+            )
         ):
-            if (
-                row["status"] != "publish"
-                and "admin" not in user["roles"]
-            ):
-                continue
             posts.append(row)
 
     if user["setting"]["sort_post_by"] == "rating":
