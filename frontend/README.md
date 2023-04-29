@@ -1,9 +1,11 @@
 
 FEATURES:
 
-login time tracking
 featured home page posts
 delete post ripple delete photo
+login time tracking
+cron to clean anonymous users
+cron to cleanup photos from drive
 
 ##########################################
 
