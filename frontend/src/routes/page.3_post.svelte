@@ -6,7 +6,7 @@
 	import { cubicInOut } from 'svelte/easing';
 
 	import Content from '$lib/content.svelte';
-	import ItemBox from './page.3_project.item_box.svelte';
+	import ItemBox from './page.3_post.item_box.svelte';
 	import Scroller from '$lib/scroller.svelte';
 
 	let sticky;
@@ -15,9 +15,9 @@
 	let scroller = {};
 	let pos = {};
 
-	export let projects = [];
+	export let posts = [];
 
-	let observe_post = projects.length > 0 ? projects[0] : {};
+	let observe_post = posts.length > 0 ? posts[0] : {};
 	let hover_post = {};
 	$: active_post = Object.keys(hover_post).length > 0 ? hover_post : observe_post;
 
@@ -37,7 +37,7 @@
 				}
 			);
 
-			ob.observe(document.querySelector('.project-block'));
+			ob.observe(document.querySelector('.post-block'));
 		}
 	});
 </script>
@@ -60,11 +60,11 @@
 			{/key}
 		</div>
 		<Content>
-			<div class="project-block" bind:this={block}>
-				<strong class="big title"> Project{projects.length > 1 ? 's' : ''} </strong>
+			<div class="post-block" bind:this={block}>
+				<strong class="big title"> Post{posts.length > 1 ? 's' : ''} </strong>
 
 				<div class="scroller" style:right="{pos.a}px" bind:this={scroller.a}>
-					{#each projects as post}
+					{#each posts as post}
 						<ItemBox
 							parent={block}
 							{post}
@@ -80,7 +80,7 @@
 							}}
 						/>
 					{/each}
-					<Scroller href="/project"
+					<Scroller href="/post"
 						>view
 						<br />
 						more</Scroller
@@ -141,7 +141,7 @@
 		filter: blur(6px);
 	}
 
-	.project-block {
+	.post-block {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;

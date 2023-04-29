@@ -9,14 +9,6 @@ bp = Blueprint("post", __name__)
 
 @bp.post("/post")
 def add_post():
-    if (
-        "type" not in request.json or not request.json["type"]
-        or request.json["type"] not in ["blog", "project"]
-    ):
-        return jsonify({
-            "status": 401,
-            "message": "invalid request"
-        })
 
     if "title" not in request.json or not request.json["title"]:
         return jsonify({
@@ -38,12 +30,11 @@ def add_post():
     slug = re.sub('-+', '-', re.sub(
         '[^a-zA-Z0-9]', '-', request.json["title"].lower()))
 
-    slug_in_use = db.get(request.json["type"], "slug", slug, data)
+    slug_in_use = db.get("post", "slug", slug, data)
     if slug_in_use or slug in reserved_words:
         slug = f"{slug}-{str(uuid4().hex)[:10]}"
 
     post = db.add(post_template(
-        request.json["type"],
         request.json["title"],
         slug
     ))
@@ -362,7 +353,7 @@ def delete(key):
     for row in data:
         if (
             row["key"] == key
-            and row["type"] in ["blog", "project"]
+            and row["type"] == "post"
         ):
             post = row
         elif (

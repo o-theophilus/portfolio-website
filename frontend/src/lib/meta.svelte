@@ -3,7 +3,7 @@
 
 	export let title;
 	export let description;
-	export let image;
+	export let image = '/favicon.png';
 
 	let imageAlt = image;
 	let type = 'website';
@@ -12,7 +12,7 @@
 
 <svelte:head>
 	{#if title}
-		<title>{title} | Theophilus</title>
+		<title>{title} | Loup</title>
 		<meta name="title" content={title} />
 		<meta property="og:title" content={title} />
 		<meta property="twitter:title" content={title} />

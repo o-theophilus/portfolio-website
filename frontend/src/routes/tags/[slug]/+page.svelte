@@ -6,41 +6,27 @@
 	import Tags from '$lib/tags.svelte';
 
 	export let data;
-	$: blogs = data.blogs;
-	$: projects = data.projects;
+	$: posts = data.posts;
 	let { tags } = data;
 </script>
 
-<Meta title="{$page.params.slug} - Tags" description="tags" image="/favicon.png" />
+<Meta
+	title="{$page.params.slug} - Tags"
+	description="This page displays posts that are relevant to the selected tag: {$page.params.slug}"
+/>
 
 <section class="background">
 	<Content>
 		<br />
 		<strong class="big">Tag: <span class="color1"> {$page.params.slug}</span></strong>
-		<br />
-		{#if blogs.length > 0}
-			<br /><br />
-			<strong class="big">Blog{blogs.length > 1 ? 's' : ''}</strong>
-			<br /><br />
+		<br /><br />
+		{#if posts.length > 0}
 			<section class="block">
-				{#each blogs as post}
+				{#each posts as post}
 					<ItemBox {post} />
 				{/each}
 			</section>
-		{/if}
-		{#if projects.length > 0}
-			<br /><br />
-			<strong class="big">Project{projects.length > 1 ? 's' : ''}</strong>
-			<br /><br />
-			<section class="block">
-				{#each projects as post}
-					<ItemBox {post} />
-				{/each}
-			</section>
-		{/if}
-
-		{#if blogs.length + projects.length == 0}
-			<br />
+		{:else}
 			No post found
 			<br />
 		{/if}

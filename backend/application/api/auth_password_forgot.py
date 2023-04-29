@@ -45,7 +45,7 @@ def password_forgot1():
         token=token_tool().dumps(user["key"]),
         name=user["name"]
     )
-    send_mail(user["email"], user["name"], "Welcome!", message)
+    send_mail(user["email"], user["name"], "Password Reset Request", message)
 
     return jsonify({
         "status": 200,

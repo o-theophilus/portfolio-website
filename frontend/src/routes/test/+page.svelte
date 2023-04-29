@@ -6,14 +6,17 @@
 	import Meta from '$lib/meta.svelte';
 	import Button from '$lib/button.svelte';
 
+	import Template from '$lib/email_template.forgot.svelte';
+
 	// export let data;
 	let user = {};
 </script>
 
-<Meta title={user.name} description="{user.name} profile" image="/favicon.png" />
+<Meta title={user.name} description="This page displays the user profile" />
 
 <Content>
-	<Button class="secondary" on:click={async () => {}}>Logout</Button>
+	<!-- <Button class="secondary" on:click={async () => {}}>Logout</Button> -->
+	<Template />
 </Content>
 
 <style>

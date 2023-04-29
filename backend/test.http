@@ -13,38 +13,16 @@ authorization: lll
 
 
 #Create
-post  {{host}}/blog HTTP/1.1
-content-type: application/json
 
-{
-    "title": "How I met Svelte",
-    "description": "The new reactive component based approach to web design without a virtual DOM.",
-    "photo": "how-i-met-svelte-01.jpg",
-    "content": "<a href='{0}'> Click here </a>",
-    "format": "markdown",
-    "tags": ""
-}
-
-###
-
-### Init
-get {{host}}/blog HTTP/1.1
-content-type: application/json
-
-###
 
 
 ### Init
-get {{host}}/project HTTP/1.1
+get {{host}}/post HTTP/1.1
 content-type: application/json
 
 ###
 
-### Init
-get {{host}}/blog_project HTTP/1.1
-content-type: application/json
 
-###
 
 ###
 

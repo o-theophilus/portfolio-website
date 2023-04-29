@@ -5,9 +5,9 @@
 
 	import Marked from '$lib/marked.svelte';
 	import Button from '$lib/button.svelte';
-	import Add_Comment from './slug.comment__add__.svelte';
-	import Comment from './slug.comment.item.svelte';
-	import Menu from './slug.comment.item__menu__.svelte';
+	import Add_Comment from './comment__add__.svelte';
+	import Comment from './comment.item.svelte';
+	import Menu from './comment.item__menu__.svelte';
 
 	export let comment = {};
 	export let comments = [];

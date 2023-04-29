@@ -5,9 +5,7 @@
 <div class="block">
 	<Button class="secondary" href="/">Home</Button>
 	&#8226;
-	<Button class="secondary" href="/project">Project</Button>
-	&#8226;
-	<Button class="secondary" href="/blog">Blog</Button>
+	<Button class="secondary" href="/post">Post</Button>
 </div>
 
 <style>

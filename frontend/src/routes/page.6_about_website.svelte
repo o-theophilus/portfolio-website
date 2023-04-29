@@ -20,7 +20,7 @@
 			website are beautifully highlighted, making it easy for you to follow along and understand the
 			technical details.
 			<br /><br />
-			Whether you're browsing my portfolio, reading my blog, or just exploring, I hope you'll enjoy your
+			Whether you're reading my post, or just exploring, I hope you'll enjoy your
 			experience on this site. This website is an all-in-one platform where I showcase my work and try
 			out new shiny things.
 		</div>

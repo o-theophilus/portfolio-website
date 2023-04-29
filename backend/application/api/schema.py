@@ -58,12 +58,11 @@ def user_schema(u):
 
 
 def post_template(
-        type: str,
         title: str,
         slug: str,
 ):
     return {
-        "type": type,  # blog, project
+        "type": "post",
         "key": uuid4().hex,
         "version": uuid4().hex,
         "created_at": now(),

@@ -1,10 +1,9 @@
 import { api_url } from '$lib/store.js';
 
-export const load = async ({ fetch, url, params, parent }) => {
+export const load = async ({ fetch, parent }) => {
     const { data } = await parent()
-    let type = url.pathname.split('/')[1];
 
-    const resp = await fetch(`${api_url}/${type}/${params.slug}`, {
+    const resp = await fetch(`${api_url}/post`, {
         method: 'get',
         headers: {
             'Content-Type': 'application/json',
@@ -14,13 +13,10 @@ export const load = async ({ fetch, url, params, parent }) => {
 
     if (resp.ok) {
         const data = await resp.json();
-
         if (data.status == 200) {
             return {
-                post: data.data.post,
+                posts: data.data.posts,
                 tags: data.data.tags,
-                comments: data.data.comments,
-                ratings: data.data.ratings
             }
         }
     }

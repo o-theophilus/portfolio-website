@@ -2,8 +2,8 @@
 FEATURES:
 
 login time tracking
-featured home page projects
-add blog to home
+featured home page posts
+delete post ripple delete photo
 
 ##########################################
 

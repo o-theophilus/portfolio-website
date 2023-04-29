@@ -28,7 +28,7 @@ margin: auto;
 		font-size: x-large;
 		margin-left: 10px;
 	"
-			>Theophilus
+			>Loup
 		</b>
 	</div>
 
@@ -49,8 +49,8 @@ margin: auto;
 	font-size: x-small;
 	color: grey;"
 	>
-		© Theophilus 2023
+		&copy Loup 2023. All rights reserved.
 		<br />
-		Modern Shopping for Africa
+		Design for impact
 	</div>
 </section>

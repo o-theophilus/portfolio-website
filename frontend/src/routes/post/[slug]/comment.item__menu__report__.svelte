@@ -1,31 +1,31 @@
 <script>
-	import { goto } from '$app/navigation';
-	import { api_url, module, loading } from '$lib/store.js';
+	import { api_url, _user, loading, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
+	import { template } from './comment.item__menu__report__template.js';
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
 	import Info from '$lib/__info__.svelte';
 
-	export let type;
+	export let owner_key;
+	export let owner_type;
 
-	let form = {
-		type
-	};
+	let form = {};
 	let error = {};
 
 	const validate = () => {
 		error = {};
-		if (!form.title) {
-			error.title = 'cannot be empty';
+
+		if (!form.comment) {
+			error.comment = 'cannot be empty';
 		}
 
 		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {
-		$loading = `Creating ${type} . . .`;
-		const resp = await fetch(`${api_url}/post`, {
+		$loading = `Reporting ${owner_type} . . .`;
+		const resp = await fetch(`${api_url}/report/${owner_key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -43,7 +43,7 @@
 					module: Info,
 					title: 'Done',
 					status: 'good',
-					message: `${type} Created`,
+					message: `${owner_type} reported`,
 					button: [
 						{
 							name: 'OK',
@@ -53,7 +53,6 @@
 						}
 					]
 				};
-				goto(`/${type}/${data.data.post.slug}`);
 			} else if (data.status == 201) {
 				error = data.message;
 			} else {
@@ -61,19 +60,35 @@
 			}
 		}
 	};
+
+	let msgStore = '';
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Add {type} </strong>
+	<strong class="big"> Report {owner_type} </strong>
 	{#if error.form}
 		<span class="error">
 			{error.form}
 		</span>
 	{/if}
-	<Input name="title" error={error.title} let:id>
-		<input placeholder="Title here" type="text" {id} bind:value={form.title} />
-	</Input>
 
+	<Input name="Reason" error={error.comment} let:id>
+		<svelte:fragment slot="label">
+			<select bind:value={form.comment}>
+				<option value={msgStore}>Examples</option>
+				{#each template as temp}
+					<option value={temp.text}>{temp.name}</option>
+				{/each}
+			</select>
+		</svelte:fragment>
+
+		<textarea
+			placeholder="Give reason for reporting"
+			{id}
+			bind:value={form.comment}
+			on:input={() => (msgStore = form.comment)}
+		/>
+	</Input>
 	<Button
 		on:click={() => {
 			validate();
@@ -86,8 +101,5 @@
 <style>
 	form {
 		padding: var(--gap3);
-	}
-	strong {
-		text-transform: capitalize;
 	}
 </style>

@@ -6,7 +6,7 @@
 
 	import Content from '$lib/content.svelte';
 	import Fluid from './page.3_fluid.svelte';
-	import ItemBox from './page.3_project.item_box.svelte';
+	import ItemBox from './page.3_post.item_box.svelte';
 	import Scroller from '$lib/scroller.svelte';
 
 	let sticky;
@@ -16,8 +16,6 @@
 	let pos = {};
 
 	export let projects = [];
-	export let blogs = [];
-	blogs = blogs; //fix unknown prop
 	let active_post = projects.length > 0 ? projects[0] : {};
 
 	const set_pos = (scroller) =>
@@ -121,20 +119,7 @@
 					{/key}
 				</div>
 
-				<!-- <br /><br />
-				<strong class="big"> Blogs </strong>
-				<br />
-
-				<div class="scroller left" style:left="{pos.b}px" bind:this={scroller.b}>
-					<Scroller href="/blog"
-						>view
-						<br />
-						more</Scroller
-					>
-					{#each blogs as post}
-					<ItemBox {post} home />
-					{/each}
-				</div> -->
+			
 			</div>
 		</Content>
 	</div>

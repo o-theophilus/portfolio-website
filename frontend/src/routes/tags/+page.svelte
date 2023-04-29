@@ -7,7 +7,10 @@
 	let { tags } = data;
 </script>
 
-<Meta title="Tags" description="tags" image="/favicon.png" />
+<Meta
+	title="Tags"
+	description="This page features tags that allow for easy filtering of similar and related posts"
+/>
 
 <Content>
 	<br />

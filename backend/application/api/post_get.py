@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from . import db, token_to_user
 from .schema import post_schema, rating_schema
 from .tag import get_tags
@@ -19,14 +19,11 @@ def add_rating(in_list, data):
     return in_list
 
 
-@bp.get("/blog/<slug>")
-@bp.get("/project/<slug>")
+@bp.get("/post/<slug>")
 def get(slug):
     data = db.data()
 
-    post_type = f"{request.url_rule}"[1:].split("/")[0]
-    post = db.get(post_type, "slug", slug, data)
-
+    post = db.get("post", "slug", slug, data)
     user = token_to_user(data)
     if (
         not user
@@ -61,11 +58,9 @@ def get(slug):
     })
 
 
-@bp.get("/blog")
-@bp.get("/project")
+@bp.get("/post")
 def get_all():
     data = db.data()
-    post_type = f"{request.url_rule}"[1:]
 
     user = token_to_user(data)
     if not user:
@@ -77,7 +72,7 @@ def get_all():
     posts = []
     for row in data:
         if (
-            row["type"] == post_type
+            row["type"] == "post"
             and row["status"] != "deleted"
             and (
                 row["status"] == "publish"
@@ -107,24 +102,22 @@ def get_all():
     })
 
 
-@bp.get("/post")
-def get_blog_project():
+@bp.get("/home_post")
+def get_all_post():
     data = db.data()
 
-    blogs = []
-    projects = []
+    posts = []
     for row in data:
-        if "type" in row and "status" in row and row["status"] == "publish":
-            if row["type"] == "blog":
-                blogs.append(row)
-            elif row["type"] == "project":
-                projects.append(row)
+        if (
+            "type" in row and row["type"] == "post"
+            and "status" in row and row["status"] == "publish"
+        ):
+            posts.append(row)
 
     return jsonify({
         "status": 200,
         "message": "successful",
         "data": {
-            "blogs": [post_schema(a) for a in blogs],
-            "projects": [post_schema(a) for a in projects]
+            "posts": [post_schema(a) for a in posts]
         }
     })

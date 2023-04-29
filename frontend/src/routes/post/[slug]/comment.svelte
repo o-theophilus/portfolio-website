@@ -3,9 +3,9 @@
 
 	import Content from '$lib/content.svelte';
 	import Button from '$lib/button.svelte';
-	import Comment from './slug.comment.item.svelte';
-	import Add_Comment from './slug.comment__add__.svelte';
-	import Sort from './slug.comment.sort.svelte';
+	import Comment from './comment.item.svelte';
+	import Add_Comment from './comment__add__.svelte';
+	import Sort from './comment.sort.svelte';
 
 	export let post_key = '';
 	export let comments = [];

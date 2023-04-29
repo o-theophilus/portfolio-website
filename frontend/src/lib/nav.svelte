@@ -16,15 +16,12 @@
 		<nav>
 			<a href="/">
 				<SVG type="logo" />
-				<strong> Theophilus </strong>
+				<strong> Loup </strong>
 			</a>
 			<div>
-				<Link {home} href="/project">Project</Link>
-				<Link {home} href="/blog">Blog</Link>
-			</div>
-			<div>
+				<Link {home} href="/post">Post</Link>
 				{#if $_user && $_user.login}
-					<Link {home} href="/user">User</Link>
+					<Link {home} href="/user">Profile</Link>
 				{:else}
 					<Link
 						{home}

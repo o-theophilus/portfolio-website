@@ -59,7 +59,7 @@ def index():
 
     return jsonify({
         "status": 200,
-        "message": "Welcome to Theophilus"
+        "message": "Welcome to Loup"
     })
 
 
@@ -132,21 +132,15 @@ def cron():
 # def fix():
 #     data = db.data()
 
-#     users = []
+#     posts = []
 #     for row in data:
-#         if row["type"] == "user":
-#             row["setting"] = {
-#                 "theme": "dark",
-#                 "sort_post_by": "date",
-#                 "sort_post_reverse": False,
-#                 "sort_comment_by": "date",
-#                 "sort_comment_reverse": False
-#             }
-#             users.append(row)
+#         if row["type"] in ["", ""]:
+#             row["type"] = "post"
+#             posts.append(row)
 
-#     while len(users) > 0:
-#         db.add_many(users[:25])
-#         users = users[25:]
+#     while len(posts) > 0:
+#         db.add_many(posts[:25])
+#         posts = posts[25:]
 
 #     return jsonify({
 #         "status": 200,

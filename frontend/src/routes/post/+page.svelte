@@ -1,19 +1,17 @@
 <script>
-	import { module, _user ,_portal} from '$lib/store.js';
+	import { module, _user, _portal } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import ItemBox from '$lib/item_box.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Button from '$lib/button.svelte';
-	import Add from './main__add__.svelte';
-	import Sort from './main.sort.svelte';
+	import Add from './__add__.svelte';
+	import Sort from './sort.svelte';
 	import Tags from '$lib/tags.svelte';
 
 	export let data;
 	let { posts } = data;
 	let { tags } = data;
-	let { type } = data;
-
 
 	$: if ($_portal) {
 		if ($_portal.for == 'posts') {
@@ -22,40 +20,41 @@
 
 		$_portal = {};
 	}
-
 </script>
 
-<Meta title={type} description="{type} Posts" image="/favicon.png" />
+<Meta
+	title="Posts"
+	description="This page showcases a collection of interesting blogs and projects that I have worked on"
+/>
 
 <section class="background">
 	<Content>
 		<br />
 
 		<div class="title">
-			<strong class="big">{type}{posts.length > 1 ? 's' : ''}</strong>
-			<Sort {type}/>
+			<strong class="big">Post{posts.length > 1 ? 's' : ''}</strong>
+			<Sort />
 		</div>
 
+		<br />
 		{#if $_user.roles.includes('admin')}
-			<br /><br />
 			<Button
 				on:click={() => {
 					$module = {
-						module: Add,
-						type
+						module: Add
 					};
 				}}
 			>
 				Add
 			</Button>
+			<br /><br />
 		{/if}
 
-		<br /> <br />
 		<section class="block">
 			{#each posts as post}
 				<ItemBox {post} />
 			{:else}
-				No {type} post found
+				No post found
 			{/each}
 		</section>
 
@@ -66,7 +65,7 @@
 </section>
 
 <style>
-	.title{
+	.title {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;

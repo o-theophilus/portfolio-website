@@ -7,19 +7,19 @@
 	import Button from '$lib/button.svelte';
 	import Tags from '$lib/tags.svelte';
 
-	import Delete from './slug__delete__.svelte';
-	import Title from './slug__edit_title__.svelte';
-	import Description from './slug__edit_description__.svelte';
-	import Edit_Tags from './slug__edit_tags__.svelte';
-	import Edit_Content from './slug__edit_content__.svelte';
-	import Edit_Date from './slug__edit_date__.svelte';
-	import Edit_Status from './slug__edit_status__.svelte';
-	import Manage_Photo from './slug__manage_photo__.svelte';
-	import Manage_Video from './slug__manage_video__.svelte';
-	import Share from './slug__share__.svelte';
-	import Rating from './slug__add_rating__.svelte';
-	import Comment from './slug.comment.svelte';
-	import Author from './slug.author.svelte';
+	import Delete from './__delete__.svelte';
+	import Title from './__edit_title__.svelte';
+	import Description from './__edit_description__.svelte';
+	import Edit_Tags from './__edit_tags__.svelte';
+	import Edit_Content from './__edit_content__.svelte';
+	import Edit_Date from './__edit_date__.svelte';
+	import Edit_Status from './__edit_status__.svelte';
+	import Manage_Photo from './__manage_photo__.svelte';
+	import Manage_Video from './__manage_video__.svelte';
+	import Share from './__share__.svelte';
+	import Rating from './__add_rating__.svelte';
+	import Comment from './comment.svelte';
+	import Author from './author.svelte';
 
 	export let data;
 	let { post } = data;

@@ -61,7 +61,7 @@ def add(key):
     user = token_to_user(data)
     if (
         not user or not owner
-        or owner["type"] not in ["blog", "project", "comment"]
+        or owner["type"] not in ["post", "comment"]
     ):
         return jsonify({
             "status": 401,

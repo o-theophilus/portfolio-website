@@ -6,7 +6,7 @@
 	import Parallax from './page.1_hero_parallax.svelte';
 	import Hero_Text from './page.1_hero_text.svelte';
 	import Home from './page.2_what_i_do.svelte';
-	import Projects from './page.3_project.svelte';
+	import Posts from './page.3_post.svelte';
 	import AboutMe from './page.4_about_me.svelte';
 	import About from './page.5_about_skill.svelte';
 	import AboutWebsite from './page.6_about_website.svelte';
@@ -19,8 +19,7 @@
 	import Forgot from '$lib/__auth_forgot2__.svelte';
 
 	export let data;
-	let { blogs } = data;
-	let { projects } = data;
+	let { posts } = data;
 
 	onMount(async () => {
 		let _module = $page.url.searchParams.get('module');
@@ -84,11 +83,7 @@
 	});
 </script>
 
-<Meta
-	title="Home"
-	description="Welcome to my personal portfolio website."
-	image="/favicon.png"
-/>
+<Meta title="Home" description="Welcome to my personal portfolio website." />
 
 <section>
 	<Parallax />
@@ -104,8 +99,10 @@
 </section>
 <Home />
 <br /><br />
-<br /><br />
-<Projects {projects} />
+{#if posts.length > 0}
+	<br /><br />
+	<Posts {posts} />
+{/if}
 <br /><br />
 <AboutMe />
 <br /><br />

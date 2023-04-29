@@ -4,7 +4,6 @@
 
 	import Button from '$lib/button.svelte';
 
-	export let type = '';
 	let error = '';
 
 	let form = { ...$_user.setting };
@@ -28,7 +27,7 @@
 	const submit = async () => {
 		error = '';
 
-		$loading = `Sorting ${type} . . .`;
+		$loading = `Sorting Post . . .`;
 		const resp = await fetch(`${api_url}/setting`, {
 			method: 'post',
 			headers: {
@@ -53,7 +52,7 @@
 	};
 
 	const submit_sort = async () => {
-		const resp = await fetch(`${api_url}/${type}`, {
+		const resp = await fetch(`${api_url}/post`, {
 			method: 'get',
 			headers: {
 				'Content-Type': 'application/json',

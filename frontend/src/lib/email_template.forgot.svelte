@@ -7,9 +7,18 @@
 	<b> Hello {'{'}name{'}'}, </b>
 	<br />
 	<br />
-	Please click the button below to continue with resetting your password.
+	We have received a request to reset your password.
+
+	<span
+		style="
+	color: red;"
+	>
+		If you did not initiate this action, please disregard this email.
+	</span>
 	<br />
-	If you did not initiate this action, please disregard this mail.
+	<br />
+
+	To reset your password, please click on the link below:
 	<br />
 	<br />
 	<a
@@ -32,4 +41,26 @@
 	<br />
 	<br />
 	{$page.url.origin}/?module=password&token={'{'}token{'}'}
+	<br />
+	<br />
+
+	If you have any questions or concerns, please feel free to contact us.
+	<br />
+	<br />
+
+	Best regards,
+	<br />
+	<br />
+	Theophilus.
+	<br />
+	<br />
+
+	<span
+		style="
+	font-size: x-small;
+	color: grey;"
+	>
+		Note: This link will expire in 1 hour for security reasons. If you do not reset your password
+		within this time, you will need to submit another request.
+	</span>
 </Template>

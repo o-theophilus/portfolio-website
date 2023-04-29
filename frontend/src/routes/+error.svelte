@@ -9,11 +9,11 @@
 	export const form = '';
 </script>
 
-<Meta title={error} description={error.message} image="/favicon.png" />
+<Meta title={error} description={error.message} />
 
 <Content>
-	<br>
-	<br>
+	<br />
+	<br />
 	<section>
 		<div>
 			<strong class="big">{$page.status}</strong>
@@ -25,8 +25,8 @@
 		<Button href="/">Back to Home</Button>
 	</section>
 </Content>
-<br>
-<br>
+<br />
+<br />
 
 <style>
 	section {

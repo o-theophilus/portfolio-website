@@ -9,7 +9,7 @@ class TeatAPI(unittest.TestCase):
 
     def test_status_code(self):
         resp = requests.post(
-            f"{host}/blog",
+            f"{host}/",
             headers={
                 'Content-type': 'application/json'
             },

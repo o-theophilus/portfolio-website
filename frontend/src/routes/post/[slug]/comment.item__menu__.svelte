@@ -2,8 +2,8 @@
 	import { _user, module } from '$lib/store.js';
 
 	import Button from '$lib/button.svelte';
-	import Delete from './slug.comment.item__menu__delete__.svelte';
-	import Report from './slug.comment.item__menu__report__.svelte';
+	import Delete from './comment.item__menu__delete__.svelte';
+	import Report from './comment.item__menu__report__.svelte';
 
 	export let comment;
 </script>

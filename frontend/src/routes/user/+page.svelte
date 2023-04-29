@@ -9,7 +9,7 @@
 	// export let data;
 </script>
 
-<Meta title={$_user.name} description="{$_user.name} profile" image="/favicon.png" />
+<Meta title={$_user.name} description="This page includes the user profile" />
 
 <Content>
 	<br />

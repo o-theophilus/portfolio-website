@@ -16,8 +16,7 @@ export const load = async ({ fetch, params, parent }) => {
 
         if (data.status == 200) {
             return {
-                blogs: data.data.blogs,
-                projects: data.data.projects,
+                posts: data.data.posts,
                 tags: data.data.tags,
             }
         }
