@@ -1,33 +1,20 @@
 export let template = [
 	{
-		name: 'Networking',
-		text: `Hi Theo,
-			
-I came across your profile and I'm impressed with your experience in the industry.
-Let's connect and explore potential opportunities.`
+		name: 'Personal attacks',
+		text: "This comment contains personal attacks and insults towards other users. It creates a toxic environment and goes against the principles of respectful discourse."
 	}, {
-		name: 'Asking for advice',
-		text: `Hi Theo,
-			
-I'm facing a challenge with _____ and I was hoping you could share your expertise and give me some advice.`
+		name: 'Misinformation',
+		text: "I believe this comment is spreading misinformation and is not based on factual evidence. It may mislead other readers and is therefore harmful."
 	}, {
-		name: 'Proposal',
-		text: `Hi Theo,
-			
-I have a proposal for you regarding a project that I believe you would be interested in.
-Please let me know if you're available for a chat.`
-	}, {
-		name: 'Feedback',
-		text: `Hi Theo,
-			
-I really enjoyed your recent work on _____, but I have a couple of suggestions for improvement.`
-	}, {
-		name: 'Compliment & collaboration',
-		text: `Hi Theo,
-
-Your work is exceptional and I admire your talent.
-I was wondering if you'd be interested in collaborating on a project together?`
-	}
+		name: 'Off-topic',
+		text: "This comment is off-topic and does not relate to the content of the post. It is disrupting the conversation and may confuse other readers."
+	},{
+		name: 'Bullying',
+		text: "This comment contains bullying behavior and targeted harassment towards a specific user or group of users. It is hurtful and creates an unsafe environment for others."
+	  },{
+		name: 'Inappropriate language',
+		text: "This comment contains inappropriate language that is offensive and disrespectful. It is not suitable for this platform and may be inappropriate for some readers." 
+	  }
 ]
 
 

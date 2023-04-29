@@ -37,7 +37,6 @@
 
 		if (resp.ok) {
 			const data = await resp.json();
-			console.log(data);
 
 			if (data.status == 200) {
 				$module = {
