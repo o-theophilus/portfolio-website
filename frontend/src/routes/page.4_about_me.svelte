@@ -3,6 +3,7 @@
 	import Content from '$lib/content.svelte';
 </script>
 
+<div id="about" />
 <Content>
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
