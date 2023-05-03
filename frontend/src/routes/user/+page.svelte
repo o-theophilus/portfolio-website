@@ -38,6 +38,8 @@
 	<br /><br />
 	<div class="hr" />
 	<br />
+	<Button href="/admin">Admin</Button>
+	<!-- <br /> -->
 	<Button
 		on:click={async () => {
 			const resp = await fetch(`${api_url}/login`, {

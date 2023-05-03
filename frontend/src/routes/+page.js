@@ -1,7 +1,7 @@
 import { api_url } from '$lib/store.js';
 
 export const load = async ({ fetch }) => {
-    const resp = await fetch(`${api_url}/home_post`, {
+    const resp = await fetch(`${api_url}/featured_post`, {
         method: 'get',
         headers: {
             'Content-Type': 'application/json'

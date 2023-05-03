@@ -6,7 +6,7 @@
 
 	$: href = `/${post.type}/${post.slug}`;
 	let target = '';
-	if (post.format == 'url' && !$_user.roles.includes('admin')) {
+	$: if (post.format == 'url' && !$_user.roles.includes('admin')) {
 		href = post.content;
 		target = '_blank';
 	}

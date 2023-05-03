@@ -28,7 +28,8 @@ content-type: application/json
 
 
 ### Init
-get {{host}}/fix HTTP/1.1
+get {{host}}/admin HTTP/1.1
 content-type: application/json
+authorization: ImRhZWI0ODY0YThiYzRjZDFiZmIwMzQ4OWE4NjU4Nzk4Ig.ZFGmcg.mFH76mF7eQMIpOPjBNoT4dXb8Yg
 
 ###

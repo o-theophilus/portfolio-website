@@ -10,6 +10,7 @@ from .api.photo import bp as photo
 from .api.tag import bp as tag
 from .api.user import bp as user
 from .api.auth import bp as auth
+from .api.admin_ import bp as admin
 from .api.auth_password_forgot import bp as auth_password_forgot
 from .api.report import bp as report
 
@@ -28,6 +29,7 @@ def create_app(config_file="config.py"):
     app.register_blueprint(user)
     app.register_blueprint(tag)
     app.register_blueprint(auth)
+    app.register_blueprint(admin)
     app.register_blueprint(auth_password_forgot)
     app.register_blueprint(report)
 

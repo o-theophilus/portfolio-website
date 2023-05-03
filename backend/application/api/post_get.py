@@ -100,24 +100,3 @@ def get_all():
             "tags": get_tags(posts)
         }
     })
-
-
-@bp.get("/home_post")
-def get_all_post():
-    data = db.data()
-
-    posts = []
-    for row in data:
-        if (
-            "type" in row and row["type"] == "post"
-            and "status" in row and row["status"] == "publish"
-        ):
-            posts.append(row)
-
-    return jsonify({
-        "status": 200,
-        "message": "successful",
-        "data": {
-            "posts": [post_schema(a) for a in posts]
-        }
-    })

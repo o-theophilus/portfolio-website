@@ -78,6 +78,21 @@
 				module: Login,
 				email: $page.url.searchParams.get('email')
 			};
+		} else if (_module == 'info') {
+			$module = {
+				module: Info,
+				title: $page.url.searchParams.get('title'),
+				status: $page.url.searchParams.get('status'),
+				message: $page.url.searchParams.get('message'),
+				button: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
+						}
+					}
+				]
+			};
 		}
 		window.history.replaceState('', '', '/');
 	});

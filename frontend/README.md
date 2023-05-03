@@ -1,7 +1,6 @@
 
 FEATURES:
 
-featured home page posts
 delete post ripple delete photo
 login time tracking
 cron to clean anonymous users
