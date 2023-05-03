@@ -62,7 +62,6 @@
 		});
 		return await resp.json();
 	};
-	console.log(get_slugs());
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
