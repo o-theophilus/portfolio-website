@@ -29,8 +29,8 @@
 
 	<strong> Featured Post{setting.featured_posts.length > 0 ? 's' : ''}: </strong>
 	<br />
-	{#each setting.featured_posts as post}
-		{post}
+	{#each setting.featured_posts as post, i}
+		{i + 1}. {post}
 		<br />
 	{:else}
 		No Featured Post
