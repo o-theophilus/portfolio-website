@@ -4,11 +4,17 @@ import { api_url } from '$lib/store.js';
 export const load = async ({ parent }) => {
     const { data } = await parent()
     
-    // if(!data.locals.user.login || !data.locals.user.roles.includes("admin")){
-    //     throw redirect(307, '/?module=info&title=Warning&status=warning&message=Unauthorised%20Access');
-    // }    
+    const url = new URL("https://a");
+    url.searchParams.append("module", "info");
+    url.searchParams.append("title", "Warning");
+    url.searchParams.append("status", "warning");
+    url.searchParams.append("message", "Unauthorised Access");
 
-    const resp = await fetch(`${api_url}/admin`, {
+    if(!data.locals.user.login || !data.locals.user.roles.includes("admin")){
+        throw redirect(307, `/${url.search}`);
+    }    
+        
+        const resp = await fetch(`${api_url}/admin`, {
         method: 'get',
         headers: {
             'Content-Type': 'application/json',
@@ -25,5 +31,5 @@ export const load = async ({ parent }) => {
             }
         }
     }
-    // throw redirect(307, '/?module=info&title=Unauthorised%20Access&status=warning&message=Unauthorised%20Access');
+    throw redirect(307, `/${url.search}`);
 }

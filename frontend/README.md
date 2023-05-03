@@ -6,6 +6,8 @@ login time tracking
 cron to clean anonymous users
 cron to cleanup photos from drive
 
+admin notification on comment and ratings
+
 ##########################################
 
 IMPROVEMENTS:
