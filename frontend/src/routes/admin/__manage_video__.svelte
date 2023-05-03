@@ -73,7 +73,7 @@
 		</span>
 	{/if}
 	<Input name="post slug{featured_posts.length > 1 ? 's' : ''}">
-		{#each Array(5) as _, i}
+		{#each Array(10) as _, i}
 			<input placeholder="post slug {i + 1} here " type="text" bind:value={featured_posts[i]} />
 		{/each}
 	</Input>

@@ -95,12 +95,13 @@ def featured_post():
     setting = get_setting(data)
 
     slugs = []
-    for slug in request.json["featured_posts"]:
+    for slug in request.json["featured_posts"][:10]:
         for row in data:
             if (
                 row["type"] == "post"
                 and row["slug"] == slug
                 and row["status"] == "publish"
+                and slug not in slugs
             ):
                 slugs.append(row["slug"])
 
