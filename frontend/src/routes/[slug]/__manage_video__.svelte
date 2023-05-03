@@ -8,28 +8,25 @@
 
 	export let post;
 
-	let form = {
-		description: post.description
-	};
-	let error = {};
+	let videos = [...post.videos];
+	let error = '';
 
 	const submit = async () => {
-		error = {};
+		error = '';
 
-		$loading = `Saving ${post.type} . . .`;
-		const resp = await fetch(`${api_url}/post/description/${post.key}`, {
+		$loading = "Saving Post . . .";
+		const resp = await fetch(`${api_url}/post/videos/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify(form)
+			body: JSON.stringify({ videos })
 		});
 		$loading = false;
 
 		if (resp.ok) {
 			const data = await resp.json();
-
 			if (data.status == 200) {
 				portal({
 					for: 'post',
@@ -40,7 +37,7 @@
 					module: Info,
 					title: 'Done',
 					status: 'good',
-					message: `Description saved`,
+					message: `Videos Updated`,
 					button: [
 						{
 							name: 'OK',
@@ -50,24 +47,24 @@
 						}
 					]
 				};
-			} else if (data.status == 201) {
-				error = data.message;
 			} else {
-				error.form = data.message;
+				error = data.message;
 			}
 		}
 	};
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Edit Description </strong>
-	{#if error.form}
+	<strong class="big"> Manage Video </strong>
+	{#if error}
 		<span class="error">
-			{error.form}
+			{error}
 		</span>
 	{/if}
-	<Input name="description" error={error.description} let:id>
-		<textarea placeholder="description here" {id} bind:value={form.description} />
+	<Input name="video{post.video_count > 1 ? 's' : ''}">
+		{#each Array(post.video_count) as _, i}
+			<input placeholder="video {i + 1} here " type="text" bind:value={videos[i]} />
+		{/each}
 	</Input>
 
 	<Button

@@ -4,13 +4,6 @@
 
 	export let post;
 
-	$: href = `/${post.type}/${post.slug}`;
-	let target = '';
-	$: if (post.format == 'url' && !$_user.roles.includes('admin')) {
-		href = post.content;
-		target = '_blank';
-	}
-
 	let time = timeAgo(post.created_at);
 	onMount(() => {
 		const intervalId = setInterval(() => {
@@ -21,7 +14,7 @@
 	});
 </script>
 
-<a {href} {target} data-sveltekit-preload-data class:draft={post.status == 'draft'}>
+<a href="/{post.slug}" data-sveltekit-preload-data class:draft={post.status == 'draft'}>
 	<div class="img">
 		<img
 			src="{api_url}/{post.photos[0] || ''}"

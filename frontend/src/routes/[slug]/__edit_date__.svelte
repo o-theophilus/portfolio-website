@@ -1,31 +1,35 @@
 <script>
-	import { goto } from '$app/navigation';
 	import { api_url, module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
+	import Input from '$lib/input_group.svelte';
 	import Info from '$lib/__info__.svelte';
 
 	export let post;
 
 	let form = {
-		title: post.title
+		date: post.created_at.split('T')[0],
+		time: post.created_at.split('T')[1]
 	};
 	let error = {};
 
-	const validate = () => {
+	const validate = async () => {
 		error = {};
-		if (!form.title) {
-			error.title = 'cannot be empty';
+
+		if (!form.date) {
+			error.date = 'cannot be empty';
+		}
+		if (!form.time) {
+			error.time = 'cannot be empty';
 		}
 
 		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {
-		$loading = `Saving ${post.type} . . .`;
-		const resp = await fetch(`${api_url}/post/title/${post.key}`, {
+		$loading = 'Saving Post . . .';
+		const resp = await fetch(`${api_url}/post/date/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -36,7 +40,7 @@
 		$loading = false;
 
 		if (resp.ok) {
-			const data = await resp.json();
+			let data = await resp.json();
 
 			if (data.status == 200) {
 				portal({
@@ -48,7 +52,7 @@
 					module: Info,
 					title: 'Done',
 					status: 'good',
-					message: 'Title Saved',
+					message: 'Date Saved',
 					button: [
 						{
 							name: 'OK',
@@ -58,7 +62,6 @@
 						}
 					]
 				};
-				goto(`/${post.type}/${data.data.post.slug}`);
 			} else if (data.status == 201) {
 				error = data.message;
 			} else {
@@ -69,15 +72,12 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Edit title </strong>
-	{#if error.form}
-		<span class="error">
-			{error.form}
-		</span>
-	{/if}
-
-	<Input name="title" error={error.title} let:id>
-		<input placeholder="Title here" type="text" {id} bind:value={form.title} />
+	<strong class="big"> Edit Date & Time </strong>
+	<Input name="date" error={error.date} let:id>
+		<input type="date" bind:value={form.date} {id} placeholder="date here" />
+	</Input>
+	<Input name="time" error={error.time} let:id>
+		<input type="time" bind:value={form.time} {id} placeholder="time here" />
 	</Input>
 
 	<Button

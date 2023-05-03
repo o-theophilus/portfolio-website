@@ -71,76 +71,78 @@
 </script>
 
 <section>
-	<div class="top">
-		<div class="left">
-			<div
-				class="img"
-				class:light={saturation > 29 && saturation < 189}
-				style:--saturation={saturation}
-			>
-				{comment.user_name[0]}
-			</div>
-			<div class="name">{comment.user_name}</div>
+	<div class="block">
+		<div
+			class="img"
+			class:light={saturation > 29 && saturation < 189}
+			style:--saturation={saturation}
+		>
+			{comment.user_name[0]}
 		</div>
-		<div class="right">
-			<div class="date">{time}</div>
-			<div
-				class="menu"
-				on:keypress
-				on:click={() => {
-					$module = {
-						module: Menu,
-						comment
-					};
-				}}
-			>
-				&#8226;&#8226;&#8226;
+		<div class="content">
+			<div class="top">
+				<strong class="name">{comment.user_name}</strong>
+				<div class="date_menu">
+					<div class="date">{time}</div>
+					<div
+						class="menu"
+						on:keypress
+						on:click={() => {
+							$module = {
+								module: Menu,
+								comment
+							};
+						}}
+					>
+						&#8226;&#8226;&#8226;
+					</div>
+				</div>
 			</div>
+
+			<div class="comment">
+				<Marked md={comment.comment} />
+			</div>
+			{#if error}
+				<span class="error">
+					{error}
+				</span>
+				<br />
+			{/if}
+			{#if $_user.login}
+				<div class="buttons">
+					<Button
+						icon="quote"
+						class="secondary tiny"
+						on:click={() => {
+							$module = {
+								module: Add_Comment,
+								owner_key: comment.key
+							};
+						}}
+					/>
+					|
+					<Button
+						name={comment.downvote.length}
+						class="secondary tiny"
+						icon="dislike"
+						on:click={() => {
+							validate('down');
+						}}
+					/>
+					|
+					<Button
+						name={comment.upvote.length}
+						class="secondary tiny"
+						icon="like"
+						on:click={() => {
+							validate('up');
+						}}
+					/>
+				</div>
+			{/if}
 		</div>
 	</div>
-	<div>
-		<div class="comment">
-			<Marked md={comment.comment} />
-		</div>
-		{#if error}
-			<span class="error">
-				{error}
-			</span>
-			<br />
-		{/if}
-		{#if $_user.login}
-			<div class="buttons">
-				<Button
-					icon="quote"
-					class="secondary tiny"
-					on:click={() => {
-						$module = {
-							module: Add_Comment,
-							owner_key: comment.key
-						};
-					}}
-				/>
-				|
-				<Button
-					name={comment.downvote.length}
-					class="secondary tiny"
-					icon="dislike"
-					on:click={() => {
-						validate('down');
-					}}
-				/>
-				|
-				<Button
-					name={comment.upvote.length}
-					class="secondary tiny"
-					icon="like"
-					on:click={() => {
-						validate('up');
-					}}
-				/>
-			</div>
-		{/if}
-	</div>
+
 	{#each comments as c}
 		{#if c.path[c.path.length - 1] == comment.key}
 			<Comment comment={c} {comments} />
@@ -164,9 +166,15 @@
 		border-top-left-radius: var(--gap0);
 	}
 
+	.block {
+		display: flex;
+		gap: var(--gap2);
+	}
+	.content {
+		width: 100%;
+	}
 	.top,
-	.right,
-	.left {
+	.date_menu {
 		display: flex;
 		align-items: center;
 		gap: var(--gap2);
@@ -215,5 +223,6 @@
 	.buttons {
 		display: flex;
 		gap: var(--gap1);
+		padding-bottom: var(--gap1);
 	}
 </style>

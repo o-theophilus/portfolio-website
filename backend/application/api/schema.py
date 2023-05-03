@@ -73,7 +73,7 @@ def post_template(
         "title": title,
         "content": "",
         "description": "",
-        "format": "markdown",  # markdown, url
+        # "format": "markdown",  # markdown, url
         "photos": [],
         "videos": [],
         "tags": []
@@ -90,14 +90,14 @@ def post_schema(p, data=[]):
         "key": p["key"],
         "status": p["status"],
         "title": p["title"],
-        "format": p["format"],
+        # "format": p["format"],
         "photos": photos,
         "videos": p["videos"] if "videos" in p else [],
         "description": p["description"],
         "content": p["content"],
         "slug": p["slug"],
         "tags": p["tags"],
-        "type": p["type"],
+        # "type": p["type"],
         "created_at": p["created_at"],
     }
 

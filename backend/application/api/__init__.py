@@ -32,9 +32,7 @@ def token_to_user(data=None):
     return db.get("user", "key", token, data)
 
 
-reserved_words = [
-    "admin", "omni", "user", "users", "store", "stores", "item",
-    "items"]  # property, cart, save
+reserved_words = ["admin", "post", "tags", "test", "user", "omni"]
 
 
 def create_default_admin():

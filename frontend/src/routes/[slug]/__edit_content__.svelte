@@ -9,25 +9,18 @@
 
 	export let post;
 
-	let form = {
-		format: post.format
-	};
+	let form = {};
+	let error = {};
 
 	let textarea;
 	onMount(() => {
 		textarea.value = post.content;
 	});
 
-	let error = {};
-
 	const validate = () => {
+		error = {};
 		form.content = textarea.value;
 
-		error = {};
-
-		if (!form.format) {
-			error.format = 'cannot be empty';
-		}
 		if (!form.content) {
 			error.content = 'cannot be empty';
 		}
@@ -36,7 +29,7 @@
 	};
 
 	const submit = async () => {
-		$loading = `Saving ${post.type} . . .`;
+		$loading = 'Saving Post . . .';
 		const resp = await fetch(`${api_url}/post/content/${post.key}`, {
 			method: 'put',
 			headers: {
@@ -81,44 +74,31 @@
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Edit Content </strong>
+
 	{#if error.form}
 		<span class="error">
 			{error.form}
 		</span>
 	{/if}
-	<Input name="format" error={error.format} let:id>
-		<label>
-			<input type="radio" bind:group={form.format} value="markdown" />
-			Markdown
-		</label>
 
-		<label>
-			<input type="radio" bind:group={form.format} value="url" />
-			URL
-		</label>
-	</Input>
 	<Input name="content" error={error.content} let:id>
-		{#if form.format == 'markdown'}
-			<textarea
-				placeholder="Content here"
-				{id}
-				bind:this={textarea}
-				on:keydown={(e) => {
-					if (e.key === 'Tab') {
-						e.preventDefault();
-						const start = e.target.selectionStart;
-						const end = e.target.selectionEnd;
+		<textarea
+			placeholder="Content here"
+			{id}
+			bind:this={textarea}
+			on:keydown={(e) => {
+				if (e.key === 'Tab') {
+					e.preventDefault();
+					const start = e.target.selectionStart;
+					const end = e.target.selectionEnd;
 
-						const text = textarea.value;
-						textarea.value = `${text.substring(0, start)}\t${text.substring(end)}`;
+					const text = textarea.value;
+					textarea.value = `${text.substring(0, start)}\t${text.substring(end)}`;
 
-						e.target.selectionStart = e.target.selectionEnd = start + 1;
-					}
-				}}
-			/>
-		{:else if form.format == 'url'}
-			<input placeholder="Content here" type="text" {id} bind:value={form.content} />
-		{/if}
+					e.target.selectionStart = e.target.selectionEnd = start + 1;
+				}
+			}}
+		/>
 	</Input>
 
 	<Button

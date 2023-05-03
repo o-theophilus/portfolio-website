@@ -16,7 +16,7 @@
 	const submit = async () => {
 		error = '';
 
-		$loading = `Saving ${post.type} . . .`;
+		$loading = "Saving Post . . .";
 		const resp = await fetch(`${api_url}/post/tags/${post.key}`, {
 			method: 'put',
 			headers: {

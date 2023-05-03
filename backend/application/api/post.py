@@ -135,16 +135,12 @@ def update_description(key):
 
 @bp.put("/post/content/<key>")
 def update_content(key):
-    error = {}
-    if "format" not in request.json or not request.json["format"]:
-        error["format"] = "cannot be empty"
     if "content" not in request.json or not request.json["content"]:
-        error["content"] = "cannot be empty"
-
-    if len(error):
         return jsonify({
             "status": 201,
-            "message": error
+            "message": {
+                "content": "cannot be empty"
+            }
         })
 
     data = db.data()
@@ -164,7 +160,6 @@ def update_content(key):
         })
 
     post["updated_at"] = now()
-    post["format"] = request.json["format"]
     post["content"] = request.json["content"]
 
     count = post["content"].count("{#video}")

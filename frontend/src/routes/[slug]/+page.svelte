@@ -196,6 +196,8 @@
 		</Button>
 	{/if}
 	<Marked md={content} />
+	<br />
+	<div class="hr" />
 
 	{#if $_user.roles.includes('admin') && edit_mode}
 		<br />
@@ -216,9 +218,11 @@
 	{/if}
 	{#if post.tags.length > 0}
 		<br />
+		<Tags tags={post.tags} />
+		<br />
+		<div class="hr" />
 	{/if}
-	<Tags tags={post.tags} />
-	<br /><br />
+	<br />
 	<Author />
 
 	{#if $_user.roles.includes('admin') && edit_mode}

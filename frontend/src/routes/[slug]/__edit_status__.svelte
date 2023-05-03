@@ -12,7 +12,7 @@
 	const submit = async (status) => {
 		error = '';
 
-		$loading = `Saving ${post.type} . . .`;
+		$loading = "Saving Post . . .";
 		const resp = await fetch(`${api_url}/post/status/${post.key}`, {
 			method: 'put',
 			headers: {

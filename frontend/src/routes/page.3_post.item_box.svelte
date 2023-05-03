@@ -7,13 +7,6 @@
 	export let post;
 	export let active_post = {};
 
-	let href = `/${post.type}/${post.slug}`;
-	let target = '';
-	if (post.format == 'url' && !$_user.roles.includes('admin')) {
-		href = post.content;
-		target = '_blank';
-	}
-
 	let emit = createEventDispatcher();
 	let element;
 	export let parent;
@@ -36,8 +29,7 @@
 </script>
 
 <a
-	{href}
-	{target}
+	href="/{post.slug}"
 	data-sveltekit-preload-data
 	bind:this={element}
 	class:active={post.key == active_post.key}
@@ -84,7 +76,7 @@
 
 	a.active {
 		/* transform: scale(1.05); */
-		border-color:  var(--color1);
+		border-color: var(--color1);
 	}
 	a.active img {
 		transform: scale(1.2);

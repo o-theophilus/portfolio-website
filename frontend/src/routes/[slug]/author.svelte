@@ -7,7 +7,7 @@
 </script>
 
 <section>
-	<strong class="big"> Author </strong>
+	<strong> Author </strong>
 	<class class="block">
 		<div
 			class="img"
@@ -25,11 +25,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--gap2);
-		border: 2px solid var(--accent4);
-		border-radius: var(--gap0);
-		padding: var(--gap2);
 	}
-	.big {
+	strong {
 		color: var(--accent1);
 	}
 	.block {

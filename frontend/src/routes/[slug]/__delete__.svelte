@@ -13,7 +13,7 @@
 	const submit = async () => {
 		error = '';
 
-		$loading = `Deleting ${post.type} . . .`;
+		$loading = "Deleting Post . . .";
 		const resp = await fetch(`${api_url}/post/${post.key}`, {
 			method: 'delete',
 			headers: {
@@ -31,7 +31,7 @@
 					module: Info,
 					title: 'Done',
 					status: 'good',
-					message: `${post.type} Deleted`,
+					message: "Post Deleted",
 					button: [
 						{
 							name: 'Ok',
@@ -41,7 +41,7 @@
 						}
 					]
 				};
-				goto(`/${post.type}/`);
+				goto("/post");
 			} else {
 				error = data.message;
 			}
