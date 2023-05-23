@@ -1,10 +1,10 @@
 
 FEATURES:
 
-delete post ripple delete photo
 login time tracking
-cron to clean anonymous users
+delete post ripple delete photo
 cron to cleanup photos from drive
+cron to clean anonymous users
 
 admin notification on comment and ratings
 
