@@ -94,7 +94,7 @@
 				]
 			};
 		}
-		window.history.replaceState('', '', '/');
+		window.history.replaceState(history.state, '', '/');
 	});
 </script>
 
