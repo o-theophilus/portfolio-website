@@ -49,7 +49,7 @@
 						}
 					]
 				};
-				goto(`/post/${data.data.post.slug}`);
+				goto(`/${data.data.post.slug}`);
 			} else if (data.status == 201) {
 				error = data.message;
 			} else {
