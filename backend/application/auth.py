@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, current_app
-from . import db, token_tool, token_to_user
+from .api import db, token_tool, token_to_user
 from .schema import user_schema, user_template
 from uuid import uuid4
 from werkzeug.security import check_password_hash

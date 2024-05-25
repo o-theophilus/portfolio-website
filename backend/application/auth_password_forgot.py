@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, current_app
 from .mail import send_mail
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
-from . import db, token_tool
+from .api import db, token_tool
 from .schema import user_schema
 
 bp = Blueprint("user_password_forgot", __name__)

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from . import db, token_to_user
+from .api import db, token_to_user
 from .schema import post_schema
 
 bp = Blueprint("tag", __name__)

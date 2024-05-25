@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from . import token_to_user, db
+from .api import token_to_user, db
 from .schema import report_template
 
 

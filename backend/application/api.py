@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, current_app, request
 from itsdangerous import URLSafeTimedSerializer
 from . import db
 import re
+import os
 from .mail import send_mail
 from .schema import user_template
 
@@ -36,7 +37,7 @@ reserved_words = ["admin", "post", "tags", "test", "user", "omni"]
 
 
 def create_default_admin():
-    email = current_app.config["DEFAULT_ADMIN"][1]
+    email = os.environ["MAIL_USERNAME"]
     user = db.get("user", "email", email)
 
     if not user:

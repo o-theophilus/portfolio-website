@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from . import db, token_to_user
+from .api import db, token_to_user
 from .schema import user_schema, now
 
 

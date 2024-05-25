@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from . import reserved_words, token_to_user, db
+from .api import reserved_words, token_to_user, db
 from .schema import now, post_template, post_schema
 import re
 from uuid import uuid4

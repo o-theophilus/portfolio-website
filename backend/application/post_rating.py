@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request
-from . import token_to_user, db
+from .api import token_to_user, db
 from .schema import rating_schema, rating_template
 
 
-bp = Blueprint("rating", __name__)
+bp = Blueprint("post_rating", __name__)
 
 
 @bp.post("/rating/<key>")

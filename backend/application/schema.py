@@ -1,4 +1,3 @@
-
 from werkzeug.security import generate_password_hash
 from uuid import uuid4
 from datetime import datetime, timedelta
@@ -26,7 +25,7 @@ def user_template(
 
         "name": name,
         "email": email,
-        "password": generate_password_hash(password, method="sha256"),
+        "password": generate_password_hash(password, method="scrypt"),
 
         "status": status,  # anonymous, verified, deleted
         "login": False,
