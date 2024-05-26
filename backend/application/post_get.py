@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
-from .api import db, token_to_user
+from . import db
+from .tools import token_to_user
 from .schema import post_schema, rating_schema
 from .tag import get_tags
 from .comment import get_comments
@@ -31,8 +32,8 @@ def get(slug):
         or post["status"] == "deleted"
     ):
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     ratings = []
@@ -48,13 +49,10 @@ def get(slug):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post, data),
-            "tags": get_tags(data, post["key"]),
-            "comments": comments,
-            "ratings": [rating_schema(c) for c in ratings]
-        }
+        "post": post_schema(post, data),
+        "tags": get_tags(data, post["key"]),
+        "comments": comments,
+        "ratings": [rating_schema(c) for c in ratings]
     })
 
 
@@ -65,8 +63,8 @@ def get_all():
     user = token_to_user(data)
     if not user:
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     posts = []
@@ -94,9 +92,6 @@ def get_all():
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "posts": [post_schema(a) for a in posts],
-            "tags": get_tags(posts)
-        }
+        "posts": [post_schema(a) for a in posts],
+        "tags": get_tags(posts)
     })

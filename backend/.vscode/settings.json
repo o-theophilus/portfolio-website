@@ -24,6 +24,7 @@
     "ilike",
     "isouter",
     "items",
+    "itsdangerous",
     "iv",
     "jsonify",
     "lt",

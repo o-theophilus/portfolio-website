@@ -1,11 +1,11 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { api_url, module, loading } from '$lib/store.js';
+	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import Info from '$lib/__info__.svelte';
+	import Info from '$lib/info.svelte';
 
 	let form = {};
 	let error = {};
@@ -21,7 +21,7 @@
 
 	const submit = async () => {
 		$loading = `Creating Post . . .`;
-		const resp = await fetch(`${api_url}/post`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -29,41 +29,34 @@
 			},
 			body: JSON.stringify(form)
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
-
-			if (data.status == 200) {
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: 'Post Created',
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+		if (resp.status == 200) {
+			$module = {
+				module: Info,
+				message: 'Post Created',
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-				goto(`/${data.data.post.slug}`);
-			} else if (data.status == 201) {
-				error = data.message;
-			} else {
-				error.form = data.message;
-			}
+					}
+				]
+			};
+			goto(`/${resp.post.slug}`);
+		} else {
+			error = resp;
 		}
 	};
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Add Post </strong>
-	{#if error.form}
+	{#if error.error}
 		<span class="error">
-			{error.form}
+			{error.error}
 		</span>
 	{/if}
 	<Input name="title" error={error.title} let:id>

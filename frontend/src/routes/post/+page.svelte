@@ -1,5 +1,5 @@
 <script>
-	import { module, _user, _portal } from '$lib/store.js';
+	import { module, user, _portal } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import ItemBox from '$lib/item_box.svelte';
@@ -37,7 +37,7 @@
 		</div>
 
 		<br />
-		{#if $_user.roles.includes('admin')}
+		{#if $user.roles.includes('admin')}
 			<Button
 				on:click={() => {
 					$module = {

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 from . import api
@@ -11,7 +11,6 @@ from . import tag
 from . import user
 from . import auth
 from . import admin
-from . import auth_password_forgot
 from . import report
 
 
@@ -21,6 +20,14 @@ def create_app(conf=None):
     if conf:
         app.config.from_pyfile(conf)
     CORS(app)
+
+    @app.route("/")
+    def index():
+
+        return jsonify({
+            "status": 200,
+            "message": "Welcome to Loup"
+        })
 
     app.register_blueprint(api.bp)
     app.register_blueprint(post.bp)
@@ -32,7 +39,6 @@ def create_app(conf=None):
     app.register_blueprint(tag.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(admin.bp)
-    app.register_blueprint(auth_password_forgot.bp)
     app.register_blueprint(report.bp)
 
     return app

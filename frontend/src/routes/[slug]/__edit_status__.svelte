@@ -1,19 +1,19 @@
 <script>
-	import { api_url, module, portal, loading } from '$lib/store.js';
+	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
-	import Info from '$lib/__info__.svelte';
+	import Info from '$lib/info.svelte';
 
 	export let post;
 
-	let error = '';
+	let error = {};
 
 	const submit = async (status) => {
-		error = '';
+		error = {};
 
-		$loading = "Saving Post . . .";
-		const resp = await fetch(`${api_url}/post/status/${post.key}`, {
+		$loading = 'Saving Post . . .';
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/status/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -21,34 +21,29 @@
 			},
 			body: JSON.stringify({ status })
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
+		if (resp.status == 200) {
+			portal({
+				for: 'post',
+				data: resp.post
+			});
 
-			if (data.status == 200) {
-				portal({
-					for: 'post',
-					data: data.data.post
-				});
-
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: 'Status Changed',
-					button: [
-						{
-							name: 'Ok',
-							fn: () => {
-								$module = '';
-							}
+			$module = {
+				module: Info,
+				message: 'Status Changed',
+				buttons: [
+					{
+						name: 'Ok',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else {
-				error = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 </script>
@@ -58,9 +53,9 @@
 	<br /><br />
 	<div>Status: <strong>{post.status}</strong></div>
 	<div>Change to:</div>
-	{#if error}
+	{#if error.error}
 		<span class="error">
-			{error}
+			{error.error}
 		</span>
 	{/if}
 	<div class="row">

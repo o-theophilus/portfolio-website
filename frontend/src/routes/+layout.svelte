@@ -1,21 +1,21 @@
 <script>
-	import { _user } from '$lib/store.js';
+	import { user } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Module from '$lib/__module__.svelte';
-	import Loading from '$lib/__loading__.svelte';
-	import Nav from '$lib/nav.svelte';
-	import Footer from './layout.footer.svelte';
-	import './layout.var.css';
-	import './layout.main.css';
-	import './layout.form.css';
+	import './layout/var.css';
+	import './layout/main.css';
+	import './layout/form.css';
+	import Module from './layout/module.svelte';
+	import Loading from './layout/loading.svelte';
+	import Nav from './layout/nav.svelte';
+	import Footer from './layout/footer.svelte';
 
 	export let data;
-	$_user = data.data.locals.user;
-	$token = data.data.locals.token;
+	$user = data.locals.user;
+	$token = data.locals.token;
 </script>
 
-<main class:dark={$_user.setting.theme == 'dark'}>
+<main class:dark={$user.setting_theme == 'dark'}>
 	<Nav />
 	<slot />
 	<Footer />

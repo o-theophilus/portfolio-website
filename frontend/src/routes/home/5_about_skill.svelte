@@ -1,7 +1,7 @@
 <script>
 	import Observe from '$lib/observe.svelte';
 	import Content from '$lib/content.svelte';
-	import Skill from './page.5_about.skill_item.svelte';
+	import Skill from './5_about.skill_item.svelte';
 
 	let skills = [
 		{ name: 'HTML', value: 95 },

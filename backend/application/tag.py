@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
-from .api import db, token_to_user
+from . import db
+from .tools import token_to_user
 from .schema import post_schema
 
 bp = Blueprint("tag", __name__)
@@ -30,10 +31,7 @@ def get_tags(data, key=None):
 def get_all():
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "tags": get_tags(db.data())
-        }
+        "tags": get_tags(db.data())
     })
 
 
@@ -57,9 +55,6 @@ def get(tag):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "posts": [post_schema(a) for a in posts],
-            "tags": get_tags(data)
-        }
+        "posts": [post_schema(a) for a in posts],
+        "tags": get_tags(data)
     })

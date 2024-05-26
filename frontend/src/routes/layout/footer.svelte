@@ -1,9 +1,9 @@
 <script>
-	import Nav from './layout.footer.nav.svelte';
+	import Nav from './footer.nav.svelte';
 
-	import Contact from './layout.footer.contact.svelte';
-	import Socials from './layout.footer.socials.svelte';
-	import Form from './layout.footer.form.svelte';
+	import Contact from './footer.contact.svelte';
+	import Socials from './footer.socials.svelte';
+	import Form from './footer.form.svelte';
 
 	import Content from '$lib/content.svelte';
 </script>

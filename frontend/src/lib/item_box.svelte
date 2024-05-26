@@ -1,5 +1,5 @@
 <script>
-	import { api_url, _user, timeAgo } from '$lib/store.js';
+	import { timeAgo } from '$lib/store.js';
 	import { onMount } from 'svelte';
 
 	export let post;
@@ -17,7 +17,7 @@
 <a href="/{post.slug}" data-sveltekit-preload-data class:draft={post.status == 'draft'}>
 	<div class="img">
 		<img
-			src="{api_url}/{post.photos[0] || ''}"
+			src="{import.meta.env.VITE_BACKEND}/{post.photos[0] || ''}"
 			alt={post.title}
 			onerror="this.src='/site/no_photo.png'"
 		/>

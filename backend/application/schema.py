@@ -8,38 +8,6 @@ def now(day=0):
         microsecond=0).isoformat()
 
 
-def user_template(
-        name: str,
-        email: str,
-        password: str,
-        status: str = "anonymous",
-        roles: list = []
-):
-
-    return {
-        "type": "user",
-        "key": uuid4().hex,
-        "version": uuid4().hex,
-        "created_at": now(),
-        "updated_at": now(),
-
-        "name": name,
-        "email": email,
-        "password": generate_password_hash(password, method="scrypt"),
-
-        "status": status,  # anonymous, verified, deleted
-        "login": False,
-        "roles": roles,
-        "setting": {
-            "theme": "dark",
-            "sort_post_by": "date",  # rating, date, title
-            "sort_post_reverse": False,
-            "sort_comment_by": "date",  # vote, date
-            "sort_comment_reverse": False
-        }
-    }
-
-
 def user_schema(u):
     return {
         "key": u["key"],
@@ -53,29 +21,6 @@ def user_schema(u):
         "roles": u["roles"],
         "login": u["login"],
 
-    }
-
-
-def post_template(
-        title: str,
-        slug: str,
-):
-    return {
-        "type": "post",
-        "key": uuid4().hex,
-        "version": uuid4().hex,
-        "created_at": now(),
-        "updated_at": now(),
-
-        "status": "draft",  # draft, publish, deleted
-        "slug": slug,
-        "title": title,
-        "content": "",
-        "description": "",
-        # "format": "markdown",  # markdown, url
-        "photos": [],
-        "videos": [],
-        "tags": []
     }
 
 

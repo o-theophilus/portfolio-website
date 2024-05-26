@@ -1,10 +1,34 @@
 from flask import Blueprint, jsonify, request
-from .api import reserved_words, token_to_user, db
-from .schema import now, post_template, post_schema
+from . import db
+from .tools import reserved_words, token_to_user
+from .schema import now, post_schema
 import re
 from uuid import uuid4
 
 bp = Blueprint("post", __name__)
+
+
+def post_template(
+        title: str,
+        slug: str,
+):
+    return {
+        "type": "post",
+        "key": uuid4().hex,
+        "version": uuid4().hex,
+        "created_at": now(),
+        "updated_at": now(),
+
+        "status": "draft",  # draft, publish, deleted
+        "slug": slug,
+        "title": title,
+        "content": "",
+        "description": "",
+        # "format": "markdown",  # markdown, url
+        "photos": [],
+        "videos": [],
+        "tags": []
+    }
 
 
 @bp.post("/post")
@@ -12,10 +36,8 @@ def add_post():
 
     if "title" not in request.json or not request.json["title"]:
         return jsonify({
-            "status": 201,
-            "message": {
-                "title": "cannot be empty"
-            }
+            "status": 400,
+            "title": "cannot be empty"
         })
 
     data = db.data()
@@ -23,8 +45,8 @@ def add_post():
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     slug = re.sub('-+', '-', re.sub(
@@ -41,10 +63,7 @@ def add_post():
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post, data)
-        }
+        "post": post_schema(post, data)
     })
 
 
@@ -52,10 +71,8 @@ def add_post():
 def update_title(key):
     if "title" not in request.json or not request.json["title"]:
         return jsonify({
-            "status": 201,
-            "message": {
-                "title": "cannot be empty"
-            }
+            "status": 400,
+            "title": "cannot be empty"
         })
 
     data = db.data()
@@ -63,15 +80,15 @@ def update_title(key):
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     post = db.get_key(key, data)
     if not post:
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     slug = re.sub('-+', '-', re.sub(
@@ -93,10 +110,7 @@ def update_title(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post, data)
-        }
+        "post": post_schema(post, data)
     })
 
 
@@ -108,15 +122,15 @@ def update_description(key):
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     post = db.get_key(key, data)
     if not post or "description" not in request.json:
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     post["updated_at"] = now()
@@ -126,10 +140,7 @@ def update_description(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post, data)
-        }
+        "post": post_schema(post, data)
     })
 
 
@@ -137,10 +148,8 @@ def update_description(key):
 def update_content(key):
     if "content" not in request.json or not request.json["content"]:
         return jsonify({
-            "status": 201,
-            "message": {
-                "content": "cannot be empty"
-            }
+            "status": 400,
+            "content": "cannot be empty"
         })
 
     data = db.data()
@@ -148,15 +157,15 @@ def update_content(key):
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     post = db.get_key(key, data)
     if not post:
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     post["updated_at"] = now()
@@ -172,10 +181,7 @@ def update_content(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post, data)
-        }
+        "post": post_schema(post, data)
     })
 
 
@@ -189,8 +195,8 @@ def update_date(key):
 
     if error != {}:
         return jsonify({
-            "status": 201,
-            "message": error
+            "status": 400,
+            **error
         })
 
     data = db.data()
@@ -198,15 +204,15 @@ def update_date(key):
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     post = db.get_key(key, data)
     if not post:
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     post["updated_at"] = now()
@@ -216,10 +222,7 @@ def update_date(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post, data)
-        }
+        "post": post_schema(post, data)
     })
 
 
@@ -231,15 +234,15 @@ def update_tags(key):
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     post = db.get_key(key, data)
     if not post or "tags" not in request.json:
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     post["updated_at"] = now()
@@ -249,10 +252,7 @@ def update_tags(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post, data)
-        }
+        "post": post_schema(post, data)
     })
 
 
@@ -264,8 +264,8 @@ def update_status(key):
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     post = db.get_key(key, data)
@@ -276,8 +276,8 @@ def update_status(key):
         or request.json["status"] == post["status"]
     ):
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     post["updated_at"] = now()
@@ -287,10 +287,7 @@ def update_status(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post, data)
-        }
+        "post": post_schema(post, data)
     })
 
 
@@ -302,8 +299,8 @@ def update_videos(key):
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     post = db.get_key(key, data)
@@ -312,8 +309,8 @@ def update_videos(key):
         or type(request.json["videos"]) != "list"
     ):
         return jsonify({
-            "status": 201,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     post["updated_at"] = now()
@@ -323,10 +320,7 @@ def update_videos(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post, data)
-        }
+        "post": post_schema(post, data)
     })
 
 
@@ -338,8 +332,8 @@ def delete(key):
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     post = None
@@ -360,8 +354,8 @@ def delete(key):
 
     if not post or post["status"] == "deleted":
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     to_delete.append(post)
@@ -375,5 +369,5 @@ def delete(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful"
+        "error": "successful"
     })

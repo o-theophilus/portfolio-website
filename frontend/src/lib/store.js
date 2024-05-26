@@ -1,9 +1,7 @@
 import { writable } from 'svelte/store';
 
-export const api_url = import.meta.env.VITE_API_URL;
-
 // app variables
-export const _user = writable();
+export const user = writable();
 
 // variables
 export const module = writable();

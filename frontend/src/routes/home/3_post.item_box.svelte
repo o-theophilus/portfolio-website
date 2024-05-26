@@ -2,8 +2,6 @@
 	import { browser } from '$app/environment';
 	import { onMount, createEventDispatcher } from 'svelte';
 
-	import { api_url, _user } from '$lib/store.js';
-
 	export let post;
 	export let active_post = {};
 
@@ -37,7 +35,7 @@
 	on:mouseleave
 >
 	<img
-		src="{api_url}/{post.photos[0] || ''}"
+		src="{import.meta.env.VITE_BACKEND}/{post.photos[0] || ''}"
 		alt={post.title}
 		onerror="this.src='/site/no_photo.png'"
 	/>

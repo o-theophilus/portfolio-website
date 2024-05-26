@@ -1,11 +1,11 @@
 <script>
-	import { api_url, _user, loading, module } from '$lib/store.js';
+	import { loading, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import { template } from './comment.item__menu__report__template.js';
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import Info from '$lib/__info__.svelte';
+	import Info from '$lib/info.svelte';
 
 	export let owner_key;
 	export let owner_type;
@@ -25,7 +25,7 @@
 
 	const submit = async () => {
 		$loading = `Reporting ${owner_type} . . .`;
-		const resp = await fetch(`${api_url}/report/${owner_key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/report/${owner_key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -33,31 +33,24 @@
 			},
 			body: JSON.stringify(form)
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
-
-			if (data.status == 200) {
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: `${owner_type} reported`,
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+		if (resp.status == 200) {
+			$module = {
+				module: Info,
+				message: `${owner_type} reported`,
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else if (data.status == 201) {
-				error = data.message;
-			} else {
-				error.form = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 
@@ -66,9 +59,9 @@
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Report {owner_type} </strong>
-	{#if error.form}
+	{#if error.error}
 		<span class="error">
-			{error.form}
+			{error.error}
 		</span>
 	{/if}
 

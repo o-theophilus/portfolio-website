@@ -1,19 +1,19 @@
 <script>
-	import { api_url, _user, loading, module } from '$lib/store.js';
+	import { user, loading, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import { template } from './layout.footer.form.template.js';
+	import { template } from './footer.form.template.js';
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import Info from '$lib/__info__.svelte';
+	import Info from '$lib/info.svelte';
 
 	import EmailTemplate from '$lib/email_template.svelte';
 	let email_template;
 
 	let form = {};
-	if ($_user.status == 'verified') {
-		form.name = $_user.name;
-		form.email = $_user.email;
+	if ($user.status == 'verified') {
+		form.name = $user.name;
+		form.email = $user.email;
 	}
 	let error = {};
 
@@ -35,10 +35,10 @@
 	};
 
 	const submit = async () => {
-		form.email_template = email_template.innerHTML;
+		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
 		$loading = 'Sending Email . . .';
-		const resp = await fetch(`${api_url}/send_email`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/send_email`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -46,39 +46,33 @@
 			},
 			body: JSON.stringify(form)
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
+		if (resp.status == 200) {
+			form = {};
+			_form.reset();
 
-			if (data.status == 200) {
-				form = {};
-				_form.reset();
-
-				$module = {
-					module: Info,
-					title: 'Message Sent',
-					status: 'good',
-					message: `
+			$module = {
+				module: Info,
+				title: 'Message Sent',
+				message: `
 					Thank you for contacting us,
 					<br/>
 					We will get back to you shortly
 					`,
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else if (data.status == 201) {
-				error = data.message;
-			} else {
-				error.form = data.message;
-				// throw new Error(data.message);
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
+			// throw new Error(data.message);
 		}
 	};
 
@@ -87,12 +81,12 @@
 </script>
 
 <form on:submit|preventDefault={validate} novalidate autocomplete="off" bind:this={_form}>
-	{#if error.form}
+	{#if error.error}
 		<div class="err">
-			{error.form}
+			{error.error}
 		</div>
 	{/if}
-	
+
 	<Input name="full name" error={error.name} let:id svg="username">
 		<input placeholder="Your Name" type="text" {id} bind:value={form.name} />
 	</Input>

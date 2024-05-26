@@ -1,19 +1,18 @@
 <script>
-	import { api_url, _user, module, loading } from '$lib/store.js';
+	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import EmailTemplate from './email_template.confirm.svelte';
-	import Signup from './__auth_signup__.svelte';
-	import Forgot from './__auth_forgot1__.svelte';
-	import Info from './__info__.svelte';
+	import Info from '$lib/info.svelte';
+	import EmailTemplate from './confirm.email_template.svelte';
+	import Signup from './signup.svelte';
+	import Forgot from './forgot.svelte';
 
 	let email_template;
 
-	export let email = '';
 	let form = {
-		email
+		email: $module.email
 	};
 	let error = {};
 
@@ -31,10 +30,10 @@
 	};
 
 	const submit = async () => {
-		form.email_template = email_template.innerHTML;
+		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
 		$loading = 'Loading . . .';
-		const resp = await fetch(`${api_url}/login`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/login`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -43,45 +42,41 @@
 			body: JSON.stringify(form)
 		});
 
-		if (resp.ok) {
-			const data = await resp.json();
+		resp = await resp.json();
+		console.log(resp);
+		if (resp.status != 200) {
+			$loading = false;
+		}
 
-			if (data.status != 200) {
-				$loading = false;
-			}
-
-			if (data.status == 200) {
-				$token = data.data.token;
-				document.location = '/';
-			} else if (data.status == 202) {
-				$module = {
-					module: Info,
-					title: 'Email has not been confirmed',
-					status: 'warning',
-					message: `A confirmation email has been sent to <b>${data.data.user.email}</b>`,
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+		if (resp.status == 200) {
+			$token = resp.token;
+			document.location = '/';
+		} else if (resp.error == 'not confirmed') {
+			$module = {
+				module: Info,
+				title: 'Email has not been confirmed',
+				status: 201,
+				message: `A confirmation email has been sent to: <b>${form.email}</b>`,
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else if (data.status == 201) {
-				error = data.message;
-			} else {
-				error.form = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Login </strong>
-	{#if error.form}
+	{#if error.error}
 		<span class="error">
-			{error.form}
+			{error.error}
 		</span>
 	{/if}
 	<Input name="email" error={error.email} let:id>
@@ -103,7 +98,8 @@
 			class="secondary"
 			on:click={() => {
 				$module = {
-					module: Signup
+					module: Signup,
+					email: form.email
 				};
 			}}
 		>

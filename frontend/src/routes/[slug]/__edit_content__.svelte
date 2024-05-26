@@ -1,10 +1,10 @@
 <script>
-	import { api_url, module, portal, loading } from '$lib/store.js';
+	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import Info from '$lib/__info__.svelte';
+	import Info from '$lib/info.svelte';
 	import { onMount } from 'svelte';
 
 	export let post;
@@ -30,7 +30,7 @@
 
 	const submit = async () => {
 		$loading = 'Saving Post . . .';
-		const resp = await fetch(`${api_url}/post/content/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/content/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -38,36 +38,29 @@
 			},
 			body: JSON.stringify(form)
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
+		if (resp.status == 200) {
+			portal({
+				for: 'post',
+				data: resp.post
+			});
 
-			if (data.status == 200) {
-				portal({
-					for: 'post',
-					data: data.data.post
-				});
-
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: 'Content Saved',
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+			$module = {
+				module: Info,
+				message: 'Content Saved',
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else if (data.status == 201) {
-				error = data.message;
-			} else {
-				error.form = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 </script>
@@ -75,9 +68,9 @@
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Edit Content </strong>
 
-	{#if error.form}
+	{#if error.error}
 		<span class="error">
-			{error.form}
+			{error.error}
 		</span>
 	{/if}
 

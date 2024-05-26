@@ -4,14 +4,6 @@
 
 	import { module } from '$lib/store.js';
 	import Button from '$lib/button.svelte';
-
-	let comp;
-	let data;
-	$: if ($module) {
-		comp = $module.module;
-		delete $module.module;
-		data = $module;
-	}
 </script>
 
 {#if $module}
@@ -28,8 +20,7 @@
 				/>
 			</div>
 			<div class="content">
-				<!-- <svelte:component this={$module.module} {...$module} /> -->
-				<svelte:component this={comp} {...data} />
+				<svelte:component this={$module.module} />
 			</div>
 		</div>
 	</section>

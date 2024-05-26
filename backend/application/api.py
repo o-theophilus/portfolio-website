@@ -1,68 +1,18 @@
 from flask import Blueprint, jsonify, current_app, request
-from itsdangerous import URLSafeTimedSerializer
 from . import db
 import re
 import os
-from .mail import send_mail
-from .schema import user_template
+from .tools import send_mail
+from deta import Deta
+from .postgres import db_open, db_close
+from .postgres import post_table, user_table, log_table
+from uuid import uuid4
 
 
 bp = Blueprint("api", __name__)
 
 
-def token_tool():
-    return URLSafeTimedSerializer(
-        current_app.config["SECRET_KEY"],
-        current_app.config["SECURITY_PASSWORD_SALT"]
-    )
-
-
-def token_to_user(data=None):
-    if (
-        "Authorization" not in request.headers or
-        not request.headers["Authorization"]
-    ):
-        return None
-
-    token = request.headers["Authorization"]
-    try:
-        token = token_tool().loads(token)
-    except Exception:
-        return None
-
-    return db.get("user", "key", token, data)
-
-
-reserved_words = ["admin", "post", "tags", "test", "user", "omni"]
-
-
-def create_default_admin():
-    email = os.environ["MAIL_USERNAME"]
-    user = db.get("user", "email", email)
-
-    if not user:
-        db.add(
-            user_template(
-                current_app.config["DEFAULT_ADMIN"][0],
-                email,
-                current_app.config["DEFAULT_ADMIN"][2],
-                "verified",
-                ["admin", "dashboard", "omni"]
-            )
-        )
-
-
-@bp.route("/")
-def index():
-    create_default_admin()
-
-    return jsonify({
-        "status": 200,
-        "message": "Welcome to Loup"
-    })
-
-
-@bp.post("/send_email")
+@bp.post("/contact")
 def send_email():
 
     if (
@@ -70,8 +20,8 @@ def send_email():
         or not request.json["email_template"]
     ):
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     error = {}
@@ -87,8 +37,8 @@ def send_email():
 
     if error != {}:
         return jsonify({
-            "status": 201,
-            "message": error
+            "status": 400,
+            **error
         })
 
     message = request.json['email_template'].format(
@@ -104,8 +54,7 @@ def send_email():
     )
 
     return jsonify({
-        "status": 200,
-        "message": "successful",
+        "status": 200
     })
 
 
@@ -122,26 +71,81 @@ def cron():
             db.rem(row["key"])
 
     return jsonify({
-        "status": 200,
-        "message": "successful",
+        "status": 200
     })
 
 
-# @bp.get("/fix")
-# def fix():
-#     data = db.data()
+@bp.get("/fix")
+def fix():
+    con, cur = db_open()
 
-#     posts = []
-#     for row in data:
-#         if row["type"] in ["", ""]:
-#             row["type"] = "post"
-#             posts.append(row)
+    cur.execute(f"""
+        DROP TABLE IF EXISTS "user" CASCADE;
+        DROP TABLE IF EXISTS post CASCADE;
+        DROP TABLE IF EXISTS log CASCADE;
+        {user_table}
+        {post_table}
+        {log_table}
+    """)
 
-#     while len(posts) > 0:
-#         db.add_many(posts[:25])
-#         posts = posts[25:]
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
 
-#     return jsonify({
-#         "status": 200,
-#         "message": "successful",
-#     })
+
+def deta_to_postgres():
+    con, cur = db_open()
+
+    source = Deta(os.environ["DETA_KEY"]).Base("live")
+
+    res = source.fetch()
+    entities = res.items
+    while res.last:
+        res = source.fetch(last=res.last)
+        entities += res.items
+
+    for x in entities:
+        if x["type"] == "post":
+            cur.execute("""
+                INSERT INTO post (
+                    key,
+                    status,
+                    title,
+                    slug,
+                    content,
+                    description,
+                    photos,
+                    videos,
+                    tags
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+            """, (
+                x["key"],
+                x["status"],
+                x["title"],
+                x["slug"],
+                x["content"],
+                x["description"],
+                x["photos"],
+                x["videos"],
+                x["tags"]
+            ))
+
+            cur.execute("""
+                INSERT INTO log (
+                    key, date, user_key, action, entity_key, entity_type
+                ) VALUES (%s, %s, %s, %s, %s, %s);
+            """, (
+                uuid4().hex,
+                x["date_c"],
+                "admin_key_replace",
+                "created",
+                x["key"],
+                "post"
+            ))
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })

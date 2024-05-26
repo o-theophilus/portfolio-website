@@ -1,12 +1,11 @@
 <script>
 	import { browser } from '$app/environment';
-	import { api_url } from '$lib/store.js';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 
 	import Content from '$lib/content.svelte';
-	import ItemBox from './page.3_post.item_box.svelte';
+	import ItemBox from './3_post.item_box.svelte';
 	import Scroller from '$lib/scroller.svelte';
 
 	let sticky;
@@ -54,7 +53,7 @@
 			{#key active_post.key}
 				<div
 					class="bg"
-					style:--fff="url({api_url}/{active_post.photos[0]})"
+					style:--fff="url({import.meta.env.VITE_BACKEND}/{active_post.photos[0]})"
 					in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}
 				/>
 			{/key}

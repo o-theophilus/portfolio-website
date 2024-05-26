@@ -1,19 +1,8 @@
-import { api_url } from '$lib/store.js';
-
 export const load = async ({ fetch }) => {
-    const resp = await fetch(`${api_url}/featured_post`, {
-        method: 'get',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    });
+    let resp = await fetch(`${import.meta.env.VITE_BACKEND}/featured_post`);
+    resp = await resp.json();
 
-    if (resp.ok) {
-        const data = await resp.json();
-        if (data.status == 200) {
-            return {
-                posts: data.data.posts,
-            }
-        }
+    if (resp.status == 200) {
+        return resp
     }
 }

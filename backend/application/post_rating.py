@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
-from .api import token_to_user, db
+from . import db
+from .tools import token_to_user
 from .schema import rating_schema, rating_template
 
 
@@ -18,14 +19,14 @@ def add_rating(key):
         or post["type"] != "post"
     ):
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     if user["status"] != "verified" or not user["login"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     rating_value = 0
@@ -62,8 +63,5 @@ def add_rating(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "ratings": ratings
-        }
+        "ratings": ratings
     })

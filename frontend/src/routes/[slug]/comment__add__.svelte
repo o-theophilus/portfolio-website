@@ -1,10 +1,10 @@
 <script>
-	import { api_url, module, portal, loading } from '$lib/store.js';
+	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import Info from '$lib/__info__.svelte';
+	import Info from '$lib/info.svelte';
 
 	export let owner_key = '';
 
@@ -23,7 +23,7 @@
 
 	const submit = async () => {
 		$loading = 'Adding Comment . . .';
-		const resp = await fetch(`${api_url}/comment/${owner_key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comment/${owner_key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -31,45 +31,38 @@
 			},
 			body: JSON.stringify(form)
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
+		if (resp.status == 200) {
+			portal({
+				for: 'comment',
+				data: resp.comments
+			});
 
-			if (data.status == 200) {
-				portal({
-					for: 'comment',
-					data: data.data.comments
-				});
-
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: 'Comment Added',
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+			$module = {
+				module: Info,
+				message: 'Comment Added',
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else if (data.status == 201) {
-				error = data.message;
-			} else {
-				error.form = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Add Comment </strong>
-	{#if error.form}
+	{#if error.error}
 		<span class="error">
-			{error.form}
+			{error.error}
 		</span>
 	{/if}
 	<Input name="comment" error={error.comment} let:id>

@@ -1,5 +1,5 @@
 <script>
-	import { module, _user } from '$lib/store.js';
+	import { module, user } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import Button from '$lib/button.svelte';
@@ -23,7 +23,7 @@
 			{/if}
 		</div>
 
-		{#if $_user.login}
+		{#if $user.login}
 			<Button
 				icon="quote"
 				name="Add comment"
@@ -42,7 +42,7 @@
 					<Comment comment={c} {comments} />
 				{/if}
 			{:else}
-				No comment{#if !$_user.login},
+				No comment{#if !$user.login},
 					<span>
 						<a href="/?module=login"> Login </a>to add comment
 					</span>

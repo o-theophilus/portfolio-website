@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
-from .api import token_to_user, db
+from . import db
+from .tools import token_to_user
 from .schema import report_template
 
 
@@ -11,10 +12,8 @@ def report(key):
 
     if "comment" not in request.json or not request.json["comment"]:
         return jsonify({
-            "status": 201,
-            "message": {
-                "comment": "cannot be empty"
-            }
+            "status": 400,
+            "comment": "cannot be empty"
         })
 
     data = db.data()
@@ -31,8 +30,8 @@ def report(key):
         or entity["status"] == "deleted"
     ):
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     db.add(report_template(
@@ -43,5 +42,4 @@ def report(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
     })

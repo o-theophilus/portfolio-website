@@ -1,31 +1,18 @@
-import { api_url } from '$lib/store.js';
-
 export async function handle({ event, resolve }) {
-
-    const resp = await fetch(`${api_url}/init`, {
+    let resp = await fetch(`${import.meta.env.VITE_BACKEND}/init`, {
         method: 'post',
         headers: {
             'Content-Type': 'application/json',
             Authorization: event.cookies.get("token")
         }
     });
+    resp = await resp.json();
 
-    if (resp.ok) {
-        let data = await resp.json();
-
-        if (data.status == 200) {
-            // event.cookies.set("session", data.data.token)
-            event.locals = data.data;
-        }
+    if (resp.status == 200) {
+        event.locals = resp;
         return await resolve(event);
     }
 
     throw new Error(404, `Error status: ${resp.status}`)
+
 }
-
-
-
-
-
-
-

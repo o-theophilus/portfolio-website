@@ -1,27 +1,24 @@
 <script>
-	import { api_url, _user } from '$lib/store.js';
+	import { user } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import { page } from '$app/stores';
 	import SVG from '$lib/svg.svelte';
 
 	const submit = async () => {
-		const resp = await fetch(`${api_url}/user/theme`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/theme`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			}
 		});
+		resp = await resp.json();
 
-		if (resp.ok) {
-			const data = await resp.json();
-
-			if (data.status == 200) {
-				$_user = data.data.user;
-			} else {
-				throw new Error('invalid request');
-			}
+		if (resp.status == 200) {
+			$user = resp.user;
+		} else {
+			throw new Error('invalid request');
 		}
 	};
 
@@ -32,11 +29,11 @@
 	class:is_home
 	on:click={() => {
 		submit();
-		$_user.setting.theme = $_user.setting.theme == 'dark' ? 'light' : 'dark';
+		$user.setting.theme = $user.setting_theme == 'dark' ? 'light' : 'dark';
 	}}
 	on:keypress
 >
-	<div class="switch" class:dark={$_user.setting.theme == 'dark'}>
+	<div class="switch" class:dark={$user.setting_theme == 'dark'}>
 		<div class="state">
 			<SVG type="light" size="15" />
 		</div>

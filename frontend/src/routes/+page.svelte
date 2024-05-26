@@ -1,100 +1,53 @@
 <script>
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { module, api_url } from '$lib/store.js';
+	import { module } from '$lib/store.js';
 
-	import Parallax from './page.1_hero_parallax.svelte';
-	import Hero_Text from './page.1_hero_text.svelte';
-	import Home from './page.2_what_i_do.svelte';
-	import Posts from './page.3_post.svelte';
-	import AboutMe from './page.4_about_me.svelte';
-	import About from './page.5_about_skill.svelte';
-	import AboutWebsite from './page.6_about_website.svelte';
+	import Parallax from './home/1_hero_parallax.svelte';
+	import Hero_Text from './home/1_hero_text.svelte';
+	import Home from './home/2_what_i_do.svelte';
+	import Posts from './home/3_post.svelte';
+	import AboutMe from './home/4_about_me.svelte';
+	import About from './home/5_about_skill.svelte';
+	import AboutWebsite from './home/6_about_website.svelte';
 	import Scroller from '$lib/scroller.svelte';
 	import Meta from '$lib/meta.svelte';
 	import SVG from '$lib/svg.svelte';
 
-	import Info from '$lib/__info__.svelte';
-	import Login from '$lib/__auth_login__.svelte';
-	import Forgot from '$lib/__auth_forgot2__.svelte';
+	import Confirm from './auth/confirm.svelte';
+	import Info from '$lib/info.svelte';
+	import Login from './auth/login.svelte';
+	import Forgot from './auth/forgot.password.svelte';
 
 	export let data;
 	let { posts } = data;
 
-	onMount(async () => {
-		let _module = $page.url.searchParams.get('module');
-
-		if (_module == 'confirm') {
-			let token = $page.url.searchParams.get('token');
-			const resp = await fetch(`${api_url}/confirm/${token}`);
-
-			if (resp.ok) {
-				const data = await resp.json();
-
-				if ([200, 201].includes(data.status)) {
-					$module = {
-						module: Info,
-						title: 'Done',
-						status: 'good',
-						message: data.message,
-						button: [
-							{
-								name: 'Login',
-								fn: () => {
-									$module = {
-										module: Login,
-										email: data.data.user.email
-									};
-								}
-							}
-						]
-					};
-				} else if (data.status == 101) {
-					$module = {
-						module: Info,
-						title: 'Failed',
-						status: 'bad',
-						message: data.message,
-						button: [
-							{
-								name: 'OK',
-								fn: () => {
-									$module = '';
-								}
-							}
-						]
-					};
-				}
-			} else {
-				throw new Error('invalid request');
+	onMount(() => {
+		console.log($page.url.searchParams.has("token"));
+		if ($page.url.searchParams.has('module')) {
+			let _module = {};
+			switch ($page.url.searchParams.get('module')) {
+				case 'confirm':
+					_module.module = Confirm;
+					break;
+				case 'password':
+					_module.module = Forgot;
+					break;
+				// case 'login':
+				// 	_module.module = Login;
+				// 	break;
 			}
-		} else if (_module == 'password') {
-			$module = {
-				module: Forgot,
-				token: $page.url.searchParams.get('token')
-			};
-		} else if (_module == 'login') {
-			$module = {
-				module: Login,
-				email: $page.url.searchParams.get('email')
-			};
-		} else if (_module == 'info') {
-			$module = {
-				module: Info,
-				title: $page.url.searchParams.get('title'),
-				status: $page.url.searchParams.get('status'),
-				message: $page.url.searchParams.get('message'),
-				button: [
-					{
-						name: 'OK',
-						fn: () => {
-							$module = '';
-						}
-					}
-				]
-			};
+
+			for (const x of ['return_url', 'token', 'message', 'email']) {
+				if ($page.url.searchParams.has(x)) {
+					_module[x] = $page.url.searchParams.get(x);
+				}
+			}
+
+			$module = _module;
+			console.log($module);
+			window.history.replaceState(history.state, '', '/');
 		}
-		window.history.replaceState(history.state, '', '/');
 	});
 </script>
 

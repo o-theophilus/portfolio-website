@@ -1,17 +1,16 @@
 <script>
-	import { api_url, _user, module } from '$lib/store.js';
-	import { token as _token } from '$lib/cookie.js';
+	import { module } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import Password from '$lib/password_checker.svelte';
-	import Login from './__auth_login__.svelte';
-	import Info from './__info__.svelte';
+	import Password from './password_checker.svelte';
+	import Login from './login.svelte';
+	import Info from '$lib/info.svelte';
 
-	import EmailTemplate from './email_template.confirm.svelte';
+	import EmailTemplate from './confirm.email_template.svelte';
 	let email_template;
 
-	export let token = '';
 	let form = {};
 	let error = {};
 
@@ -38,50 +37,42 @@
 	};
 
 	const submit = async () => {
-		form.email_template = email_template.innerHTML;
-		form.token = token;
+		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
-		const resp = await fetch(`${api_url}/password_forgot2`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/forgot/${$module.token}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $_token
+				Authorization: $token
 			},
 			body: JSON.stringify(form)
 		});
+		resp = await resp.json();
 
-		if (resp.ok) {
-			const data = await resp.json();
-
-			if (data.status == 200) {
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: `Password Changed`,
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+		if (resp.status == 200) {
+			$module = {
+				module: Info,
+				message: `Password Changed`,
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else if (data.status == 201) {
-				error = data.message;
-			} else {
-				error.form = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Change Password </strong>
-	{#if error.form}
+	{#if error.error}
 		<span class="error">
-			{error.form}
+			{error.error}
 		</span>
 	{/if}
 
@@ -89,9 +80,9 @@
 		<input placeholder="password here" type="password" {id} bind:value={form.password} />
 		<Password password={form.password} />
 	</Input>
-	<Input name="confirm pasword" error={error.confirm_password} let:id>
+	<Input name="confirm password" error={error.confirm_password} let:id>
 		<input
-			placeholder="confirm pasword here"
+			placeholder="confirm password here"
 			type="password"
 			{id}
 			bind:value={form.confirm_password}

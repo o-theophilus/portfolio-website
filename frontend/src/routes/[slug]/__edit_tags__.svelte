@@ -1,23 +1,23 @@
 <script>
-	import { api_url, module, portal, loading } from '$lib/store.js';
+	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import Info from '$lib/__info__.svelte';
+	import Info from '$lib/info.svelte';
 
 	export let post;
 	export let tags_in;
 
 	let tags = post.tags.join(', ');
 	let all_tags = [...tags_in];
-	let error = '';
+	let error = {};
 
 	const submit = async () => {
-		error = '';
+		error = {};
 
-		$loading = "Saving Post . . .";
-		const resp = await fetch(`${api_url}/post/tags/${post.key}`, {
+		$loading = 'Saving Post . . .';
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/tags/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -25,36 +25,31 @@
 			},
 			body: JSON.stringify({ tags: tags.split(', ') })
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
+		if (resp.status == 200) {
+			portal({
+				for: 'post',
+				data: resp.post
+			});
 
-			if (data.status == 200) {
-				portal({
-					for: 'post',
-					data: data.data.post
-				});
+			let s = resp.post.tags.length > 1;
 
-				let s = data.data.post.tags.length > 1;
-
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: `Tag${s ? 's' : ''} Saved`,
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+			$module = {
+				module: Info,
+				message: `Tag${s ? 's' : ''} Saved`,
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else {
-				error = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 
@@ -87,9 +82,9 @@
 
 <form class="form" on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Edit tags </strong>
-	{#if error}
+	{#if error.error}
 		<span class="error">
-			{error}
+			{error.error}
 		</span>
 	{/if}
 

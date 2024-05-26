@@ -1,35 +1,17 @@
 import { redirect } from '@sveltejs/kit';
-import { api_url } from '$lib/store.js';
 
-export const load = async ({ parent }) => {
-    const { data } = await parent()
+
+export const load = async ({ parent, fetch }) => {
+
+    await fetch(`${import.meta.env.VITE_BACKEND}/admin/init`);
     
-    const url = new URL("https://a");
-    url.searchParams.append("module", "info");
-    url.searchParams.append("title", "Warning");
-    url.searchParams.append("status", "warning");
-    url.searchParams.append("message", "Unauthorised Access");
-
-    if(!data.locals.user.login || !data.locals.user.roles.includes("admin")){
+    let a = await parent();
+    if (!a.locals.user.login || a.locals.user.permissions.length == 0) {
+        const url = new URL("https://a");
+        url.searchParams.append("module", "info");
+        url.searchParams.append("title", "Warning");
+        url.searchParams.append("status", "warning");
+        url.searchParams.append("message", "Unauthorised Access");
         throw redirect(307, `/${url.search}`);
-    }    
-        
-        const resp = await fetch(`${api_url}/admin`, {
-        method: 'get',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: data.locals.token
-        },
-    });
-
-    if (resp.ok) {
-        const data = await resp.json();
-
-        if (data.status == 200) {
-            return {
-                setting: data.data.setting,
-            }
-        }
     }
-    throw redirect(307, `/${url.search}`);
 }

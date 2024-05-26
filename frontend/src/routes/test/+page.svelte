@@ -1,6 +1,4 @@
 <script>
-	import { _user, api_url } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
 
 	import Content from '$lib/content.svelte';
 	import Meta from '$lib/meta.svelte';

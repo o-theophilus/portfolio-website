@@ -1,22 +1,23 @@
 <script>
-	import { api_url, _user, module } from '$lib/store.js';
+	import { module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import Login from './__auth_login__.svelte';
-	import Info from './__info__.svelte';
-	import EmailTemplate from './email_template.forgot.svelte';
+	import Login from './login.svelte';
+	import Info from '$lib/info.svelte';
+	import EmailTemplate from './forgot.email_template.svelte';
 
 	let email_template;
 
-	export let email = '';
-	let form = { email: email };
+	let form = {
+		email: $module.email
+	};
 	let error = {};
 
 	const validate = () => {
 		error = {};
-		
+
 		if (!form.email) {
 			error.email = 'cannot be empty';
 		} else if (!/\S+@\S+\.\S+/.test(form.email)) {
@@ -27,8 +28,8 @@
 	};
 
 	const submit = async () => {
-		form.email_template = email_template.innerHTML;
-		const resp = await fetch(`${api_url}/password_forgot1`, {
+		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/forgot`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -36,39 +37,33 @@
 			},
 			body: JSON.stringify(form)
 		});
+		resp = await resp.json();
+		console.log(resp);
 
-		if (resp.ok) {
-			const data = await resp.json();
-
-			if (data.status == 200) {
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: data.message,
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+		if (resp.status == 200) {
+			$module = {
+				module: Info,
+				message: `A password recovery message has been sent to: <b>${form.email}</b>`,
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else if (data.status == 201) {
-				error = data.message;
-			} else {
-				error.form = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Forgot Password </strong>
-	{#if error.form}
+	{#if error.error}
 		<span class="error">
-			{error.form}
+			{error.error}
 		</span>
 	{/if}
 	<Input name="email" error={error.email} let:id>

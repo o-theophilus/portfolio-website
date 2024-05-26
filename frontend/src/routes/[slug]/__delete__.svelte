@@ -1,20 +1,20 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { api_url, module, loading } from '$lib/store.js';
+	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
-	import Info from '$lib/__info__.svelte';
+	import Info from '$lib/info.svelte';
 
 	export let post;
 
-	let error = '';
+	let error = {};
 
 	const submit = async () => {
-		error = '';
+		error = {};
 
-		$loading = "Deleting Post . . .";
-		const resp = await fetch(`${api_url}/post/${post.key}`, {
+		$loading = 'Deleting Post . . .';
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${post.key}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
@@ -22,29 +22,24 @@
 			}
 		});
 		$loading = false;
+		resp = await resp.json();
 
-		if (resp.ok) {
-			const data = await resp.json();
-
-			if (data.status == 200) {
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: "Post Deleted",
-					button: [
-						{
-							name: 'Ok',
-							fn: () => {
-								$module = '';
-							}
+		if (resp.status == 200) {
+			$module = {
+				module: Info,
+				message: 'Post Deleted',
+				buttons: [
+					{
+						name: 'Ok',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-				goto("/post");
-			} else {
-				error = data.message;
-			}
+					}
+				]
+			};
+			goto('/post');
+		} else {
+			error = resp;
 		}
 	};
 </script>
@@ -52,9 +47,9 @@
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big error">Delete</strong>
 	<div class="error">Are you sure you want to delete</div>
-	{#if error}
+	{#if error.error}
 		<span class="error">
-			{error}
+			{error.error}
 		</span>
 	{/if}
 

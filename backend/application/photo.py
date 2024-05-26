@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, send_file
-from .api import token_to_user
+from .tools import token_to_user
 from . import db, dd
 from .schema import post_schema
 from PIL import Image, ImageOps
@@ -15,8 +15,8 @@ def get(name, thumbnail=None):
 
     if not photo:
         return jsonify({
-            "status": 201,
-            "message": "not found"
+            "status": 400,
+            "error": "not found"
         })
 
     if thumbnail:
@@ -34,8 +34,8 @@ def get(name, thumbnail=None):
 def post_many(key):
     if 'files' not in request.files:
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     data = db.data()
@@ -43,8 +43,8 @@ def post_many(key):
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     files = request.files.getlist("files")
@@ -53,16 +53,16 @@ def post_many(key):
         media, format = file.content_type.split("/")
         if media not in ["image", "video"] or format in ['svg+xml', 'x-icon']:
             return jsonify({
-                "status": 201,
-                "message": "invalid file type"
+                "status": 400,
+                "error": "invalid file type"
             })
 
     post = db.get_key(key, data)
     count = post["content"].count("{#photo}") + 1
     if not post or len(post["photos"]) + len(files) > count:
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     for file in files:
@@ -72,10 +72,7 @@ def post_many(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post)
-        }
+        "post": post_schema(post)
     })
 
 
@@ -87,8 +84,8 @@ def arrange(key):
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     def get_photo_names():
@@ -102,8 +99,8 @@ def arrange(key):
         or set(post["photos"]) != set(get_photo_names())
     ):
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     post["photos"] = get_photo_names()
@@ -111,10 +108,7 @@ def arrange(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post)
-        }
+        "post": post_schema(post)
     })
 
 
@@ -126,8 +120,8 @@ def delete(key):
     user = token_to_user(data)
     if "admin" not in user["roles"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     def active_photo():
@@ -141,8 +135,8 @@ def delete(key):
         or active_photo() not in post["photos"]
     ):
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     post["photos"].remove(active_photo())
@@ -152,8 +146,5 @@ def delete(key):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "post": post_schema(post)
-        }
+        "post": post_schema(post)
     })

@@ -1,5 +1,3 @@
 export const load = async ({ locals }) => {
-	return {
-		locals
-	};
+	return {locals};
 }

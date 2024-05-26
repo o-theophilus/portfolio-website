@@ -1,5 +1,5 @@
 <script>
-	import { _user, module } from '$lib/store.js';
+	import { user, module } from '$lib/store.js';
 
 	import Button from '$lib/button.svelte';
 	import Delete from './comment.item__menu__delete__.svelte';
@@ -10,7 +10,7 @@
 
 <div class="content">
 	<strong class="big">Comment</strong>
-	{#if comment.user_key == $_user.key}
+	{#if comment.user_key == $user.key}
 		<br /><br />
 		<Button
 			name="Delete"
@@ -42,7 +42,7 @@
 			on:click={() => {
 				$module = {
 					module: Report,
-					owner_key: $_user.key,
+					owner_key: $user.key,
 					owner_type: 'user'
 				};
 			}}

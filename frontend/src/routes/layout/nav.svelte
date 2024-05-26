@@ -1,12 +1,12 @@
 <script>
-	import { _user, module } from '$lib/store.js';
+	import { user, module } from '$lib/store.js';
 	import { page } from '$app/stores';
 
-	import Link from './nav.btn.svelte';
-	import Theme from './nav.theme.svelte';
-	import SVG from './svg.svelte';
-	import Content from './content.svelte';
-	import Login from './__auth_login__.svelte';
+	import Link from '$lib/nav.btn.svelte';
+	import Theme from '$lib/nav.theme.svelte';
+	import SVG from '$lib/svg.svelte';
+	import Content from '$lib/content.svelte';
+	import Login from '../auth/login.svelte';
 
 	$: home = $page.url.pathname == '/';
 </script>
@@ -20,7 +20,7 @@
 			</a>
 			<div>
 				<Link {home} href="/post">Post</Link>
-				{#if $_user && $_user.login}
+				{#if $user && $user.login}
 					<Link {home} href="/user">Profile</Link>
 				{:else}
 					<Link

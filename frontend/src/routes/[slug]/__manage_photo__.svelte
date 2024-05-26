@@ -1,5 +1,5 @@
 <script>
-	import { api_url, loading, portal } from '$lib/store.js';
+	import { loading, portal } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
@@ -73,7 +73,7 @@
 		error = '';
 
 		$loading = method == 'delete' ? 'Deleting . . .' : 'Reordering . . .';
-		const resp = await fetch(`${api_url}/photo/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/photo/${post.key}`, {
 			method: method,
 			headers: {
 				'Content-Type': 'application/json',
@@ -84,32 +84,29 @@
 				active_photo: post.active_photo
 			})
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			let data = await resp.json();
+		if (resp.status == 200) {
+			let temp = post.active_photo;
+			let temp2 = post.photo_count;
+			post = resp.post;
+			post.active_photo = temp;
+			post.photo_count = temp2;
 
-			if (data.status == 200) {
-				let temp = post.active_photo;
-				let temp2 = post.photo_count;
-				post = data.data.post;
-				post.active_photo = temp;
-				post.photo_count = temp2;
+			portal({
+				for: 'post',
+				data: post
+			});
 
-				portal({
-					for: 'post',
-					data: post
-				});
-
-				if (method == 'delete') {
-					post.active_photo = post.photos[0] || '';
-				}
-
-				init_order = [...post.photos];
-				order_changed = false;
-			} else {
-				error = data.message;
+			if (method == 'delete') {
+				post.active_photo = post.photos[0] || '';
 			}
+
+			init_order = [...post.photos];
+			order_changed = false;
+		} else {
+			error = resp;
 		}
 	};
 
@@ -161,33 +158,30 @@
 		}
 
 		$loading = 'Uploading . . .';
-		const resp = await fetch(`${api_url}/photo/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/photo/${post.key}`, {
 			method: 'post',
 			headers: {
 				Authorization: $token
 			},
 			body: formData
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			let data = await resp.json();
+		if (resp.status == 200) {
+			let temp = post.active_photo;
+			let temp2 = post.photo_count;
+			post = resp.post;
+			post.active_photo = temp;
+			post.photo_count = temp2;
 
-			if (data.status == 200) {
-				let temp = post.active_photo;
-				let temp2 = post.photo_count;
-				post = data.data.post;
-				post.active_photo = temp;
-				post.photo_count = temp2;
-
-				make_active('', false);
-				portal({
-					for: 'post',
-					data: post
-				});
-			} else {
-				error = data.message;
-			}
+			make_active('', false);
+			portal({
+				for: 'post',
+				data: post
+			});
+		} else {
+			error = resp;
 		}
 	};
 
@@ -198,7 +192,7 @@
 	<strong class="big"> Manage Photo </strong>
 	<img
 		class:dragover
-		src="{api_url}/{post.active_photo}"
+		src="{import.meta.env.VITE_BACKEND}/{post.active_photo}"
 		alt={post.title}
 		onerror="this.src='/site/no_photo.png'"
 		on:dragover|preventDefault={() => {
@@ -228,13 +222,14 @@
 		<div class="slide">
 			{#each post.photos as photo}
 				<img
-					src="{api_url}/{photo}"
+					src="{import.meta.env.VITE_BACKEND}/{photo}"
 					alt={post.name}
 					class:active={post.active_photo == photo}
 					on:click={() => {
 						make_active(photo);
 					}}
 					on:keypress
+					role="presentation"
 					onerror="this.src='/site/no_photo.png'"
 				/>
 			{/each}

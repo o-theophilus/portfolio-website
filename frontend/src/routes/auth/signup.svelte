@@ -1,17 +1,19 @@
 <script>
-	import { api_url, _user, module, loading } from '$lib/store.js';
+	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import Password from '$lib/password_checker.svelte';
-	import Login from './__auth_login__.svelte';
-	import Info from './__info__.svelte';
-	import EmailTemplate from './email_template.confirm.svelte';
+	import Password from './password_checker.svelte';
+	import Info from '$lib/info.svelte';
+	import Login from './login.svelte';
+	import EmailTemplate from './confirm.email_template.svelte';
 
 	let email_template;
 
-	let form = {};
+	let form = {
+		email: $module.email
+	};
 	let error = {};
 
 	const validate = () => {
@@ -46,10 +48,10 @@
 	};
 
 	const submit = async () => {
-		form.email_template = email_template.innerHTML;
+		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
 		$loading = 'Loading . . .';
-		const resp = await fetch(`${api_url}/signup`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/signup`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -57,40 +59,33 @@
 			},
 			body: JSON.stringify(form)
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
-
-			if (data.status == 200) {
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: `A confirmation email has been sent to <b>${data.data.user.email}</b>`,
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+		if (resp.status == 200) {
+			$module = {
+				module: Info,
+				message: `A confirmation email has been sent to <b>${form.email}</b>`,
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else if (data.status == 201) {
-				error = data.message;
-			} else {
-				error.form = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Signup </strong>
-	{#if error.form}
+	{#if error.error}
 		<span class="error">
-			{error.form}
+			{error.error}
 		</span>
 	{/if}
 	<Input name="name" error={error.name} let:id>
@@ -123,7 +118,8 @@
 		class="secondary"
 		on:click={() => {
 			$module = {
-				module: Login
+				module: Login,
+				email: form.email
 			};
 		}}
 	>

@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, portal, _user, loading } from '$lib/store.js';
+	import { module, portal, user, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
@@ -7,10 +7,10 @@
 	export let ratings;
 	export let post_key;
 	let rating = 0;
-	let error = '';
+	let error = {};
 
 	for (const i in ratings) {
-		if (ratings[i].user_key == $_user.key) {
+		if (ratings[i].user_key == $user.key) {
 			rating = ratings[i].rating;
 			break;
 		}
@@ -21,10 +21,10 @@
 	};
 
 	const submit = async () => {
-		error = '';
+		error = {};
 
 		$loading = 'Saving . . .';
-		const resp = await fetch(`${api_url}/rating/${post_key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/rating/${post_key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -32,30 +32,27 @@
 			},
 			body: JSON.stringify({ rating })
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
+		if (resp.status == 200) {
+			portal({
+				for: 'rating',
+				data: resp.ratings
+			});
 
-			if (data.status == 200) {
-				portal({
-					for: 'rating',
-					data: data.data.ratings
-				});
-
-				$module = '';
-			} else {
-				error = data.message;
-			}
+			$module = '';
+		} else {
+			error = resp;
 		}
 	};
 </script>
 
 <section>
 	<strong class="big"> Add Rating </strong>
-	{#if error}
+	{#if error.error}
 		<span class="error">
-			{error}
+			{error.error}
 		</span>
 	{/if}
 	<div>

@@ -1,5 +1,5 @@
 <script>
-	import { _user, api_url } from '$lib/store.js';
+	import { user } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Content from '$lib/content.svelte';
@@ -9,7 +9,7 @@
 	// export let data;
 </script>
 
-<Meta title={$_user.name} description="This page includes the user profile" />
+<Meta title={$user.name} description="This page includes the user profile" />
 
 <Content>
 	<br />
@@ -18,13 +18,13 @@
 	Name:
 	<br />
 	<strong>
-		{$_user.name}
+		{$user.name}
 	</strong>
 	<br /><br />
 	Email:
 	<br />
 	<strong>
-		{$_user.email}
+		{$user.email}
 	</strong>
 	<br /><br />
 	<div class="hr" />
@@ -42,7 +42,7 @@
 	<!-- <br /> -->
 	<Button
 		on:click={async () => {
-			const resp = await fetch(`${api_url}/login`, {
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/login`, {
 				method: 'delete',
 				headers: {
 					'Content-Type': 'application/json',
@@ -50,13 +50,11 @@
 				}
 			});
 
-			if (resp.ok) {
-				const data = await resp.json();
+			resp = await resp.json();
 
-				if (data.status == 200) {
-					$token = data.data.token;
-					document.location = '/';
-				}
+			if (resp.status == 200) {
+				$token = resp.token;
+				document.location = '/';
 			}
 		}}>Logout</Button
 	>

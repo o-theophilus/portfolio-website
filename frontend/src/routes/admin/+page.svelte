@@ -6,22 +6,22 @@
 	import Button from '$lib/button.svelte';
 	import Manage_Video from './__manage_video__.svelte';
 
-	export let data;
-	let { setting } = data;
+	// export let data;
+	// let { setting } = data;
 
-	$: if ($_portal) {
-		if ($_portal.for == 'setting') {
-			setting = $_portal.data;
-		}
+	// $: if ($_portal) {
+	// 	if ($_portal.for == 'setting') {
+	// 		setting = $_portal.data;
+	// 	}
 
-		$_portal = {};
-	}
+	// 	$_portal = {};
+	// }
 </script>
 
-<Meta title="Admin Dashboard" description="This contains this website settingd" />
+<Meta title="Admin Dashboard" description="This contains this website settings" />
 
 <Content>
-	<br />
+	<!-- <br />
 	<strong class="big">Website Settings</strong>
 	<br /><br />
 	<div class="hr" />
@@ -45,7 +45,7 @@
 			};
 		}}>Edit</Button
 	>
-	<br /><br />
+	<br /><br /> -->
 </Content>
 
 <style>

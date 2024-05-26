@@ -1,5 +1,5 @@
 <script>
-	import { api_url, module, _portal, _user } from '$lib/store.js';
+	import { module, _portal, user } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import Marked from '$lib/marked.svelte';
@@ -45,7 +45,9 @@
 		post.photo_count = 1;
 		let is_available = content.search(/{#photo}/) >= 0;
 		while (is_available) {
-			let photo = `![${post.title}](${api_url}/${post.photos[post.photo_count]})`;
+			let photo = `![${post.title}](${import.meta.env.VITE_BACKEND}/${
+				post.photos[post.photo_count]
+			})`;
 			content = content.replace(/{#photo}/, photo);
 			is_available = content.search(/{#photo}/) >= 0;
 			post.photo_count = post.photo_count + 1;
@@ -83,7 +85,7 @@
 <Meta title={post.title} description={post.description} image={post.photos[0]} />
 
 <Content>
-	{#if $_user.roles.includes('admin')}
+	{#if $user.roles.includes('admin')}
 		<Button
 			class="tiny"
 			on:click={() => {
@@ -94,12 +96,12 @@
 		<br />
 	{/if}
 	<img
-		src="{api_url}/{post.photos[0] || ''}"
+		src="{import.meta.env.VITE_BACKEND}/{post.photos[0] || ''}"
 		alt={post.title}
 		onerror="this.src='/site/no_photo.png'"
 	/>
 
-	{#if $_user.roles.includes('admin') && edit_mode}
+	{#if $user.roles.includes('admin') && edit_mode}
 		<div class="row">
 			<Button
 				class="tiny"
@@ -126,7 +128,7 @@
 
 	<br />
 	<strong class="big">{post.title}</strong>
-	{#if $_user.roles.includes('admin') && edit_mode}
+	{#if $user.roles.includes('admin') && edit_mode}
 		<Button
 			icon="edit"
 			class="tiny"
@@ -144,7 +146,7 @@
 
 	<br />
 	<span class="date">{post.created_at.split('T')[0]}</span>
-	{#if $_user.roles.includes('admin') && edit_mode}
+	{#if $user.roles.includes('admin') && edit_mode}
 		<Button
 			icon="edit"
 			class="tiny"
@@ -160,7 +162,7 @@
 		</Button>
 	{/if}
 
-	{#if $_user.roles.includes('admin') && edit_mode}
+	{#if $user.roles.includes('admin') && edit_mode}
 		<br /><br />
 		{post.description}
 
@@ -180,7 +182,7 @@
 	{/if}
 
 	<br /><br />
-	{#if $_user.roles.includes('admin') && edit_mode}
+	{#if $user.roles.includes('admin') && edit_mode}
 		<Button
 			icon="edit"
 			class="tiny"
@@ -199,7 +201,7 @@
 	<br />
 	<div class="hr" />
 
-	{#if $_user.roles.includes('admin') && edit_mode}
+	{#if $user.roles.includes('admin') && edit_mode}
 		<br />
 		<Button
 			icon="edit"
@@ -225,7 +227,7 @@
 	<br />
 	<Author />
 
-	{#if $_user.roles.includes('admin') && edit_mode}
+	{#if $user.roles.includes('admin') && edit_mode}
 		<br /> <br />
 		Status: <strong> {post.status}</strong>
 		<div class="row">
@@ -252,7 +254,7 @@
 
 	<br /><br />
 
-	{#if $_user.login}
+	{#if $user.login}
 		<Button
 			class="tiny"
 			name="Overall Rating: {ratings_value}"

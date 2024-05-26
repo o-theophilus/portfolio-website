@@ -1,20 +1,19 @@
 <script>
-	import { goto } from '$app/navigation';
-	import { api_url, module, loading, portal } from '$lib/store.js';
+	import { module, loading, portal } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button.svelte';
-	import Info from '$lib/__info__.svelte';
+	import Info from '$lib/info.svelte';
 
 	export let comment_key;
 
-	let error = '';
+	let error = {};
 
 	const submit = async () => {
-		error = '';
+		error = {};
 
 		$loading = `Deleting comment . . .`;
-		const resp = await fetch(`${api_url}/comment/${comment_key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comment/${comment_key}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
@@ -23,32 +22,28 @@
 		});
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
+		resp = await resp.json();
 
-			if (data.status == 200) {
-				portal({
-					for: 'comment',
-					data: data.data.comments
-				});
+		if (resp.status == 200) {
+			portal({
+				for: 'comment',
+				data: resp.comments
+			});
 
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: 'Comment Deleted',
-					button: [
-						{
-							name: 'Ok',
-							fn: () => {
-								$module = '';
-							}
+			$module = {
+				module: Info,
+				message: 'Comment Deleted',
+				buttons: [
+					{
+						name: 'Ok',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else {
-				error = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 </script>
@@ -56,9 +51,9 @@
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big error">Delete</strong>
 	<div class="error">Are you sure you want to delete</div>
-	{#if error}
+	{#if error.error}
 		<span class="error">
-			{error}
+			{error.error}
 		</span>
 	{/if}
 

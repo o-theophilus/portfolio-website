@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
-from .api import token_to_user, db
+from . import db
+from .tools import token_to_user
 from .schema import comment_template, comment_schema
 
 
@@ -12,8 +13,8 @@ def get_comments(key, data=None, user=None):
     user = user if user else token_to_user(data)
     if not user:
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     setting = user["setting"]
@@ -38,10 +39,7 @@ def get_comments(key, data=None, user=None):
 
     return jsonify({
         "status": 200,
-        "message": "successful",
-        "data": {
-            "comments": [comment_schema(c, data) for c in comments]
-        }
+        "comments": [comment_schema(c, data) for c in comments]
     })
 
 
@@ -49,10 +47,8 @@ def get_comments(key, data=None, user=None):
 def add(key):
     if "comment" not in request.json or not request.json["comment"]:
         return jsonify({
-            "status": 201,
-            "message": {
-                "comment": "cannot be empty"
-            }
+            "status": 400,
+            "comment": "cannot be empty"
         })
 
     data = db.data()
@@ -64,14 +60,14 @@ def add(key):
         or owner["type"] not in ["post", "comment"]
     ):
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     if user["status"] != "verified" or not user["login"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     path = [owner["key"]]
@@ -102,14 +98,14 @@ def vote(key):
         or request.json["vote"] not in ["up", "down"]
     ):
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     if user["status"] != "verified" or not user["login"]:
         return jsonify({
-            "status": 102,
-            "message": "unauthorised access"
+            "status": 400,
+            "error": "unauthorised access"
         })
 
     if user["key"] in comment["upvote"]:
@@ -154,8 +150,8 @@ def delete(key):
         or comment["user_key"] != user["key"]
     ):
         return jsonify({
-            "status": 401,
-            "message": "invalid request"
+            "status": 400,
+            "error": "invalid request"
         })
 
     to_delete.append(comment)

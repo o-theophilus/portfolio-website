@@ -1,26 +1,21 @@
-import { api_url } from '$lib/store.js';
-
 export const load = async ({ fetch, params, parent }) => {
     const { data } = await parent()
 
-    const resp = await fetch(`${api_url}/post/${params.slug}`, {
+    let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${params.slug}`, {
         method: 'get',
         headers: {
             'Content-Type': 'application/json',
             Authorization: data.locals.token
         },
     });
+    resp = await resp.json();
 
-    if (resp.ok) {
-        const data = await resp.json();
-
-        if (data.status == 200) {
-            return {
-                post: data.data.post,
-                tags: data.data.tags,
-                comments: data.data.comments,
-                ratings: data.data.ratings
-            }
+    if (resp.status == 200) {
+        return {
+            post: resp.post,
+            tags: resp.tags,
+            comments: resp.comments,
+            ratings: resp.ratings
         }
     }
 }

@@ -1,21 +1,21 @@
 <script>
-	import { api_url, module, portal, loading } from '$lib/store.js';
+	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import Info from '$lib/__info__.svelte';
+	import Info from '$lib/info.svelte';
 
 	export let setting;
 
 	let featured_posts = [...setting.featured_posts];
-	let error = '';
+	let error = {};
 
 	const submit = async () => {
-		error = '';
+		error = {};
 
 		$loading = `Saving . . .`;
-		const resp = await fetch(`${api_url}/featured_post`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/featured_post`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -23,38 +23,34 @@
 			},
 			body: JSON.stringify({ featured_posts })
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
-			if (data.status == 200) {
-				portal({
-					for: 'setting',
-					data: data.data.setting
-				});
+		if (resp.status == 200) {
+			portal({
+				for: 'setting',
+				data: resp.setting
+			});
 
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: `Featured Posts Saved`,
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+			$module = {
+				module: Info,
+				message: `Featured Posts Saved`,
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else {
-				error = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 
 	const get_slugs = async () => {
-		const resp = await fetch(`${api_url}/slug`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/slug`, {
 			method: 'get',
 			headers: {
 				'Content-Type': 'application/json'
@@ -66,9 +62,9 @@
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Featured Posts </strong>
-	{#if error}
+	{#if error.error}
 		<span class="error">
-			{error}
+			{error.error}
 		</span>
 	{/if}
 	<Input name="post slug{featured_posts.length > 1 ? 's' : ''}">
@@ -76,7 +72,7 @@
 			<input placeholder="post slug {i + 1} here " type="text" bind:value={featured_posts[i]} />
 		{/each}
 	</Input>
-	
+
 	<Button
 		on:click={() => {
 			submit();
@@ -93,7 +89,6 @@
 			<br />
 		{/each}
 	{/await}
-
 </form>
 
 <style>

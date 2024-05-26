@@ -1,5 +1,5 @@
 <script>
-	import { module, _user, api_url, portal, timeAgo } from '$lib/store.js';
+	import { module, user, portal, timeAgo } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 	import { onMount } from 'svelte';
 
@@ -11,21 +11,21 @@
 
 	export let comment = {};
 	export let comments = [];
-	let error = '';
+	let error = {};
 
 	const validate = async (vote) => {
-		error = '';
+		error = {};
 
-		if (comment.upvote.includes($_user.key)) {
-			comment.upvote = comment.upvote.filter((e) => e != $_user.key);
-		} else if (comment.downvote.includes($_user.key)) {
-			comment.downvote = comment.downvote.filter((e) => e != $_user.key);
+		if (comment.upvote.includes($user.key)) {
+			comment.upvote = comment.upvote.filter((e) => e != $user.key);
+		} else if (comment.downvote.includes($user.key)) {
+			comment.downvote = comment.downvote.filter((e) => e != $user.key);
 		}
 
 		if (vote == 'up') {
-			comment.upvote.push($_user.key);
+			comment.upvote.push($user.key);
 		} else if (vote == 'down') {
-			comment.downvote.push($_user.key);
+			comment.downvote.push($user.key);
 		} else {
 			return;
 		}
@@ -35,7 +35,7 @@
 	};
 
 	const submit = async (vote) => {
-		const resp = await fetch(`${api_url}/comment/vote/${comment.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comment/vote/${comment.key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -43,18 +43,15 @@
 			},
 			body: JSON.stringify({ vote })
 		});
+		resp = await resp.json();
 
-		if (resp.ok) {
-			const data = await resp.json();
-
-			if (data.status == 200) {
-				portal({
-					for: 'comment',
-					data: data.data.comments
-				});
-			} else {
-				error = data.message;
-			}
+		if (resp.status == 200) {
+			portal({
+				for: 'comment',
+				data: resp.comments
+			});
+		} else {
+			error = resp;
 		}
 	};
 
@@ -86,13 +83,14 @@
 					<div class="date">{time}</div>
 					<div
 						class="menu"
-						on:keypress
 						on:click={() => {
 							$module = {
 								module: Menu,
 								comment
 							};
 						}}
+						on:keypress
+						role="presentation"
 					>
 						&#8226;&#8226;&#8226;
 					</div>
@@ -102,13 +100,13 @@
 			<div class="comment">
 				<Marked md={comment.comment} />
 			</div>
-			{#if error}
+			{#if error.error}
 				<span class="error">
-					{error}
+					{error.error}
 				</span>
 				<br />
 			{/if}
-			{#if $_user.login}
+			{#if $user.login}
 				<div class="buttons">
 					<Button
 						icon="quote"

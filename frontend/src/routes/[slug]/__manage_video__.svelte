@@ -1,10 +1,10 @@
 <script>
-	import { api_url, module, portal, loading } from '$lib/store.js';
+	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button.svelte';
-	import Info from '$lib/__info__.svelte';
+	import Info from '$lib/info.svelte';
 
 	export let post;
 
@@ -14,8 +14,8 @@
 	const submit = async () => {
 		error = '';
 
-		$loading = "Saving Post . . .";
-		const resp = await fetch(`${api_url}/post/videos/${post.key}`, {
+		$loading = 'Saving Post . . .';
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/videos/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -23,33 +23,29 @@
 			},
 			body: JSON.stringify({ videos })
 		});
+		resp = await resp.json();
 		$loading = false;
 
-		if (resp.ok) {
-			const data = await resp.json();
-			if (data.status == 200) {
-				portal({
-					for: 'post',
-					data: data.data.post
-				});
+		if (resp.status == 200) {
+			portal({
+				for: 'post',
+				data: resp.post
+			});
 
-				$module = {
-					module: Info,
-					title: 'Done',
-					status: 'good',
-					message: `Videos Updated`,
-					button: [
-						{
-							name: 'OK',
-							fn: () => {
-								$module = '';
-							}
+			$module = {
+				module: Info,
+				message: `Videos Updated`,
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
 						}
-					]
-				};
-			} else {
-				error = data.message;
-			}
+					}
+				]
+			};
+		} else {
+			error = resp;
 		}
 	};
 </script>
