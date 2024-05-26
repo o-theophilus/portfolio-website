@@ -68,9 +68,3 @@ def user_schema(user, saves=[]):
                      if user["photo"] else None)
     user["saves"] = saves
     return user
-
-
-def item_schema(item):
-    del item["available_quantity"]
-    item["photos"] = [f"{request.host_url}photo/{x}" for x in item["photos"]]
-    return item

@@ -13,6 +13,8 @@
 	let { posts } = data;
 	let { tags } = data;
 
+	console.log(data);
+
 	$: if ($_portal) {
 		if ($_portal.for == 'posts') {
 			posts = $_portal.data;
@@ -33,11 +35,11 @@
 
 		<div class="title">
 			<strong class="big">Post{posts.length > 1 ? 's' : ''}</strong>
-			<Sort />
+			<!-- <Sort /> -->
 		</div>
 
 		<br />
-		{#if $user.roles.includes('admin')}
+		{#if $user.permissions.includes('post:add')}
 			<Button
 				on:click={() => {
 					$module = {

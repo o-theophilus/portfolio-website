@@ -23,7 +23,6 @@
 	let { posts } = data;
 
 	onMount(() => {
-		console.log($page.url.searchParams.has("token"));
 		if ($page.url.searchParams.has('module')) {
 			let _module = {};
 			switch ($page.url.searchParams.get('module')) {
@@ -33,19 +32,21 @@
 				case 'password':
 					_module.module = Forgot;
 					break;
+				case 'info':
+					_module.module = Info;
+					break;
 				// case 'login':
 				// 	_module.module = Login;
 				// 	break;
 			}
 
-			for (const x of ['return_url', 'token', 'message', 'email']) {
+			for (const x of ['return_url', 'token', 'email', 'title', 'status', 'message']) {
 				if ($page.url.searchParams.has(x)) {
 					_module[x] = $page.url.searchParams.get(x);
 				}
 			}
 
 			$module = _module;
-			console.log($module);
 			window.history.replaceState(history.state, '', '/');
 		}
 	});

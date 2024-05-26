@@ -55,10 +55,10 @@ save_table = """CREATE TABLE IF NOT EXISTS save (
     key CHAR(32) PRIMARY KEY,
 
     user_key CHAR(32) NOT NULL,
-    item_key CHAR(32) NOT NULL,
+    post_key CHAR(32) NOT NULL,
 
     FOREIGN KEY (user_key) REFERENCES "user"(key),
-    FOREIGN KEY (item_key) REFERENCES item(key)
+    FOREIGN KEY (post_key) REFERENCES post(key)
 );"""
 
 
@@ -66,13 +66,13 @@ feedback_table = """CREATE TABLE IF NOT EXISTS feedback (
     key CHAR(32) PRIMARY KEY,
 
     user_key CHAR(32) NOT NULL,
-    item_key CHAR(32) NOT NULL,
+    post_key CHAR(32) NOT NULL,
 
     rating INT DEFAULT 0,
     review TEXT,
 
     FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE,
-    FOREIGN KEY (item_key) REFERENCES item(key)
+    FOREIGN KEY (post_key) REFERENCES post(key)
 );"""
 
 

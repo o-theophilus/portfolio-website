@@ -43,14 +43,13 @@ def default_admin():
     if not cur.fetchone():
         key = uuid4().hex
         cur.execute("""
-                INSERT INTO "user" ( key, version, status, name, email,
+                INSERT INTO "user" ( key, status, name, email,
                     password, permissions)
-                VALUES (%s, %s, %s, %s, %s, %s, %s);
+                VALUES (%s, %s, %s, %s, %s, %s);
             """, (
             key,
-            uuid4().hex,
             "confirmed",
-            "App Admin",
+            "Theophilus",
             email,
             generate_password_hash(
                 os.environ["MAIL_PASSWORD"], method="scrypt"),
@@ -105,30 +104,6 @@ def admin():
 
     return jsonify({
         "status": 200,
-        "posts": []
-    })
-
-
-@bp.get("/featured_post")
-def get():
-    # data = db.data()
-
-    # setting = get_setting(data)
-
-    # posts = []
-    # if setting:
-    #     for slug in setting["featured_posts"]:
-    #         for row in data:
-    #             if (
-    #                 row["type"] == "post"
-    #                 and row["slug"] == slug
-    #                 and row["status"] == "publish"
-    #             ):
-    #                 posts.append(row)
-
-    return jsonify({
-        "status": 200,
-        # "posts": [post_schema(a) for a in posts]
         "posts": []
     })
 

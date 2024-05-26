@@ -5,7 +5,9 @@ import os
 from .tools import send_mail
 from deta import Deta
 from .postgres import db_open, db_close
-from .postgres import post_table, user_table, log_table
+from .postgres import (
+    post_table, user_table, log_table, feedback_table,
+    save_table, otp_table)
 from uuid import uuid4
 
 
@@ -75,17 +77,22 @@ def cron():
     })
 
 
-@bp.get("/fix")
-def fix():
+def create_tables():
     con, cur = db_open()
 
     cur.execute(f"""
         DROP TABLE IF EXISTS "user" CASCADE;
         DROP TABLE IF EXISTS post CASCADE;
         DROP TABLE IF EXISTS log CASCADE;
+        DROP TABLE IF EXISTS save CASCADE;
+        DROP TABLE IF EXISTS feedback CASCADE;
+        DROP TABLE IF EXISTS otp CASCADE;
         {user_table}
         {post_table}
         {log_table}
+        {save_table}
+        {feedback_table}
+        {otp_table}
     """)
 
     db_close(con, cur)
@@ -94,6 +101,7 @@ def fix():
     })
 
 
+@bp.get("/fix")
 def deta_to_postgres():
     con, cur = db_open()
 
@@ -107,6 +115,7 @@ def deta_to_postgres():
 
     for x in entities:
         if x["type"] == "post":
+
             cur.execute("""
                 INSERT INTO post (
                     key,
@@ -128,7 +137,7 @@ def deta_to_postgres():
                 x["content"],
                 x["description"],
                 x["photos"],
-                x["videos"],
+                x["videos"] if "videos" in x else [],
                 x["tags"]
             ))
 
@@ -138,8 +147,8 @@ def deta_to_postgres():
                 ) VALUES (%s, %s, %s, %s, %s, %s);
             """, (
                 uuid4().hex,
-                x["date_c"],
-                "admin_key_replace",
+                x["created_at"],
+                "02442216bcd94a98bdff104efc734aa8",
                 "created",
                 x["key"],
                 "post"

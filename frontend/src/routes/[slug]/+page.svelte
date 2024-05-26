@@ -16,16 +16,18 @@
 	import Edit_Status from './__edit_status__.svelte';
 	import Manage_Photo from './__manage_photo__.svelte';
 	import Manage_Video from './__manage_video__.svelte';
+	
 	import Share from './__share__.svelte';
 	import Rating from './__add_rating__.svelte';
+	
 	import Comment from './comment.svelte';
 	import Author from './author.svelte';
 
 	export let data;
 	let { post } = data;
-	let { tags } = data;
-	let { comments } = data;
-	let { ratings } = data;
+	let tags = [];
+	let comments = [];
+	let ratings = [];
 
 	$: if ($_portal) {
 		if ($_portal.for == 'post') {
@@ -40,44 +42,44 @@
 	}
 
 	let content = post.content;
-	$: {
-		content = post.content;
-		post.photo_count = 1;
-		let is_available = content.search(/{#photo}/) >= 0;
-		while (is_available) {
-			let photo = `![${post.title}](${import.meta.env.VITE_BACKEND}/${
-				post.photos[post.photo_count]
-			})`;
-			content = content.replace(/{#photo}/, photo);
-			is_available = content.search(/{#photo}/) >= 0;
-			post.photo_count = post.photo_count + 1;
-		}
-	}
+	// $: {
+	// 	content = post.content;
+	// 	post.photo_count = 1;
+	// 	let is_available = content.search(/{#photo}/) >= 0;
+	// 	while (is_available) {
+	// 		let photo = `![${post.title}](${import.meta.env.VITE_BACKEND}/${
+	// 			post.photos[post.photo_count]
+	// 		})`;
+	// 		content = content.replace(/{#photo}/, photo);
+	// 		is_available = content.search(/{#photo}/) >= 0;
+	// 		post.photo_count = post.photo_count + 1;
+	// 	}
+	// }
 
-	$: {
-		post.video_count = 0;
-		let is_available = content.search(/{#video}/) >= 0;
-		while (is_available) {
-			let v = `<iframe 
-					width="100%" 
-					height="500px"
-					frameborder="0" 
-					src="https://www.youtube.com/embed/${post.videos[post.video_count]}">
-				</iframe>
-				`;
-			content = content.replace(/{#video}/, v);
-			is_available = content.search(/{#video}/) >= 0;
-			post.video_count = post.video_count + 1;
-		}
-	}
+	// $: {
+	// 	post.video_count = 0;
+	// 	let is_available = content.search(/{#video}/) >= 0;
+	// 	while (is_available) {
+	// 		let v = `<iframe
+	// 				width="100%"
+	// 				height="500px"
+	// 				frameborder="0"
+	// 				src="https://www.youtube.com/embed/${post.videos[post.video_count]}">
+	// 			</iframe>
+	// 			`;
+	// 		content = content.replace(/{#video}/, v);
+	// 		is_available = content.search(/{#video}/) >= 0;
+	// 		post.video_count = post.video_count + 1;
+	// 	}
+	// }
 
-	let ratings_value = 0;
-	$: {
-		ratings_value = 0;
-		for (const i in ratings) {
-			ratings_value += ratings[i].rating;
-		}
-	}
+	// let ratings_value = 0;
+	// $: {
+	// 	ratings_value = 0;
+	// 	for (const i in ratings) {
+	// 		ratings_value += ratings[i].rating;
+	// 	}
+	// }
 
 	let edit_mode = false;
 </script>
@@ -85,7 +87,7 @@
 <Meta title={post.title} description={post.description} image={post.photos[0]} />
 
 <Content>
-	{#if $user.roles.includes('admin')}
+	{#if $user.permissions.includes('admin')}
 		<Button
 			class="tiny"
 			on:click={() => {
@@ -96,12 +98,12 @@
 		<br />
 	{/if}
 	<img
-		src="{import.meta.env.VITE_BACKEND}/{post.photos[0] || ''}"
+		src="{post.photos[0] || ''}"
 		alt={post.title}
 		onerror="this.src='/site/no_photo.png'"
 	/>
 
-	{#if $user.roles.includes('admin') && edit_mode}
+	{#if $user.permissions.includes('admin') && edit_mode}
 		<div class="row">
 			<Button
 				class="tiny"
@@ -128,7 +130,7 @@
 
 	<br />
 	<strong class="big">{post.title}</strong>
-	{#if $user.roles.includes('admin') && edit_mode}
+	{#if $user.permissions.includes('admin') && edit_mode}
 		<Button
 			icon="edit"
 			class="tiny"
@@ -145,8 +147,8 @@
 	{/if}
 
 	<br />
-	<span class="date">{post.created_at.split('T')[0]}</span>
-	{#if $user.roles.includes('admin') && edit_mode}
+	<span class="date">{post.date.split('T')[0]}</span>
+	{#if $user.permissions.includes('admin') && edit_mode}
 		<Button
 			icon="edit"
 			class="tiny"
@@ -162,7 +164,7 @@
 		</Button>
 	{/if}
 
-	{#if $user.roles.includes('admin') && edit_mode}
+	{#if $user.permissions.includes('admin') && edit_mode}
 		<br /><br />
 		{post.description}
 
@@ -182,7 +184,7 @@
 	{/if}
 
 	<br /><br />
-	{#if $user.roles.includes('admin') && edit_mode}
+	{#if $user.permissions.includes('admin') && edit_mode}
 		<Button
 			icon="edit"
 			class="tiny"
@@ -201,7 +203,7 @@
 	<br />
 	<div class="hr" />
 
-	{#if $user.roles.includes('admin') && edit_mode}
+	{#if $user.permissions.includes('admin') && edit_mode}
 		<br />
 		<Button
 			icon="edit"
@@ -227,7 +229,7 @@
 	<br />
 	<Author />
 
-	{#if $user.roles.includes('admin') && edit_mode}
+	{#if $user.permissions.includes('admin') && edit_mode}
 		<br /> <br />
 		Status: <strong> {post.status}</strong>
 		<div class="row">

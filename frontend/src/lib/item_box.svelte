@@ -4,10 +4,10 @@
 
 	export let post;
 
-	let time = timeAgo(post.created_at);
+	let time = timeAgo(post.date);
 	onMount(() => {
 		const intervalId = setInterval(() => {
-			time = timeAgo(post.created_at);
+			time = timeAgo(post.date);
 		}, 1000);
 
 		return () => clearInterval(intervalId);
@@ -17,7 +17,7 @@
 <a href="/{post.slug}" data-sveltekit-preload-data class:draft={post.status == 'draft'}>
 	<div class="img">
 		<img
-			src="{import.meta.env.VITE_BACKEND}/{post.photos[0] || ''}"
+			src="{post.photos[0] || ''}"
 			alt={post.title}
 			onerror="this.src='/site/no_photo.png'"
 		/>
