@@ -4,19 +4,12 @@
 
 	import Button from '$lib/button.svelte';
 
-	export let post;
-	let text = `Check Out: ${post.name}`;
+	let text = `Check Out: ${$module.post.name}`;
 </script>
 
 <section class="content">
 	<strong class="big"> Share </strong>
-	<div
-		class="row"
-		on:click={() => {
-			$module = '';
-		}}
-		on:keypress
-	>
+	<div class="row">
 		<Button
 			icon="facebook"
 			href="https://www.facebook.com/sharer.php?u={$page.url.href}"
@@ -49,8 +42,8 @@
 	.content {
 		display: flex;
 		flex-direction: column;
-		gap: var(--gap2);
+		gap: var(--sp2);
 
-		padding: var(--gap3);
+		padding: var(--sp3);
 	}
 </style>

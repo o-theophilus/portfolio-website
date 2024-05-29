@@ -3,10 +3,13 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
+	import { module, settings } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
-	import ItemBox from './3_post.item_box.svelte';
+	import Post from './highlight.post.svelte';
+	import Edit from './highlight.edit.svelte';
 	import Scroller from '$lib/scroller.svelte';
+	import Button from '$lib/button.svelte';
 
 	let sticky;
 	let block;
@@ -14,9 +17,7 @@
 	let scroller = {};
 	let pos = {};
 
-	export let posts = [];
-
-	let observe_post = posts.length > 0 ? posts[0] : {};
+	let observe_post = $settings.highlight.length > 0 ? $settings.highlight[0] : {};
 	let hover_post = {};
 	$: active_post = Object.keys(hover_post).length > 0 ? hover_post : observe_post;
 
@@ -47,6 +48,10 @@
 	}}
 />
 
+{#if $settings.highlight.length > 0}
+	<br /><br />
+{/if}
+
 <section bind:this={section} class:intersecting>
 	<div class="sticky" bind:this={sticky}>
 		<div class="bg-area">
@@ -60,11 +65,10 @@
 		</div>
 		<Content>
 			<div class="post-block" bind:this={block}>
-				<strong class="big title"> Post{posts.length > 1 ? 's' : ''} </strong>
-
+				<strong class="big title"> Post{$settings.highlight.length > 1 ? 's' : ''} </strong>
 				<div class="scroller" style:right="{pos.a}px" bind:this={scroller.a}>
-					{#each posts as post}
-						<ItemBox
+					{#each $settings.highlight as post (post.key)}
+						<Post
 							parent={block}
 							{post}
 							{active_post}
@@ -83,6 +87,13 @@
 						>view
 						<br />
 						more</Scroller
+					>
+					<Button
+						on:click={() => {
+							$module = {
+								module: Edit
+							};
+						}}>Edit</Button
 					>
 				</div>
 
@@ -115,7 +126,7 @@
 	}
 	.intersecting .title {
 		font-size: 40px;
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 
 	.sticky {
@@ -152,11 +163,11 @@
 
 		display: flex;
 		align-items: center;
-		gap: var(--gap5);
+		gap: var(--sp5);
 		width: fit-content;
 
-		/* padding-right: var(--gap5); */
-		padding: 0 var(--gap5);
+		/* padding-right: var(--sp5); */
+		padding: 0 var(--sp5);
 	}
 
 	.title,

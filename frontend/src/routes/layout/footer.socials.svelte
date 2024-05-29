@@ -31,7 +31,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: var(--gap2);
+		gap: var(--sp2);
 
 		max-width: var(--mobileWidth);
 	}
@@ -52,13 +52,13 @@
 
 		border-radius: 50%;
 
-		fill: var(--accent3);
+		fill: var(--ac3);
 
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;
 	}
 
 	a:hover {
-		fill: var(--color1);
+		fill: var(--cl1);
 	}
 </style>

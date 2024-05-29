@@ -24,14 +24,14 @@
 	section {
 		display: flex;
 		flex-direction: column;
-		gap: var(--gap2);
+		gap: var(--sp2);
 	}
 	strong {
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 	.block {
 		display: flex;
-		gap: var(--gap2);
+		gap: var(--sp2);
 		align-items: center;
 	}
 
@@ -53,9 +53,9 @@
 		font-size: larger;
 		font-weight: bold;
 
-		color: var(--accent5_);
+		color: var(--ac5_);
 	}
 	.light {
-		color: var(--accent1_);
+		color: var(--ac1_);
 	}
 </style>

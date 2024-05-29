@@ -51,7 +51,7 @@
 		position: fixed;
 		inset: 0;
 
-		padding: var(--gap1);
+		padding: var(--sp1);
 
 		background-color: var(--overlay);
 	}
@@ -67,8 +67,8 @@
 		width: var(--size2);
 		height: var(--size2);
 
-		background-color: var(--accent5);
-		border-radius: var(--gap1);
+		background-color: var(--ac5);
+		border-radius: var(--sp1);
 	}
 
 	.circle {
@@ -95,6 +95,6 @@
 	strong {
 		height: 0;
 		text-align: center;
-		padding: 0 var(--gap3);
+		padding: 0 var(--sp3);
 	}
 </style>

@@ -7,22 +7,21 @@
 	import Info from '$lib/info.svelte';
 	import { onMount } from 'svelte';
 
-	export let post;
-
-	let form = {};
 	let error = {};
 
 	let textarea;
+
 	onMount(() => {
-		textarea.value = post.content;
+		textarea.value = $module.post.content;
 	});
 
 	const validate = () => {
 		error = {};
-		form.content = textarea.value;
 
-		if (!form.content) {
+		if (!textarea.value) {
 			error.content = 'cannot be empty';
+		} else if (textarea.value == $module.post.content) {
+			error.content = 'no change';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -30,22 +29,24 @@
 
 	const submit = async () => {
 		$loading = 'Saving Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/content/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${$module.post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify(form)
+			body: JSON.stringify({
+				content: textarea.value
+			})
 		});
 		resp = await resp.json();
 		$loading = false;
 
 		if (resp.status == 200) {
-			portal({
+			$portal = {
 				for: 'post',
 				data: resp.post
-			});
+			};
 
 			$module = {
 				module: Info,
@@ -94,24 +95,18 @@
 		/>
 	</Input>
 
-	<Button
-		on:click={() => {
-			validate();
-		}}
-	>
-		Submit
-	</Button>
+	<Button on:click={validate}>Submit</Button>
 </form>
 
 <style>
 	form {
-		padding: var(--gap3);
+		padding: var(--sp3);
 	}
 
 	textarea {
 		max-width: 600px;
-		width: calc(100vw - var(--gap5) * 2);
+		width: calc(100vw - var(--sp5) * 2);
 		min-height: 160px;
-		height: calc(100vh - var(--gap5) * 9);
+		height: calc(100vh - var(--sp5) * 9);
 	}
 </style>

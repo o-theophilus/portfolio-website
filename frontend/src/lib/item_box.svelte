@@ -16,11 +16,7 @@
 
 <a href="/{post.slug}" data-sveltekit-preload-data class:draft={post.status == 'draft'}>
 	<div class="img">
-		<img
-			src="{post.photos[0] || ''}"
-			alt={post.title}
-			onerror="this.src='/site/no_photo.png'"
-		/>
+		<img src={post.photos[0] || ''} alt={post.title} onerror="this.src='/site/no_photo.png'" />
 	</div>
 	<div class="details">
 		<strong class="big color1">
@@ -43,27 +39,27 @@
 
 <style>
 	a {
-		padding: var(--gap3);
+		padding: var(--sp3);
 
-		background-color: var(--accent5);
-		color: var(--accent2);
+		background-color: var(--ac5);
+		color: var(--ac2);
 		text-decoration: none;
 
-		border-radius: var(--gap1);
+		border-radius: var(--sp1);
 		border: 2px solid transparent;
 
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;
 	}
 	a.draft {
-		border: 2px solid var(--color2);
+		border: 2px solid var(--cl2);
 	}
 	a:hover {
-		border-color: var(--accent2);
+		border-color: var(--ac2);
 	}
 
 	.img {
-		border-radius: var(--gap1);
+		border-radius: var(--sp1);
 		overflow: hidden;
 	}
 	img {
@@ -71,7 +67,7 @@
 
 		object-fit: cover;
 		aspect-ratio: 1 / 1;
-		background-color: var(--accent4);
+		background-color: var(--ac4);
 
 		transition: transform var(--animTime3);
 		transition-timing-function: ease-in-out;
@@ -81,7 +77,7 @@
 	}
 
 	.details {
-		padding-top: var(--gap3);
+		padding-top: var(--sp3);
 	}
 	strong {
 		font-size: large;

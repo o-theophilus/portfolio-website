@@ -68,7 +68,7 @@
 <style>
 	.h {
 		display: flex;
-		gap: var(--gap2);
+		gap: var(--sp2);
 		align-items: center;
 	}
 
@@ -85,10 +85,10 @@
 	}
 
 	.dark {
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 	.large {
-		color: var(--accent1);
+		color: var(--ac1);
 		font-size: large;
 	}
 </style>

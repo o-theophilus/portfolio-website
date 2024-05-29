@@ -20,16 +20,15 @@
 			website are beautifully highlighted, making it easy for you to follow along and understand the
 			technical details.
 			<br /><br />
-			Whether you're reading my post, or just exploring, I hope you'll enjoy your
-			experience on this site. This website is an all-in-one platform where I showcase my work and try
-			out new shiny things.
+			Whether you're reading my post, or just exploring, I hope you'll enjoy your experience on this
+			site. This website is an all-in-one platform where I showcase my work and try out new shiny things.
 		</div>
 	</Observe>
 </Content>
 
 <style>
 	.heart {
-		color: var(--color2);
+		color: var(--cl2);
 	}
 	.observe {
 		opacity: 0;
@@ -43,6 +42,6 @@
 		transform: translate(0, 0) scale(1);
 	}
 	.big {
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 </style>

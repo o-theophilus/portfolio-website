@@ -7,8 +7,9 @@ from deta import Deta
 from .postgres import db_open, db_close
 from .postgres import (
     post_table, user_table, log_table, feedback_table,
-    save_table, otp_table)
+    save_table, otp_table, setting_table)
 from uuid import uuid4
+from .admin import permissions
 
 
 bp = Blueprint("api", __name__)
@@ -77,16 +78,19 @@ def cron():
     })
 
 
+@bp.get("/fix")
 def create_tables():
     con, cur = db_open()
 
     cur.execute(f"""
+        DROP TABLE IF EXISTS setting CASCADE;
         DROP TABLE IF EXISTS "user" CASCADE;
         DROP TABLE IF EXISTS post CASCADE;
         DROP TABLE IF EXISTS log CASCADE;
         DROP TABLE IF EXISTS save CASCADE;
         DROP TABLE IF EXISTS feedback CASCADE;
         DROP TABLE IF EXISTS otp CASCADE;
+        {setting_table}
         {user_table}
         {post_table}
         {log_table}
@@ -95,13 +99,84 @@ def create_tables():
         {otp_table}
     """)
 
+    cur.execute(f"""
+        DROP TABLE IF EXISTS setting CASCADE;
+        {setting_table}
+    """)
+
     db_close(con, cur)
     return jsonify({
         "status": 200
     })
 
 
-@bp.get("/fix")
+def general_fix():
+    con, cur = db_open()
+
+    # cur.execute("""
+    #     ALTER TABLE item
+    #     RENAME COLUMN old_price
+    #     TO discount_time;
+
+    #     ALTER TABLE item
+    #     ALTER COLUMN discount_time
+    #     TYPE VARCHAR(32);
+
+    #     ALTER TABLE item
+    #     ALTER COLUMN discount_time
+    #     SET DEFAULT 'TRUE';
+
+    #     UPDATE item
+    #     SET discount_time = 'TRUE';
+
+    #     ALTER TABLE save
+    #     DROP COLUMN date;
+
+    # ALTER TABLE order_item
+    # ADD COLUMN price FLOAT DEFAULT 0 NOT NULL;
+    # """)
+
+    # cur.execute("""
+    #     ALTER TABLE post
+    #     ADD COLUMN date TIMESTAMP;
+    # """)
+
+    cur.execute("""
+        UPDATE post
+        SET date = (
+            SELECT log.date
+            FROM log
+            WHERE
+                post.key = log.entity_key
+                AND log.action = 'created'
+                AND log.entity_type = 'post'
+        )
+    """)
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
+def fix_permission():
+    con, cur = db_open()
+
+    cur.execute("""
+            UPDATE "user"
+            SET permissions = %s
+            WHERE email = %s;
+        """, (
+        [f"{x}:{y[0]}" for x in permissions for y in permissions[x]],
+        os.environ["MAIL_USERNAME"]
+    ))
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
 def deta_to_postgres():
     con, cur = db_open()
 
@@ -120,6 +195,7 @@ def deta_to_postgres():
                 INSERT INTO post (
                     key,
                     status,
+                    date,
                     title,
                     slug,
                     content,
@@ -128,10 +204,11 @@ def deta_to_postgres():
                     videos,
                     tags
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
             """, (
                 x["key"],
                 x["status"],
+                x["created_at"],
                 x["title"],
                 x["slug"],
                 x["content"],
@@ -141,6 +218,10 @@ def deta_to_postgres():
                 x["tags"]
             ))
 
+            cur.execute('SELECT * FROM "user" WHERE email = %s;',
+                        (os.environ["MAIL_USERNAME"],))
+            admin = cur.fetchone()
+
             cur.execute("""
                 INSERT INTO log (
                     key, date, user_key, action, entity_key, entity_type
@@ -148,7 +229,7 @@ def deta_to_postgres():
             """, (
                 uuid4().hex,
                 x["created_at"],
-                "02442216bcd94a98bdff104efc734aa8",
+                admin["key"],
                 "created",
                 x["key"],
                 "post"

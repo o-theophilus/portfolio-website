@@ -1,373 +1,527 @@
 from flask import Blueprint, jsonify, request
-from . import db
 from .tools import reserved_words, token_to_user
-from .schema import now, post_schema
 import re
 from uuid import uuid4
+from .postgres import db_open, db_close
+from .storage import storage
+from .log import log
+from .post_get import get_post
+from datetime import datetime
 
 bp = Blueprint("post", __name__)
 
 
-def post_template(
-        title: str,
-        slug: str,
-):
-    return {
-        "type": "post",
-        "key": uuid4().hex,
-        "version": uuid4().hex,
-        "created_at": now(),
-        "updated_at": now(),
-
-        "status": "draft",  # draft, publish, deleted
-        "slug": slug,
-        "title": title,
-        "content": "",
-        "description": "",
-        # "format": "markdown",  # markdown, url
-        "photos": [],
-        "videos": [],
-        "tags": []
-    }
-
-
 @bp.post("/post")
-def add_post():
+def add():
+    con, cur = db_open()
 
-    if "title" not in request.json or not request.json["title"]:
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
-            "title": "cannot be empty"
+            "error": "invalid token"
         })
 
-    data = db.data()
-
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
+    if "post:add" not in user["permissions"]:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "unauthorised access"
+            "error": "unauthorized access"
+        })
+
+    if "title" not in request.json or not request.json["title"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "this field is required"
         })
 
     slug = re.sub('-+', '-', re.sub(
         '[^a-zA-Z0-9]', '-', request.json["title"].lower()))
-
-    slug_in_use = db.get("post", "slug", slug, data)
-    if slug_in_use or slug in reserved_words:
+    cur.execute('SELECT * FROM post WHERE slug = %s;', (slug,))
+    post = cur.fetchone()
+    if post or slug in reserved_words:
         slug = f"{slug}-{str(uuid4().hex)[:10]}"
 
-    post = db.add(post_template(
+    cur.execute("""
+            INSERT INTO post (key, title, slug, date)
+            VALUES (%s, %s, %s, %s)
+            RETURNING *;
+        """, (
+        uuid4().hex,
         request.json["title"],
-        slug
+        slug,
+        datetime.now()
     ))
+    post = cur.fetchone()
+    post["ratings"] = []
 
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="created",
+        entity_key=post["key"],
+        entity_type="post"
+    )
+
+    db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post_schema(post, data)
+        "post": post
     })
 
 
-@bp.put("/post/title/<key>")
-def update_title(key):
-    if "title" not in request.json or not request.json["title"]:
+@bp.put("/post/<key>")
+def edit(key):
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
-            "title": "cannot be empty"
+            "error": "invalid token"
         })
 
-    data = db.data()
-
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
-        return jsonify({
-            "status": 400,
-            "error": "unauthorised access"
-        })
-
-    post = db.get_key(key, data)
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
     if not post:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid request"
         })
 
-    slug = re.sub('-+', '-', re.sub(
-        '[^a-zA-Z0-9]', '-', request.json["title"].lower()))
-
-    slug_in_use = db.get(post["type"], "slug", slug, data)
-
-    if (
-        (slug_in_use and slug_in_use['key'] != post["key"])
-        or slug in reserved_words
-    ):
-        slug = f"{slug}-{str(uuid4().hex)[:10]}"
-
-    post["updated_at"] = now()
-    post["title"] = request.json["title"]
-    post["slug"] = slug
-
-    db.add(post)
-
-    return jsonify({
-        "status": 200,
-        "post": post_schema(post, data)
-    })
-
-
-@bp.put("/post/description/<key>")
-def update_description(key):
-
-    data = db.data()
-
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
-        return jsonify({
-            "status": 400,
-            "error": "unauthorised access"
-        })
-
-    post = db.get_key(key, data)
-    if not post or "description" not in request.json:
-        return jsonify({
-            "status": 400,
-            "error": "invalid request"
-        })
-
-    post["updated_at"] = now()
-    post["description"] = request.json["description"]
-
-    db.add(post)
-
-    return jsonify({
-        "status": 200,
-        "post": post_schema(post, data)
-    })
-
-
-@bp.put("/post/content/<key>")
-def update_content(key):
-    if "content" not in request.json or not request.json["content"]:
-        return jsonify({
-            "status": 400,
-            "content": "cannot be empty"
-        })
-
-    data = db.data()
-
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
-        return jsonify({
-            "status": 400,
-            "error": "unauthorised access"
-        })
-
-    post = db.get_key(key, data)
-    if not post:
-        return jsonify({
-            "status": 400,
-            "error": "invalid request"
-        })
-
-    post["updated_at"] = now()
-    post["content"] = request.json["content"]
-
-    count = post["content"].count("{#video}")
-    if count == 0:
-        post["videos"] = []
-    else:
-        post["videos"] = post["videos"][:count]
-
-    db.add(post)
-
-    return jsonify({
-        "status": 200,
-        "post": post_schema(post, data)
-    })
-
-
-@bp.put("/post/date/<key>")
-def update_date(key):
     error = {}
-    if "date" not in request.json or not request.json["date"]:
-        error["date"] = "cannot be empty"
-    if "time" not in request.json or not request.json["time"]:
-        error["time"] = "cannot be empty"
+
+    if "title" in request.json:
+        if "post:edit_title" not in user["permissions"]:
+            error["title"] = "unauthorized access"
+        elif not request.json["title"]:
+            error["title"] = "this field is required"
+        elif request.json["title"] == post["title"]:
+            error["title"] = "no change"
+        else:
+            slug = re.sub('-+', '-', re.sub(
+                '[^a-zA-Z0-9]', '-', request.json["title"].lower()))
+            cur.execute('SELECT * FROM post WHERE key != %s AND slug = %s;',
+                        (post["key"], slug))
+            slug_in_use = cur.fetchone()
+            if (slug_in_use or slug in reserved_words):
+                slug = f"{slug}-{str(uuid4().hex)[:10]}"
+
+            cur.execute("""
+                    UPDATE post
+                    SET title = %s, slug = %s
+                    WHERE key = %s;
+                """, (
+                request.json["title"],
+                slug,
+                post["key"]
+            ))
+
+    if "date" in request.json:
+        if "post:edit_date" not in user["permissions"]:
+            error["date"] = "unauthorized access"
+        else:
+            try:
+                datetime.strptime(
+                    f"{request.json['date']}",
+                    "%Y-%m-%dT%H:%M:%S"
+                )
+            except Exception:
+                print(request.json['date'])
+                error["date"] = "invalid request"
+
+            cur.execute("""
+                UPDATE post
+                SET date = %s
+                WHERE key = %s;
+            """, (
+                request.json['date'],
+                post["key"]
+            ))
+
+    if "description" in request.json:
+        if "post:edit_description" not in user["permissions"]:
+            error["description"] = "unauthorized access"
+        elif request.json["description"] == post["description"]:
+            error["description"] = "no change"
+        else:
+            cur.execute("UPDATE post SET description = %s WHERE key = %s;", (
+                request.json["description"], post["key"]))
+
+    if "content" in request.json:
+        if "post:edit_content" not in user["permissions"]:
+            error["content"] = "unauthorized access"
+        elif request.json["content"] == post["content"]:
+            error["content"] = "no change"
+        else:
+            cur.execute("UPDATE post SET content = %s WHERE key = %s;", (
+                request.json["content"], post["key"]))
+
+    if "tags" in request.json:
+        if "post:edit_tags" not in user["permissions"]:
+            error["tags"] = "unauthorized access"
+        elif type(request.json["tags"]) is not list:
+            error["tags"] = "this field is required"
+        elif set(request.json["tags"]) == set(post["tags"]):
+            error["tags"] = "no change"
+        else:
+            cur.execute("""
+                    UPDATE post
+                    SET tags = %s
+                    WHERE key = %s;
+                """, (
+                request.json["tags"],
+                post["key"]
+            ))
+
+    if "status" in request.json:
+        if "post:edit_status" not in user["permissions"]:
+            error["status"] = "unauthorized access"
+        elif (
+            not request.json["status"]
+            or request.json["status"] not in ['publish', 'draft', 'delete']
+        ):
+            error["status"] = "invalid request"
+        elif request.json["status"] == post["status"]:
+            error["status"] = "no change"
+        elif request.json["status"] == "publish" and len(post["photos"]) == 0:
+            error["status"] = "add photo"
+        elif request.json["status"] == "publish" and not post["content"]:
+            error["status"] = "no content"
+        else:
+            cur.execute("""
+                    UPDATE post
+                    SET status = %s
+                    WHERE key = %s;
+                """, (
+                request.json["status"],
+                post["key"]
+            ))
 
     if error != {}:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
             **error
         })
 
-    data = db.data()
+    post = get_post(key, cur).json["post"]
 
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="edited",
+        entity_key=post["key"],
+        entity_type="post",
+        misc=request.json
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "post": post
+    })
+
+
+@bp.post("/post/photo/<key>")
+def add_photos(key):
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "unauthorised access"
+            "error": "invalid token"
         })
 
-    post = db.get_key(key, data)
-    if not post:
+    if "post:edit_photos" not in user["permissions"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
+    if 'files' not in request.files or not post:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid request"
         })
 
-    post["updated_at"] = now()
-    post["created_at"] = f"{request.json['date']}T{request.json['time']}"
+    error = ""
+    files = []
+    for x in request.files.getlist("files"):
+        media, format = x.content_type.split("/")
 
-    db.add(post)
+        err = ""
+        if media != "image" or format in ['svg+xml', 'x-icon']:
+            err = f"{x.filename} => invalid file"
+        elif len(files) + len(post["photos"]) >= 10:
+            err = f"{x.filename} => excess file"
 
+        if err:
+            error = f"{error}, {err}" if error else err
+        else:
+            files.append(x)
+
+    if files == []:
+        if not error:
+            error = "no file"
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": error
+        })
+
+    file_names = []
+    for x in files:
+        filename = storage(x)
+        file_names.append(filename)
+
+    cur.execute("""
+            UPDATE post
+            SET photos = %s
+            WHERE key = %s;
+        """, (
+        post["photos"] + file_names,
+        post["key"]
+    ))
+
+    post = get_post(key, cur).json["post"]
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="added_photo",
+        entity_key=post["key"],
+        entity_type="post",
+        misc={
+            "added": ", ".join(file_names),
+            "error": error
+        }
+    )
+
+    db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post_schema(post, data)
+        "post": post,
+        "error": error
     })
 
 
-@bp.put("/post/tags/<key>")
-def update_tags(key):
+@bp.put("/post/photo/<key>")
+def order_photo(key):
 
-    data = db.data()
+    con, cur = db_open()
 
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "unauthorised access"
+            "error": "invalid token"
         })
 
-    post = db.get_key(key, data)
-    if not post or "tags" not in request.json:
+    if "post:edit_photos" not in user["permissions"]:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "unauthorized access"
         })
 
-    post["updated_at"] = now()
-    post["tags"] = request.json["tags"]
-
-    db.add(post)
-
-    return jsonify({
-        "status": 200,
-        "post": post_schema(post, data)
-    })
-
-
-@ bp.put("/post/status/<key>")
-def update_status(key):
-
-    data = db.data()
-
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
-        return jsonify({
-            "status": 400,
-            "error": "unauthorised access"
-        })
-
-    post = db.get_key(key, data)
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
     if (
         not post
-        or "status" not in request.json or not request.json["status"]
-        or request.json["status"] not in ["draft", "publish", "deleted"]
-        or request.json["status"] == post["status"]
+        or "photos" not in request.json
+        or type(request.json["photos"]) is not list
+        or set(post["photos"]) != set(
+            [p.split("/")[-1] for p in request.json["photos"]])
     ):
+        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid request"
         })
 
-    post["updated_at"] = now()
-    post["status"] = request.json["status"]
+    in_photos = [p.split("/")[-1] for p in request.json["photos"]]
 
-    db.add(post)
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="arranged_photo",
+        entity_key=post["key"],
+        entity_type="post",
+        misc={
+            "from": post["photos"],
+            "to": in_photos
+        }
+    )
 
+    cur.execute("""
+            UPDATE post
+            SET photos = %s
+            WHERE key = %s;
+        """, (
+        in_photos,
+        post["key"]
+    ))
+
+    post = get_post(key, cur).json["post"]
+
+    db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post_schema(post, data)
+        "post": post
     })
 
 
-@ bp.put("/post/videos/<key>")
-def update_videos(key):
+@bp.delete("/post/photo/<key>")
+def delete_photo(key):
 
-    data = db.data()
+    con, cur = db_open()
 
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "unauthorised access"
+            "error": "invalid token"
         })
 
-    post = db.get_key(key, data)
+    if "post:edit_photos" not in user["permissions"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
     if (
-        not post or "videos" not in request.json
-        or type(request.json["videos"]) != "list"
+        not post
+        or "active_photo" not in request.json
+        or not request.json["active_photo"]
+        or request.json["active_photo"].split("/")[-1] not in post["photos"]
     ):
+        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid request"
         })
 
-    post["updated_at"] = now()
-    post["videos"] = request.json["videos"]
+    file_name = request.json["active_photo"].split("/")[-1]
 
-    db.add(post)
+    storage(file_name, delete=True)
 
+    post["photos"].remove(file_name)
+    cur.execute("""
+            UPDATE post
+            SET photos = %s
+            WHERE key = %s;
+        """, (
+        post["photos"],
+        post["key"]
+    ))
+
+    if len(post["photos"]) == 0 and post["status"] == "live":
+        cur.execute("""
+                UPDATE post
+                SET status = %s
+                WHERE key = %s;
+            """, (
+            "draft",
+            post["key"]
+        ))
+
+    post = get_post(key, cur).json["post"]
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="deleted_photo",
+        entity_key=post["key"],
+        entity_type="post",
+        misc={"photo": file_name}
+    )
+
+    db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post_schema(post, data)
+        "post": post
     })
 
 
-@ bp.delete("/post/<key>")
-def delete(key):
+@bp.put("/post/videos/<key>")
+def update_videos(key):
+    con, cur = db_open()
 
-    data = db.data()
-
-    user = token_to_user(data)
-    if "admin" not in user["roles"]:
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "unauthorised access"
+            "error": "invalid token"
         })
 
-    post = None
-    to_delete = []
-
-    for row in data:
-        if (
-            row["key"] == key
-            and row["type"] == "post"
-        ):
-            post = row
-        elif (
-            row["type"] == "comment"
-            and row["path"][0] == key
-            and row["status"] != "deleted"
-        ):
-            to_delete.append(row)
-
-    if not post or post["status"] == "deleted":
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
+    if not post:
+        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid request"
         })
 
-    to_delete.append(post)
-    for row in to_delete:
-        row["status"] = "deleted"
-        row["updated_at"] = now()
+    error = {}
+    if "post:edit_videos" not in user["permissions"]:
+        error["videos"] = "unauthorized access"
+    elif (
+        "videos" not in request.json
+        or type(request.json["videos"]) is not list
+    ):
+        error["videos"] = "this field is required"
+    elif set(request.json["videos"]) == set(post["videos"]):
+        error["videos"] = "no change"
+    if error != {}:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            **error
+        })
 
-    while len(to_delete) > 0:
-        db.add_many(to_delete[:25])
-        to_delete = to_delete[25:]
+    cur.execute("""
+        UPDATE post
+        SET videos = %s
+        WHERE key = %s;
+    """, (
+        request.json["videos"],
+        post["key"]
+    ))
 
+    post = get_post(key, cur).json["post"]
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="edited_videos",
+        entity_key=post["key"],
+        entity_type="post",
+        misc={
+            "from": post["videos"],
+            "to": request.json["videos"]
+        }
+    )
+
+    db_close(con, cur)
     return jsonify({
         "status": 200,
-        "error": "successful"
+        "post": post
     })

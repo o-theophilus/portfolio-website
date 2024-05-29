@@ -25,10 +25,10 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			portal({
+			$portal = {
 				for: 'comment',
 				data: resp.comments
-			});
+			};
 
 			$module = {
 				module: Info,
@@ -77,6 +77,6 @@
 
 <style>
 	form {
-		padding: var(--gap3);
+		padding: var(--sp3);
 	}
 </style>

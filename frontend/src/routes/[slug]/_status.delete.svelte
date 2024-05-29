@@ -6,15 +6,13 @@
 	import Button from '$lib/button.svelte';
 	import Info from '$lib/info.svelte';
 
-	export let post;
-
 	let error = {};
 
 	const submit = async () => {
 		error = {};
 
 		$loading = 'Deleting Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${$module.post.key}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
@@ -73,6 +71,6 @@
 
 <style>
 	form {
-		padding: var(--gap3);
+		padding: var(--sp3);
 	}
 </style>

@@ -14,43 +14,42 @@
 	--animTime2: 0.5s;
 	--animTime3: 1s;
 
-	--gap0: 4px;
-	--gap1: 8px;
-	--gap2: 16px;
-	--gap3: 24px;
-	--gap4: 32px;
-	--gap5: calc(var(--gap4) * 2);
+	--sp0: 4px;
+	--sp1: 8px;
+	--sp2: 16px;
+	--sp3: 24px;
+	--sp4: 32px;
+	--sp5: calc(var(--sp4) * 2);
 
-	--color1: rgb(255, 102, 51);
-	/* --color1: rgb(41, 172, 41); */
-	--color2: red;
-	--color3: green;
-	--color4: rgb(255, 162, 0);
+	--cl1: rgb(255, 102, 51);
+	--cl1_l: color-mix(in srgb, var(--cl1), transparent 90%);
+	--cl1_d: color-mix(in srgb, var(--cl1), black 30%);
+	--cl2: red;
+	--cl3: green;
+	--cl4: rgb(255, 162, 0);
 
 	--overlay: rgba(128, 128, 128, 0.5);
 
-	--accent1_: black;
-	--accent2_: rgb(100, 100, 100);
-	--accent3_: rgb(128, 128, 128);
-	--accent4_: rgb(210, 210, 210);
-	--accent5_: white;
+	--ac1_: black;
+	--ac2_: rgb(100, 100, 100);
+	--ac3_: rgb(128, 128, 128);
+	--ac4_: rgb(210, 210, 210);
+	--ac5_: white;
 
 }
 
 main {
-	--accent1: var(--accent1_);
-	--accent2: var(--accent2_);
-	--accent3: var(--accent3_);
-	--accent4: var(--accent4_);
-	--accent5: var(--accent5_);
+	--ac1: var(--ac1_);
+	--ac2: var(--ac2_);
+	--ac3: var(--ac3_);
+	--ac4: var(--ac4_);
+	--ac5: var(--ac5_);
 }
 
 main.dark {
-	--accent1: white;
-	--accent2: rgb(200, 200, 200);
-	--accent3: rgb(128, 128, 128);
-	--accent4: rgb(50, 50, 50);
-	--accent5: rgb(0, 0, 0);
-	/* --accent5: rgb(24, 24, 24); */
-
+	--ac1: white;
+	--ac2: rgb(200, 200, 200);
+	--ac3: rgb(128, 128, 128);
+	--ac4: rgb(50, 50, 50);
+	--ac5: rgb(0, 0, 0);
 }

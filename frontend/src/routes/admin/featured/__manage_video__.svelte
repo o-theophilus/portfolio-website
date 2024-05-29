@@ -27,10 +27,10 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			portal({
+			$portal = {
 				for: 'setting',
 				data: resp.setting
-			});
+			};
 
 			$module = {
 				module: Info,
@@ -93,6 +93,6 @@
 
 <style>
 	form {
-		padding: var(--gap3);
+		padding: var(--sp3);
 	}
 </style>

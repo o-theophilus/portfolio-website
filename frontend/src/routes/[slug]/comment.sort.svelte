@@ -60,10 +60,10 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			portal({
+			$portal = {
 				for: 'comment',
 				data: resp.comments
-			});
+			};
 		} else {
 			error = resp;
 		}
@@ -125,13 +125,13 @@
 		align-items: center;
 	}
 	.block {
-		gap: var(--gap2);
+		gap: var(--sp2);
 	}
 
 	select {
 		background-color: transparent;
 		border: none;
-		color: var(--accent2);
+		color: var(--ac2);
 		cursor: pointer;
 	}
 </style>

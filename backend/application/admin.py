@@ -1,12 +1,11 @@
 from flask import Blueprint, jsonify, request
-from .tools import token_to_user
-from . import db
-from .schema import now, post_schema
 from uuid import uuid4
 import os
+import json
 from .postgres import db_open, db_close
 from werkzeug.security import generate_password_hash
 from .log import log
+from .tools import token_to_user
 
 
 bp = Blueprint("admin", __name__)
@@ -19,14 +18,15 @@ permissions = {
     ],
     "post": [
         ['add', 2],
-        ['edit_photo', 2],
-        ['edit_status', 2],
-        ['edit_title', 2],
-        ['edit_content', 2],
-        ['edit_description', 2],
         ['edit_photos', 2],
         ['edit_videos', 2],
-        ['tags', 2]
+        ['edit_title', 2],
+        ['edit_date', 2],
+        ['edit_description', 2],
+        ['edit_content', 2],
+        ['edit_tags', 2],
+        ['edit_status', 2],
+        ['edit_highlight', 2]
     ],
     "log": [
         ['view', 1]
@@ -81,85 +81,157 @@ def default_admin():
     })
 
 
-def get_setting(data):
-    for row in data:
-        if row["type"] == "setting":
-            return row
-    return None
+def get_highlight(cur=None):
+    cur.execute("SELECT * FROM setting WHERE key = 'highlight';",)
+    highlight = cur.fetchone()
+    if not highlight:
+        cur.execute("""
+            INSERT INTO setting (key, misc)
+            VALUES ('highlight', %s)
+            RETURNING *;
+        """, (json.dumps({"highlight": []}),))
+        highlight = cur.fetchone()
+    keys = highlight["misc"]["highlight"]
+
+    cur.execute("""
+        SELECT
+            post.*,
+            COALESCE(ARRAY_AGG(feedback.rating) FILTER (
+                WHERE feedback.rating IS NOT NULL
+            ), ARRAY[]::int[]) AS ratings
+        FROM post
+        LEFT JOIN feedback ON post.key = feedback.post_key
+        WHERE
+            post.status = 'publish'
+            AND post.key = ANY(%s)
+        GROUP BY post.key;
+    """, (keys,))
+    posts = cur.fetchall()
+    posts = sorted(posts, key=lambda d: keys.index(d['key']))
+    for x in posts:
+        x["photos"] = [f"{request.host_url}photo/{y}" for y in x["photos"]]
+
+    return posts
 
 
-def admin():
-    data = db.data()
+@bp.post("/highlight/<key>")
+def set_highlight(key):
+    con, cur = db_open()
 
-    setting = get_setting(data)
-    if not setting:
-        setting = db.add({
-            "type": "setting",
-            "key": uuid4().hex,
-            "version": uuid4().hex,
-            "created_at": now(),
-            "updated_at": now(),
-            "featured_posts": []
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
         })
 
-    return jsonify({
-        "status": 200,
-        "posts": []
-    })
+    if "post:edit_highlight" not in user["permissions"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error":  "unauthorized access"
+        })
 
-
-@bp.post("/featured_post")
-def featured_post():
-    if (
-        "featured_posts" not in request.json
-        or type(request.json["featured_posts"]) is not list
-    ):
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
+    if not post or post["status"] != "publish":
+        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid request"
         })
 
-    data = db.data()
+    cur.execute("SELECT * FROM setting WHERE key = 'highlight';",)
+    keys = cur.fetchone()["misc"]["highlight"]
+    _from = keys
 
-    user = token_to_user(data)
-    if not user or "admin" not in user["roles"]:
-        return jsonify({
-            "status": 400,
-            "error": "unauthorised access"
-        })
+    if post["key"] in keys:
+        keys.remove(post["key"])
+    else:
+        keys.append(post["key"])
 
-    setting = get_setting(data)
+    cur.execute("UPDATE setting SET misc = %s WHERE key = 'highlight';",
+                (json.dumps({"highlight": keys}),))
 
-    slugs = []
-    for slug in request.json["featured_posts"][:10]:
-        for row in data:
-            if (
-                row["type"] == "post"
-                and row["slug"] == slug
-                and row["status"] == "publish"
-                and slug not in slugs
-            ):
-                slugs.append(row["slug"])
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="edited_highlight",
+        entity_type="setting",
+        misc={
+            "from": _from,
+            "to": keys
+        }
+    )
 
-    setting["featured_posts"] = slugs
-    db.add(setting)
+    posts = get_highlight(cur)
 
+    db_close(con, cur)
     return jsonify({
         "status": 200,
-        "setting": setting
+        "posts": posts
     })
 
 
-@bp.get("/slug")
-def slug():
-    data = db.data()
+@bp.put("/highlight")
+def edit_highlight():
+    con, cur = db_open()
 
-    slugs = []
-    for row in data:
-        if row["type"] == "post" and row["status"] == "publish":
-            slugs.append(row["slug"])
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
 
+    if "post:edit_highlight" not in user["permissions"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error":  "unauthorized access"
+        })
+
+    if (
+        "keys" not in request.json
+        or not request.json["keys"]
+        or type(request.json["keys"]) is not list
+    ):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    cur.execute("SELECT * FROM setting WHERE key = 'highlight';",)
+    keys = cur.fetchone()["misc"]["highlight"]
+
+    if request.json["keys"] == keys:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error":  "no change"
+        })
+
+    cur.execute("UPDATE setting SET misc = %s WHERE key = 'highlight';",
+                (json.dumps({"highlight": request.json["keys"]}),))
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="edited_highlight",
+        entity_type="setting",
+        misc={
+            "from": keys,
+            "to": request.json["keys"]
+        }
+    )
+
+    posts = get_highlight(cur)
+
+    db_close(con, cur)
     return jsonify({
         "status": 200,
-        "slugs": slugs
+        "posts": posts
     })

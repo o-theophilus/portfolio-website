@@ -20,7 +20,7 @@
 	};
 
 	const submit = async () => {
-		$loading = `Creating Post . . .`;
+		$loading = 'Creating Post . . .';
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post`, {
 			method: 'post',
 			headers: {
@@ -40,12 +40,12 @@
 					{
 						name: 'OK',
 						fn: () => {
+							goto(`/${resp.post.slug}?edit=true`);
 							$module = '';
 						}
 					}
 				]
 			};
-			goto(`/${resp.post.slug}`);
 		} else {
 			error = resp;
 		}
@@ -74,7 +74,7 @@
 
 <style>
 	form {
-		padding: var(--gap3);
+		padding: var(--sp3);
 	}
 	strong {
 		text-transform: capitalize;

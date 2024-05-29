@@ -23,7 +23,7 @@
 		flex-direction: column;
 		align-items: center;
 
-		gap: var(--gap1);
+		gap: var(--sp1);
 	}
 	@media screen and (min-width: 600px) {
 		.block {

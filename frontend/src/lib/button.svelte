@@ -52,15 +52,15 @@
 		display: inline-flex;
 		justify-content: center;
 		align-items: center;
-		gap: var(--gap1);
+		gap: var(--sp1);
 
 		border: none;
-		padding: var(--gap2);
-		border-radius: var(--gap0);
+		padding: var(--sp2);
+		border-radius: var(--sp0);
 
-		background-color: var(--accent3);
-		color: var(--accent5_);
-		fill: var(--accent5_);
+		background-color: var(--ac3);
+		color: var(--ac5_);
+		fill: var(--ac5_);
 
 		text-decoration: none;
 		width: fit-content;
@@ -69,16 +69,16 @@
 	}
 
 	.tiny {
-		/* gap: var(--gap1); */
-		padding: var(--gap1);
+		/* gap: var(--sp1); */
+		padding: var(--sp1);
 		font-size: small;
 	}
 	.secondary {
 		padding: 0;
 		background-color: transparent;
 		border-bottom: 2px solid transparent;
-		color: var(--accent2);
-		fill: var(--accent3);
+		color: var(--ac2);
+		fill: var(--ac3);
 		border-radius: 0;
 	}
 
@@ -86,23 +86,22 @@
 		width: 100%;
 	}
 	.careful {
-		background-color: var(--color2);
+		background-color: var(--cl2);
 	}
 
 	:hover {
-		background-color: var(--color1);
+		background-color: var(--cl1);
 		text-decoration: none;
 	}
 
 	.secondary:hover {
 		background-color: transparent;
-		color: var(--color1);
-		fill: var(--color1);
-		border-bottom-color: var(--color1);
+		color: var(--cl1);
+		fill: var(--cl1);
+		border-bottom-color: var(--cl1);
 	}
 
-
 	:hover.red {
-		background-color: var(--color2);
+		background-color: var(--cl2);
 	}
 </style>

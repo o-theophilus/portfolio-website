@@ -1,5 +1,5 @@
 <script>
-	import { user } from '$lib/store.js';
+	import { user, settings } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import './layout/var.css';
@@ -13,6 +13,7 @@
 	export let data;
 	$user = data.locals.user;
 	$token = data.locals.token;
+	$settings.highlight = data.locals.posts;
 </script>
 
 <main class:dark={$user.setting_theme == 'dark'}>
@@ -26,7 +27,7 @@
 
 <style>
 	main {
-		background-color: var(--accent5);
-		color: var(--accent2);
+		background-color: var(--ac5);
+		color: var(--ac2);
 	}
 </style>

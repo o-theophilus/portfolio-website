@@ -6,7 +6,7 @@
 	import Meta from '$lib/meta.svelte';
 	import Button from '$lib/button.svelte';
 
-	// export let data;
+	console.log($user);
 </script>
 
 <Meta title={$user.name} description="This page includes the user profile" />
@@ -25,6 +25,12 @@
 	<br />
 	<strong>
 		{$user.email}
+	</strong>
+	<br /><br />
+	Phone:
+	<br />
+	<strong>
+		{$user.phone || 'None'}
 	</strong>
 	<br /><br />
 	<div class="hr" />
@@ -63,6 +69,6 @@
 
 <style>
 	.big {
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 </style>

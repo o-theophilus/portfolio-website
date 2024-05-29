@@ -32,6 +32,6 @@
 	section {
 		display: flex;
 		flex-direction: column;
-		gap: var(--gap3);
+		gap: var(--sp3);
 	}
 </style>

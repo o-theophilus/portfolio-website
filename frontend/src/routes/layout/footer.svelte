@@ -38,7 +38,7 @@
 	section {
 		display: flex;
 		flex-direction: column;
-		gap: var(--gap5);
+		gap: var(--sp5);
 	}
 	@media screen and (min-width: 600px) {
 		section {
@@ -53,6 +53,6 @@
 		text-align: center;
 	}
 	.big {
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 </style>

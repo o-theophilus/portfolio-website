@@ -7,6 +7,11 @@ import psycopg2.extras
 bp = Blueprint("postgres", __name__)
 
 # anonymous, verified, deleted
+setting_table = """CREATE TABLE IF NOT EXISTS setting (
+    key VARCHAR(32) PRIMARY KEY,
+    misc JSONB DEFAULT '{}'::JSONB
+);"""
+
 user_table = """CREATE TABLE IF NOT EXISTS "user" (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'anonymous' NOT NULL,
@@ -20,13 +25,14 @@ user_table = """CREATE TABLE IF NOT EXISTS "user" (
     permissions TEXT[] DEFAULT ARRAY[]::TEXT[],
     login BOOLEAN DEFAULT FALSE,
 
-    setting_theme VARCHAR(20) DEFAULT 'light'
+    setting_theme VARCHAR(20) DEFAULT 'dark'
 );"""
 
 # draft, publish, deleted
 post_table = """CREATE TABLE IF NOT EXISTS post (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'draft' NOT NULL,
+    date TIMESTAMP NOT NULL,
 
     title VARCHAR(100) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,

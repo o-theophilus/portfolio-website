@@ -2,8 +2,8 @@
 	import { user, module } from '$lib/store.js';
 	import { page } from '$app/stores';
 
-	import Link from '$lib/nav.btn.svelte';
-	import Theme from '$lib/nav.theme.svelte';
+	import Link from './nav.btn.svelte';
+	import Theme from './nav.theme.svelte';
 	import SVG from '$lib/svg.svelte';
 	import Content from '$lib/content.svelte';
 	import Login from '../auth/login.svelte';
@@ -21,7 +21,7 @@
 			<div>
 				<Link {home} href="/post">Post</Link>
 				{#if $user && $user.login}
-					<Link {home} href="/user">Profile</Link>
+					<Link {home} href="/profile">Profile</Link>
 				{:else}
 					<Link
 						{home}
@@ -54,21 +54,21 @@
 
 	div {
 		display: flex;
-		gap: var(--gap2);
+		gap: var(--sp2);
 	}
 	a {
 		display: flex;
 		align-items: center;
-		gap: var(--gap1);
+		gap: var(--sp1);
 
-		color: var(--accent1);
-		fill: var(--color1);
+		color: var(--ac1);
+		fill: var(--cl1);
 		font-size: large;
 
 		text-decoration: none;
 	}
 	.home a {
-		color: var(--accent5);
+		color: var(--ac5);
 	}
 
 	nav,

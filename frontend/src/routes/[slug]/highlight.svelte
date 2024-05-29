@@ -1,0 +1,80 @@
+<script>
+	import { module, loading, settings } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
+
+	import Button from '$lib/button.svelte';
+	import Info from '$lib/info.svelte';
+
+	export let post;
+	let is_highlight = false;
+
+	const highlight = () => {
+		is_highlight = false;
+		for (const x of $settings.highlight) {
+			if (x.key == post.key) {
+				is_highlight = true;
+				break;
+			}
+		}
+	};
+
+	highlight();
+
+	const submit = async () => {
+		$loading = 'Adding Highlight . . .';
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight/${post.key}`, {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: $token
+			}
+		});
+		resp = await resp.json();
+		$loading = false;
+
+		if (resp.status == 200) {
+			$settings.highlight = resp.posts;
+			highlight();
+
+			$module = {
+				module: Info,
+				message: `${is_highlight ? 'Added' : 'Removed'} as Highlight`,
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
+						}
+					}
+				]
+			};
+		} else {
+			$module = {
+				module: Info,
+				title: 'Error',
+				message: resp.error,
+				status: 400,
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
+						}
+					}
+				]
+			};
+		}
+	};
+</script>
+
+<Button class="tiny" on:click={submit}>
+	Highlight:
+	{#if is_highlight}
+		ON
+	{:else}
+		Off
+	{/if}
+</Button>
+
+<style>
+</style>

@@ -2,34 +2,30 @@
 	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Button from '$lib/button.svelte';
 	import Input from '$lib/input_group.svelte';
+	import Button from '$lib/button.svelte';
 	import Info from '$lib/info.svelte';
 
-	export let post;
-
 	let form = {
-		date: post.created_at.split('T')[0],
-		time: post.created_at.split('T')[1]
+		description: $module.post.description
 	};
 	let error = {};
 
-	const validate = async () => {
+	const validate = () => {
 		error = {};
 
-		if (!form.date) {
-			error.date = 'cannot be empty';
-		}
-		if (!form.time) {
-			error.time = 'cannot be empty';
+		if (form.description == $module.post.description) {
+			error.description = 'no change';
 		}
 
 		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {
+		error = {};
+
 		$loading = 'Saving Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/date/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${$module.post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -41,14 +37,14 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			portal({
+			$portal = {
 				for: 'post',
 				data: resp.post
-			});
+			};
 
 			$module = {
 				module: Info,
-				message: 'Date Saved',
+				message: `Description saved`,
 				buttons: [
 					{
 						name: 'OK',
@@ -65,25 +61,21 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Edit Date & Time </strong>
-	<Input name="date" error={error.date} let:id>
-		<input type="date" bind:value={form.date} {id} placeholder="date here" />
-	</Input>
-	<Input name="time" error={error.time} let:id>
-		<input type="time" bind:value={form.time} {id} placeholder="time here" />
+	<strong class="big"> Edit Description </strong>
+	{#if error.error}
+		<span class="error">
+			{error.error}
+		</span>
+	{/if}
+	<Input name="description" error={error.description} let:id>
+		<textarea placeholder="description here" {id} bind:value={form.description} />
 	</Input>
 
-	<Button
-		on:click={() => {
-			validate();
-		}}
-	>
-		Submit
-	</Button>
+	<Button on:click={validate}>Submit</Button>
 </form>
 
 <style>
 	form {
-		padding: var(--gap3);
+		padding: var(--sp3);
 	}
 </style>

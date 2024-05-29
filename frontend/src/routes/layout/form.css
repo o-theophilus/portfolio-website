@@ -1,13 +1,13 @@
 form {
 	display: flex;
 	flex-direction: column;
-	gap: var(--gap2);
+	gap: var(--sp2);
 }
 
 .inputGroup {
 	display: flex;
 	flex-direction: column;
-	gap: var(--gap0);
+	gap: var(--sp0);
 
 	position: relative;
 
@@ -16,7 +16,7 @@ form {
 form .h {
 	display: flex;
 	flex-direction: unset;
-	gap: var(--gap1);
+	gap: var(--sp1);
 	flex-wrap: wrap;
 }
 
@@ -33,20 +33,20 @@ form select,
 form textarea {
 	width: 100%;
 
-	padding: var(--gap2);
-	border-radius: var(--gap1);
-	border: 2px solid var(--accent4);
+	padding: var(--sp2);
+	border-radius: var(--sp1);
+	border: 2px solid var(--ac4);
 
 	background-color: transparent;
 }
 
 form input:not([type="radio"]),
 form textarea {
-	color: var(--accent1);
+	color: var(--ac1);
 }
 
 form select {
-	color: var(--accent2);
+	color: var(--ac2);
 
 }
 
@@ -55,13 +55,13 @@ form select {
 form input:hover,
 form select:hover,
 form textarea:hover {
-	border-color: var(--accent1);
+	border-color: var(--ac1);
 }
 
 form input:focus,
 form select:focus,
 form textarea:focus {
-	border-color: var(--accent1);
+	border-color: var(--ac1);
 
 }
 
@@ -78,7 +78,7 @@ form textarea~.svg {
 	bottom: var(--inputHeight);
 	left: var(--inputHeight);
 
-	fill: var(--accent3);
+	fill: var(--ac3);
 
 	transition: fill var(--animTime1);
 	transition-timing-function: ease-in-out;
@@ -89,13 +89,13 @@ form textarea~.svg {
 form input:hover~.svg,
 form select:hover~.svg,
 form textarea:hover~.svg {
-	fill: var(--color1);
+	fill: var(--cl1);
 }
 
 form input:focus~.svg,
 form select:focus~.svg,
 form textarea:focus~.svg {
-	fill: var(--color1);
+	fill: var(--cl1);
 }
 
 form textarea {
@@ -106,7 +106,7 @@ form textarea {
 
 
 form input[type=submit]:hover {
-	background-color: var(--color1);
+	background-color: var(--cl1);
 	border-color: transparent;
 }
 
@@ -121,6 +121,6 @@ form .error~textarea {
 
 
 form option {
-	color: var(--accent2);
-	background-color: var(--accent5);
+	color: var(--ac2);
+	background-color: var(--ac5);
 }

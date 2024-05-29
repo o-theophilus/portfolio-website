@@ -35,10 +35,10 @@
 		position: fixed;
 		inset: 0;
 
-		padding: var(--gap5) var(--gap3);
+		padding: var(--sp5) var(--sp3);
 		overflow-y: auto;
 
-		color: var(--accent1);
+		color: var(--ac1);
 		background-color: var(--overlay);
 	}
 
@@ -54,9 +54,9 @@
 		/* width: 100%; */
 	}
 	.content {
-		background-color: var(--accent5);
+		background-color: var(--ac5);
 		box-shadow: var(--shad1);
-		border-radius: var(--gap1);
+		border-radius: var(--sp1);
 
 		overflow: hidden;
 	}

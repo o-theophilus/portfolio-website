@@ -29,7 +29,7 @@
 	class:is_home
 	on:click={() => {
 		submit();
-		$user.setting.theme = $user.setting_theme == 'dark' ? 'light' : 'dark';
+		$user.setting_theme = $user.setting_theme == 'dark' ? 'light' : 'dark';
 	}}
 	on:keypress
 >
@@ -57,7 +57,7 @@
 		position: relative;
 		overflow: hidden;
 
-		fill: var(--accent1);
+		fill: var(--ac1);
 		border-radius: 50%;
 
 		height: var(--size);
@@ -71,12 +71,12 @@
 	}
 
 	.is_home {
-		fill: var(--accent5);
+		fill: var(--ac5);
 	}
 
 	button:hover {
-		color: var(--accent5_);
-		background-color: var(--color1);
+		color: var(--ac5_);
+		background-color: var(--cl1);
 	}
 
 	.switch {

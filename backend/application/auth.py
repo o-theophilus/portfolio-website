@@ -6,6 +6,7 @@ import re
 from werkzeug.security import generate_password_hash
 from .postgres import db_open, db_close
 from .log import log
+from .admin import get_highlight
 
 bp = Blueprint("auth", __name__)
 
@@ -42,12 +43,10 @@ def init():
 
         token = token_tool().dumps(user["key"])
 
-    cur.execute("""
-        SELECT *
-        FROM save
-        WHERE save.user_key = %s;
-    """, (user["key"],))
+    cur.execute("SELECT * FROM save WHERE save.user_key = %s;", (user["key"],))
     saves = cur.fetchall()
+
+    posts = get_highlight(cur)
 
     db_close(con, cur)
     return jsonify({
@@ -56,7 +55,8 @@ def init():
             user,
             saves=[x['item_key'] for x in saves],
         ),
-        "token": token
+        "token": token,
+        "posts": posts
     })
 
 

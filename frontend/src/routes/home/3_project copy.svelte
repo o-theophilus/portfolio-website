@@ -118,8 +118,6 @@
 						</div>
 					{/key}
 				</div>
-
-			
 			</div>
 		</Content>
 	</div>
@@ -129,7 +127,7 @@
 	section {
 		position: relative;
 		height: 300vh;
-		/* background-color: var(--accent4);
+		/* background-color: var(--ac4);
 		
 		transition: all var(--animTime3);
 		transition-timing-function: ease-in-out; */
@@ -149,7 +147,7 @@
 	.blocker {
 		position: absolute;
 		inset: 0;
-		background-color: var(--accent4);
+		background-color: var(--ac4);
 		pointer-events: none;
 		transition: background-color var(--animTime1);
 		transition-timing-function: ease-in-out;
@@ -164,7 +162,7 @@
 	}
 	.intersecting .title {
 		font-size: 40px;
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 
 	.sticky {
@@ -187,15 +185,15 @@
 
 		display: flex;
 		align-items: center;
-		gap: var(--gap5);
+		gap: var(--sp5);
 		width: fit-content;
 
-		padding-right: var(--gap5);
+		padding-right: var(--sp5);
 	}
 	/* .left {
 		align-self: flex-end;
 		padding: 0;
-		padding-left: var(--gap5);
+		padding-left: var(--sp5);
 	} */
 
 	.title,

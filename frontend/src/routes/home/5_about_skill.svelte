@@ -58,7 +58,7 @@
 
 <style>
 	strong {
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 	.skill {
 		display: flex;

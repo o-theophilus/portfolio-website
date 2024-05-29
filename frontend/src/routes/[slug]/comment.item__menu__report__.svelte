@@ -93,6 +93,6 @@
 
 <style>
 	form {
-		padding: var(--gap3);
+		padding: var(--sp3);
 	}
 </style>

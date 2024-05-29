@@ -32,30 +32,30 @@
 		justify-content: center;
 		align-items: center;
 
-		border: 2px solid var(--accent1);
+		border: 2px solid var(--ac1);
 		border-radius: 50%;
 		width: var(--size);
 		height: var(--size);
 
-		fill: var(--accent1);
-		color: var(--accent1);
+		fill: var(--ac1);
+		color: var(--ac1);
 
 		background-color: transparent;
 	}
 	.invert {
-		fill: var(--accent5);
-		border-color: var(--accent5);
+		fill: var(--ac5);
+		border-color: var(--ac5);
 	}
 	button:hover {
-		fill: var(--accent5_);
-		color: var(--accent5_);
+		fill: var(--ac5_);
+		color: var(--ac5_);
 		border-color: transparent;
 	}
 	button:hover .highlight {
 		width: var(--size);
 		height: var(--size);
 
-		background-color: var(--color1);
+		background-color: var(--cl1);
 		opacity: 1;
 	}
 	.icon {

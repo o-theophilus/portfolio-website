@@ -6,30 +6,6 @@ from math import ceil
 bp = Blueprint("post_read", __name__)
 
 
-@bp.get("/featured_post")
-def featured_posts():
-    # data = db.data()
-
-    # setting = get_setting(data)
-
-    # posts = []
-    # if setting:
-    #     for slug in setting["featured_posts"]:
-    #         for row in data:
-    #             if (
-    #                 row["type"] == "post"
-    #                 and row["slug"] == slug
-    #                 and row["status"] == "publish"
-    #             ):
-    #                 posts.append(row)
-
-    return jsonify({
-        "status": 200,
-        # "posts": [post_schema(a) for a in posts]
-        "posts": []
-    })
-
-
 @bp.get("/tag")
 def all_tags():
     con, cur = db_open()
@@ -61,24 +37,25 @@ def all_tags():
 
 
 @bp.get("/post/<key>")
-def get(key, ):
-    con, cur = db_open()
+def get_post(key, cur=None):
+    close_conn = not cur
+    if not cur:
+        con, cur = db_open()
 
     cur.execute("""
         SELECT
             post.*,
-            log.date,
             COALESCE(ARRAY_AGG(feedback.rating), ARRAY[]::int[]) AS ratings
         FROM post
         LEFT JOIN feedback ON post.key = feedback.post_key
-        LEFT JOIN log ON post.key = log.entity_key
         WHERE post.slug = %s OR post.key = %s
-        GROUP BY post.key, log.date;
+        GROUP BY post.key;
     """, (key, key))
     post = cur.fetchone()
 
     if not post:
-        db_close(con, cur)
+        if close_conn:
+            db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid request"
@@ -87,7 +64,8 @@ def get(key, ):
     if post["status"] != "publish":
         user = token_to_user(cur)
         if not user:
-            db_close(con, cur)
+            if close_conn:
+                db_close(con, cur)
             return jsonify({
                 "status": 400,
                 "error": "invalid token"
@@ -97,7 +75,8 @@ def get(key, ):
             "post:add",
             "post:edit_status"
         ]).isdisjoint(user["permissions"]):
-            db_close(con, cur)
+            if close_conn:
+                db_close(con, cur)
             return jsonify({
                 "status": 400,
                 "error": "unauthorized access"
@@ -105,7 +84,8 @@ def get(key, ):
 
     post["photos"] = [f"{request.host_url}photo/{x}" for x in post["photos"]]
 
-    db_close(con, cur)
+    if close_conn:
+        db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post
@@ -113,7 +93,7 @@ def get(key, ):
 
 
 @bp.get("/post")
-def get_all(order="latest", page_size=24):
+def get_all(order="latest", page_size=4):
     con, cur = db_open()
     user = token_to_user(cur)
 
@@ -147,8 +127,8 @@ def get_all(order="latest", page_size=24):
     tags = [] if not tags[0] else tags
 
     order_by = {
-        'latest': 'log.date',
-        'oldest': 'log.date',
+        'latest': 'post.date',
+        'oldest': 'post.date',
         'post (a-z)': 'post.title',
         'post (z-a)': 'post.title',
         'rating': 'rating'
@@ -157,8 +137,8 @@ def get_all(order="latest", page_size=24):
     order_dir = {
         'latest': 'DESC',
         'oldest': 'ASC',
-        'name (a-z)': 'ASC',
-        'name (z-a)': 'DESC',
+        'post (a-z)': 'ASC',
+        'post (z-a)': 'DESC',
         'rating': 'DESC'
     }
 
@@ -172,22 +152,17 @@ def get_all(order="latest", page_size=24):
     cur.execute("""
         SELECT
             post.*,
-            log.date,
             COALESCE(AVG(feedback.rating), 0) AS rating,
             COALESCE(ARRAY_AGG(feedback.rating), ARRAY[]::int[]) AS ratings,
             COUNT(*) OVER() AS total_posts
         FROM post
         LEFT JOIN feedback ON post.key = feedback.post_key
-        LEFT JOIN log ON post.key = log.entity_key
         WHERE
             post.status = %s
             AND (%s = '' OR post.title ILIKE %s) {}
-            AND log.action = 'created'
-            AND log.entity_type = 'post'
         GROUP BY
             post.key, post.status, post.title, post.slug, post.content,
-            post.description, post.photos, post.videos, post.tags,
-            log.date
+            post.description, post.photos, post.videos, post.tags
         ORDER BY {} {}
         LIMIT %s OFFSET %s;
     """.format(

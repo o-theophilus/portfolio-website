@@ -46,10 +46,10 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			portal({
+			$portal = {
 				for: 'comment',
 				data: resp.comments
-			});
+			};
 		} else {
 			error = resp;
 		}
@@ -153,20 +153,20 @@
 		display: flex;
 		flex-direction: column;
 
-		padding: var(--gap2);
+		padding: var(--sp2);
 		padding-right: 0;
 		padding-bottom: 0;
 
-		border: 2px solid var(--accent4);
+		border: 2px solid var(--ac4);
 		border-right-width: 0;
 		border-bottom-width: 0;
 
-		border-top-left-radius: var(--gap0);
+		border-top-left-radius: var(--sp0);
 	}
 
 	.block {
 		display: flex;
-		gap: var(--gap2);
+		gap: var(--sp2);
 	}
 	.content {
 		width: 100%;
@@ -175,7 +175,7 @@
 	.date_menu {
 		display: flex;
 		align-items: center;
-		gap: var(--gap2);
+		gap: var(--sp2);
 	}
 	.top {
 		justify-content: space-between;
@@ -199,28 +199,28 @@
 		font-size: larger;
 		font-weight: bold;
 
-		color: var(--accent5_);
+		color: var(--ac5_);
 	}
 	.light {
-		color: var(--accent1_);
+		color: var(--ac1_);
 	}
 	.date {
-		color: var(--accent3);
+		color: var(--ac3);
 	}
 	.menu {
 		cursor: pointer;
 	}
 	.menu:hover {
-		color: var(--color1);
+		color: var(--cl1);
 	}
 	.comment,
 	.name {
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 
 	.buttons {
 		display: flex;
-		gap: var(--gap1);
-		padding-bottom: var(--gap1);
+		gap: var(--sp1);
+		padding-bottom: var(--sp1);
 	}
 </style>

@@ -1,12 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { module } from '$lib/store.js';
+	import { module, settings } from '$lib/store.js';
 
 	import Parallax from './home/1_hero_parallax.svelte';
 	import Hero_Text from './home/1_hero_text.svelte';
 	import Home from './home/2_what_i_do.svelte';
-	import Posts from './home/3_post.svelte';
+	import Highlight from './home/highlight.svelte';
 	import AboutMe from './home/4_about_me.svelte';
 	import About from './home/5_about_skill.svelte';
 	import AboutWebsite from './home/6_about_website.svelte';
@@ -19,8 +19,8 @@
 	import Login from './auth/login.svelte';
 	import Forgot from './auth/forgot.password.svelte';
 
-	export let data;
-	let { posts } = data;
+	// export let data;
+	// let { posts } = data;
 
 	onMount(() => {
 		if ($page.url.searchParams.has('module')) {
@@ -68,10 +68,7 @@
 </section>
 <Home />
 <br /><br />
-{#if posts.length > 0}
-	<br /><br />
-	<Posts {posts} />
-{/if}
+<Highlight />
 <br /><br />
 <AboutMe />
 <br /><br />

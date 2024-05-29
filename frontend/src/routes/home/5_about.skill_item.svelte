@@ -21,10 +21,10 @@
 
 		margin: 2px;
 		height: 12px;
-		border-radius: var(--gap0);
+		border-radius: var(--sp0);
 
-		background-color: var(--accent3);
-		/* background-color: var(--color1); */
+		background-color: var(--ac3);
+		/* background-color: var(--cl1); */
 
 		transition: width 2000ms;
 		transition-timing-function: cubic-bezier(0.47, 1.64, 0.41, 0.8);

@@ -9,3 +9,9 @@ get {{host}}/fix HTTP/1.1
 content-type: application/json
 ###
 
+
+### other
+get {{host}}/highlight HTTP/1.1
+content-type: application/json
+###
+

@@ -35,7 +35,7 @@
 	on:mouseleave
 >
 	<img
-		src="{import.meta.env.VITE_BACKEND}/{post.photos[0] || ''}"
+		src="{post.photos[0] || ''}"
 		alt={post.title}
 		onerror="this.src='/site/no_photo.png'"
 	/>
@@ -48,9 +48,9 @@
 		flex-shrink: 0;
 
 		height: 30vh;
-		width: min(calc(100vw - var(--gap2) * 2), 400px);
+		width: min(calc(100vw - var(--sp2) * 2), 400px);
 
-		border-radius: var(--gap1);
+		border-radius: var(--sp1);
 		overflow: hidden;
 
 		transition: all var(--animTime3);
@@ -66,7 +66,7 @@
 		height: 100%;
 
 		object-fit: cover;
-		background-color: var(--accent4);
+		background-color: var(--ac4);
 
 		transition: transform var(--animTime3);
 		transition-timing-function: ease-in-out;
@@ -74,7 +74,7 @@
 
 	a.active {
 		/* transform: scale(1.05); */
-		border-color: var(--color1);
+		border-color: var(--cl1);
 	}
 	a.active img {
 		transform: scale(1.2);

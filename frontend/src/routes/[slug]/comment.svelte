@@ -56,7 +56,7 @@
 	section {
 		display: flex;
 		flex-direction: column;
-		gap: var(--gap2);
+		gap: var(--sp2);
 	}
 	.title {
 		display: flex;
@@ -64,11 +64,11 @@
 		align-items: center;
 	}
 	.big {
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 	.block {
 		display: flex;
 		flex-direction: column;
-		/* gap: var(--gap2); */
+		/* gap: var(--sp2); */
 	}
 </style>

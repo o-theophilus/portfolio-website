@@ -38,7 +38,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
 	transition: background-color 9999s;
-	-webkit-text-fill-color: var(--accent1);
+	-webkit-text-fill-color: var(--ac1);
 }
 
 
@@ -63,7 +63,7 @@ select {
 .row {
 	display: flex;
 	flex-wrap: wrap;
-	gap: var(--gap0);
+	gap: var(--sp0);
 }
 
 
@@ -71,11 +71,11 @@ select {
 
 
 .color1 {
-	color: var(--color1);
+	color: var(--cl1);
 }
 
 .error {
-	color: var(--color2);
+	color: var(--cl2);
 }
 
 .date {
@@ -90,12 +90,12 @@ select {
 img {
 	display: block;
 	width: 100%;
-	border-radius: var(--gap1);
+	border-radius: var(--sp1);
 }
 
 .hr {
-	border-top: 2px solid var(--accent4);
+	border-top: 2px solid var(--ac4);
 }
 .hr.v2{
-	border-color: var(--accent2);
+	border-color: var(--ac2);
 }

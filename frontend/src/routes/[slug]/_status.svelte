@@ -4,8 +4,9 @@
 
 	import Button from '$lib/button.svelte';
 	import Info from '$lib/info.svelte';
+	import Delete from './_status.delete.svelte';
 
-	export let post;
+	let _status = $module.post.status;
 
 	let error = {};
 
@@ -13,7 +14,7 @@
 		error = {};
 
 		$loading = 'Saving Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/status/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${$module.post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -25,10 +26,10 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			portal({
+			$portal = {
 				for: 'post',
 				data: resp.post
-			});
+			};
 
 			$module = {
 				module: Info,
@@ -51,30 +52,46 @@
 <div class="content">
 	<strong class="big">Change Status</strong>
 	<br /><br />
-	<div>Status: <strong>{post.status}</strong></div>
+	<div>Status: <strong>{_status}</strong></div>
 	<div>Change to:</div>
+	<div class="row">
+		{#each ['draft', 'publish'] as x}
+			{#if _status != x}
+				<Button
+					on:click={() => {
+						submit(x);
+					}}
+				>
+					{x}
+				</Button>
+			{/if}
+		{/each}
+		{#if _status != 'delete'}
+			<Button
+				on:click={() => {
+					$module = {
+						module: Delete,
+						post: $module.post
+					};
+				}}>Delete</Button
+			>
+		{/if}
+	</div>
+
 	{#if error.error}
 		<span class="error">
 			{error.error}
 		</span>
 	{/if}
-	<div class="row">
-		{#each ['draft', 'publish'] as status}
-			{#if status != post.status}
-				<Button
-					on:click={() => {
-						submit(status);
-					}}
-				>
-					{status}
-				</Button>
-			{/if}
-		{/each}
-	</div>
+	{#if error.status}
+		<span class="error">
+			{error.status}
+		</span>
+	{/if}
 </div>
 
 <style>
 	.content {
-		padding: var(--gap3);
+		padding: var(--sp3);
 	}
 </style>

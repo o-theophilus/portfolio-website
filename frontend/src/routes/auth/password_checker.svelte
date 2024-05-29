@@ -14,15 +14,15 @@
 <style>
 	section {
 		display: flex;
-		gap: var(--gap1);
+		gap: var(--sp1);
 
 		border-radius: var(--brad1);
 		overflow: hidden;
 
 		font-size: x-small;
-		color: var(--accent3);
+		color: var(--ac3);
 	}
 	.active {
-		color: var(--color3);
+		color: var(--cl3);
 	}
 </style>

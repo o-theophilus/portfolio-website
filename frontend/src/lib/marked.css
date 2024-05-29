@@ -1,6 +1,6 @@
 .markdown img {
-	background-color: var(--accent4);
-	padding: var(--gap2);
+	background-color: var(--ac4);
+	padding: var(--sp2);
 	margin: 20px auto;
 }
 
@@ -9,7 +9,7 @@ blockquote {
 }
 
 a {
-	color: var(--color1);
+	color: var(--cl1);
 	text-decoration: none;
 }
 
@@ -24,7 +24,7 @@ h4,
 h5,
 h6 {
 	margin: 20px 0;
-	color: var(--accent1);
+	color: var(--ac1);
 }
 
 h1 {
@@ -60,7 +60,7 @@ ul {
 
 pre {
 	padding: 20px;
-	border-radius: var(--gap0);
+	border-radius: var(--sp0);
 
 	background-color: rgb(50, 50, 50);
 
@@ -69,7 +69,7 @@ pre {
 }
 
 code {
-	color: var(--accent1);
+	color: var(--ac1);
 }
 
 pre code {

@@ -41,6 +41,6 @@
 	}
 
 	.big {
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 </style>

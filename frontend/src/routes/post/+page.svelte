@@ -1,29 +1,35 @@
 <script>
-	import { module, user, _portal } from '$lib/store.js';
+	import { module, user, portal } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import ItemBox from '$lib/item_box.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Button from '$lib/button.svelte';
-	import Add from './__add__.svelte';
-	import Sort from './sort.svelte';
+	import Add from './_add.svelte';
 	import Tags from '$lib/tags.svelte';
+	import OrderBy from './order_by.svelte';
+	import Pagination from './pagination.svelte';
+	import UpdateUrl from './update_url.svelte';
 
 	export let data;
-	let { posts } = data;
+	$: posts = data.posts;
+	$: total_page = data.total_page;
 	let { tags } = data;
+	let { order_by } = data;
+	let { post_status } = data;
 
 	console.log(data);
 
-	$: if ($_portal) {
-		if ($_portal.for == 'posts') {
-			posts = $_portal.data;
+	$: if ($portal) {
+		if ($portal.for == 'posts') {
+			posts = $portal.data;
 		}
 
-		$_portal = {};
+		$portal = {};
 	}
 </script>
 
+<UpdateUrl />
 <Meta
 	title="Posts"
 	description="This page showcases a collection of interesting blogs and projects that I have worked on"
@@ -35,7 +41,8 @@
 
 		<div class="title">
 			<strong class="big">Post{posts.length > 1 ? 's' : ''}</strong>
-			<!-- <Sort /> -->
+			<OrderBy list={order_by} name="order" />
+			<OrderBy list={post_status} name="status" />
 		</div>
 
 		<br />
@@ -64,6 +71,8 @@
 		<Tags {tags} />
 		<br />
 	</Content>
+
+	<Pagination {total_page} />
 </section>
 
 <style>
@@ -73,14 +82,14 @@
 		align-items: center;
 	}
 	.background {
-		background-color: var(--accent4);
+		background-color: var(--ac4);
 	}
 	.block {
 		display: grid;
-		gap: var(--gap2);
+		gap: var(--sp2);
 	}
 	.big {
-		color: var(--accent1);
+		color: var(--ac1);
 		text-transform: capitalize;
 	}
 

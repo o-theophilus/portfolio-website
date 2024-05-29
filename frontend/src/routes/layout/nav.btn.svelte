@@ -30,7 +30,7 @@
 		justify-content: center;
 		align-items: center;
 
-		color: var(--accent2);
+		color: var(--ac2);
 
 		border-bottom: 2px solid transparent;
 
@@ -38,24 +38,24 @@
 		transition-timing-function: ease-in-out;
 		text-decoration: none;
 	}
-	
+
 	button:hover,
 	a:hover {
-		color: var(--accent1);
-		border-color: var(--color1);
+		color: var(--ac1);
+		border-color: var(--cl1);
 		text-decoration: none;
 	}
 
 	.home {
-		color: var(--accent5);
+		color: var(--ac5);
 	}
 	a.home:hover,
 	button.home:hover {
-		color: var(--accent5);
+		color: var(--ac5);
 	}
 
 	.active {
 		font-weight: bold;
-		color: var(--accent1);
+		color: var(--ac1);
 	}
 </style>

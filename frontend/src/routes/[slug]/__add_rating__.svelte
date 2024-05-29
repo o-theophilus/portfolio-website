@@ -36,10 +36,10 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			portal({
+			$portal = {
 				for: 'rating',
 				data: resp.ratings
-			});
+			};
 
 			$module = '';
 		} else {
@@ -103,9 +103,9 @@
 	section {
 		display: flex;
 		flex-direction: column;
-		gap: var(--gap2);
+		gap: var(--sp2);
 
-		padding: var(--gap3);
+		padding: var(--sp3);
 	}
 
 	.block {
@@ -115,10 +115,10 @@
 	}
 	.green {
 		flex-direction: row-reverse;
-		border-radius: 0 var(--gap1) var(--gap1) 0;
+		border-radius: 0 var(--sp1) var(--sp1) 0;
 	}
 	.red {
-		border-radius: var(--gap1) 0 0 var(--gap1);
+		border-radius: var(--sp1) 0 0 var(--sp1);
 		overflow: hidden;
 	}
 
@@ -128,7 +128,7 @@
 	}
 	.red button.active,
 	.red button:hover {
-		background-color: var(--color2) !important;
+		background-color: var(--cl2) !important;
 	}
 
 	.green button.active ~ button,
@@ -137,19 +137,19 @@
 	}
 	.green button.active,
 	.green button:hover {
-		background-color: var(--color3) !important;
+		background-color: var(--cl3) !important;
 	}
 
 	.b0 {
-		border-radius: var(--gap1);
+		border-radius: var(--sp1);
 		width: 5px;
 		height: 70px;
-		background-color: var(--accent3);
+		background-color: var(--ac3);
 	}
 
 	.b0:hover,
 	.b0.active {
-		background-color: var(--accent1);
+		background-color: var(--ac1);
 	}
 
 	button {
@@ -157,7 +157,7 @@
 		height: 50px;
 
 		border: none;
-		background-color: var(--accent4);
+		background-color: var(--ac4);
 
 		cursor: pointer;
 	}

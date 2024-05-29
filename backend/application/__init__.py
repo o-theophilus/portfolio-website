@@ -2,16 +2,13 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 
 from . import api
+from . import user
 from . import post
 from . import post_get
-from . import comment
-from . import post_rating
+from . import feedback
 from . import storage
-from . import tag
-from . import user
 from . import auth
 from . import admin
-from . import report
 
 
 def create_app(conf=None):
@@ -30,15 +27,12 @@ def create_app(conf=None):
         })
 
     app.register_blueprint(api.bp)
+    app.register_blueprint(user.bp)
     app.register_blueprint(post.bp)
     app.register_blueprint(post_get.bp)
-    app.register_blueprint(comment.bp)
-    app.register_blueprint(post_rating.bp)
+    app.register_blueprint(feedback.bp)
     app.register_blueprint(storage.bp)
-    app.register_blueprint(user.bp)
-    app.register_blueprint(tag.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(admin.bp)
-    app.register_blueprint(report.bp)
 
     return app

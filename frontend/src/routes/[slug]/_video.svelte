@@ -6,13 +6,25 @@
 	import Button from '$lib/button.svelte';
 	import Info from '$lib/info.svelte';
 
-	export let post;
-
+	let post = $module.post;
+	let video_count = $module.video_count;
 	let videos = [...post.videos];
-	let error = '';
+	let error = {};
+
+	const validate = () => {
+		error = {};
+
+		if (
+			videos.filter(Boolean).sort().join(', ') == post.videos.slice().sort().join(', ')
+		) {
+			error.videos = 'no change';
+		}
+
+		Object.keys(error).length === 0 && submit();
+	};
 
 	const submit = async () => {
-		error = '';
+		error = {};
 
 		$loading = 'Saving Post . . .';
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/videos/${post.key}`, {
@@ -27,10 +39,10 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			portal({
+			$portal = {
 				for: 'post',
 				data: resp.post
-			});
+			};
 
 			$module = {
 				module: Info,
@@ -52,28 +64,23 @@
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="big"> Manage Video </strong>
-	{#if error}
+	{#if error.error}
 		<span class="error">
-			{error}
+			{error.error}
 		</span>
 	{/if}
-	<Input name="video{post.video_count > 1 ? 's' : ''}">
-		{#each Array(post.video_count) as _, i}
+
+	<Input name="video{video_count > 1 ? 's' : ''}" error={error.videos}>
+		{#each Array(video_count) as _, i}
 			<input placeholder="video {i + 1} here " type="text" bind:value={videos[i]} />
 		{/each}
 	</Input>
 
-	<Button
-		on:click={() => {
-			submit();
-		}}
-	>
-		Submit
-	</Button>
+	<Button on:click={validate}>Submit</Button>
 </form>
 
 <style>
 	form {
-		padding: var(--gap3);
+		padding: var(--sp3);
 	}
 </style>

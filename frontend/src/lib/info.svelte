@@ -42,31 +42,31 @@
 	.big {
 		display: flex;
 		align-items: center;
-		gap: var(--gap2);
+		gap: var(--sp2);
 
-		padding: var(--gap2);
-		padding-right: var(--gap5);
-		color: var(--accent5_);
-		fill: var(--accent5_);
+		padding: var(--sp2);
+		padding-right: var(--sp5);
+		color: var(--ac5_);
+		fill: var(--ac5_);
 
 		text-transform: capitalize;
 	}
 
 	.good {
-		background-color: var(--color3);
+		background-color: var(--cl3);
 	}
 	.bad {
-		background-color: var(--color2);
+		background-color: var(--cl2);
 	}
 	.warning {
-		background-color: var(--color4);
+		background-color: var(--cl4);
 	}
 	.body {
 		display: flex;
 		flex-direction: column;
-		gap: var(--gap2);
+		gap: var(--sp2);
 
-		padding: var(--gap2);
+		padding: var(--sp2);
 	}
 
 	.text:first-letter {

@@ -1,17 +1,12 @@
-import { writable } from 'svelte/store';
+import { page } from '$app/stores';
+import { writable, get } from 'svelte/store';
+import { invalidate } from '$app/navigation';
 
-// app variables
 export const user = writable();
-
-// variables
+export const settings = writable({});
 export const module = writable();
 export const loading = writable(false);
-
-export const _portal = writable("");
-export const portal = (data) => {
-	_portal.set(data);
-}
-
+export const portal = writable();
 
 // tools
 export const isMobile = writable(false);
@@ -66,4 +61,30 @@ export const timeAgo = (time) => {
 		const day = date.getDate();
 		return `${day}/${month}/${year}`;
 	}
+};
+
+export const state = writable([])
+export const set_state = (key, value) => {
+	let _page = get(page);
+	_page.url.searchParams.set(key, value);
+
+
+	if (value == '') {
+		_page.url.searchParams.delete(key);
+	}
+	if (key != "page_no") {
+		_page.url.searchParams.delete("page_no");
+	}
+
+	window.history.replaceState(history.state, '', _page.url.href);
+	window.scrollTo({ top: 0, behavior: 'smooth' });
+
+	let _state = get(state)
+	let i = _state.findIndex(x => x.name == _page.data.page_name)
+	_state[i].loaded = false
+	_state[i].search = _page.url.search
+	state.set(_state)
+
+	loading.set("Loading . . .")
+	invalidate(() => true);
 };
