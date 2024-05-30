@@ -8,7 +8,7 @@
 	import Home from './home/2_what_i_do.svelte';
 	import Highlight from './home/highlight.svelte';
 	import AboutMe from './home/4_about_me.svelte';
-	import About from './home/5_about_skill.svelte';
+	import Skills from './home/skill.svelte';
 	import AboutWebsite from './home/6_about_website.svelte';
 	import Scroller from '$lib/scroller.svelte';
 	import Meta from '$lib/meta.svelte';
@@ -72,7 +72,7 @@
 <br /><br />
 <AboutMe />
 <br /><br />
-<About />
+<Skills />
 <br /><br />
 <AboutWebsite />
 <br /><br />

@@ -7,7 +7,7 @@
 	import Marked from '$lib/marked.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Button from '$lib/button.svelte';
-	import Tags from '$lib/tags.svelte';
+	import Tags from './tags.svelte';
 	import Toggle from '$lib/toggle.svelte';
 
 	import Title from './_title.svelte';
@@ -123,7 +123,7 @@
 	<img src={post.photos[0] || ''} alt={post.title} onerror="this.src='/site/no_photo.png'" />
 
 	{#if $user.permissions.includes('post:edit_photos') && edit_mode}
-		<div class="row">
+		<div class="line">
 			<Button
 				class="tiny"
 				on:click={() => {
@@ -223,7 +223,7 @@
 	{/if}
 	<Marked md={content} />
 	<br />
-	<div class="hr" />
+	<hr />
 
 	{#if $user.permissions.includes('post:edit_tags') && edit_mode}
 		<br />
@@ -246,14 +246,14 @@
 		<br />
 		<Tags tags={post.tags} />
 		<br />
-		<div class="hr" />
+		<hr />
 	{/if}
 	<br />
 	<Author />
 
 	{#if $user.permissions.includes('post:edit_status') && edit_mode}
 		<br /> <br />
-		<div class="row">
+		<div class="line">
 			<Button
 				class="tiny"
 				on:click={() => {

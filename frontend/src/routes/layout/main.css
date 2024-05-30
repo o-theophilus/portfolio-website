@@ -1,37 +1,21 @@
-@font-face {
-	font-family: "JosefinSans";
-	src: url('/font/JosefinSans-Regular.ttf');
-	font-weight: 400;
-}
-
-@font-face {
-	font-family: "JosefinSans";
-	src: url('/font/JosefinSans-Bold.ttf');
-	font-weight: 500;
-}
-
-/* ################################### */
-
 :root,
 textarea,
 select,
 input,
 button {
-	font-family: "JosefinSans", 'Segoe UI', Tahoma, Verdana, sans-serif;
+	font-family: "Josefin Sans", sans-serif;
 	font-size: 16px;
 }
 
-
-
 * {
-	line-height: 150%;
+	/* line-height: 150%; */
+	margin: 0;
+	padding: 0;
 
 	box-sizing: border-box;
 	outline: none;
 	-webkit-tap-highlight-color: transparent;
 }
-
-
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -41,42 +25,24 @@ input:-webkit-autofill:active {
 	-webkit-text-fill-color: var(--ac1);
 }
 
+.error {
+	color: var(--cl2);
+}
 
+hr {
+	border: none;
+	border-top: 2px solid var(--ac4);
+}
+
+/* .line {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sp0);
+} */
 
 
 /* ################################### */
 
-/* a,
-button,
-label,
-input,
-textarea,
-select {
-	pointer-events: all;
-} */
-
-
-/* body {
-	overflow-x: hidden;
-} */
-
-.row {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--sp0);
-}
-
-
-
-
-
-.color1 {
-	color: var(--cl1);
-}
-
-.error {
-	color: var(--cl2);
-}
 
 .date {
 	font-size: small;
@@ -86,16 +52,8 @@ select {
 	font-size: x-large;
 }
 
-
 img {
 	display: block;
 	width: 100%;
 	border-radius: var(--sp1);
-}
-
-.hr {
-	border-top: 2px solid var(--ac4);
-}
-.hr.v2{
-	border-color: var(--ac2);
 }

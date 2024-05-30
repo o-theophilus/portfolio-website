@@ -33,16 +33,16 @@
 		{$user.phone || 'None'}
 	</strong>
 	<br /><br />
-	<div class="hr" />
+	<hr />
 	<br />
 	<strong class="big">Likes</strong>
 
 	<br /><br />
-	<div class="hr" />
+	<hr />
 	<br />
 	<strong class="big">Comments</strong>
 	<br /><br />
-	<div class="hr" />
+	<hr />
 	<br />
 	<Button href="/admin">Admin</Button>
 	<!-- <br /> -->

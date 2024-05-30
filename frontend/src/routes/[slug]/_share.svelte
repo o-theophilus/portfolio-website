@@ -9,7 +9,7 @@
 
 <section class="content">
 	<strong class="big"> Share </strong>
-	<div class="row">
+	<div class="line">
 		<Button
 			icon="facebook"
 			href="https://www.facebook.com/sharer.php?u={$page.url.href}"

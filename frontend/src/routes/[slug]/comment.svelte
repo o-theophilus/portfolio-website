@@ -13,7 +13,7 @@
 
 <Content>
 	<section>
-		<div class="hr v2" />
+		<hr />
 		<br />
 
 		<div class="title">

@@ -19,7 +19,7 @@
 		<img src={post.photos[0] || ''} alt={post.title} onerror="this.src='/site/no_photo.png'" />
 	</div>
 	<div class="details">
-		<strong class="big color1">
+		<strong class="big title">
 			{post.title}
 		</strong>
 		{#if post.description}
@@ -74,6 +74,9 @@
 	}
 	a:hover img {
 		transform: scale(1.2);
+	}
+	.title {
+		color: var(--cl1);
 	}
 
 	.details {

@@ -67,7 +67,7 @@
 <div class="comp">
 	<strong class="big"> Edit Highlights </strong>
 	{#each posts as x, i}
-		<div class="row">
+		<div class="line">
 			{x.title}
 
 			<Button
@@ -116,11 +116,11 @@
 	.comp {
 		padding: var(--sp3);
 	}
-	.row {
+	/* .row {
 		display: flex;
 		justify-content: center;
 		gap: var(--sp1);
 		flex-wrap: wrap;
 		margin-top: var(--sp2);
-	}
+	} */
 </style>

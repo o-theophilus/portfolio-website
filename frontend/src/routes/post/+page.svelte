@@ -5,20 +5,22 @@
 	import ItemBox from '$lib/item_box.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Button from '$lib/button.svelte';
+
 	import Add from './_add.svelte';
-	import Tags from '$lib/tags.svelte';
+	import Tags from './tags.svelte';
+	import Note from './filter_note.svelte';
+
 	import OrderBy from './order_by.svelte';
 	import Pagination from './pagination.svelte';
+	import Search from './search.svelte';
+
 	import UpdateUrl from './update_url.svelte';
 
 	export let data;
 	$: posts = data.posts;
 	$: total_page = data.total_page;
-	let { tags } = data;
 	let { order_by } = data;
 	let { post_status } = data;
-
-	console.log(data);
 
 	$: if ($portal) {
 		if ($portal.for == 'posts') {
@@ -37,13 +39,13 @@
 
 <section class="background">
 	<Content>
-		<br />
-
 		<div class="title">
-			<strong class="big">Post{posts.length > 1 ? 's' : ''}</strong>
-			<OrderBy list={order_by} name="order" />
-			<OrderBy list={post_status} name="status" />
+			Post{posts.length > 1 ? 's' : ''}
 		</div>
+
+		<Search />
+		<OrderBy list={order_by} name="order" />
+		<OrderBy list={post_status} name="status" />
 
 		<br />
 		{#if $user.permissions.includes('post:add')}
@@ -59,6 +61,7 @@
 			<br /><br />
 		{/if}
 
+		<Note />
 		<section class="block">
 			{#each posts as post}
 				<ItemBox {post} />
@@ -68,7 +71,7 @@
 		</section>
 
 		<br />
-		<Tags {tags} />
+		<Tags />
 		<br />
 	</Content>
 
@@ -76,21 +79,26 @@
 </section>
 
 <style>
+	.background {
+		background-color: var(--ac4);
+		padding-top: 1px;
+	}
+
 	.title {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+
+		margin-top: var(--sp3);
+
+		font-size: x-large;
+		font-weight: 800;
+		color: var(--ac1);
 	}
-	.background {
-		background-color: var(--ac4);
-	}
+
 	.block {
 		display: grid;
 		gap: var(--sp2);
-	}
-	.big {
-		color: var(--ac1);
-		text-transform: capitalize;
 	}
 
 	@media screen and (min-width: 600px) {

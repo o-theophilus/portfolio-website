@@ -1,7 +1,6 @@
 <script>
-	import Observe from '$lib/observe.svelte';
 	import Content from '$lib/content.svelte';
-	import Skill from './5_about.skill_item.svelte';
+	import Line from './skill.line.svelte';
 
 	let skills = [
 		{ name: 'HTML', value: 95 },
@@ -35,7 +34,7 @@
 				{ent.name}
 			</div>
 			<div class="chat">
-				<Skill num={ent.value} />
+				<Line num={ent.value} />
 			</div>
 		</div>
 	{/each}
@@ -49,7 +48,7 @@
 				{ent.name}
 			</div>
 			<div class="chat">
-				<Skill num={ent.value} />
+				<Line num={ent.value} />
 			</div>
 		</div>
 	{/each}

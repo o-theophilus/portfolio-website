@@ -172,7 +172,7 @@
 />
 
 {#if post.photos.length > 1}
-	<div class="row">
+	<div class="line">
 		{#each post.photos as photo}
 			<img
 				src="{photo}/200"
@@ -191,7 +191,7 @@
 {/if}
 
 {#if edit_mode}
-	<div class="row">
+	<div class="line">
 		<Button
 			primary
 			on:click={() => {
@@ -267,13 +267,13 @@
 		cursor: pointer;
 	}
 
-	.row {
+	/* .row {
 		display: flex;
 		justify-content: center;
 		gap: var(--sp1);
 		flex-wrap: wrap;
 		margin-top: var(--sp2);
-	}
+	} */
 
 	.active {
 		outline-color: var(--cl1);

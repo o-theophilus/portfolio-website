@@ -24,7 +24,7 @@
 	<div class="text">
 		{@html message}
 	</div>
-	<div class="row">
+	<div class="line">
 		{#each buttons as x}
 			<Button
 				name={x.name}

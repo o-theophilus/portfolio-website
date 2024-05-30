@@ -54,7 +54,7 @@
 	<br /><br />
 	<div>Status: <strong>{_status}</strong></div>
 	<div>Change to:</div>
-	<div class="row">
+	<div class="line">
 		{#each ['draft', 'publish'] as x}
 			{#if _status != x}
 				<Button

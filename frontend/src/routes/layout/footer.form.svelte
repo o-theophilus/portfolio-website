@@ -1,4 +1,5 @@
 <script>
+	import { page } from '$app/stores';
 	import { user, loading, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
@@ -16,6 +17,12 @@
 		form.email = $user.email;
 	}
 	let error = {};
+
+	const clear_error = () => {
+		error = {};
+	};
+
+	$: clear_error($page);
 
 	const validate = () => {
 		error = {};

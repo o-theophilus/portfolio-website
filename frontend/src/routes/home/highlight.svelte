@@ -100,7 +100,7 @@
 				<div class="desc">
 					{#key hover_post.key || observe_post.key}
 						<div in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}>
-							<strong class="big color1">
+							<strong class="big color">
 								{hover_post.title || observe_post.title}
 							</strong>
 							<br />
@@ -179,5 +179,8 @@
 
 		text-align: center;
 		position: relative;
+	}
+	.color {
+		color: var(--cl1);
 	}
 </style>

@@ -7,7 +7,16 @@
 <Meta title="Admin Dashboard" description="This contains this website settings" />
 
 <Content>
-	<Button href="/admin/featured">Featured</Button>
+	<!-- <Button href="/admin/featured">Featured</Button> -->
+	Nothing to see here
+
+	<br />
+	<br />
+	Todo
+	<br />
+	* Logs
+	<br />
+	* Profile
 </Content>
 
 <style>

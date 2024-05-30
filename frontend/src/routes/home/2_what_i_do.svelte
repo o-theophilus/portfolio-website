@@ -20,7 +20,7 @@
 
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
-			<strong class="big color1"> What I Can Do: </strong>
+			<strong class="big color"> What I Can Do: </strong>
 			<br /><br />
 			<strong class="large">Design What You Want</strong>
 			<br />
@@ -48,7 +48,7 @@
 		<div class="observe" class:intersecting>
 			<div class="h">
 				<div>
-					<strong class="big color1"> How I Can Help </strong>
+					<strong class="big color"> How I Can Help </strong>
 					<br />
 					I am currently available for freelance work and collaborations. Whether you're looking to refresh
 					your branding, create a new website, or design marketing materials, I'm here to help.
@@ -90,5 +90,8 @@
 	.large {
 		color: var(--ac1);
 		font-size: large;
+	}
+	.color {
+		color: var(--cl1);
 	}
 </style>

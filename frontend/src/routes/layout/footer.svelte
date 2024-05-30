@@ -9,7 +9,7 @@
 </script>
 
 <Content>
-	<div class="hr v2" />
+	<hr />
 	<br /><br />
 	<footer id="footer">
 		<strong class="big">Get in touch!</strong>
@@ -23,7 +23,7 @@
 				<br /><br />
 				<Socials />
 				<br /><br />
-				<div class="hr" />
+				<hr />
 				<br /><br />
 				<Nav />
 			</div>

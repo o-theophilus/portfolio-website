@@ -110,16 +110,6 @@ form input[type=submit]:hover {
 	border-color: transparent;
 }
 
-
-
-form .error~input,
-form .error~select,
-form .error~textarea {
-	border-color: red;
-
-}
-
-
 form option {
 	color: var(--ac2);
 	background-color: var(--ac5);

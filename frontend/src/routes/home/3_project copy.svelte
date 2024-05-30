@@ -110,7 +110,7 @@
 				<div class="desc">
 					{#key active_post.slug}
 						<div in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}>
-							<strong class="big color1">
+							<strong class="big color">
 								{active_post.title}
 							</strong>
 							<br />
@@ -154,6 +154,9 @@
 	}
 	.intersecting .blocker {
 		background-color: transparent;
+	}
+	.color{
+		color: var(--cl1);
 	}
 	.title {
 		font-size: 30px;

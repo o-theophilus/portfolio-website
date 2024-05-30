@@ -3,7 +3,6 @@
 	import { onMount } from 'svelte';
 	import { set_state } from '$lib/store.js';
 
-	export let card = false;
 	let _value, value, width;
 	export let total_page = 1;
 
@@ -36,8 +35,8 @@
 </script>
 
 {#if total_page > 1}
-	<div class="center" class:card>
-		<div class="hr" />
+	<div class="center">
+		<hr />
 
 		<section>
 			{#if _value > 1}
@@ -107,14 +106,9 @@
 		margin: 0 auto;
 		padding: 0 var(--sp2);
 	}
-	.card {
-		padding: unset;
-	}
 
-	.hr {
-		margin-top: var(--sp2);
-		border-top: 2px solid var(--ac4);
-		padding-top: var(--sp2);
+	hr {
+		border-color: var(--ac3);
 	}
 
 	section {
