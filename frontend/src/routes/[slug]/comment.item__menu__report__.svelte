@@ -4,7 +4,8 @@
 
 	import { template } from './comment.item__menu__report__template.js';
 	import Input from '$lib/input_group.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Icon from '$lib/icon.svelte';
 	import Info from '$lib/info.svelte';
 
 	export let owner_key;
@@ -82,12 +83,9 @@
 			on:input={() => (msgStore = form.comment)}
 		/>
 	</Input>
-	<Button
-		on:click={() => {
-			validate();
-		}}
-	>
+	<Button on:click={validate}>
 		Submit
+		<Icon icon="send" />
 	</Button>
 </form>
 

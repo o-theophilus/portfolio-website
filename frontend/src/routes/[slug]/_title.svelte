@@ -3,8 +3,9 @@
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
 	import Info from '$lib/info.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	let form = {
 		title: $module.post.title
@@ -74,7 +75,10 @@
 		<input placeholder="Title here" type="text" {id} bind:value={form.title} />
 	</Input>
 
-	<Button on:click={validate}>Submit</Button>
+	<Button on:click={validate}>
+		Submit
+		<Icon icon="send" />
+	</Button>
 </form>
 
 <style>

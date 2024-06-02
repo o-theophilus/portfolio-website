@@ -36,8 +36,8 @@
 		border-radius: var(--sp0);
 		border: none;
 
-		outline: 2px solid var(--ac4);
-		background-color: var(--ac5);
+		outline: 2px solid var(--ac7);
+		background-color: var(--ac8);
 		color: var(--ac1);
 	}
 
@@ -47,7 +47,7 @@
 
 	input:hover:not(:disabled),
 	textarea:hover:not(:disabled) {
-		outline-color: var(--ac3);
+		outline-color: var(--ac4);
 	}
 
 	input:focus,

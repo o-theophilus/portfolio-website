@@ -3,7 +3,8 @@
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Icon from '$lib/icon.svelte';
 	import Info from '$lib/info.svelte';
 
 	let post = $module.post;
@@ -14,9 +15,7 @@
 	const validate = () => {
 		error = {};
 
-		if (
-			videos.filter(Boolean).sort().join(', ') == post.videos.slice().sort().join(', ')
-		) {
+		if (videos.filter(Boolean).sort().join(', ') == post.videos.slice().sort().join(', ')) {
 			error.videos = 'no change';
 		}
 
@@ -76,7 +75,10 @@
 		{/each}
 	</Input>
 
-	<Button on:click={validate}>Submit</Button>
+	<Button on:click={validate}>
+		Submit
+		<Icon icon="send" />
+	</Button>
 </form>
 
 <style>

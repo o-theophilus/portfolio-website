@@ -1,9 +1,9 @@
 <script>
+	import { page } from '$app/stores';
 	import { user } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import { page } from '$app/stores';
-	import SVG from '$lib/svg.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	const submit = async () => {
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/theme`, {
@@ -35,10 +35,10 @@
 >
 	<div class="switch" class:dark={$user.setting_theme == 'dark'}>
 		<div class="state">
-			<SVG type="light" size="15" />
+			<Icon icon="light_mode" size="16" />
 		</div>
 		<div class="state">
-			<SVG type="dark" size="12" />
+			<Icon icon="dark_mode" size="16" />
 		</div>
 	</div>
 </button>
@@ -57,7 +57,7 @@
 		position: relative;
 		overflow: hidden;
 
-		fill: var(--ac1);
+		color: var(--ac1);
 		border-radius: 50%;
 
 		height: var(--size);
@@ -67,24 +67,22 @@
 		background-color: transparent;
 		border: none;
 
-		transition-timing-function: ease-in-out;
+		transition: background-color var(--trans1), color var(--trans1);
 	}
 
 	.is_home {
-		fill: var(--ac5);
+		color: var(--ac8);
 	}
 
 	button:hover {
-		color: var(--ac5_);
+		color: var(--ac8_);
 		background-color: var(--cl1);
 	}
 
 	.switch {
 		position: absolute;
 		top: 0;
-
-		transition: top var(--animTime1);
-		transition-timing-function: ease-in-out;
+		transition: top var(--trans1);
 	}
 	.dark {
 		top: -100%;

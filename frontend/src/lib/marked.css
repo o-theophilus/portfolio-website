@@ -1,11 +1,24 @@
 .markdown img {
-	background-color: var(--ac4);
-	padding: var(--sp2);
+	width: 100%;
 	margin: 20px auto;
+	padding: var(--sp2);
+	border-radius: var(--sp1);
+	
+	background-color: var(--ac7);
 }
 
 blockquote {
-	margin: auto 80px;
+	margin: auto 40px;
+	font-style: italic;
+	background-color: var(--ac7);
+}
+.markdown blockquote img {
+	margin: 0;
+	padding: 0;
+}
+
+.markdown blockquote p {
+	margin: 8px;
 }
 
 a {
@@ -23,7 +36,7 @@ h3,
 h4,
 h5,
 h6 {
-	margin: 20px 0;
+	margin: 52px 0 16px;
 	color: var(--ac1);
 }
 
@@ -51,25 +64,34 @@ h6 {
 	font-size: 17.3px
 }
 
+p{
+	margin: 16px 0;
+}
+
 ol,
 ul {
 	padding-left: 24px;
+}
+
+li{
+	margin: 8px 0;
 }
 
 /* ##################################### */
 
 pre {
 	padding: 20px;
+	margin: 16px 0;
 	border-radius: var(--sp0);
 
-	background-color: rgb(50, 50, 50);
+	background-color: hsl(0, 0%, 10%);
 
 	overflow-y: auto;
 	font-size: small;
 }
 
 code {
-	color: var(--ac1);
+	color: var(--cl3);
 }
 
 pre code {

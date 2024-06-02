@@ -40,6 +40,7 @@
 		position: relative;
 		height: calc(100vh - var(--headerHeight));
 		min-height: 800px;
+		overflow: hidden;
 
 		background-color: #ffaf1b;
 

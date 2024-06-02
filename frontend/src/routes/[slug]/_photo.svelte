@@ -1,8 +1,12 @@
 <script>
+	import { flip } from 'svelte/animate';
+	import { cubicInOut } from 'svelte/easing';
 	import { loading, portal, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import BRound from '$lib/button/round.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	let post = $module.post;
 	let photo_count = $module.photo_count;
@@ -132,128 +136,147 @@
 	}
 </script>
 
-<img
-	src={active_photo || '/site/no_photo.png'}
-	alt={post.title}
-	onerror="this.src='/site/no_photo.png'"
-	class="main"
-	class:dragover
-	class:edit_mode
-	on:click={() => {
-		if (edit_mode) {
-			input.click();
-		}
-	}}
-	on:dragover|preventDefault={() => {
-		dragover = true;
-	}}
-	on:dragleave|preventDefault={() => {
-		dragover = false;
-	}}
-	on:drop={(e) => {
-		dragover = false;
-		if (edit_mode) {
-			e.preventDefault();
-			input.files = e.dataTransfer.files;
-			on_input();
-		}
-	}}
-	role="presentation"
-/>
-<input
-	style:display="none"
-	type="file"
-	accept="image/*"
-	multiple
-	bind:this={input}
-	on:change={(e) => {
-		on_input();
-	}}
-/>
-
-{#if post.photos.length > 1}
-	<div class="line">
-		{#each post.photos as photo}
-			<img
-				src="{photo}/200"
-				alt={post.name}
-				onerror="this.src='/site/no_photo.png'"
-				on:click={() => {
-					error = {};
-					active_photo = photo;
-				}}
-				class="thumbnail"
-				class:active={active_photo == photo}
-				role="presentation"
-			/>
-		{/each}
-	</div>
-{/if}
-
-{#if edit_mode}
-	<div class="line">
-		<Button
-			primary
-			on:click={() => {
+<div class="comp">
+	<img
+		src={active_photo || '/site/no_photo.png'}
+		alt={post.title}
+		onerror="this.src='/site/no_photo.png'"
+		class="main"
+		class:dragover
+		class:edit_mode={edit_mode && post.photos.length < photo_count}
+		on:click={() => {
+			if (edit_mode && post.photos.length < photo_count) {
 				input.click();
-			}}
-			disabled={post.photos.length >= photo_count}
-		>
-			Add ({photo_count - post.photos.length})
-		</Button>
+			}
+		}}
+		on:dragover|preventDefault={() => {
+			dragover = true;
+		}}
+		on:dragleave|preventDefault={() => {
+			dragover = false;
+		}}
+		on:drop={(e) => {
+			dragover = false;
+			if (edit_mode && post.photos.length < photo_count) {
+				e.preventDefault();
+				input.files = e.dataTransfer.files;
+				on_input();
+			}
+		}}
+		role="presentation"
+	/>
+	<input
+		style:display="none"
+		type="file"
+		accept="image/*"
+		multiple
+		bind:this={input}
+		on:change={(e) => {
+			on_input();
+		}}
+	/>
 
-		<Button
-			extra="hover_red"
-			on:click={() => {
-				reorder_delete('delete');
-			}}
-			disabled={post.photos.length == 0}
-		>
-			Remove
-		</Button>
-		<Button
-			disabled={post.photos.length <= 1 || post.photos[0] == active_photo}
-			on:click={() => {
-				move_right(false);
-			}}
-		>
-			&lt;
-		</Button>
-		<Button
-			disabled={post.photos.length <= 1 || post.photos[post.photos.length - 1] == active_photo}
-			on:click={() => {
-				move_right();
-			}}
-		>
-			&gt;
-		</Button>
-		<Button
-			disabled={JSON.stringify(init_order) == JSON.stringify(post.photos)}
-			on:click={() => {
-				reorder_delete('put');
-			}}
-		>
-			Save Order
-		</Button>
-	</div>
-
-	{#if error.error}
-		<br />
-		<span class="error">
-			{error.error}
-		</span>
-		<br />
+	{#if post.photos.length > 1}
+		<div class="line">
+			{#each post.photos as photo (photo)}
+				<img
+					animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
+					src="{photo}/200"
+					alt={post.name}
+					onerror="this.src='/site/no_photo.png'"
+					on:click={() => {
+						error = {};
+						active_photo = photo;
+					}}
+					class="thumbnail"
+					class:active={active_photo == photo}
+					role="presentation"
+				/>
+			{/each}
+		</div>
 	{/if}
-{/if}
+
+	{#if edit_mode}
+		<div class="line">
+			<Button
+				primary
+				on:click={() => {
+					input.click();
+				}}
+				disabled={post.photos.length >= photo_count}
+			>
+				<Icon icon="add" />
+				Add ({photo_count - post.photos.length})
+			</Button>
+
+			<Button
+				extra="hover_red"
+				on:click={() => {
+					reorder_delete('delete');
+				}}
+				disabled={post.photos.length == 0}
+			>
+				<Icon icon="delete" />
+				Remove
+			</Button>
+		</div>
+		<div class="line">
+			<BRound
+				icon="arrow_back"
+				disabled={post.photos.length <= 1 || post.photos[0] == active_photo}
+				on:click={() => {
+					move_right(false);
+				}}
+			/>
+			<Button
+				size="small"
+				disabled={JSON.stringify(init_order) == JSON.stringify(post.photos)}
+				on:click={() => {
+					reorder_delete('put');
+				}}
+			>
+				<Icon icon="save" />
+				Save
+			</Button>
+			<BRound
+				icon="arrow_forward"
+				disabled={post.photos.length <= 1 || post.photos[post.photos.length - 1] == active_photo}
+				on:click={() => {
+					move_right();
+				}}
+			/>
+		</div>
+
+		{#if error.error}
+			<br />
+			<span class="error">
+				{error.error}
+			</span>
+			<br />
+		{/if}
+	{/if}
+</div>
 
 <style>
-	img {
-		outline: 2px solid transparent;
-		border-radius: var(--sp1);
-		width: 100%;
-		transition: var(--trans1);
+	.comp {
+		padding: var(--sp3);
 	}
 
+	img {
+		width: 100%;
+		border-radius: var(--sp1);
+		outline: 2px solid transparent;
+		transition: outline-color var(--trans1);
+	}
+
+	.line {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: var(--sp1);
+		flex-wrap: wrap;
+		margin-top: var(--sp2);
+	}
 	.thumbnail {
 		--size: 50px;
 		width: var(--size);
@@ -266,14 +289,6 @@
 		outline-color: var(--cl1);
 		cursor: pointer;
 	}
-
-	/* .row {
-		display: flex;
-		justify-content: center;
-		gap: var(--sp1);
-		flex-wrap: wrap;
-		margin-top: var(--sp2);
-	} */
 
 	.active {
 		outline-color: var(--cl1);

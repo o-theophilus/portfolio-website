@@ -37,23 +37,20 @@
 </script>
 
 {#if text}
-	<Content>
-		<div class="filter">
-			<span>
-				{text}
-			</span>
+	<div class="filter">
+		<span>
+			{text}
+		</span>
 
-			<BRound
-				icon="close"
-				icon_size="8"
-				extra="hover_red"
-				on:click={() => {
-					set_state('search', '');
-					set_state('tag', '');
-				}}
-			/>
-		</div>
-	</Content>
+		<BRound
+			icon="close"
+			extra="hover_red"
+			on:click={() => {
+				set_state('search', '');
+				set_state('tag', '');
+			}}
+		/>
+	</div>
 {/if}
 
 <style>
@@ -63,10 +60,12 @@
 		justify-content: space-between;
 		align-items: center;
 
+		margin-top: var(--sp2);
+		
 		padding: var(--sp2);
 		border-radius: var(--sp0);
 
-		background-color: var(--cl1_t);
+		background-color: var(--cl1_l);
 		color: var(--ac1);
 		font-size: small;
 	}

@@ -2,7 +2,8 @@
 	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Icon from '$lib/icon.svelte';
 	import Input from '$lib/input_group.svelte';
 	import Info from '$lib/info.svelte';
 
@@ -73,7 +74,10 @@
 		<input type="datetime-local" bind:value={form.date} {id} placeholder="date here" />
 	</Input>
 
-	<Button on:click={validate}>Submit</Button>
+	<Button on:click={validate}>
+		Submit
+		<Icon icon="send" />
+	</Button>
 </form>
 
 <style>

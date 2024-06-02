@@ -2,7 +2,7 @@
 	import { portal, loading, user } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
 
 	export let post_key;
 	let error = {};
@@ -100,14 +100,7 @@
 		</div>
 
 		{#if changed}
-			<Button
-				class="tiny"
-				on:click={() => {
-					submit();
-				}}
-			>
-				Ok
-			</Button>
+			<Button class="tiny" on:click={submit}>Ok</Button>
 		{/if}
 	</div>
 

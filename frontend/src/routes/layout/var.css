@@ -1,10 +1,7 @@
-* {
-	transition-property: background-color, border-color, opacity, outline;
-	transition-duration: 0.2s;
-	transition-timing-function: cubic-bezier(0.47, 1.64, 0.41, 0.8);
-}
-
 :root {
+	/* --trans1: all 0.2s ease-in-out; */
+	--trans1: 1s ease-in-out;
+	
 	--mobileWidth: 720px;
 	--mobileWidth2: 1200px;
 	--mobileMenuWidth: 300px;
@@ -31,25 +28,31 @@
 	--overlay: rgba(128, 128, 128, 0.5);
 
 	--ac1_: black;
-	--ac2_: rgb(100, 100, 100);
-	--ac3_: rgb(128, 128, 128);
-	--ac4_: rgb(210, 210, 210);
-	--ac5_: white;
+	--ac2_: hsl(0, 0%, 30%);
+	
+	--ac4_: hsl(0, 0%, 50%);
+	--ac6_: hsl(0, 0%, 75%);
+	--ac7_: hsl(0, 0%, 85%);
+	--ac8_: white;
 
 }
 
 main {
 	--ac1: var(--ac1_);
 	--ac2: var(--ac2_);
-	--ac3: var(--ac3_);
+
 	--ac4: var(--ac4_);
-	--ac5: var(--ac5_);
+	--ac6: var(--ac6_);
+	--ac7: var(--ac7_);
+	--ac8: var(--ac8_);
 }
 
 main.dark {
 	--ac1: white;
-	--ac2: rgb(200, 200, 200);
-	--ac3: rgb(128, 128, 128);
-	--ac4: rgb(50, 50, 50);
-	--ac5: rgb(0, 0, 0);
+	--ac2: hsl(0, 0%, 70%);
+
+	--ac4: hsl(0, 0%, 25%);
+	--ac6: hsl(0, 0%, 25%);
+	--ac7: hsl(0, 0%, 10%);
+	--ac8: hsl(0, 0%, 5%);
 }

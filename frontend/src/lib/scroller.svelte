@@ -43,12 +43,12 @@
 		background-color: transparent;
 	}
 	.invert {
-		fill: var(--ac5);
-		border-color: var(--ac5);
+		fill: var(--ac8);
+		border-color: var(--ac8);
 	}
 	button:hover {
-		fill: var(--ac5_);
-		color: var(--ac5_);
+		fill: var(--ac8_);
+		color: var(--ac8_);
 		border-color: transparent;
 	}
 	button:hover .highlight {

@@ -35,7 +35,7 @@ form textarea {
 
 	padding: var(--sp2);
 	border-radius: var(--sp1);
-	border: 2px solid var(--ac4);
+	border: 2px solid var(--ac7);
 
 	background-color: transparent;
 }
@@ -78,7 +78,7 @@ form textarea~.svg {
 	bottom: var(--inputHeight);
 	left: var(--inputHeight);
 
-	fill: var(--ac3);
+	fill: var(--ac4);
 
 	transition: fill var(--animTime1);
 	transition-timing-function: ease-in-out;
@@ -112,5 +112,5 @@ form input[type=submit]:hover {
 
 form option {
 	color: var(--ac2);
-	background-color: var(--ac5);
+	background-color: var(--ac8);
 }

@@ -1,5 +1,5 @@
 <script>
-	import SVG from '$lib/svg.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	export let href = '';
 	export let target = '';
@@ -7,7 +7,7 @@
 	export let disabled = false;
 
 	export let icon = '';
-	export let icon_size = 15;
+	export let icon_size = 16;
 
 	export let large = false;
 	export let extra = ''; // outline, hov_red
@@ -24,8 +24,7 @@
 	class={extra}
 	title={tooltip}
 >
-	<SVG {icon} size={icon_size} />
-	<slot />
+	<Icon {icon} size={icon_size} />
 </svelte:element>
 
 <style>
@@ -42,10 +41,11 @@
 		height: var(--size);
 		border-radius: 50%;
 
-		background-color: var(--ac5);
-		background-color: red;
-		fill: var(--ac2);
+		background-color: var(--ac7);
+		color: var(--ac2);
 		cursor: pointer;
+
+		transition: var(--trans1);
 	}
 
 	.large {
@@ -53,7 +53,7 @@
 	}
 
 	:disabled {
-		background-color: var(--ac5);
+		background-color: var(--ac8);
 		color: var(--ac2);
 		box-shadow: unset;
 
@@ -62,15 +62,14 @@
 	}
 
 	:not(:disabled):hover {
-		background-color: var(--cl1_b);
-		color: var(--ac6_);
-		fill: var(--ac5_);
+		background-color: var(--cl1_d);
+		color: var(--ac8_);
 	}
 	:not(:disabled).hover_red:hover {
 		background-color: var(--cl2);
 	}
 
 	:not(:disabled).outline {
-		outline: 2px solid var(--ac4);
+		outline: 2px solid var(--ac7);
 	}
 </style>

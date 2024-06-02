@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { state, set_state } from '$lib/store.js';
 
-	import Button from '$lib/button.svelte';
+	import Link from '$lib/button/link.svelte';
 
 	let tags = [];
 
@@ -28,19 +28,35 @@
 	});
 </script>
 
-<div class="line">
-	{#each tags as tag, i}
-		{#if i > 0}
-			|
-		{/if}
-		<Button
-			class="secondary tiny"
-			on:click={() => {
-				set_state('tag', tag);
-			}}>{tag}</Button
-		>
-	{/each}
-</div>
+{#if loading_tags}
+	<hr />
+	<div class="line">Loading tags . . .</div>
+{:else if tags.length > 0}
+	<hr />
+	<div class="line">
+		{#each tags as tag, i}
+			{#if i > 0}
+				&#8226;
+			{/if}
+			<Link
+				small
+				on:click={() => {
+					set_state('tag', tag);
+				}}>{tag}</Link
+			>
+		{/each}
+	</div>
+{/if}
 
 <style>
+	hr {
+		margin: var(--sp2) 0;
+	}
+	.line {
+		margin: var(--sp2) 0;
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: var(--sp0);
+	}
 </style>

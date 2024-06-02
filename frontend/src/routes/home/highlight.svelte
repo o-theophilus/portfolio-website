@@ -9,7 +9,7 @@
 	import Post from './highlight.post.svelte';
 	import Edit from './highlight.edit.svelte';
 	import Scroller from '$lib/scroller.svelte';
-	import Button from '$lib/button.svelte';
+	import BRround from '$lib/button/round.svelte';
 
 	let sticky;
 	let block;
@@ -88,13 +88,15 @@
 						<br />
 						more</Scroller
 					>
-					<Button
+					<BRround
+						icon="edit"
+						large
 						on:click={() => {
 							$module = {
 								module: Edit
 							};
-						}}>Edit</Button
-					>
+						}}
+					/>
 				</div>
 
 				<div class="desc">

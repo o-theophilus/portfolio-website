@@ -5,7 +5,8 @@
 
 	import { template } from './footer.form.template.js';
 	import Input from '$lib/input_group.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Icon from '$lib/icon.svelte';
 	import Info from '$lib/info.svelte';
 
 	import EmailTemplate from '$lib/email_template.svelte';
@@ -87,7 +88,7 @@
 	let _form;
 </script>
 
-<form on:submit|preventDefault={validate} novalidate autocomplete="off" bind:this={_form}>
+<form on:submit|preventDefault novalidate autocomplete="off" bind:this={_form}>
 	{#if error.error}
 		<div class="err">
 			{error.error}
@@ -118,7 +119,10 @@
 			on:input={() => (msgStore = form.message)}
 		/>
 	</Input>
-	<Button class="wide">Send</Button>
+	<Button size="wide" on:click={validate}>
+		Send
+		<Icon icon="send" />
+	</Button>
 </form>
 
 <div bind:this={email_template} style="display: none;">

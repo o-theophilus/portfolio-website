@@ -2,7 +2,8 @@
 	import { module, portal, user, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	export let ratings;
 	export let post_key;
@@ -90,12 +91,9 @@
 		</div>
 	</div>
 
-	<Button
-		on:click={() => {
-			submit();
-		}}
-	>
+	<Button on:click={submit}>
 		Submit
+		<Icon icon="send" />
 	</Button>
 </section>
 
@@ -144,7 +142,7 @@
 		border-radius: var(--sp1);
 		width: 5px;
 		height: 70px;
-		background-color: var(--ac3);
+		background-color: var(--ac4);
 	}
 
 	.b0:hover,
@@ -157,7 +155,7 @@
 		height: 50px;
 
 		border: none;
-		background-color: var(--ac4);
+		background-color: var(--ac7);
 
 		cursor: pointer;
 	}

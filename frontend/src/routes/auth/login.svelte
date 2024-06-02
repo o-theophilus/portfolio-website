@@ -1,9 +1,13 @@
 <script>
+	import { page } from '$app/stores';
+
 	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Link from '$lib/button/link.svelte';
+	import Icon from '$lib/icon.svelte';
 	import Info from '$lib/info.svelte';
 	import EmailTemplate from './confirm.email_template.svelte';
 	import Signup from './signup.svelte';
@@ -15,6 +19,11 @@
 		email: $module.email
 	};
 	let error = {};
+
+	let return_url = $page.url.pathname;
+	if ($module.return_url) {
+		return_url = $module.return_url;
+	}
 
 	const validate = () => {
 		error = {};
@@ -50,7 +59,7 @@
 
 		if (resp.status == 200) {
 			$token = resp.token;
-			document.location = '/';
+			document.location = return_url;
 		} else if (resp.error == 'not confirmed') {
 			$module = {
 				module: Info,
@@ -86,16 +95,12 @@
 		<input placeholder="password here" type="password" {id} bind:value={form.password} />
 	</Input>
 
-	<Button
-		on:click={() => {
-			validate();
-		}}
-	>
+	<Button on:click={validate}>
 		Submit
+		<Icon icon="send" />
 	</Button>
 	<div>
-		<Button
-			class="secondary"
+		<Link
 			on:click={() => {
 				$module = {
 					module: Signup,
@@ -104,10 +109,9 @@
 			}}
 		>
 			Signup
-		</Button>
+		</Link>
 		<span class="divider"> | </span>
-		<Button
-			class="secondary"
+		<Link
 			on:click={() => {
 				$module = {
 					module: Forgot,
@@ -116,7 +120,7 @@
 			}}
 		>
 			Forgot Password
-		</Button>
+		</Link>
 	</div>
 </form>
 

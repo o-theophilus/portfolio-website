@@ -127,7 +127,7 @@
 	section {
 		position: relative;
 		height: 300vh;
-		/* background-color: var(--ac4);
+		/* background-color: var(--ac7);
 		
 		transition: all var(--animTime3);
 		transition-timing-function: ease-in-out; */
@@ -147,7 +147,7 @@
 	.blocker {
 		position: absolute;
 		inset: 0;
-		background-color: var(--ac4);
+		background-color: var(--ac7);
 		pointer-events: none;
 		transition: background-color var(--animTime1);
 		transition-timing-function: ease-in-out;
@@ -155,7 +155,7 @@
 	.intersecting .blocker {
 		background-color: transparent;
 	}
-	.color{
+	.color {
 		color: var(--cl1);
 	}
 	.title {

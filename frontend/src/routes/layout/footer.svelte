@@ -1,6 +1,7 @@
 <script>
-	import Nav from './footer.nav.svelte';
+	import { page } from '$app/stores';
 
+	import Nav from './footer.nav.svelte';
 	import Contact from './footer.contact.svelte';
 	import Socials from './footer.socials.svelte';
 	import Form from './footer.form.svelte';
@@ -9,11 +10,11 @@
 </script>
 
 <Content>
-	<hr />
-	<br /><br />
+	{#if $page.url.pathname != '/post'}
+		<hr />
+	{/if}
 	<footer id="footer">
-		<strong class="big">Get in touch!</strong>
-		<br /><br />
+		<div class="title">Get in touch!</div>
 		<section>
 			<div class="form">
 				<Form />
@@ -28,17 +29,27 @@
 				<Nav />
 			</div>
 		</section>
-		<br /><br />
 		<div class="copyright">&copy Loup 2023. All rights reserved.</div>
 		<br /><br />
 	</footer>
 </Content>
 
 <style>
+	.title {
+		margin: var(--sp4) 0;
+
+		font-size: x-large;
+		font-weight: 800;
+	}
+
 	section {
 		display: flex;
 		flex-direction: column;
 		gap: var(--sp5);
+		margin: var(--sp4) 0;
+	}
+	.copyright {
+		margin: var(--sp5) 0;
 	}
 	@media screen and (min-width: 600px) {
 		section {
@@ -51,8 +62,5 @@
 	}
 	.copyright {
 		text-align: center;
-	}
-	.big {
-		color: var(--ac1);
 	}
 </style>

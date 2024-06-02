@@ -4,9 +4,6 @@
 
 	import Content from '$lib/content.svelte';
 	import Meta from '$lib/meta.svelte';
-	import Button from '$lib/button.svelte';
-
-	console.log($user);
 </script>
 
 <Meta title={$user.name} description="This page includes the user profile" />
@@ -41,29 +38,6 @@
 	<hr />
 	<br />
 	<strong class="big">Comments</strong>
-	<br /><br />
-	<hr />
-	<br />
-	<Button href="/admin">Admin</Button>
-	<!-- <br /> -->
-	<Button
-		on:click={async () => {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/login`, {
-				method: 'delete',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: $token
-				}
-			});
-
-			resp = await resp.json();
-
-			if (resp.status == 200) {
-				$token = resp.token;
-				document.location = '/';
-			}
-		}}>Logout</Button
-	>
 	<br /><br />
 </Content>
 

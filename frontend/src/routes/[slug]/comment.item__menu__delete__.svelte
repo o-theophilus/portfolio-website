@@ -2,7 +2,7 @@
 	import { module, loading, portal } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
 	import Info from '$lib/info.svelte';
 
 	export let comment_key;
@@ -58,13 +58,7 @@
 	{/if}
 
 	<div class="h">
-		<Button
-			on:click={() => {
-				submit();
-			}}
-		>
-			Yes
-		</Button>
+		<Button on:click={submit}>Yes</Button>
 		<Button
 			on:click={() => {
 				$module = '';

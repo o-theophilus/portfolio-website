@@ -6,9 +6,11 @@
 	import Content from '$lib/content.svelte';
 	import Marked from '$lib/marked.svelte';
 	import Meta from '$lib/meta.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import BRound from '$lib/button/round.svelte';
 	import Tags from './tags.svelte';
 	import Toggle from '$lib/toggle.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	import Title from './_title.svelte';
 	import Description from './_description.svelte';
@@ -88,12 +90,14 @@
 
 	let is_admin = $user.permissions.some((x) =>
 		[
-			'post:edit_status',
-			'post:edit_name',
-			'post:edit_tag',
-			'post:edit_price',
-			'post:edit_info',
-			'post:edit_variation'
+			'post:edit_photos',
+			'post:edit_videos',
+			'post:edit_title',
+			'post:edit_date',
+			'post:edit_description',
+			'post:edit_content',
+			'post:edit_tags',
+			'post:edit_status'
 		].includes(x)
 	);
 
@@ -111,88 +115,82 @@
 
 <Content>
 	{#if is_admin}
-		<Toggle
-			state_1="off"
-			state_2="edit"
-			active={edit_mode}
-			on:click={() => {
-				edit_mode = !edit_mode;
-			}}
-		/>
-	{/if}
-	<img src={post.photos[0] || ''} alt={post.title} onerror="this.src='/site/no_photo.png'" />
-
-	{#if $user.permissions.includes('post:edit_photos') && edit_mode}
-		<div class="line">
-			<Button
-				class="tiny"
+		<div class="toggle">
+			<Toggle
+				state_1="off"
+				state_2="edit"
+				active={edit_mode}
 				on:click={() => {
-					$module = {
-						module: Manage_Photo,
-						post,
-						photo_count
-					};
-				}}>Manage Photo</Button
-			>
+					edit_mode = !edit_mode;
+				}}
+			/>
+		</div>
+	{/if}
+	<div class="img">
+		<img src={post.photos[0] || ''} alt={post.title} onerror="this.src='/site/no_photo.png'" />
+		<div class="line">
+			{#if $user.permissions.includes('post:edit_photos') && edit_mode}
+				<BRound
+					icon="photo"
+					on:click={() => {
+						$module = {
+							module: Manage_Photo,
+							post,
+							photo_count
+						};
+					}}
+				/>
+			{/if}
 
-			{#if video_count > 0}
-				<Button
-					class="tiny"
+			{#if video_count > 0 && $user.permissions.includes('post:edit_videos') && edit_mode}
+				<BRound
+					icon="movie"
 					on:click={() => {
 						$module = {
 							module: Manage_Video,
 							post,
 							video_count
 						};
-					}}>Manage Video</Button
-				>
+					}}
+				/>
 			{/if}
 		</div>
-	{/if}
+	</div>
 
-	<br />
-	<strong class="big">{post.title}</strong>
-	{#if $user.permissions.includes('post:edit_title') && edit_mode}
-		<Button
-			icon="edit"
-			class="tiny"
-			icon_size={15}
-			on:click={() => {
-				$module = {
-					module: Title,
-					post
-				};
-			}}
-		>
-			title
-		</Button>
-	{/if}
+	<div class="title">
+		{#if $user.permissions.includes('post:edit_title') && edit_mode}
+			<BRound
+				icon="edit"
+				on:click={() => {
+					$module = {
+						module: Title,
+						post
+					};
+				}}
+			/>
+		{/if}
 
-	<br />
-	<span class="date">{post.date.split('T')[0]}</span>
+		{post.title}
+	</div>
+
 	{#if $user.permissions.includes('post:edit_date') && edit_mode}
-		<Button
+		<hr />
+		<BRound
 			icon="edit"
-			class="tiny"
-			icon_size={15}
 			on:click={() => {
 				$module = {
 					module: Edit_Date,
 					post
 				};
 			}}
-		>
-			date
-		</Button>
+		/>
 	{/if}
+	<span class="date">{post.date}</span>
 
 	{#if $user.permissions.includes('post:edit_description') && edit_mode}
-		<br /><br />
-		{post.description}
-
-		<Button
+		<hr />
+		<BRound
 			icon="edit"
-			class="tiny"
 			icon_size={15}
 			on:click={() => {
 				$module = {
@@ -200,16 +198,16 @@
 					post
 				};
 			}}
-		>
-			description
-		</Button>
+		/>
+		<div class="description">
+			{post.description}
+		</div>
 	{/if}
 
-	<br /><br />
 	{#if $user.permissions.includes('post:edit_content') && edit_mode}
-		<Button
+		<hr />
+		<BRound
 			icon="edit"
-			class="tiny"
 			icon_size={15}
 			on:click={() => {
 				$module = {
@@ -217,19 +215,16 @@
 					post
 				};
 			}}
-		>
-			content
-		</Button>
+		/>
 	{/if}
 	<Marked md={content} />
+
 	<br />
 	<hr />
 
 	{#if $user.permissions.includes('post:edit_tags') && edit_mode}
-		<br />
-		<Button
+		<BRound
 			icon="edit"
-			class="tiny"
 			icon_size={15}
 			on:click={() => {
 				$module = {
@@ -238,24 +233,19 @@
 					tags_in: tags
 				};
 			}}
-		>
-			tags
-		</Button>
+		/>
 	{/if}
 	{#if post.tags.length > 0}
-		<br />
 		<Tags tags={post.tags} />
-		<br />
 		<hr />
 	{/if}
-	<br />
 	<Author />
 
 	{#if $user.permissions.includes('post:edit_status') && edit_mode}
-		<br /> <br />
+		<hr />
 		<div class="line">
 			<Button
-				class="tiny"
+				size="small"
 				on:click={() => {
 					$module = {
 						module: Edit_Status,
@@ -263,10 +253,11 @@
 					};
 				}}
 			>
+				<Icon icon="edit" size="16" />
+				|
 				<span>
 					Status: <strong>{post.status}</strong>
 				</span>
-				| Edit
 			</Button>
 			{#if post.status == 'publish'}
 				<Highlight {post} />
@@ -274,7 +265,7 @@
 		</div>
 	{/if}
 
-	<br /><br />
+	<hr />
 
 	<!-- {#if $user.login}
 		<Button
@@ -292,8 +283,6 @@
 	{/if} -->
 
 	<Button
-		class="tiny"
-		name="share"
 		icon="share"
 		on:click={() => {
 			$module = {
@@ -301,19 +290,58 @@
 				post
 			};
 		}}
-	/>
-	<br /><br /><br />
+	>
+		<Icon icon="share" />
+		Share
+	</Button>
+
+	<hr />
+
+	<Comment {comments} post_key={post.key} />
 </Content>
 
-<Comment {comments} post_key={post.key} />
-<br /><br />
-
 <style>
-	.big {
+	.img {
+		position: relative;
+	}
+
+	img {
+		display: block;
+
+		width: 100%;
+		margin: var(--sp2) 0;
+		border-radius: var(--sp1);
+
+		background-color: var(--ac7);
+	}
+	.img .line {
+		position: absolute;
+		bottom: var(--sp1);
+		left: var(--sp1);
+	}
+
+	.title {
+		margin-top: var(--sp3);
+
 		font-size: x-large;
+		font-weight: 800;
 		color: var(--ac1);
 	}
-	img {
-		background-color: var(--ac4);
+	.date {
+		font-size: small;
+		margin-bottom: var(--sp3);
+	}
+
+	.description {
+		margin: var(--sp2) 0;
+	}
+
+	hr {
+		margin: var(--sp2) 0;
+	}
+
+	.line {
+		display: flex;
+		gap: var(--sp1);
 	}
 </style>

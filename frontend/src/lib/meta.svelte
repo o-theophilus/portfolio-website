@@ -3,43 +3,30 @@
 
 	export let title;
 	export let description;
-	export let image = '/favicon.png';
+	export let image = `${$page.url.origin}/image/hero_image.png`;
 
-	let imageAlt = image;
-	let type = 'website';
-	let twitterCard = 'summary_large_image';
+	title = `${title} | Loup`;
+	description = description ? description : title;
 </script>
 
 <svelte:head>
-	{#if title}
-		<title>{title} | Loup</title>
-		<meta name="title" content={title} />
-		<meta property="og:title" content={title} />
-		<meta property="twitter:title" content={title} />
-	{/if}
+	<title>{title}</title>
 
-	{#if description}
-		<meta name="description" content={description} />
-		<meta property="og:description" content={description} />
-		<meta property="twitter:description" content={description} />
-	{/if}
+	<meta name="title" content={title} />
+	<meta name="description" content={description} />
 
-	{#if image}
-		<meta property="og:image" content="/images/{image}" />
-		<meta property="twitter:image" content="/images/{image}" />
-	{/if}
-
-	{#if imageAlt}
-		<meta property="og:image:alt" content={imageAlt} />
-		<meta property="twitter:image:alt" content={imageAlt} />
-	{/if}
-
+	<meta property="og:title" content={title} />
+	<meta property="og:description" content={description} />
+	<meta property="og:image" content={image} />
+	<meta property="og:image:alt" content={title} />
 	<meta property="og:url" content={$page.url.href} />
-	<meta property="twitter:url" content={$page.url.href} />
+	<meta property="og:type" content="website" />
 
-	{#if type}
-		<meta property="og:type" content={type} />
-	{/if}
-
-	<meta property="twitter:card" content={twitterCard} />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:description" content={description} />
+	<meta name="twitter:image" content={image} />
+	<meta name="twitter:image:alt" content={title} />
+	<meta name="twitter:url" content={$page.url.href} />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@meji_ng" />
 </svelte:head>

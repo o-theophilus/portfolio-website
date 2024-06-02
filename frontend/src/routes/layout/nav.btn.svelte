@@ -30,13 +30,12 @@
 		justify-content: center;
 		align-items: center;
 
-		color: var(--ac2);
-
 		border-bottom: 2px solid transparent;
 
-		transition: all var(--animTime1);
-		transition-timing-function: ease-in-out;
+		color: var(--ac2);
 		text-decoration: none;
+
+		transition: var(--trans1);
 	}
 
 	button:hover,
@@ -47,11 +46,11 @@
 	}
 
 	.home {
-		color: var(--ac5);
+		color: var(--ac8);
 	}
 	a.home:hover,
 	button.home:hover {
-		color: var(--ac5);
+		color: var(--ac8);
 	}
 
 	.active {

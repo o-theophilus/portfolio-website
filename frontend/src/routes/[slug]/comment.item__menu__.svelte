@@ -1,7 +1,7 @@
 <script>
 	import { user, module } from '$lib/store.js';
 
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
 	import Delete from './comment.item__menu__delete__.svelte';
 	import Report from './comment.item__menu__report__.svelte';
 

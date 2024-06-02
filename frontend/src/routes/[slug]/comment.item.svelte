@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 
 	import Marked from '$lib/marked.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
 	import Add_Comment from './comment__add__.svelte';
 	import Comment from './comment.item.svelte';
 	import Menu from './comment.item__menu__.svelte';
@@ -157,7 +157,7 @@
 		padding-right: 0;
 		padding-bottom: 0;
 
-		border: 2px solid var(--ac4);
+		border: 2px solid var(--ac7);
 		border-right-width: 0;
 		border-bottom-width: 0;
 
@@ -199,13 +199,13 @@
 		font-size: larger;
 		font-weight: bold;
 
-		color: var(--ac5_);
+		color: var(--ac8_);
 	}
 	.light {
 		color: var(--ac1_);
 	}
 	.date {
-		color: var(--ac3);
+		color: var(--ac4);
 	}
 	.menu {
 		cursor: pointer;

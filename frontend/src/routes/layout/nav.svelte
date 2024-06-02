@@ -4,6 +4,7 @@
 
 	import Link from './nav.btn.svelte';
 	import Theme from './nav.theme.svelte';
+	import User from './nav.user.svelte';
 	import SVG from '$lib/svg.svelte';
 	import Login from '../auth/login.svelte';
 
@@ -19,7 +20,7 @@
 		<div class="links">
 			<Link {home} href="/post">Post</Link>
 			{#if $user && $user.login}
-				<Link {home} href="/profile">Profile</Link>
+				<User />
 			{:else}
 				<Link
 					{home}
@@ -76,6 +77,6 @@
 		background-color: #ffaf1b;
 	}
 	.home a {
-		color: var(--ac5);
+		color: var(--ac8);
 	}
 </style>

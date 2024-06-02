@@ -1,34 +1,22 @@
 <script>
-	import SVG from '$lib/svg.svelte';
-
 	export let href = '';
 	export let target = '';
 	export let disabled = false;
 
-	export let icon = false;
+	export let small = false;
 </script>
 
-{#if href}
-	<a {href} {target}>
-		<slot />
-
-		{#if icon}
-			<div class="svg">
-				<SVG icon="angle" size="8" />
-			</div>
-		{/if}
-	</a>
-{:else}
-	<button on:click {disabled}>
-		<slot />
-
-		{#if icon}
-			<div class="svg">
-				<SVG icon="angle" size="8" />
-			</div>
-		{/if}
-	</button>
-{/if}
+<svelte:element
+	this={href ? 'a' : 'button'}
+	{href}
+	{target}
+	on:click
+	{disabled}
+	role="presentation"
+	class:small
+>
+	<slot />
+</svelte:element>
 
 <style>
 	button,
@@ -36,7 +24,7 @@
 		display: inline-flex;
 		gap: var(--sp1);
 
-		color: var(--cl1);
+		color: var(--ac2);
 		font-weight: 700;
 		text-decoration: none;
 		border: none;
@@ -45,12 +33,11 @@
 
 		fill: currentColor;
 	}
-
-	:hover {
-		color: var(--cl1_b);
+	.small {
+		font-size: small;
 	}
 
-	.svg {
-		transform: scaleX(-1);
+	:hover {
+		color: var(--cl1);
 	}
 </style>

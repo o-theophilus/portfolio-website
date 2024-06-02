@@ -37,9 +37,9 @@
 		border-radius: var(--sp0);
 		width: fit-content;
 
-		background-color: var(--ac5);
+		background-color: var(--ac7);
+
 		color: var(--ac2);
-		fill: currentColor;
 		text-decoration: none;
 		text-align: center;
 		font-weight: 700;
@@ -62,12 +62,12 @@
 
 	.primary {
 		background-color: var(--cl1);
-		color: var(--ac6_);
-		box-shadow: 0 -4px 0 var(--cl1_b) inset;
+		color: var(--ac8_);
+		box-shadow: 0 -4px 0 var(--cl1_d) inset;
 	}
 
 	:disabled {
-		background-color: var(--ac5);
+		background-color: var(--ac7);
 		color: var(--ac2);
 		box-shadow: unset;
 
@@ -76,15 +76,19 @@
 	}
 
 	:not(:disabled):hover {
-		background-color: var(--cl1_b);
-		color: var(--ac6_);
+		background-color: var(--cl1_d);
+		color: var(--ac8_);
 	}
 
 	:not(:disabled):not(.primary).hover_red:hover {
-		background-color: var(--cl4);
+		background-color: var(--cl2);
 	}
 
 	:not(:disabled):not(.primary).outline {
-		outline: 2px solid var(--ac4);
+		outline: 2px solid var(--ac6);
+	}
+
+	:not(:disabled):not(.primary).outline:hover {
+		outline-color: transparent;
 	}
 </style>

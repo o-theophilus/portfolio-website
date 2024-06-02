@@ -3,7 +3,9 @@
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Link from '$lib/button/link.svelte';
+	import Icon from '$lib/icon.svelte';
 	import Password from './password_checker.svelte';
 	import Info from '$lib/info.svelte';
 	import Login from './login.svelte';
@@ -98,24 +100,20 @@
 		<input placeholder="password here" type="password" {id} bind:value={form.password} />
 		<Password password={form.password} />
 	</Input>
-	<Input name="confirm pasword" error={error.confirm_password} let:id>
+	<Input name="confirm password" error={error.confirm_password} let:id>
 		<input
-			placeholder="confirm pasword here"
+			placeholder="confirm password here"
 			type="password"
 			{id}
 			bind:value={form.confirm_password}
 		/>
 	</Input>
 
-	<Button
-		on:click={() => {
-			validate();
-		}}
-	>
+	<Button on:click={validate}>
 		Submit
+		<Icon icon="send" />
 	</Button>
-	<Button
-		class="secondary"
+	<Link
 		on:click={() => {
 			$module = {
 				module: Login,
@@ -124,7 +122,7 @@
 		}}
 	>
 		Login
-	</Button>
+	</Link>
 </form>
 
 <div bind:this={email_template} style="display: none;">

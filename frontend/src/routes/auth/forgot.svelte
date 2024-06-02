@@ -3,7 +3,9 @@
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Link from '$lib/button/link.svelte';
+	import Icon from '$lib/icon.svelte';
 	import Login from './login.svelte';
 	import Info from '$lib/info.svelte';
 	import EmailTemplate from './forgot.email_template.svelte';
@@ -70,16 +72,12 @@
 		<input placeholder="email here" type="text" {id} bind:value={form.email} />
 	</Input>
 
-	<Button
-		on:click={() => {
-			validate();
-		}}
-	>
+	<Button on:click={validate}>
 		Submit
+		<Icon icon="send" />
 	</Button>
 
-	<Button
-		class="secondary"
+	<Link
 		on:click={() => {
 			$module = {
 				module: Login,
@@ -88,7 +86,7 @@
 		}}
 	>
 		Login
-	</Button>
+	</Link>
 </form>
 
 <div bind:this={email_template} style="display: none;">

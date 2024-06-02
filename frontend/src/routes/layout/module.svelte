@@ -3,7 +3,7 @@
 	import { backInOut } from 'svelte/easing';
 
 	import { module } from '$lib/store.js';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/round.svelte';
 </script>
 
 {#if $module}
@@ -11,9 +11,9 @@
 		<div class="block" transition:scale|local={{ delay: 0, duration: 200, easing: backInOut }}>
 			<div class="close">
 				<Button
+					large
 					icon="close"
-					icon_size="12"
-					class="hover red"
+					extra="hover_red"
 					on:click={() => {
 						$module = '';
 					}}
@@ -51,10 +51,9 @@
 
 	.block {
 		position: relative;
-		/* width: 100%; */
 	}
 	.content {
-		background-color: var(--ac5);
+		background-color: var(--ac8);
 		box-shadow: var(--shad1);
 		border-radius: var(--sp1);
 

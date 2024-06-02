@@ -52,7 +52,7 @@
 
 		border-radius: 50%;
 
-		fill: var(--ac3);
+		fill: var(--ac4);
 
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;

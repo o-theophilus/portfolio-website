@@ -129,16 +129,16 @@ def get_all(order="latest", page_size=4):
     order_by = {
         'latest': 'post.date',
         'oldest': 'post.date',
-        'post (a-z)': 'post.title',
-        'post (z-a)': 'post.title',
+        'title (a-z)': 'post.title',
+        'title (z-a)': 'post.title',
         'rating': 'rating'
     }
 
     order_dir = {
         'latest': 'DESC',
         'oldest': 'ASC',
-        'post (a-z)': 'ASC',
-        'post (z-a)': 'DESC',
+        'title (a-z)': 'ASC',
+        'title (z-a)': 'DESC',
         'rating': 'DESC'
     }
 

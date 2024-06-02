@@ -14,26 +14,18 @@
 	});
 </script>
 
-<a href="/{post.slug}" data-sveltekit-preload-data class:draft={post.status == 'draft'}>
+<a href="/{post.slug}" data-sveltekit-preload-data>
 	<div class="img">
 		<img src={post.photos[0] || ''} alt={post.title} onerror="this.src='/site/no_photo.png'" />
 	</div>
-	<div class="details">
-		<strong class="big title">
-			{post.title}
-		</strong>
-		{#if post.description}
-			<br />
-			<div class="description">
-				{post.description}
-			</div>
-		{:else}
-			<br />
-		{/if}
-		<br />
-		<div class="date">
-			{time}
-		</div>
+	<div class="title">
+		{post.title}
+	</div>
+	<div class="description">
+		{post.description}
+	</div>
+	<div class="date">
+		{time}
 	</div>
 </a>
 
@@ -41,7 +33,7 @@
 	a {
 		padding: var(--sp3);
 
-		background-color: var(--ac5);
+		background-color: var(--ac8);
 		color: var(--ac2);
 		text-decoration: none;
 
@@ -50,9 +42,6 @@
 
 		transition: all var(--animTime1);
 		transition-timing-function: ease-in-out;
-	}
-	a.draft {
-		border: 2px solid var(--cl2);
 	}
 	a:hover {
 		border-color: var(--ac2);
@@ -65,9 +54,10 @@
 	img {
 		display: block;
 
+		width: 100%;
 		object-fit: cover;
 		aspect-ratio: 1 / 1;
-		background-color: var(--ac4);
+		background-color: var(--ac7);
 
 		transition: transform var(--animTime3);
 		transition-timing-function: ease-in-out;
@@ -76,13 +66,18 @@
 		transform: scale(1.2);
 	}
 	.title {
+		margin: var(--sp2) 0;
 		color: var(--cl1);
+		font-size: large;
+		font-weight: 800;
 	}
 
-	.details {
-		padding-top: var(--sp3);
+	.description {
+		margin: var(--sp2) 0;
+		color: var(--ac1);
 	}
-	strong {
-		font-size: large;
+
+	.date {
+		font-size: small;
 	}
 </style>

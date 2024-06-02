@@ -2,7 +2,7 @@
 
 	import Content from '$lib/content.svelte';
 	import Meta from '$lib/meta.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
 
 	import Template from '$lib/email_template.forgot.svelte';
 

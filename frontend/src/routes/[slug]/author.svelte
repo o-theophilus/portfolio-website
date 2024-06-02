@@ -3,20 +3,16 @@
 		name: 'Theophilus Ogbolu'
 	};
 
-	let saturation = Math.floor(Math.random() * (360 + 1));
+	let hue = Math.floor(Math.random() * (360 + 1));
 </script>
 
 <section>
-	<strong> Author </strong>
+	<div class="title">Author</div>
 	<class class="block">
-		<div
-			class="img"
-			class:light={saturation > 29 && saturation < 189}
-			style:--saturation={saturation}
-		>
+		<div class="img" class:light={hue > 29 && hue < 189} style:--hue={hue}>
 			{author.name[0]}
 		</div>
-		<div class="name">{author.name}</div>
+		{author.name}
 	</class>
 </section>
 
@@ -26,7 +22,9 @@
 		flex-direction: column;
 		gap: var(--sp2);
 	}
-	strong {
+
+	.title {
+		font-weight: 800;
 		color: var(--ac1);
 	}
 	.block {
@@ -38,22 +36,21 @@
 	.img {
 		--size: 40px;
 
-		background-color: hsl(var(--saturation), 100%, 50%);
-		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		flex-shrink: 0;
 
 		width: var(--size);
 		height: var(--size);
+		border-radius: 50%;
 
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
+		background-color: hsl(var(--hue), 100%, 50%);
 		text-transform: capitalize;
 		font-size: larger;
 		font-weight: bold;
 
-		color: var(--ac5_);
+		color: var(--ac8_);
 	}
 	.light {
 		color: var(--ac1_);

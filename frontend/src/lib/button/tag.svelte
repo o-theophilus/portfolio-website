@@ -29,7 +29,7 @@
 	}
 
 	:disabled {
-		background-color: var(--ac5);
+		background-color: var(--ac8);
 		color: var(--ac2);
 		cursor: unset;
 		opacity: 0.4;
@@ -40,7 +40,7 @@
 		color: var(--ac6_);
 	}
 	:not(:disabled):hover {
-		background-color: var(--cl1_b);
+		background-color: var(--cl1_d);
 		color: var(--ac6_);
 	}
 </style>

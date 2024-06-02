@@ -27,6 +27,7 @@
 
 <style>
 	main {
-		background-color: var(--ac5);
+		background-color: var(--ac8);
+		color: var(--ac2);
 	}
 </style>

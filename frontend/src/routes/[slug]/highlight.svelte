@@ -2,7 +2,7 @@
 	import { module, loading, settings } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
 	import Info from '$lib/info.svelte';
 
 	export let post;
@@ -67,7 +67,7 @@
 	};
 </script>
 
-<Button class="tiny" on:click={submit}>
+<Button size="small" on:click={submit}>
 	Highlight:
 	{#if is_highlight}
 		ON

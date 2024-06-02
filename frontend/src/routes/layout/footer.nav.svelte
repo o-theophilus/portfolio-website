@@ -1,13 +1,13 @@
 <script>
-	import Button from '$lib/button.svelte';
+	import Link from '$lib/button/link.svelte';
 </script>
 
 <div class="block">
-	<Button class="secondary" href="/">Home</Button>
+	<Link class="secondary" href="/">Home</Link>
 	&#8226;
-	<Button class="secondary" href="#about">About</Button>
+	<Link class="secondary" href="#about">About</Link>
 	&#8226;
-	<Button class="secondary" href="/post">Post</Button>
+	<Link class="secondary" href="/post">Post</Link>
 </div>
 
 <style>

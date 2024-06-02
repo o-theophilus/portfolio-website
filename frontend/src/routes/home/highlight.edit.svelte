@@ -1,8 +1,12 @@
 <script>
-	import { loading, portal, module, settings } from '$lib/store.js';
+	import { flip } from 'svelte/animate';
+	import { cubicInOut } from 'svelte/easing';
+	import { loading, module, settings } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import BRound from '$lib/button/round.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	let posts = [...$settings.highlight];
 	let init_order = [...posts];
@@ -66,42 +70,46 @@
 
 <div class="comp">
 	<strong class="big"> Edit Highlights </strong>
-	{#each posts as x, i}
-		<div class="line">
-			{x.title}
+	{#each posts as x, i (x.key)}
+		<div class="line" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
+			<div class="post_name">
+				{x.title}
+			</div>
 
-			<Button
-				class="tiny"
+			<BRound
+				icon="arrow_upward"
 				disabled={i == 0}
 				on:click={() => {
 					move_down(x.key, false);
 				}}
-			>
-				up
-			</Button>
-			<Button
-				class="tiny"
+			/>
+			<BRound
+				icon="arrow_downward"
 				disabled={i == posts.length - 1}
 				on:click={() => {
 					move_down(x.key);
 				}}
-			>
-				dn
-			</Button>
-			<Button
-				class="tiny"
+			/>
+			<BRound
+				icon="delete"
 				extra="hover_red"
 				on:click={() => {
 					remove(x.key);
 				}}
-			>
-				Remove
-			</Button>
+			/>
 		</div>
 	{/each}
 
-	<Button class="tiny" disabled={init_order == posts} on:click={submit}>Submit</Button>
-	<Button class="tiny" disabled={init_order == posts} on:click={reset}>Reset</Button>
+	<div class="line">
+		<Button class="tiny" disabled={init_order == posts} on:click={submit}>
+			Submit
+			<Icon icon="send" />
+		</Button>
+		<Button class="tiny" disabled={init_order == posts} on:click={reset}>
+			Reset
+			<Icon icon="history" />
+		</Button>
+	</div>
 
 	{#if error.error}
 		<br />
@@ -116,11 +124,13 @@
 	.comp {
 		padding: var(--sp3);
 	}
-	/* .row {
+	.line {
 		display: flex;
-		justify-content: center;
 		gap: var(--sp1);
-		flex-wrap: wrap;
 		margin-top: var(--sp2);
-	} */
+	}
+
+	.post_name {
+		width: 100%;
+	}
 </style>

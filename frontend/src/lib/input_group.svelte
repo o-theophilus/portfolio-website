@@ -1,13 +1,13 @@
 <script>
-	import SVG from '$lib/svg.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	export let name;
 	export let error;
-	export let svg = '';
+	export let icon = '';
 	let id = name.split(' ').join('_');
 </script>
 
-<div class="inputGroup" class:svgi={!!svg}>
+<div class="inputGroup" class:svgi={!!icon}>
 	<slot name="label" />
 	{#if !$$slots.label}
 		<label for={id}>{name}</label>
@@ -18,9 +18,9 @@
 		</span>
 	{/if}
 	<slot {id} />
-	{#if svg}
+	{#if icon}
 		<div class="svg">
-			<SVG type={svg} size="20" />
+			<Icon {icon} size="20" />
 		</div>
 	{/if}
 </div>

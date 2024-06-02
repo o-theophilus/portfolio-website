@@ -1,13 +1,13 @@
 <script>
 	import BRound from '$lib/button/round.svelte';
-	import SVG from '$lib/svg.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	export let open;
 </script>
 
 <BRound on:click>
 	<div class="fold" class:open>
-		<SVG icon="angle" size="8" />
+		<Icon icon="chevron_right" />
 	</div>
 </BRound>
 

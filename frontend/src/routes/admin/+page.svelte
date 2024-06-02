@@ -1,7 +1,7 @@
 <script>
 	import Meta from '$lib/meta.svelte';
 	import Content from '$lib/content.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
 </script>
 
 <Meta title="Admin Dashboard" description="This contains this website settings" />

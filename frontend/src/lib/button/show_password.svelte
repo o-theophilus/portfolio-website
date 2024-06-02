@@ -1,5 +1,5 @@
 <script>
-	import SVG from '$lib/svg.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	export let show_password = false;
 </script>
@@ -11,7 +11,7 @@
 			show_password = !show_password;
 		}}
 	>
-		<SVG icon={show_password ? 'hide_password' : 'show_password'} size="12" />
+		<Icon icon={show_password ? 'visibility_off' : 'Visibility'} size="12" />
 	</button>
 </form>
 
@@ -40,14 +40,14 @@
 		border: none;
 		border-radius: var(--size);
 
-		background-color: var(--ac5);
+		background-color: var(--ac8);
 		color: var(--ac2);
 		fill: currentColor;
 		cursor: pointer;
 	}
 
 	button:hover {
-		background-color: var(--cl1_b);
+		background-color: var(--cl1_d);
 		color: var(--ac6_);
 	}
 </style>

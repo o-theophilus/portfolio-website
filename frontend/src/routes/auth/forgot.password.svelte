@@ -3,7 +3,8 @@
 	import { token } from '$lib/cookie.js';
 
 	import Input from '$lib/input_group.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Icon from '$lib/icon.svelte';
 	import Password from './password_checker.svelte';
 	import Login from './login.svelte';
 	import Info from '$lib/info.svelte';
@@ -89,12 +90,9 @@
 		/>
 	</Input>
 
-	<Button
-		on:click={() => {
-			validate();
-		}}
-	>
+	<Button on:click={validate}>
 		Submit
+		<Icon icon="send" />
 	</Button>
 	<Button
 		class="secondary"

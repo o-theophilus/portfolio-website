@@ -2,7 +2,7 @@
 	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
 	import Info from '$lib/info.svelte';
 	import Delete from './_status.delete.svelte';
 
@@ -93,5 +93,10 @@
 <style>
 	.content {
 		padding: var(--sp3);
+	}
+
+	.line {
+		display: flex;
+		gap: var(--sp1);
 	}
 </style>

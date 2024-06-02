@@ -2,7 +2,8 @@
 	import { page } from '$app/stores';
 	import Content from '$lib/content.svelte';
 	import Meta from '$lib/meta.svelte';
-	import Button from '$lib/button.svelte';
+	import Icon from '$lib/icon.svelte';
+	import Button from '$lib/button/button.svelte';
 
 	let error = $page.error.message;
 	export const data = '';
@@ -22,7 +23,10 @@
 		</div>
 		<img src="/site/error.png" alt="error" />
 
-		<Button href="/">Back to Home</Button>
+		<Button href="/">
+			<Icon icon="home" />
+			Back to Home
+		</Button>
 	</section>
 </Content>
 <br />

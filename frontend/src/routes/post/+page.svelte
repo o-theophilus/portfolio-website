@@ -2,9 +2,10 @@
 	import { module, user, portal } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
-	import ItemBox from '$lib/item_box.svelte';
+	import Item from './item.svelte';
 	import Meta from '$lib/meta.svelte';
-	import Button from '$lib/button.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	import Add from './_add.svelte';
 	import Tags from './tags.svelte';
@@ -41,47 +42,48 @@
 	<Content>
 		<div class="title">
 			Post{posts.length > 1 ? 's' : ''}
+			{#if $user.permissions.includes('post:add')}
+				<Button
+					extra="outline"
+					on:click={() => {
+						$module = {
+							module: Add
+						};
+					}}
+				>
+					<Icon icon="add" />
+					Add
+				</Button>
+			{/if}
 		</div>
-
-		<Search />
-		<OrderBy list={order_by} name="order" />
-		<OrderBy list={post_status} name="status" />
-
-		<br />
 		{#if $user.permissions.includes('post:add')}
-			<Button
-				on:click={() => {
-					$module = {
-						module: Add
-					};
-				}}
-			>
-				Add
-			</Button>
-			<br /><br />
+			<OrderBy list={post_status} name="status" />
 		{/if}
 
+		<div class="search_bar">
+			<Search />
+			<OrderBy list={order_by} name="order" button />
+		</div>
+
 		<Note />
-		<section class="block">
+
+		<section class="items">
 			{#each posts as post}
-				<ItemBox {post} />
+				<Item {post} />
 			{:else}
 				No post found
 			{/each}
 		</section>
 
-		<br />
+		<Pagination {total_page} />
 		<Tags />
-		<br />
 	</Content>
-
-	<Pagination {total_page} />
 </section>
 
 <style>
 	.background {
-		background-color: var(--ac4);
-		padding-top: 1px;
+		background-color: var(--ac7);
+		padding: 1px 0;
 	}
 
 	.title {
@@ -96,13 +98,21 @@
 		color: var(--ac1);
 	}
 
-	.block {
+	.search_bar {
+		margin: var(--sp2) 0;
+		display: flex;
+		gap: var(--sp0);
+		align-items: center;
+	}
+
+	.items {
+		margin: var(--sp2) 0;
 		display: grid;
 		gap: var(--sp2);
 	}
 
 	@media screen and (min-width: 600px) {
-		.block {
+		.items {
 			grid-template-columns: 1fr 1fr;
 		}
 	}

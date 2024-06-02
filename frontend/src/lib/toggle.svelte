@@ -18,20 +18,19 @@
 <style>
 	button {
 		--size: 24px;
-		
+
 		display: flex;
 		align-items: center;
-		
+
 		position: relative;
-		
+
 		height: var(--size);
 		border: none;
 		border-radius: calc(var(--size) / 2);
-		/* overflow: hidden; */
 
 		font-size: x-small;
 		cursor: pointer;
-		background-color: var(--ac4);
+		background-color: var(--ac7);
 
 		text-transform: capitalize;
 		color: var(--ac1);
@@ -69,7 +68,7 @@
 		height: var(--size);
 		border-radius: calc(var(--size) / 2);
 		background-color: var(--cl1);
-		color: var(--ac5_);
+		color: var(--ac8_);
 
 		transition: var(--trans1);
 	}

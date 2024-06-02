@@ -12,15 +12,11 @@
 	import AboutWebsite from './home/6_about_website.svelte';
 	import Scroller from '$lib/scroller.svelte';
 	import Meta from '$lib/meta.svelte';
-	import SVG from '$lib/svg.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	import Confirm from './auth/confirm.svelte';
 	import Info from '$lib/info.svelte';
-	import Login from './auth/login.svelte';
 	import Forgot from './auth/forgot.password.svelte';
-
-	// export let data;
-	// let { posts } = data;
 
 	onMount(() => {
 		if ($page.url.searchParams.has('module')) {
@@ -35,9 +31,6 @@
 				case 'info':
 					_module.module = Info;
 					break;
-				// case 'login':
-				// 	_module.module = Login;
-				// 	break;
 			}
 
 			for (const x of ['return_url', 'token', 'email', 'title', 'status', 'message']) {
@@ -61,7 +54,7 @@
 	</div>
 	<div class="scroller">
 		<Scroller query=".scroll_1" invert>
-			<SVG type="down" size="20" />
+			<Icon icon="arrow_downward" size="20" />
 		</Scroller>
 	</div>
 	<div class="grad" />

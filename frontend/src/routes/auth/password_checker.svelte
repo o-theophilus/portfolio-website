@@ -20,7 +20,7 @@
 		overflow: hidden;
 
 		font-size: x-small;
-		color: var(--ac3);
+		color: var(--ac4);
 	}
 	.active {
 		color: var(--cl3);

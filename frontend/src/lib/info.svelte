@@ -1,8 +1,8 @@
 <script>
 	import { module } from '$lib/store.js';
 
-	import SVG from '$lib/svg.svelte';
-	import Button from '$lib/button.svelte';
+	import Icon from '$lib/icon.svelte';
+	import Button from '$lib/button/button.svelte';
 
 	let title = $module.title || 'Done';
 	let status = $module.status || 200;
@@ -10,13 +10,18 @@
 	let buttons = $module.buttons || [];
 </script>
 
-<div class="big" class:good={status == 200} class:bad={status == 400} class:warning={status == 201}>
+<div
+	class="title"
+	class:good={status == 200}
+	class:bad={status == 400}
+	class:warning={status == 201}
+>
 	{#if status == 200}
-		<SVG type="check" size="20" />
+		<Icon icon="check_circle" />
 	{:else if status == 400}
-		<SVG type="close" />
+		<Icon icon="cancel" />
 	{:else if status == 201}
-		<SVG type="info" size="20" />
+		<Icon icon="error" />
 	{/if}
 	{title}
 </div>
@@ -27,28 +32,28 @@
 	<div class="line">
 		{#each buttons as x}
 			<Button
-				name={x.name}
-				icon={x.icon}
-				class="wide"
+				size="wide"
 				on:click={() => {
 					x.fn();
 				}}
-			/>
+			>
+				<Icon icon={x.icon} />
+				{x.name}
+			</Button>
 		{/each}
 	</div>
 </div>
 
 <style>
-	.big {
+	.title {
 		display: flex;
 		align-items: center;
 		gap: var(--sp2);
 
 		padding: var(--sp2);
 		padding-right: var(--sp5);
-		color: var(--ac5_);
-		fill: var(--ac5_);
 
+		color: var(--ac8_);
 		text-transform: capitalize;
 	}
 

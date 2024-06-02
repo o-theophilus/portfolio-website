@@ -8,13 +8,17 @@ button {
 }
 
 * {
-	/* line-height: 150%; */
+	line-height: 150%;
 	margin: 0;
 	padding: 0;
 
 	box-sizing: border-box;
 	outline: none;
 	-webkit-tap-highlight-color: transparent;
+
+	transition-property: background-color, border-color, opacity, outline;
+	transition-duration: 0.2s;
+	transition-timing-function: ease-in-out;
 }
 
 input:-webkit-autofill,
@@ -31,29 +35,6 @@ input:-webkit-autofill:active {
 
 hr {
 	border: none;
-	border-top: 2px solid var(--ac4);
+	border-top: 2px solid var(--ac6);
 }
 
-/* .line {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--sp0);
-} */
-
-
-/* ################################### */
-
-
-.date {
-	font-size: small;
-}
-
-.big {
-	font-size: x-large;
-}
-
-img {
-	display: block;
-	width: 100%;
-	border-radius: var(--sp1);
-}

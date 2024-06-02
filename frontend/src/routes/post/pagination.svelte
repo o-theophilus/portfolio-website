@@ -35,82 +35,70 @@
 </script>
 
 {#if total_page > 1}
-	<div class="center">
-		<hr />
+	<hr />
 
-		<section>
-			{#if _value > 1}
-				<button
-					on:click={() => {
-						submit(_value - 1);
-					}}
-				>
-					&lt;
-				</button>
-			{/if}
+	<section>
+		{#if _value > 1}
+			<button
+				on:click={() => {
+					submit(_value - 1);
+				}}
+			>
+				&lt;
+			</button>
+		{/if}
 
-			<div class="input">
-				<input
-					style:width="calc({width}px + 4px)"
-					type="text"
-					oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-					bind:value
-					on:keypress={(e) => {
-						if (e.key == 'Enter') {
-							submit(value);
-						}
-					}}
-				/>
-				<div class="total">
-					/ {total_page}
-				</div>
-			</div>
-
-			<div class="width_helper" bind:clientWidth={width}>
-				<span>
-					{#if value}
-						{value}
-					{:else}
-						0
-					{/if}
-				</span>
+		<div class="input">
+			<input
+				style:width="calc({width}px + 4px)"
+				type="text"
+				oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+				bind:value
+				on:keypress={(e) => {
+					if (e.key == 'Enter') {
+						submit(value);
+					}
+				}}
+			/>
+			<div class="total">
 				/ {total_page}
 			</div>
+		</div>
 
-			{#if value != _value}
-				<button
-					on:click={() => {
-						submit(value);
-					}}
-				>
-					&gt;&gt;
-				</button>
-			{/if}
+		<div class="width_helper" bind:clientWidth={width}>
+			<span>
+				{#if value}
+					{value}
+				{:else}
+					0
+				{/if}
+			</span>
+			/ {total_page}
+		</div>
 
-			{#if _value < total_page}
-				<button
-					on:click={() => {
-						submit(parseInt(_value) + 1);
-					}}
-				>
-					&gt;
-				</button>
-			{/if}
-		</section>
-	</div>
+		{#if value != _value}
+			<button
+				on:click={() => {
+					submit(value);
+				}}
+			>
+				&gt;&gt;
+			</button>
+		{/if}
+
+		{#if _value < total_page}
+			<button
+				on:click={() => {
+					submit(parseInt(_value) + 1);
+				}}
+			>
+				&gt;
+			</button>
+		{/if}
+	</section>
 {/if}
 
 <style>
-	.center {
-		width: min(100%, 1200px);
-		margin: 0 auto;
-		padding: 0 var(--sp2);
-	}
-
-	hr {
-		border-color: var(--ac3);
-	}
-
 	section {
 		--size: var(--sp1);
 		--height: 40px;
@@ -118,15 +106,15 @@
 		display: flex;
 
 		width: fit-content;
-		margin: auto;
+		margin: var(--sp2) auto;
 		border-radius: var(--sp0);
 		overflow: hidden;
 
-		color: var(--ac3);
-		outline: 2px solid var(--ac4);
+		color: var(--ac4);
+		outline: 2px solid var(--ac7);
 	}
 	section:hover {
-		outline-color: var(--ac3);
+		outline-color: var(--ac4);
 	}
 	section:has(input:focus) {
 		outline-color: var(--ac1);
@@ -144,7 +132,7 @@
 		border: none;
 
 		color: var(--ac1);
-		background-color: var(--ac5);
+		background-color: var(--ac8);
 	}
 
 	.total {
@@ -172,7 +160,7 @@
 	}
 
 	button:hover {
-		background-color: var(--cl1_b);
+		background-color: var(--cl1_d);
 		color: var(--ac6_);
 	}
 </style>
