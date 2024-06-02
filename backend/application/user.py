@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from .postgres import db_open, db_close
 from .tools import token_to_user
 from .log import log

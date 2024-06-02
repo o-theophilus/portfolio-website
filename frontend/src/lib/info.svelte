@@ -37,7 +37,9 @@
 					x.fn();
 				}}
 			>
-				<Icon icon={x.icon} />
+				{#if x.icon}
+					<Icon icon={x.icon} />
+				{/if}
 				{x.name}
 			</Button>
 		{/each}

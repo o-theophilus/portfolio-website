@@ -13,8 +13,8 @@
 
 <style>
 	.fold {
-		transition: var(--trans1);
 		transform: rotate(180deg);
+		transition: transform var(--trans1);
 	}
 	.open {
 		transform: rotate(270deg);

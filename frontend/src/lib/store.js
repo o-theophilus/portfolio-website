@@ -4,9 +4,11 @@ import { invalidate } from '$app/navigation';
 
 export const user = writable();
 export const settings = writable({});
-export const module = writable();
-export const loading = writable(false);
 export const portal = writable();
+
+export const loading = writable(false);
+export const module = writable();
+export const notification = writable();
 
 // tools
 export const isMobile = writable(false);

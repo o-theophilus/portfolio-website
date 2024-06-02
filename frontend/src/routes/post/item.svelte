@@ -40,8 +40,7 @@
 		border-radius: var(--sp1);
 		border: 2px solid transparent;
 
-		transition: all var(--animTime1);
-		transition-timing-function: ease-in-out;
+		transition: background-color var(--trans1), border-color var(--trans1);
 	}
 	a:hover {
 		border-color: var(--ac2);
@@ -75,9 +74,11 @@
 	.description {
 		margin: var(--sp2) 0;
 		color: var(--ac1);
+		transition: color var(--trans1);
 	}
-
+	
 	.date {
 		font-size: small;
+		transition: color var(--trans1);
 	}
 </style>

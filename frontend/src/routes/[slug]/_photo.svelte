@@ -266,7 +266,7 @@
 		width: 100%;
 		border-radius: var(--sp1);
 		outline: 2px solid transparent;
-		transition: outline-color var(--trans1);
+		transition: outline-color var(--trans1), transform var(--trans1);
 	}
 
 	.line {

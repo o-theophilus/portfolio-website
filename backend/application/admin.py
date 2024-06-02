@@ -133,13 +133,13 @@ def set_highlight(key):
             "error":  "unauthorized access"
         })
 
-    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    cur.execute('SELECT * FROM post WHERE key = %s OR slug = %s;', (key, key))
     post = cur.fetchone()
     if not post or post["status"] != "publish":
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "not found"
         })
 
     cur.execute("SELECT * FROM setting WHERE key = 'highlight';",)

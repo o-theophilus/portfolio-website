@@ -4,20 +4,21 @@
 	import { token } from '$lib/cookie.js';
 
 	import { template } from './footer.form.template.js';
-	import Input from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Info from '$lib/info.svelte';
+	import IG from '$lib/input_group_new.svelte';
 
 	import EmailTemplate from '$lib/email_template.svelte';
 	let email_template;
 
 	let form = {};
-	if ($user.status == 'verified') {
-		form.name = $user.name;
-		form.email = $user.email;
-	}
+	let msgStore = '';
 	let error = {};
+	// if ($user.login) {
+	// form.name = $user.name;
+	// form.email = $user.email;
+	// }
 
 	const clear_error = () => {
 		error = {};
@@ -46,7 +47,7 @@
 		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
 		$loading = 'Sending Email . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/send_email`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/contact`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -59,15 +60,14 @@
 
 		if (resp.status == 200) {
 			form = {};
-			_form.reset();
 
 			$module = {
 				module: Info,
 				title: 'Message Sent',
 				message: `
-					Thank you for contacting us,
+					Thank you for contacting me,
 					<br/>
-					We will get back to you shortly
+					I will get back to you shortly
 					`,
 				buttons: [
 					{
@@ -80,29 +80,42 @@
 			};
 		} else {
 			error = resp;
-			// throw new Error(data.message);
 		}
 	};
-
-	let msgStore = '';
-	let _form;
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off" bind:this={_form}>
+<form on:submit|preventDefault novalidate autocomplete="off">
 	{#if error.error}
 		<div class="err">
 			{error.error}
 		</div>
 	{/if}
 
-	<Input name="full name" error={error.name} let:id svg="username">
-		<input placeholder="Your Name" type="text" {id} bind:value={form.name} />
-	</Input>
-
-	<Input name="email address" error={error.email} let:id svg="emailAddress">
-		<input placeholder="Your Email Address" type="text" {id} bind:value={form.email} />
-	</Input>
-	<Input name="message" error={error.message} let:id>
+	<IG
+		name="Full name"
+		icon="person"
+		bind:value={form.name}
+		error={error.name}
+		type="text"
+		placeholder="Your name"
+	/>
+	<IG
+		name="Email Address"
+		icon="email"
+		bind:value={form.email}
+		error={error.email}
+		type="text"
+		placeholder="Your email address"
+	/>
+	<IG
+		name="Message"
+		bind:value={form.message}
+		error={error.message}
+		type="textarea"
+		icon="message"
+		placeholder="Your message"
+		on:input={() => (msgStore = form.message)}
+	>
 		<svelte:fragment slot="label">
 			<select bind:value={form.message}>
 				<option value={msgStore}>Message</option>
@@ -110,15 +123,10 @@
 					<option value={temp.text}>{temp.name}</option>
 				{/each}
 			</select>
+			<div class="gap" />
 		</svelte:fragment>
+	</IG>
 
-		<textarea
-			placeholder="Your Message"
-			{id}
-			bind:value={form.message}
-			on:input={() => (msgStore = form.message)}
-		/>
-	</Input>
 	<Button size="wide" on:click={validate}>
 		Send
 		<Icon icon="send" />
@@ -136,4 +144,7 @@
 </div>
 
 <style>
+	.gap {
+		height: var(--sp1);
+	}
 </style>

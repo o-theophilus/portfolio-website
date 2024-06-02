@@ -35,7 +35,7 @@
 		color: var(--ac2);
 		text-decoration: none;
 
-		transition: var(--trans1);
+		transition: border-color var(--trans1), color var(--trans1), font-weight var(--trans1);
 	}
 
 	button:hover,

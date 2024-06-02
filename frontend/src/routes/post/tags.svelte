@@ -55,7 +55,7 @@
 	.line {
 		margin: var(--sp2) 0;
 		display: flex;
-		justify-content: center;
+		/* justify-content: center; */
 		flex-wrap: wrap;
 		gap: var(--sp0);
 	}

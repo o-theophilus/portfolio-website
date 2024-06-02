@@ -4,11 +4,12 @@
 
 	import './layout/var.css';
 	import './layout/main.css';
-	import './layout/form.css';
-	import Module from './layout/module.svelte';
-	import Loading from './layout/loading.svelte';
 	import Nav from './layout/nav.svelte';
 	import Footer from './layout/footer.svelte';
+
+	import Module from './layout/_module.svelte';
+	import Loading from './layout/_loading.svelte';
+	import Notification from './layout/_notification.svelte';
 
 	export let data;
 	$user = data.locals.user;
@@ -16,18 +17,22 @@
 	$settings.highlight = data.locals.posts;
 </script>
 
-<main class:dark={$user.setting_theme == 'dark'}>
+<main class:dark={$user && $user.setting_theme == 'dark'}>
 	<Nav />
 	<slot />
 	<Footer />
 
 	<Module />
 	<Loading />
+	<Notification />
 </main>
 
 <style>
 	main {
+		position: relative;
+
 		background-color: var(--ac8);
 		color: var(--ac2);
+		transition: background-color var(--trans1), color var(--trans1);
 	}
 </style>

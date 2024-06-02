@@ -25,23 +25,25 @@
 	$: is_home = $page.url.pathname == '/';
 </script>
 
-<button
-	class:is_home
-	on:click={() => {
-		submit();
-		$user.setting_theme = $user.setting_theme == 'dark' ? 'light' : 'dark';
-	}}
-	on:keypress
->
-	<div class="switch" class:dark={$user.setting_theme == 'dark'}>
-		<div class="state">
-			<Icon icon="light_mode" size="16" />
+{#if $user}
+	<button
+		class:is_home
+		on:click={() => {
+			submit();
+			$user.setting_theme = $user.setting_theme == 'dark' ? 'light' : 'dark';
+		}}
+		on:keypress
+	>
+		<div class="switch" class:dark={$user.setting_theme == 'dark'}>
+			<div class="state">
+				<Icon icon="light_mode" size="16" />
+			</div>
+			<div class="state">
+				<Icon icon="dark_mode" size="16" />
+			</div>
 		</div>
-		<div class="state">
-			<Icon icon="dark_mode" size="16" />
-		</div>
-	</div>
-</button>
+	</button>
+{/if}
 
 <style>
 	button,
@@ -66,8 +68,9 @@
 		margin: auto;
 		background-color: transparent;
 		border: none;
+		cursor: pointer;
 
-		transition: background-color var(--trans1), color var(--trans1);
+		transition: color var(--trans1), background-color var(--trans1);
 	}
 
 	.is_home {

@@ -24,7 +24,7 @@
 {:else if type == 'datetime'}
 	<input bind:value {id} type="datetime-local" {placeholder} {min} {disabled} />
 {:else if type == 'textarea'}
-	<textarea bind:value {id} {placeholder} on:blur {disabled} />
+	<textarea bind:value {id} {placeholder} on:blur on:input {disabled} />
 {/if}
 
 <style>
@@ -32,13 +32,15 @@
 	textarea {
 		width: 100%;
 
-		padding: var(--sp1);
+		padding: var(--sp2);
 		border-radius: var(--sp0);
 		border: none;
 
-		outline: 2px solid var(--ac7);
-		background-color: var(--ac8);
+		outline: 2px solid transparent;
+		background-color: var(--ac7);
 		color: var(--ac1);
+
+		transition: outline-color var(--trans1);
 	}
 
 	:disabled {
@@ -47,7 +49,7 @@
 
 	input:hover:not(:disabled),
 	textarea:hover:not(:disabled) {
-		outline-color: var(--ac4);
+		outline-color: var(--ac1);
 	}
 
 	input:focus,

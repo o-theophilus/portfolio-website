@@ -15,7 +15,7 @@
 	<div class="block">
 		<a href="/">
 			<SVG type="logo" />
-			<strong> Loup </strong>
+			Loup
 		</a>
 		<div class="links">
 			<Link {home} href="/post">Post</Link>
@@ -64,8 +64,11 @@
 		color: var(--ac1);
 		fill: var(--cl1);
 		font-size: large;
+		font-weight: 800;
 
 		text-decoration: none;
+
+		transition: color var(--trans1);
 	}
 
 	.block,

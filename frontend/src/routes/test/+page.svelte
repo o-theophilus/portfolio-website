@@ -4,7 +4,6 @@
 	import Meta from '$lib/meta.svelte';
 	import Button from '$lib/button/button.svelte';
 
-	import Template from '$lib/email_template.forgot.svelte';
 
 	// export let data;
 	let user = {};
@@ -14,7 +13,7 @@
 
 <Content>
 	<!-- <Button class="secondary" on:click={async () => {}}>Logout</Button> -->
-	<Template />
+	Hello
 </Content>
 
 <style>

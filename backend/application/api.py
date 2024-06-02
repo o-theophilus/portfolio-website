@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, current_app, request
+from flask import Blueprint, jsonify, request
 from . import db
 import re
 import os
@@ -50,9 +50,8 @@ def send_email():
         message=request.json["message"])
 
     send_mail(
-        current_app.config["DEFAULT_ADMIN"][1],
-        current_app.config["DEFAULT_ADMIN"][0],
-        f"{request.json['name']} from Designdev",
+        os.environ["MAIL_USERNAME"],
+        f"{request.json['name']} from Loup",
         message
     )
 

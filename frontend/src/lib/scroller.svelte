@@ -16,10 +16,9 @@
 			goto(href);
 		}
 	}}
-	on:keypress
 >
 	<div class="highlight" />
-	<div class="icon">
+	<div class="content">
 		<slot />
 	</div>
 </button>
@@ -37,33 +36,32 @@
 		width: var(--size);
 		height: var(--size);
 
-		fill: var(--ac1);
-		color: var(--ac1);
-
 		background-color: transparent;
+		transition: border-color var(--animTime1) ease-in-out;
 	}
 	.invert {
-		fill: var(--ac8);
-		border-color: var(--ac8);
+		border-color: var(--ac8_);
 	}
 	button:hover {
-		fill: var(--ac8_);
-		color: var(--ac8_);
 		border-color: transparent;
 	}
-	button:hover .highlight {
-		width: var(--size);
-		height: var(--size);
-
-		background-color: var(--cl1);
-		opacity: 1;
+	button:hover .content {
+		color: var(--ac8_);
 	}
-	.icon {
+
+	.content {
 		position: absolute;
 		display: flex;
 		justify-content: center;
 		align-items: center;
+
+		color: var(--ac1);
+		transition: color var(--animTime1) ease-in-out;
 	}
+	.invert .content {
+		color: var(--ac8_);
+	}
+
 	.highlight {
 		position: absolute;
 		width: 0%;
@@ -74,7 +72,16 @@
 		background-color: transparent;
 		border-radius: 50%;
 
-		transition: all var(--animTime1);
+		transition-property: width, height, background-color, opacity;
+		transition-duration: var(--animTime1);
 		transition-timing-function: ease-in-out;
+	}
+
+	button:hover .highlight {
+		width: var(--size);
+		height: var(--size);
+
+		background-color: var(--cl1);
+		opacity: 1;
 	}
 </style>

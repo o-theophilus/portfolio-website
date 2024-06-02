@@ -1,15 +1,15 @@
 <script>
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { module, settings } from '$lib/store.js';
+	import { module } from '$lib/store.js';
 
-	import Parallax from './home/1_hero_parallax.svelte';
-	import Hero_Text from './home/1_hero_text.svelte';
-	import Home from './home/2_what_i_do.svelte';
+	import Parallax from './home/parallax.svelte';
+	import WelcomeText from './home/welcome_text.svelte';
+	import WhatIDo from './home/what_i_do.svelte';
 	import Highlight from './home/highlight.svelte';
-	import AboutMe from './home/4_about_me.svelte';
+	import AboutMe from './home/about_me.svelte';
 	import Skills from './home/skill.svelte';
-	import AboutWebsite from './home/6_about_website.svelte';
+	import AboutWebsite from './home/about_website.svelte';
 	import Scroller from '$lib/scroller.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Icon from '$lib/icon.svelte';
@@ -50,16 +50,16 @@
 <section>
 	<Parallax />
 	<div class="text">
-		<Hero_Text />
+		<WelcomeText />
 	</div>
 	<div class="scroller">
 		<Scroller query=".scroll_1" invert>
-			<Icon icon="arrow_downward" size="20" />
+			<Icon icon="arrow_downward" />
 		</Scroller>
 	</div>
 	<div class="grad" />
 </section>
-<Home />
+<WhatIDo />
 <br /><br />
 <Highlight />
 <br /><br />

@@ -51,13 +51,10 @@
 		position: absolute;
 		left: 0;
 
-		transition: var(--trans1);
+		transition: left var(--trans1);
 	}
 	.active .switch {
 		left: 100%;
-	}
-	.active .switch .knob {
-		left: -100%;
 	}
 
 	.knob {
@@ -70,8 +67,12 @@
 		background-color: var(--cl1);
 		color: var(--ac8_);
 
-		transition: var(--trans1);
+		transition: background-color var(--trans1), left var(--trans1);
 	}
+	.active .switch .knob {
+		left: -100%;
+	}
+
 	button:not(:disabled) .knob:hover {
 		background-color: var(--cl1_d);
 	}

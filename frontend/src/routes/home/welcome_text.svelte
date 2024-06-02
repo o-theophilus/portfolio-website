@@ -31,22 +31,27 @@
 
 <Content>
 	<div class="dynamic">
-		<strong>
-			Welcome to my {#if visible}<span class="highlight" transition:typewriter>{states[count]}</span
-				>
-			{/if} Website
-		</strong>
+		Welcome to my
+		{#if visible}
+			<span class="highlight" transition:typewriter>
+				{states[count]}
+			</span>
+		{/if}
+		Website
 	</div>
 </Content>
 
 <style>
-	.highlight {
-		color: var(--cl1);
-	}
-
 	.dynamic {
 		color: var(--ac8);
 		font-size: xx-large;
+		font-weight: 800;
 		text-align: center;
+
+		transition: color var(--trans1);
+	}
+
+	.highlight {
+		color: var(--cl1);
 	}
 </style>

@@ -1,7 +1,7 @@
 <script>
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { loading, module, settings } from '$lib/store.js';
+	import { loading, notification, settings } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -9,8 +9,12 @@
 	import Icon from '$lib/icon.svelte';
 
 	let posts = [...$settings.highlight];
-	let init_order = [...posts];
+	let init_order = [...$settings.highlight];
 	let error = {};
+
+	$: not_changed =
+		`${posts.map((obj) => JSON.stringify(obj))}` ==
+		`${init_order.map((obj) => JSON.stringify(obj))}`;
 
 	const move_down = (key, dir = true) => {
 		const index = posts.findIndex((x) => x.key == key);
@@ -33,13 +37,13 @@
 		posts[index] = temp;
 	};
 
-	const remove = async (key) => {
+	const remove = (key) => {
 		posts = posts.filter((i) => i.key != key);
 	};
 
-	const reset = async () => {
-		console.log(1);
+	export const reset = () => {
 		posts = [...$settings.highlight];
+		init_order = [...$settings.highlight];
 	};
 
 	const submit = async () => {
@@ -61,69 +65,67 @@
 
 		if (resp.status == 200) {
 			$settings.highlight = resp.posts;
-			$module = null;
+
+			$notification = {
+				status: 200,
+				message: 'Highlight updated'
+			};
 		} else {
 			error = resp;
 		}
 	};
 </script>
 
-<div class="comp">
-	<strong class="big"> Edit Highlights </strong>
-	{#each posts as x, i (x.key)}
-		<div class="line" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<div class="post_name">
-				{x.title}
-			</div>
-
-			<BRound
-				icon="arrow_upward"
-				disabled={i == 0}
-				on:click={() => {
-					move_down(x.key, false);
-				}}
-			/>
-			<BRound
-				icon="arrow_downward"
-				disabled={i == posts.length - 1}
-				on:click={() => {
-					move_down(x.key);
-				}}
-			/>
-			<BRound
-				icon="delete"
-				extra="hover_red"
-				on:click={() => {
-					remove(x.key);
-				}}
-			/>
+{#each posts as x, i (x.key)}
+	<div class="line" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
+		<div class="post_name">
+			{x.title}
 		</div>
-	{/each}
 
-	<div class="line">
-		<Button class="tiny" disabled={init_order == posts} on:click={submit}>
-			Submit
-			<Icon icon="send" />
-		</Button>
-		<Button class="tiny" disabled={init_order == posts} on:click={reset}>
-			Reset
-			<Icon icon="history" />
-		</Button>
+		<BRound
+			icon="arrow_upward"
+			disabled={i == 0}
+			on:click={() => {
+				move_down(x.key, false);
+			}}
+		/>
+		<BRound
+			icon="arrow_downward"
+			disabled={i == posts.length - 1}
+			on:click={() => {
+				move_down(x.key);
+			}}
+		/>
+		<BRound
+			icon="delete"
+			extra="hover_red"
+			on:click={() => {
+				remove(x.key);
+			}}
+		/>
 	</div>
+{/each}
 
-	{#if error.error}
-		<br />
-		<span class="error">
-			{error.error}
-		</span>
-		<br />
-	{/if}
+<div class="line">
+	<Button class="tiny" disabled={not_changed} on:click={submit}>
+		<Icon icon="save" />
+		Save
+	</Button>
+	<Button class="tiny" disabled={not_changed} on:click={reset}>
+		<Icon icon="history" />
+		Reset
+	</Button>
 </div>
 
+{#if error.error}
+	<br />
+	<span class="error">
+		{error.error}
+	</span>
+	<br />
+{/if}
+
 <style>
-	.comp {
-		padding: var(--sp3);
-	}
 	.line {
 		display: flex;
 		gap: var(--sp1);

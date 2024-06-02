@@ -45,7 +45,7 @@
 		color: var(--ac2);
 		cursor: pointer;
 
-		transition: var(--trans1);
+		transition: background-color var(--trans1), color var(--trans1);
 	}
 
 	.large {

@@ -5,20 +5,17 @@ input,
 button {
 	font-family: "Josefin Sans", sans-serif;
 	font-size: 16px;
+
 }
 
 * {
 	line-height: 150%;
 	margin: 0;
 	padding: 0;
-
+	
 	box-sizing: border-box;
 	outline: none;
 	-webkit-tap-highlight-color: transparent;
-
-	transition-property: background-color, border-color, opacity, outline;
-	transition-duration: 0.2s;
-	transition-timing-function: ease-in-out;
 }
 
 input:-webkit-autofill,
@@ -38,3 +35,19 @@ hr {
 	border-top: 2px solid var(--ac6);
 }
 
+/************************** form ******************/
+
+select {	
+	padding: var(--sp2);
+	border-radius: var(--sp0);
+	outline: 2px solid transparent;
+	
+	border: none;
+	background-color: var(--ac7);
+	color: var(--ac2);
+
+	transition: outline-color var(--trans1);
+}
+select:hover {
+	outline-color: var(--ac1);
+}

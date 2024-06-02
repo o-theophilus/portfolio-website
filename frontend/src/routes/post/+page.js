@@ -21,7 +21,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
 		return _state[i].data
 	}
 
-	loading.set(true)
+	// loading.set(true)
 	let backend = new URL(`${import.meta.env.VITE_BACKEND}/post`)
 	backend.search = _state[i].search
 	let a = await parent();

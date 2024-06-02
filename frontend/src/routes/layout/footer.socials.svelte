@@ -54,8 +54,7 @@
 
 		fill: var(--ac4);
 
-		transition: all var(--animTime1);
-		transition-timing-function: ease-in-out;
+		transition: fill var(--trans1);
 	}
 
 	a:hover {

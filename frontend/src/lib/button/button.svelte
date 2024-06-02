@@ -32,7 +32,7 @@
 		align-items: center;
 		gap: var(--sp1);
 
-		padding: var(--sp1) var(--sp2);
+		padding: var(--sp2);
 		border: none;
 		border-radius: var(--sp0);
 		width: fit-content;
@@ -44,6 +44,8 @@
 		text-align: center;
 		font-weight: 700;
 		cursor: pointer;
+
+		transition: background-color var(--trans1), color var(--trans1), outline-color var(--trans1);
 	}
 
 	.large {
@@ -76,8 +78,11 @@
 	}
 
 	:not(:disabled):hover {
-		background-color: var(--cl1_d);
+		background-color: var(--cl1);
 		color: var(--ac8_);
+	}
+	:not(:disabled).primary:hover {
+		background-color: var(--cl1_d);
 	}
 
 	:not(:disabled):not(.primary).hover_red:hover {
@@ -86,6 +91,7 @@
 
 	:not(:disabled):not(.primary).outline {
 		outline: 2px solid var(--ac6);
+		outline-offset: -2px;
 	}
 
 	:not(:disabled):not(.primary).outline:hover {

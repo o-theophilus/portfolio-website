@@ -32,6 +32,8 @@
 		cursor: pointer;
 
 		fill: currentColor;
+
+		transition: color var(--trans1);
 	}
 	.small {
 		font-size: small;
@@ -39,5 +41,6 @@
 
 	:hover {
 		color: var(--cl1);
+		text-decoration: none;
 	}
 </style>
