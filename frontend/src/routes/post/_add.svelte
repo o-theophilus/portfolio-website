@@ -3,9 +3,9 @@
 	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/input_group.svelte';
+	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 	import Icon from '$lib/icon.svelte';
 
 	let form = {};
@@ -35,7 +35,7 @@
 
 		if (resp.status == 200) {
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: 'Post Created',
 				buttons: [
 					{
@@ -54,15 +54,20 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Add Post </strong>
+	<strong class="ititle"> Add Post </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
 		</span>
 	{/if}
-	<Input name="title" error={error.title} let:id>
-		<input placeholder="Title here" type="text" {id} bind:value={form.title} />
-	</Input>
+	<IG
+		name="title"
+		icon="edit"
+		error={error.title}
+		placeholder="Title here"
+		type="text"
+		bind:value={form.title}
+	/>
 
 	<Button on:click={validate}>
 		Submit
@@ -73,8 +78,5 @@
 <style>
 	form {
 		padding: var(--sp3);
-	}
-	strong {
-		text-transform: capitalize;
 	}
 </style>

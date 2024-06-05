@@ -3,6 +3,8 @@
 	import { onMount } from 'svelte';
 	import { set_state } from '$lib/store.js';
 
+	import Icon from '$lib/icon.svelte';
+
 	let _value, value, width;
 	export let total_page = 1;
 
@@ -44,7 +46,7 @@
 					submit(_value - 1);
 				}}
 			>
-				&lt;
+				<Icon icon="arrow_back" />
 			</button>
 		{/if}
 
@@ -82,7 +84,7 @@
 					submit(value);
 				}}
 			>
-				&gt;&gt;
+				<Icon icon="keyboard_double_arrow_right" />
 			</button>
 		{/if}
 
@@ -92,7 +94,7 @@
 					submit(parseInt(_value) + 1);
 				}}
 			>
-				&gt;
+				<Icon icon="arrow_forward" />
 			</button>
 		{/if}
 	</section>
@@ -100,22 +102,24 @@
 
 <style>
 	section {
-		--size: var(--sp1);
-		--height: 40px;
+		--size: var(--sp3);
+		--height: 48px;
 
 		display: flex;
+		gap: var(--sp0);
 
 		width: fit-content;
 		margin: var(--sp2) auto;
 		border-radius: var(--sp0);
-		overflow: hidden;
 
-		color: var(--ac4);
-		outline: 2px solid var(--ac7);
+		color: var(--ac3);
+		outline: 2px solid transparent;
+		padding: var(--sp0);
+		background-color: var(--ac5);
+
+		transition: outline-color var(--trans);
 	}
-	section:hover {
-		outline-color: var(--ac4);
-	}
+	section:hover,
 	section:has(input:focus) {
 		outline-color: var(--ac1);
 	}
@@ -132,7 +136,7 @@
 		border: none;
 
 		color: var(--ac1);
-		background-color: var(--ac8);
+		background-color: transparent;
 	}
 
 	.total {
@@ -149,18 +153,25 @@
 	}
 
 	button {
-		aspect-ratio: 1/1;
-		height: var(--height);
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
-		background-color: var(--ac6);
+		height: var(--height);
+		aspect-ratio: 1/1;
+
+		border-radius: var(--sp0);
+		background-color: var(--ac4);
 		color: var(--ac2);
 		border: none;
 		cursor: pointer;
 		font-weight: 700;
+
+		transition: color var(--trans), background-color var(--trans);
 	}
 
 	button:hover {
-		background-color: var(--cl1_d);
-		color: var(--ac6_);
+		background-color: var(--cl1);
+		color: var(--ac5_);
 	}
 </style>

@@ -17,7 +17,7 @@
 	<br />
 	<section>
 		<div>
-			<strong class="big">{$page.status}</strong>
+			<strong class="ititle">{$page.status}</strong>
 			<br />
 			{error}
 		</div>

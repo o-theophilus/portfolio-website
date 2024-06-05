@@ -7,7 +7,7 @@
 <Content>
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
-			<strong class="big">About Me</strong>
+			<strong class="ititle">About Me</strong>
 			<br /><br />
 
 			My name is <strong>Theophilus</strong>, and I am a self-taught programmer and designer with a
@@ -38,9 +38,5 @@
 	.intersecting {
 		opacity: 1;
 		transform: translate(0, 0) scale(1);
-	}
-
-	.big {
-		color: var(--ac1);
 	}
 </style>

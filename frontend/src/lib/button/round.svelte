@@ -41,11 +41,11 @@
 		height: var(--size);
 		border-radius: 50%;
 
-		background-color: var(--ac7);
+		background-color: var(--ac4);
 		color: var(--ac2);
 		cursor: pointer;
 
-		transition: background-color var(--trans1), color var(--trans1);
+		transition: background-color var(--trans), color var(--trans);
 	}
 
 	.large {
@@ -53,7 +53,7 @@
 	}
 
 	:disabled {
-		background-color: var(--ac8);
+		background-color: var(--ac5);
 		color: var(--ac2);
 		box-shadow: unset;
 
@@ -63,13 +63,13 @@
 
 	:not(:disabled):hover {
 		background-color: var(--cl1_d);
-		color: var(--ac8_);
+		color: var(--ac5_);
 	}
 	:not(:disabled).hover_red:hover {
 		background-color: var(--cl2);
 	}
 
 	:not(:disabled).outline {
-		outline: 2px solid var(--ac7);
+		outline: 2px solid var(--ac4);
 	}
 </style>

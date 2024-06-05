@@ -37,19 +37,20 @@
 		border-radius: var(--sp0);
 		width: fit-content;
 
-		background-color: var(--ac7);
+		background-color: var(--ac4);
 
 		color: var(--ac2);
+		fill: currentColor;
 		text-decoration: none;
 		text-align: center;
 		font-weight: 700;
 		cursor: pointer;
 
-		transition: background-color var(--trans1), color var(--trans1), outline-color var(--trans1);
+		transition: background-color var(--trans), color var(--trans), outline-color var(--trans);
 	}
 
 	.large {
-		padding: var(--sp2) var(--sp4);
+		padding: var(--sp2) var(--sp3);
 		font-size: large;
 	}
 	.small {
@@ -64,12 +65,12 @@
 
 	.primary {
 		background-color: var(--cl1);
-		color: var(--ac8_);
+		color: var(--ac5_);
 		box-shadow: 0 -4px 0 var(--cl1_d) inset;
 	}
 
 	:disabled {
-		background-color: var(--ac7);
+		background-color: var(--ac4);
 		color: var(--ac2);
 		box-shadow: unset;
 
@@ -79,7 +80,7 @@
 
 	:not(:disabled):hover {
 		background-color: var(--cl1);
-		color: var(--ac8_);
+		color: var(--ac5_);
 	}
 	:not(:disabled).primary:hover {
 		background-color: var(--cl1_d);
@@ -90,7 +91,7 @@
 	}
 
 	:not(:disabled):not(.primary).outline {
-		outline: 2px solid var(--ac6);
+		outline: 2px solid var(--ac3);
 		outline-offset: -2px;
 	}
 

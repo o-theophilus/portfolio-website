@@ -9,7 +9,7 @@
 </script>
 
 <section class="content">
-	<strong class="big"> Share </strong>
+	<strong class="ititle"> Share </strong>
 	<div class="line">
 		<Button
 			href="https://www.facebook.com/sharer.php?u={$page.url.href}"

@@ -52,9 +52,9 @@
 
 		border-radius: 50%;
 
-		fill: var(--ac4);
+		fill: var(--ac3);
 
-		transition: fill var(--trans1);
+		transition: fill var(--trans);
 	}
 
 	a:hover {

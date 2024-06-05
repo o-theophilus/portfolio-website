@@ -18,8 +18,10 @@
 	<div class="img">
 		<img src={post.photos[0] || ''} alt={post.title} onerror="this.src='/site/no_photo.png'" />
 	</div>
-	<div class="title">
-		{post.title}
+	<div class="ititle">
+		<strong>
+			{post.title}
+		</strong>
 	</div>
 	<div class="description">
 		{post.description}
@@ -33,14 +35,14 @@
 	a {
 		padding: var(--sp3);
 
-		background-color: var(--ac8);
+		background-color: var(--ac5);
 		color: var(--ac2);
 		text-decoration: none;
 
 		border-radius: var(--sp1);
 		border: 2px solid transparent;
 
-		transition: background-color var(--trans1), border-color var(--trans1);
+		transition: background-color var(--trans), border-color var(--trans);
 	}
 	a:hover {
 		border-color: var(--ac2);
@@ -56,29 +58,27 @@
 		width: 100%;
 		object-fit: cover;
 		aspect-ratio: 1 / 1;
-		background-color: var(--ac7);
+		background-color: var(--ac4);
 
-		transition: transform var(--animTime3);
+		transition: transform var(--aTime);
 		transition-timing-function: ease-in-out;
 	}
 	a:hover img {
 		transform: scale(1.2);
 	}
-	.title {
-		margin: var(--sp2) 0;
+	.ititle {
 		color: var(--cl1);
-		font-size: large;
-		font-weight: 800;
+		margin: var(--sp2) 0;
 	}
 
 	.description {
 		margin: var(--sp2) 0;
 		color: var(--ac1);
-		transition: color var(--trans1);
+		transition: color var(--trans);
 	}
-	
+
 	.date {
 		font-size: small;
-		transition: color var(--trans1);
+		transition: color var(--trans);
 	}
 </style>

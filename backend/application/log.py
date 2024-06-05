@@ -68,6 +68,22 @@ def log(
     })
 
 
+def search_query(cur):
+    cur.execute("""
+        SELECT DISTINCT ON (entity_type, action) entity_type, action
+        FROM log;
+    """)
+
+    actions = {"all": ["all"]}
+    for x in cur.fetchall():
+        if x["entity_type"] in actions:
+            actions[x["entity_type"]].append(x["action"])
+        else:
+            actions[x["entity_type"]] = ["all", x["action"]]
+
+    return actions
+
+
 @bp.get("/log")
 def get_many():
     con, cur = db_open()
@@ -108,15 +124,16 @@ def get_many():
         SELECT
             log.*,
             "user".name AS user_name,
-            COALESCE(usr.name, item.name, log.entity_key
+            COALESCE(usr.name, post.title, log.entity_key
             ) AS entity_name,
-            COUNT(*) OVER() AS total_items
+            COUNT(*) OVER() AS total_page
         FROM log
         LEFT JOIN "user" ON log.user_key = "user".key
         LEFT JOIN "user" usr ON log.entity_key = usr.key
             AND (log.entity_type = 'user' OR log.entity_type = 'admin')
-        LEFT JOIN item ON log.entity_key = item.key
-            AND (log.entity_type = 'item' OR log.entity_type = 'advert')
+        LEFT JOIN
+            post ON log.entity_key = post.key
+            AND log.entity_type = 'post'
         WHERE
             (%s = '' OR CONCAT_WS(
                 ', ', log.user_key, "user".name, "user".email
@@ -124,7 +141,7 @@ def get_many():
             AND (%s = 'all' OR log.entity_type = %s)
             AND (%s = 'all' OR log.action = %s)
             AND (%s = '' OR CONCAT_WS(
-                ', ', log.entity_key, usr.name, usr.email, item.name
+                ', ', log.entity_key, usr.name, usr.email, post.title
             ) ILIKE %s)
         ORDER BY log.date DESC
         LIMIT %s OFFSET %s;
@@ -144,36 +161,5 @@ def get_many():
         "status": 200,
         "logs": logs,
         "search_query": sq,
-        "total_page": ceil(logs[0]["total_items"] / page_size) if logs else 0
+        "total_page": ceil(logs[0]["total_page"] / page_size) if logs else 0
     })
-
-
-def search_query(cur):
-    cur.execute("""
-        SELECT DISTINCT ON (entity_type, action) entity_type, action
-        FROM log;
-    """)
-
-    actions = {"all": ["all"]}
-    for x in cur.fetchall():
-        if x["entity_type"] in actions:
-            actions[x["entity_type"]].append(x["action"])
-        else:
-            actions[x["entity_type"]] = ["all", x["action"]]
-
-    return actions
-
-
-def get_voucher_log(cur, voucher_key):
-    cur.execute("""
-        SELECT
-            log.*,
-            "user".name AS user_name,
-            log.entity_key AS entity_name
-        FROM log
-        LEFT JOIN "user" ON log.user_key = "user".key
-        WHERE log.entity_key = %s
-        ORDER BY log.date DESC
-        LIMIT 10;
-    """, (voucher_key,))
-    return cur.fetchall()

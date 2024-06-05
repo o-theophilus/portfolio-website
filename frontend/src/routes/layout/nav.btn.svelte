@@ -35,7 +35,7 @@
 		color: var(--ac2);
 		text-decoration: none;
 
-		transition: border-color var(--trans1), color var(--trans1), font-weight var(--trans1);
+		transition: border-color var(--trans), color var(--trans), font-weight var(--trans);
 	}
 
 	button:hover,
@@ -46,11 +46,11 @@
 	}
 
 	.home {
-		color: var(--ac8);
+		color: var(--ac5);
 	}
 	a.home:hover,
 	button.home:hover {
-		color: var(--ac8);
+		color: var(--ac5);
 	}
 
 	.active {

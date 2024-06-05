@@ -50,7 +50,7 @@
 </script>
 
 <section>
-	<strong class="big"> Add Rating </strong>
+	<strong class="ititle"> Add Rating </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
@@ -142,7 +142,7 @@
 		border-radius: var(--sp1);
 		width: 5px;
 		height: 70px;
-		background-color: var(--ac4);
+		background-color: var(--ac3);
 	}
 
 	.b0:hover,
@@ -155,7 +155,7 @@
 		height: 50px;
 
 		border: none;
-		background-color: var(--ac7);
+		background-color: var(--ac4);
 
 		cursor: pointer;
 	}

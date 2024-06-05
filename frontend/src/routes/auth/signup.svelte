@@ -2,12 +2,12 @@
 	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/input_group.svelte';
+	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Link from '$lib/button/link.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Password from './password_checker.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 	import Login from './login.svelte';
 	import EmailTemplate from './confirm.email_template.svelte';
 
@@ -66,7 +66,7 @@
 
 		if (resp.status == 200) {
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: `A confirmation email has been sent to <b>${form.email}</b>`,
 				buttons: [
 					{
@@ -84,35 +84,56 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Signup </strong>
+	<strong class="ititle"> Signup </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
 		</span>
 	{/if}
-	<Input name="name" error={error.name} let:id>
-		<input placeholder="name here" type="text" {id} bind:value={form.name} />
-	</Input>
-	<Input name="email" error={error.email} let:id>
-		<input placeholder="email here" type="text" {id} bind:value={form.email} />
-	</Input>
-	<Input name="password" error={error.password} let:id>
-		<input placeholder="password here" type="password" {id} bind:value={form.password} />
-		<Password password={form.password} />
-	</Input>
-	<Input name="confirm password" error={error.confirm_password} let:id>
-		<input
-			placeholder="confirm password here"
-			type="password"
-			{id}
-			bind:value={form.confirm_password}
-		/>
-	</Input>
+	<IG
+		name="name"
+		icon="person"
+		error={error.name}
+		placeholder="name here"
+		type="text"
+		bind:value={form.name}
+	/>
+	<IG
+		name="email"
+		icon="email"
+		error={error.email}
+		placeholder="email here"
+		type="text"
+		bind:value={form.email}
+	/>
+	<IG
+		name="password"
+		icon="key"
+		error={error.password}
+		placeholder="password here"
+		type="password"
+		bind:value={form.password}
+	>
+		<svelte:fragment slot="down">
+			<Password password={form.password} />
+		</svelte:fragment>
+	</IG>
+	<IG
+		name="confirm password"
+		icon="key"
+		error={error.confirm_password}
+		placeholder="confirm password here"
+		type="password"
+		bind:value={form.confirm_password}
+	/>
 
 	<Button on:click={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>
+
+	<br />
+
 	<Link
 		on:click={() => {
 			$module = {

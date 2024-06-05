@@ -40,7 +40,6 @@
 		position: relative;
 		height: calc(100vh - var(--headerHeight));
 		min-height: 800px;
-		overflow: hidden;
 
 		background-color: #ffaf1b;
 
@@ -56,13 +55,9 @@
 	img {
 		position: absolute;
 
-		border-radius: 0;
-
 		height: 100%;
+		width: 100%;
 		object-fit: cover;
-		/* top: var(--top); */
 		transform: translateY(var(--top));
-
-		/* transition: top 500ms; */
 	}
 </style>

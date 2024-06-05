@@ -33,7 +33,7 @@
 
 		fill: currentColor;
 
-		transition: color var(--trans1);
+		transition: color var(--trans);
 	}
 	.small {
 		font-size: small;

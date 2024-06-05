@@ -2,10 +2,10 @@
 	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/input_group.svelte';
+	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 
 	export let owner_key = '';
 
@@ -42,7 +42,7 @@
 			};
 
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: 'Comment Added',
 				buttons: [
 					{
@@ -60,15 +60,15 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Add Comment </strong>
+	<strong class="ititle"> Add Comment </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
 		</span>
 	{/if}
-	<Input name="comment" error={error.comment} let:id>
+	<IG name="comment" error={error.comment} let:id>
 		<textarea placeholder="Comment here" {id} bind:value={form.comment} on:keypress />
-	</Input>
+	</IG>
 
 	<Button on:click={validate}>
 		Submit

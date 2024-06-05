@@ -23,7 +23,7 @@
 		height: 12px;
 		border-radius: var(--sp0);
 
-		background-color: var(--ac4);
+		background-color: var(--ac3);
 		/* background-color: var(--cl1); */
 
 		transition: width 2000ms;

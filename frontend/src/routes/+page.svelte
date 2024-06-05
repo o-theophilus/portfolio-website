@@ -15,7 +15,7 @@
 	import Icon from '$lib/icon.svelte';
 
 	import Confirm from './auth/confirm.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 	import Forgot from './auth/forgot.password.svelte';
 
 	onMount(() => {
@@ -29,7 +29,7 @@
 					_module.module = Forgot;
 					break;
 				case 'info':
-					_module.module = Info;
+					_module.module = Dialogue;
 					break;
 			}
 

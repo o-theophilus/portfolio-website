@@ -41,9 +41,11 @@
 			ob.observe(document.querySelector('.post-block'));
 		}
 	});
+	let width;
 </script>
 
 <svelte:window
+	bind:innerWidth={width}
 	on:scroll={(e) => {
 		pos.a = set_pos(scroller.a);
 	}}
@@ -54,7 +56,11 @@
 		<br /><br />
 	{/if}
 
-	<section bind:this={section} class:intersecting>
+	<section
+		bind:this={section}
+		class:intersecting
+		style:height="{(width + 64) * $settings.highlight.length + width}px"
+	>
 		<div class="sticky" bind:this={sticky}>
 			<div class="bg-area">
 				{#key active_post.key}
@@ -109,7 +115,7 @@
 					<div class="desc">
 						{#key hover_post.key || observe_post.key}
 							<div in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}>
-								<strong class="big color">
+								<strong class="ititle color">
 									{hover_post.title || observe_post.title}
 								</strong>
 								<br />
@@ -126,7 +132,6 @@
 <style>
 	section {
 		position: relative;
-		height: 300vh;
 	}
 
 	.title {
@@ -135,8 +140,7 @@
 		font-size: 30px;
 		font-weight: 800;
 
-		transition: all var(--animTime1);
-		transition-timing-function: ease-in-out;
+		transition: font-size var(--trans), color var(--trans);
 	}
 	.intersecting .title {
 		font-size: 40px;
@@ -177,11 +181,10 @@
 
 		display: flex;
 		align-items: center;
-		gap: var(--sp5);
+		gap: var(--sp4);
 		width: fit-content;
 
-		/* padding-right: var(--sp5); */
-		padding: 0 var(--sp5);
+		padding: 0 var(--sp4);
 	}
 
 	.title,

@@ -137,6 +137,9 @@
 </script>
 
 <div class="comp">
+	<strong class="ititle"> Manage Photo </strong>
+	<br />
+	<br />
 	<img
 		src={active_photo || '/site/no_photo.png'}
 		alt={post.title}

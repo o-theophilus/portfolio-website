@@ -19,17 +19,19 @@
 
 		font-size: small;
 		cursor: pointer;
-		background-color: var(--cl1_t);
+		background-color: var(--cl1_l);
 
 		text-transform: capitalize;
-		color: var(--ac1);
+		color: var(--ac2);
+
+		transition: color var(--trans), background-color var(--trans);
 	}
 	.grow {
 		flex-grow: 1;
 	}
 
 	:disabled {
-		background-color: var(--ac8);
+		background-color: var(--ac5);
 		color: var(--ac2);
 		cursor: unset;
 		opacity: 0.4;
@@ -37,10 +39,10 @@
 
 	:not(:disabled).active {
 		background-color: var(--cl1);
-		color: var(--ac6_);
+		color: var(--ac3_);
 	}
 	:not(:disabled):hover {
-		background-color: var(--cl1_d);
-		color: var(--ac6_);
+		background-color: var(--cl1);
+		color: var(--ac5_);
 	}
 </style>

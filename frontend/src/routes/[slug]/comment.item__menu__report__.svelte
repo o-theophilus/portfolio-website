@@ -3,10 +3,10 @@
 	import { token } from '$lib/cookie.js';
 
 	import { template } from './comment.item__menu__report__template.js';
-	import Input from '$lib/input_group.svelte';
+	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 
 	export let owner_key;
 	export let owner_type;
@@ -39,7 +39,7 @@
 
 		if (resp.status == 200) {
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: `${owner_type} reported`,
 				buttons: [
 					{
@@ -59,14 +59,14 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Report {owner_type} </strong>
+	<strong class="ititle"> Report {owner_type} </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
 		</span>
 	{/if}
 
-	<Input name="Reason" error={error.comment} let:id>
+	<IG name="Reason" error={error.comment} let:id>
 		<svelte:fragment slot="label">
 			<select bind:value={form.comment}>
 				<option value={msgStore}>Examples</option>
@@ -82,7 +82,7 @@
 			bind:value={form.comment}
 			on:input={() => (msgStore = form.comment)}
 		/>
-	</Input>
+	</IG>
 	<Button on:click={validate}>
 		Submit
 		<Icon icon="send" />

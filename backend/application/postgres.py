@@ -28,7 +28,6 @@ user_table = """CREATE TABLE IF NOT EXISTS "user" (
     setting_theme VARCHAR(20) DEFAULT 'dark'
 );"""
 
-# draft, publish, deleted
 post_table = """CREATE TABLE IF NOT EXISTS post (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'draft' NOT NULL,

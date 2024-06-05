@@ -26,7 +26,7 @@
 
 <Content>
 	<br /> <br />
-	<strong class="big">Programming Skills / Stack</strong>
+	<strong>Programming Skills / Stack</strong>
 	<br /><br />
 	{#each skills as ent}
 		<div class="skill">
@@ -40,7 +40,7 @@
 	{/each}
 	<br /><br />
 
-	<strong class="big">Software Skills</strong>
+	<strong>Software Skills</strong>
 	<br /> <br />
 	{#each tools as ent}
 		<div class="skill">

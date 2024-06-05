@@ -2,12 +2,12 @@
 	import { module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/input_group.svelte';
+	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Link from '$lib/button/link.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Login from './login.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 	import EmailTemplate from './forgot.email_template.svelte';
 
 	let email_template;
@@ -44,7 +44,7 @@
 
 		if (resp.status == 200) {
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: `A password recovery message has been sent to: <b>${form.email}</b>`,
 				buttons: [
 					{
@@ -62,20 +62,27 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Forgot Password </strong>
+	<strong class="ititle"> Forgot Password </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
 		</span>
 	{/if}
-	<Input name="email" error={error.email} let:id>
-		<input placeholder="email here" type="text" {id} bind:value={form.email} />
-	</Input>
+	<IG
+		name="email"
+		icon="email"
+		error={error.email}
+		placeholder="email here"
+		type="text"
+		bind:value={form.email}
+	/>
 
 	<Button on:click={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>
+
+	<br />
 
 	<Link
 		on:click={() => {

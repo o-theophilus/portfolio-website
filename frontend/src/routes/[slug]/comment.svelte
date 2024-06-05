@@ -15,7 +15,7 @@
 
 <section>
 	<div class="title">
-		<strong class="big">Comment{comments.length > 1 ? 's' : ''}</strong>
+		<strong class="ititle">Comment{comments.length > 1 ? 's' : ''}</strong>
 		{#if comments.length > 2}
 			<Sort {post_key} />
 		{/if}
@@ -71,9 +71,7 @@
 		font-weight: 800;
 		color: var(--ac1);
 	}
-	.big {
-		color: var(--ac1);
-	}
+	
 	/* .block { */
 	/* display: flex; */
 	/* flex-direction: column; */

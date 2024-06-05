@@ -14,9 +14,11 @@
 	<br />
 	Todo
 	<br />
+	* Profile
+	<br />
 	* Logs
 	<br />
-	* Profile
+	* feedback
 </Content>
 
 <style>

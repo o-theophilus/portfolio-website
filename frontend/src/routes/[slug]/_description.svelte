@@ -2,10 +2,10 @@
 	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/input_group.svelte';
+	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 
 	let form = {
 		description: $module.post.description
@@ -44,7 +44,7 @@
 			};
 
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: `Description saved`,
 				buttons: [
 					{
@@ -62,15 +62,19 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Edit Description </strong>
+	<strong class="ititle"> Edit Description </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
 		</span>
 	{/if}
-	<Input name="description" error={error.description} let:id>
-		<textarea placeholder="description here" {id} bind:value={form.description} />
-	</Input>
+	<IG
+		name="description"
+		error={error.description}
+		type="textarea"
+		placeholder="description here"
+		bind:value={form.description}
+	/>
 
 	<Button on:click={validate}>
 		Submit

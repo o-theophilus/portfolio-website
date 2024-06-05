@@ -68,7 +68,7 @@
 
 		text-decoration: none;
 
-		transition: color var(--trans1);
+		transition: color var(--trans);
 	}
 
 	.block,
@@ -80,6 +80,6 @@
 		background-color: #ffaf1b;
 	}
 	.home a {
-		color: var(--ac8);
+		color: var(--ac5);
 	}
 </style>

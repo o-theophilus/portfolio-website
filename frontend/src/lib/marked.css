@@ -1,16 +1,16 @@
 .markdown img {
 	width: 100%;
 	margin: 20px auto;
-	padding: var(--sp2);
+	/* padding: var(--sp2); */
 	border-radius: var(--sp1);
 	
-	background-color: var(--ac7);
+	background-color: var(--ac4);
 }
 
 blockquote {
 	margin: auto 40px;
 	font-style: italic;
-	background-color: var(--ac7);
+	background-color: var(--ac4);
 }
 .markdown blockquote img {
 	margin: 0;
@@ -73,9 +73,9 @@ ul {
 	padding-left: 24px;
 }
 
-li{
-	margin: 8px 0;
-}
+/* li{ */
+	/* margin: 8px 0; */
+/* } */
 
 /* ##################################### */
 
@@ -84,7 +84,7 @@ pre {
 	margin: 16px 0;
 	border-radius: var(--sp0);
 
-	background-color: hsl(0, 0%, 10%);
+	background-color: hsl(0, 0%, 15%);
 
 	overflow-y: auto;
 	font-size: small;

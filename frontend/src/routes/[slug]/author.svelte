@@ -7,7 +7,7 @@
 </script>
 
 <section>
-	<div class="title">Author</div>
+	<strong> Author </strong>
 	<class class="block">
 		<div class="img" class:light={hue > 29 && hue < 189} style:--hue={hue}>
 			{author.name[0]}
@@ -23,10 +23,6 @@
 		gap: var(--sp2);
 	}
 
-	.title {
-		font-weight: 800;
-		color: var(--ac1);
-	}
 	.block {
 		display: flex;
 		gap: var(--sp2);
@@ -50,7 +46,7 @@
 		font-size: larger;
 		font-weight: bold;
 
-		color: var(--ac8_);
+		color: var(--ac5_);
 	}
 	.light {
 		color: var(--ac1_);

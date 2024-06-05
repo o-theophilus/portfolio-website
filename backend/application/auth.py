@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, request
 from .tools import token_tool, token_to_user, user_schema, send_mail
 from uuid import uuid4
-from werkzeug.security import check_password_hash
 import re
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from .postgres import db_open, db_close
 from .log import log
 from .admin import get_highlight

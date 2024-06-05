@@ -2,10 +2,10 @@
 	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/input_group.svelte';
+	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 	import { onMount } from 'svelte';
 
 	let error = {};
@@ -50,7 +50,7 @@
 			};
 
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: 'Content Saved',
 				buttons: [
 					{
@@ -68,7 +68,7 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Edit Content </strong>
+	<strong class="ititle"> Edit Content </strong>
 
 	{#if error.error}
 		<span class="error">
@@ -76,7 +76,7 @@
 		</span>
 	{/if}
 
-	<Input name="content" error={error.content} let:id>
+	<IG name="content" error={error.content} let:id>
 		<textarea
 			placeholder="Content here"
 			{id}
@@ -94,7 +94,7 @@
 				}
 			}}
 		/>
-	</Input>
+	</IG>
 
 	<Button on:click={validate}>
 		Submit
@@ -108,9 +108,29 @@
 	}
 
 	textarea {
+		display: block;
+
 		max-width: 600px;
-		width: calc(100vw - var(--sp5) * 2);
+		width: calc(100vw - var(--sp4) * 2);
 		min-height: 160px;
-		height: calc(100vh - var(--sp5) * 9);
+		height: calc(100vh - var(--sp4) * 9);
+		resize: none;
+		padding: var(--sp2);
+		border-radius: var(--sp0);
+		border: none;
+
+		outline: 2px solid transparent;
+		background-color: var(--ac4);
+		color: var(--ac1);
+
+		transition: outline-color var(--trans);
+	}
+
+	textarea:hover:not(.disabled) {
+		outline-color: var(--ac1);
+	}
+
+	textarea:focus {
+		outline-color: var(--ac1);
 	}
 </style>

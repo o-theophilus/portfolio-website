@@ -11,16 +11,12 @@
 			show_password = !show_password;
 		}}
 	>
-		<Icon icon={show_password ? 'visibility_off' : 'Visibility'} size="12" />
+		<Icon icon={show_password ? 'visibility' : 'Visibility_off'} size="16" />
 	</button>
 </form>
 
 <style>
 	form {
-		position: absolute;
-		right: var(--sp1);
-		top: 0;
-
 		display: flex;
 		align-items: center;
 
@@ -40,14 +36,16 @@
 		border: none;
 		border-radius: var(--size);
 
-		background-color: var(--ac8);
+		background-color: var(--ac5);
 		color: var(--ac2);
 		fill: currentColor;
 		cursor: pointer;
+
+		transition: color var(--trans), background-color var(--trans);
 	}
 
 	button:hover {
-		background-color: var(--cl1_d);
-		color: var(--ac6_);
+		background-color: var(--cl1);
+		color: var(--ac5_);
 	}
 </style>

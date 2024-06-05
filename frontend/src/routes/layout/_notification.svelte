@@ -68,7 +68,7 @@
 
 		background-color: var(--cl3);
 		border-radius: var(--sp0);
-		color: var(--ac8_);
+		color: var(--ac5_);
 		font-size: small;
 	}
 
@@ -83,7 +83,7 @@
 	.progress {
 		width: 100%;
 		height: 2px;
-		background-color: var(--ac8_);
+		background-color: var(--ac5_);
 	}
 	.zero {
 		transition: width 5s linear;

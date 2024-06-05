@@ -6,18 +6,14 @@
 </script>
 
 <div class="comp">
-	<div class="title">Add Highlights</div>
+	<strong class="ititle"> Add Highlights </strong>
 	<Add on:ok={reset} />
 	<hr />
-	<div class="title">Change Order</div>
+	<strong class="ititle"> Change Order </strong>
 	<Order bind:reset />
 </div>
 
 <style>
-	.title {
-		font-weight: 800;
-	}
-
 	.comp {
 		padding: var(--sp3);
 	}

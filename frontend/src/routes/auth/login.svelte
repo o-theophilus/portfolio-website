@@ -4,16 +4,18 @@
 	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/input_group.svelte';
+	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Link from '$lib/button/link.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 	import EmailTemplate from './confirm.email_template.svelte';
 	import Signup from './signup.svelte';
 	import Forgot from './forgot.svelte';
+	import PasswordShow from './password_show.svelte';
 
 	let email_template;
+	let show_password = false;
 
 	let form = {
 		email: $module.email
@@ -62,7 +64,7 @@
 			document.location = return_url;
 		} else if (resp.error == 'not confirmed') {
 			$module = {
-				module: Info,
+				module: Dialogue,
 				title: 'Email has not been confirmed',
 				status: 201,
 				message: `A confirmation email has been sent to: <b>${form.email}</b>`,
@@ -82,23 +84,39 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Login </strong>
+	<strong class="ititle"> Login </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
 		</span>
 	{/if}
-	<Input name="email" error={error.email} let:id>
-		<input placeholder="email here" type="text" {id} bind:value={form.email} />
-	</Input>
-	<Input name="password" error={error.password} let:id>
-		<input placeholder="password here" type="password" {id} bind:value={form.password} />
-	</Input>
+	<IG
+		name="email"
+		icon="email"
+		error={error.email}
+		placeholder="email here"
+		type="text"
+		bind:value={form.email}
+	/>
+	<IG
+		name="password"
+		icon="key"
+		error={error.password}
+		placeholder="password here"
+		type={show_password ? 'text' : 'password'}
+		bind:value={form.password}
+	>
+		<svelte:fragment slot="right">
+			<PasswordShow bind:show_password />
+		</svelte:fragment>
+	</IG>
 
 	<Button on:click={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>
+
+	<br />
 	<div>
 		<Link
 			on:click={() => {

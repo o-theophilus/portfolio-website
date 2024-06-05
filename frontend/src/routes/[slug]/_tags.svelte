@@ -3,10 +3,11 @@
 	import { module, portal, loading, state } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/input_group.svelte';
+	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
+	import Tag from '$lib/button/tag.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 
 	let post = { ...$module.post };
 	let tags = post.tags.join(', ');
@@ -48,7 +49,7 @@
 			let s = resp.post.tags.length > 1;
 
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: `Tag${s ? 's' : ''} Saved`,
 				buttons: [
 					{
@@ -107,39 +108,43 @@
 </script>
 
 <form class="form" on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Edit tags </strong>
+	<strong class="ititle"> Edit tags </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
 		</span>
 	{/if}
 
-	<Input name="tags" let:id>
-		<textarea
-			type="text"
-			bind:value={tags}
-			id="tags"
-			placeholder="Tags here"
-			on:blur={() => {
-				clean_value();
-			}}
-		/>
-		<form on:submit|preventDefault>
-			<div class="h">
-				{#each unused_tags as tag}
-					<Button
-						name={tag}
-						class="tiny"
-						on:click={() => {
-							clean_value(tag);
-						}}
-					/>
-				{/each}
-			</div>
-		</form>
-	</Input>
+	<IG
+		name="tags"
+		bind:value={tags}
+		error={error.tags}
+		type="textarea"
+		placeholder="Tags here"
+		on:blur={() => {
+			clean_value();
+		}}
+	/>
+	<div class="line">
+		{#each unused_tags as tag}
+			<Tag
+				size="small"
+				on:click={() => {
+					clean_value(tag);
+				}}
+			>
+				{tag}
+			</Tag>
+		{/each}
+	</div>
 
-	<Button on:click={validate}>
+	<br />
+
+	<Button
+		on:click={validate}
+		disabled={tags.split(', ').filter(Boolean).sort().join(', ') ==
+			post.tags.slice().sort().join(', ')}
+	>
 		Submit
 		<Icon icon="send" />
 	</Button>
@@ -148,5 +153,11 @@
 <style>
 	.form {
 		padding: var(--sp3);
+	}
+
+	.line {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--sp1);
 	}
 </style>

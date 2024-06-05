@@ -88,7 +88,7 @@
 
 		<Content>
 			<div class="project-block" bind:this={block}>
-				<strong class="big title"> Project{projects.length > 1 ? 's' : ''} </strong>
+				<strong class="ititle title"> Project{projects.length > 1 ? 's' : ''} </strong>
 
 				<div class="scroller" style:right="{pos.a}px" bind:this={scroller.a}>
 					{#each projects as post}
@@ -110,7 +110,7 @@
 				<div class="desc">
 					{#key active_post.slug}
 						<div in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}>
-							<strong class="big color">
+							<strong class="ititle color">
 								{active_post.title}
 							</strong>
 							<br />
@@ -127,9 +127,9 @@
 	section {
 		position: relative;
 		height: 300vh;
-		/* background-color: var(--ac7);
+		/* background-color: var(--ac4);
 		
-		transition: all var(--animTime3);
+		transition: all var(--aTime);
 		transition-timing-function: ease-in-out; */
 	}
 	/* .intersecting {
@@ -138,7 +138,7 @@
 	.fluid {
 		position: absolute;
 		/* opacity: 0;
-		transition: opacity var(--animTime3);
+		transition: opacity var(--aTime);
 		transition-timing-function: ease-in-out; */
 	}
 	/* .intersecting .fluid {
@@ -147,9 +147,9 @@
 	.blocker {
 		position: absolute;
 		inset: 0;
-		background-color: var(--ac7);
+		background-color: var(--ac4);
 		pointer-events: none;
-		transition: background-color var(--animTime1);
+		transition: background-color var(--aTime);
 		transition-timing-function: ease-in-out;
 	}
 	.intersecting .blocker {
@@ -160,7 +160,7 @@
 	}
 	.title {
 		font-size: 30px;
-		transition: all var(--animTime1);
+		transition: all var(--aTime);
 		transition-timing-function: ease-in-out;
 	}
 	.intersecting .title {
@@ -188,15 +188,15 @@
 
 		display: flex;
 		align-items: center;
-		gap: var(--sp5);
+		gap: var(--sp4);
 		width: fit-content;
 
-		padding-right: var(--sp5);
+		padding-right: var(--sp4);
 	}
 	/* .left {
 		align-self: flex-end;
 		padding: 0;
-		padding-left: var(--sp5);
+		padding-left: var(--sp4);
 	} */
 
 	.title,

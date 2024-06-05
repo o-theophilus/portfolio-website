@@ -49,7 +49,7 @@
 		$portal = {};
 	}
 
-	$: {
+	$: if (post.content) {
 		content = post.content;
 		photo_count = 1;
 		let exist = content.search(/{#photo}/) >= 0;
@@ -86,7 +86,6 @@
 	// }
 
 	let edit_mode = false;
-	edit_mode = true;
 
 	let is_admin = $user.permissions.some((x) =>
 		[
@@ -157,7 +156,7 @@
 		</div>
 	</div>
 
-	<div class="title">
+	<div class="ititle">
 		{#if $user.permissions.includes('post:edit_title') && edit_mode}
 			<BRound
 				icon="edit"
@@ -169,8 +168,9 @@
 				}}
 			/>
 		{/if}
-
-		{post.title}
+		<strong>
+			{post.title}
+		</strong>
 	</div>
 
 	{#if $user.permissions.includes('post:edit_date') && edit_mode}
@@ -199,8 +199,12 @@
 				};
 			}}
 		/>
-		<div class="description">
-			{post.description}
+		<div class="margin">
+			{#if post.description}
+				{post.description}
+			{:else}
+				No description
+			{/if}
 		</div>
 	{/if}
 
@@ -217,12 +221,15 @@
 			}}
 		/>
 	{/if}
-	<Marked md={content} />
-
-	<br />
-	<hr />
+	{#if post.content}
+		<Marked md={content} />
+		<br />
+	{:else if edit_mode}
+		<div class="margin">No content</div>
+	{/if}
 
 	{#if $user.permissions.includes('post:edit_tags') && edit_mode}
+		<hr />
 		<BRound
 			icon="edit"
 			icon_size={15}
@@ -235,10 +242,15 @@
 			}}
 		/>
 	{/if}
+
 	{#if post.tags.length > 0}
 		<Tags tags={post.tags} />
-		<hr />
+	{:else if edit_mode}
+		<div class="margin">No tag</div>
 	{/if}
+
+	<hr />
+
 	<Author />
 
 	{#if $user.permissions.includes('post:edit_status') && edit_mode}
@@ -284,6 +296,7 @@
 
 	<Button
 		icon="share"
+		size="small"
 		on:click={() => {
 			$module = {
 				module: Share,
@@ -294,8 +307,6 @@
 		<Icon icon="share" />
 		Share
 	</Button>
-
-	<hr />
 
 	<Comment {comments} post_key={post.key} />
 </Content>
@@ -312,7 +323,7 @@
 		margin: var(--sp2) 0;
 		border-radius: var(--sp1);
 
-		background-color: var(--ac7);
+		background-color: var(--ac4);
 	}
 	.img .line {
 		position: absolute;
@@ -320,19 +331,15 @@
 		left: var(--sp1);
 	}
 
-	.title {
+	.ititle {
 		margin-top: var(--sp3);
-
-		font-size: x-large;
-		font-weight: 800;
-		color: var(--ac1);
 	}
 	.date {
 		font-size: small;
 		margin-bottom: var(--sp3);
 	}
 
-	.description {
+	.margin {
 		margin: var(--sp2) 0;
 	}
 

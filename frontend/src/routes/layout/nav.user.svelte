@@ -1,10 +1,14 @@
 <script>
+	import { slide } from 'svelte/transition';
+	import { cubicInOut } from 'svelte/easing';
+
 	import { page } from '$app/stores';
 	import { user } from '$lib/store.js';
 
 	import Icon from '$lib/icon.svelte';
 	import Link from './nav.btn.svelte';
 	import Logout from '../auth/logout.svelte';
+	import Avatar from '$lib/avatar.svelte';
 
 	let open = false;
 	let self = false;
@@ -33,19 +37,17 @@
 />
 
 <div class="user">
-	<div
-		class="avatar"
+	<Avatar
+		user={$user}
+		size="32"
 		on:click={() => {
 			open = !open;
 			self = true;
 		}}
-		role="presentation"
-	>
-		<Icon icon="person" />
-	</div>
+	/>
 
 	{#if open}
-		<div class="dropdown">
+		<div class="dropdown" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
 			{#if $page.url.pathname != '/profile'}
 				<Link href="/profile">Profile</Link>
 			{/if}
@@ -62,28 +64,6 @@
 		position: relative;
 	}
 
-	.avatar {
-		--size: 32px;
-
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		width: var(--size);
-		height: var(--size);
-		border-radius: 50%;
-
-		background-color: var(--ac7);
-
-		cursor: pointer;
-
-		transition: background-color var(--trans1);
-	}
-
-	.avatar:hover {
-		background-color: var(--ac6);
-	}
-
 	.dropdown {
 		position: absolute;
 		right: 0;
@@ -92,11 +72,11 @@
 
 		display: flex;
 		flex-direction: column;
-		gap: var(--sp1);
+		gap: var(--sp2);
 
-		background-color: var(--ac7);
+		background-color: var(--ac4);
 
-		padding: var(--sp1);
+		padding: var(--sp2);
 		border-radius: var(--sp0);
 	}
 </style>

@@ -2,12 +2,13 @@
 	import { module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/input_group.svelte';
+	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
+	import Link from '$lib/button/link.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Password from './password_checker.svelte';
 	import Login from './login.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 
 	import EmailTemplate from './confirm.email_template.svelte';
 	let email_template;
@@ -52,7 +53,7 @@
 
 		if (resp.status == 200) {
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: `Password Changed`,
 				buttons: [
 					{
@@ -70,32 +71,38 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Change Password </strong>
+	<strong class="ititle"> Change Password </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
 		</span>
 	{/if}
 
-	<Input name="password" error={error.password} let:id>
-		<input placeholder="password here" type="password" {id} bind:value={form.password} />
+	<IG
+		name="password"
+		icon="key"
+		error={error.password}
+		placeholder="password here"
+		type="password"
+		bind:value={form.password}
+	>
 		<Password password={form.password} />
-	</Input>
-	<Input name="confirm password" error={error.confirm_password} let:id>
-		<input
-			placeholder="confirm password here"
-			type="password"
-			{id}
-			bind:value={form.confirm_password}
-		/>
-	</Input>
+	</IG>
+	<IG
+		name="confirm password"
+		icon="key"
+		error={error.confirm_password}
+		placeholder="confirm password here"
+		type="password"
+		bind:value={form.confirm_password}
+	/>
 
 	<Button on:click={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>
-	<Button
-		class="secondary"
+
+	<Link
 		on:click={() => {
 			$module = {
 				module: Login
@@ -103,7 +110,7 @@
 		}}
 	>
 		Login
-	</Button>
+	</Link>
 </form>
 
 <div bind:this={email_template} style="display: none;">

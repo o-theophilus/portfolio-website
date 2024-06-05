@@ -37,16 +37,16 @@
 		height: var(--size);
 
 		background-color: transparent;
-		transition: border-color var(--animTime1) ease-in-out;
+		transition: border-color var(--trans);
 	}
 	.invert {
-		border-color: var(--ac8_);
+		border-color: var(--ac5_);
 	}
 	button:hover {
 		border-color: transparent;
 	}
 	button:hover .content {
-		color: var(--ac8_);
+		color: var(--ac5_);
 	}
 
 	.content {
@@ -56,10 +56,10 @@
 		align-items: center;
 
 		color: var(--ac1);
-		transition: color var(--animTime1) ease-in-out;
+		transition: color var(--trans);
 	}
 	.invert .content {
-		color: var(--ac8_);
+		color: var(--ac5_);
 	}
 
 	.highlight {
@@ -72,9 +72,8 @@
 		background-color: transparent;
 		border-radius: 50%;
 
-		transition-property: width, height, background-color, opacity;
-		transition-duration: var(--animTime1);
-		transition-timing-function: ease-in-out;
+		transition-property: width var(--trans), height var(--trans), background-color var(--trans),
+			opacity var(--trans);
 	}
 
 	button:hover .highlight {

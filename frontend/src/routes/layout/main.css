@@ -32,7 +32,12 @@ input:-webkit-autofill:active {
 
 hr {
 	border: none;
-	border-top: 2px solid var(--ac6);
+	border-top: 1px solid var(--ac3);
+}
+
+.ititle {
+	color: var(--ac1);
+	font-size: x-large;
 }
 
 /************************** form ******************/
@@ -43,10 +48,10 @@ select {
 	outline: 2px solid transparent;
 	
 	border: none;
-	background-color: var(--ac7);
+	background-color: var(--ac4);
 	color: var(--ac2);
 
-	transition: outline-color var(--trans1);
+	transition: outline-color var(--trans);
 }
 select:hover {
 	outline-color: var(--ac1);

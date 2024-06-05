@@ -53,9 +53,9 @@
 		gap: var(--sp2);
 
 		padding: var(--sp2);
-		padding-right: var(--sp5);
+		padding-right: var(--sp4);
 
-		color: var(--ac8_);
+		color: var(--ac5_);
 		text-transform: capitalize;
 	}
 

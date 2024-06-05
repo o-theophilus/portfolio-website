@@ -14,7 +14,7 @@
 		<hr />
 	{/if}
 	<footer id="footer">
-		<div class="title">Get in touch!</div>
+		<div class="ititle"><strong> Get in touch! </strong></div>
 		<section>
 			<div class="form">
 				<Form />
@@ -35,21 +35,18 @@
 </Content>
 
 <style>
-	.title {
-		margin: var(--sp4) 0;
-
-		font-size: x-large;
-		font-weight: 800;
+	.ititle {
+		margin: var(--sp3) 0;
 	}
 
 	section {
 		display: flex;
 		flex-direction: column;
-		gap: var(--sp5);
-		margin: var(--sp4) 0;
+		gap: var(--sp4);
+		margin: var(--sp3) 0;
 	}
 	.copyright {
-		margin: var(--sp5) 0;
+		margin: var(--sp4) 0;
 	}
 	@media screen and (min-width: 600px) {
 		section {

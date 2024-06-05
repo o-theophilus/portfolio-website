@@ -2,10 +2,10 @@
 	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Input from '$lib/input_group.svelte';
+	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 
 	let post = $module.post;
 	let video_count = $module.video_count;
@@ -44,7 +44,7 @@
 			};
 
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: `Videos Updated`,
 				buttons: [
 					{
@@ -62,18 +62,25 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Manage Video </strong>
+	<strong class="ititle"> Manage Video </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
 		</span>
 	{/if}
 
-	<Input name="video{video_count > 1 ? 's' : ''}" error={error.videos}>
+	<IG name="video{video_count > 1 ? 's' : ''}" error={error.videos}>
 		{#each Array(video_count) as _, i}
-			<input placeholder="video {i + 1} here " type="text" bind:value={videos[i]} />
+			<IG
+				icon="movie"
+				error={error.title}
+				placeholder="video {i + 1} here"
+				type="text"
+				bind:value={videos[i]}
+				no_pad
+			/>
 		{/each}
-	</Input>
+	</IG>
 
 	<Button on:click={validate}>
 		Submit

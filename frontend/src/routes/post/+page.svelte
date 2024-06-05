@@ -41,24 +41,27 @@
 <section class="background">
 	<Content>
 		<div class="title">
-			Post{posts.length > 1 ? 's' : ''}
+			<strong class="ititle">
+				Post{posts.length > 1 ? 's' : ''}
+			</strong>
 			{#if $user.permissions.includes('post:add')}
-				<Button
-					extra="outline"
-					on:click={() => {
-						$module = {
-							module: Add
-						};
-					}}
-				>
-					<Icon icon="add" />
-					Add
-				</Button>
+				<div class="line">
+					<OrderBy list={post_status} name="status" />
+
+					<Button
+						extra="outline"
+						on:click={() => {
+							$module = {
+								module: Add
+							};
+						}}
+					>
+						<Icon icon="add" />
+						Add
+					</Button>
+				</div>
 			{/if}
 		</div>
-		{#if $user.permissions.includes('post:add')}
-			<OrderBy list={post_status} name="status" />
-		{/if}
 
 		<div class="search_bar">
 			<Search />
@@ -82,7 +85,7 @@
 
 <style>
 	.background {
-		background-color: var(--ac7);
+		background-color: var(--ac4);
 		padding: 1px 0;
 	}
 
@@ -92,16 +95,12 @@
 		align-items: center;
 
 		margin-top: var(--sp3);
-
-		font-size: x-large;
-		font-weight: 800;
-		color: var(--ac1);
 	}
 
 	.search_bar {
 		margin: var(--sp2) 0;
 		display: flex;
-		gap: var(--sp0);
+		gap: var(--sp1);
 		align-items: center;
 	}
 
@@ -111,6 +110,11 @@
 		gap: var(--sp2);
 	}
 
+	.line {
+		display: flex;
+		gap: var(--sp1);
+		align-items: center;
+	}
 	@media screen and (min-width: 600px) {
 		.items {
 			grid-template-columns: 1fr 1fr;

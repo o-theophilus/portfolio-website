@@ -49,7 +49,7 @@
 		border-radius: var(--sp1);
 		overflow: hidden;
 
-		transition: all var(--animTime3);
+		transition: all var(--aTime);
 		transition-timing-function: ease-in-out;
 
 		/* box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.131); */
@@ -62,9 +62,9 @@
 		height: 100%;
 
 		object-fit: cover;
-		background-color: var(--ac7);
+		background-color: var(--ac4);
 
-		transition: transform var(--animTime3);
+		transition: transform var(--aTime);
 		transition-timing-function: ease-in-out;
 	}
 

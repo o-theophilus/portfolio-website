@@ -47,13 +47,33 @@
 <style>
 	.comp {
 		position: relative;
-		display: inline;
+	}
+	select {
+		outline-color: var(--ac3);
 	}
 
-	.button .icon {
-		display: flex;
+	.default select:focus:not(:disabled),
+	.default select:hover:not(:disabled) {
+		outline-color: var(--ac1);
 	}
 
+	.button select {
+		--size: 60px;
+		width: var(--size);
+		height: var(--size);
+		appearance: none;
+		color: transparent;
+		background-color: var(--ac3);
+
+		transition: background-color var(--trans);
+	}
+	.button select:hover:not(:disabled) {
+		background-color: var(--cl1_d);
+		outline: transparent;
+	}
+	.button:hover:not(:disabled) .icon {
+		color: var(--ac5_);
+	}
 	.icon {
 		position: absolute;
 		inset: 0;
@@ -62,45 +82,10 @@
 		justify-content: center;
 		align-items: center;
 		pointer-events: none;
-	}
 
-	select {
-		border: none;
-		padding: var(--sp1);
-		border-radius: var(--sp0);
-		cursor: pointer;
+		transition: color var(--trans);
 	}
-
-	.default select {
-		width: min-content;
-
-		outline: 2px solid transparent;
-
-		background-color: var(--ac8);
-		color: var(--ac2);
-	}
-
-	.default select:focus:not(:disabled),
-	.default select:hover:not(:disabled) {
-		outline-color: var(--ac4);
-	}
-
-	.button select {
-		width: 40px;
-		height: 40px;
-		appearance: none;
-		color: transparent;
-		background-color: var(--ac6);
-	}
-	.button select:hover:not(:disabled) {
-		background-color: var(--cl1_d);
-	}
-	.button:hover:not(:disabled) .icon {
-		color: var(--ac8_);
-	}
-
-	option {
-		color: var(--ac1);
-		background-color: var(--ac8);
+	.button .icon {
+		display: flex;
 	}
 </style>

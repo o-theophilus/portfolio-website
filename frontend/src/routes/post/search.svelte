@@ -92,7 +92,9 @@
 
 		border-radius: var(--sp0);
 		outline: 2px solid transparent;
-		background-color: var(--ac8);
+		background-color: var(--ac5);
+
+		transition: outline-color var(--trans);
 	}
 
 	input {
@@ -106,17 +108,17 @@
 	}
 
 	.comp:hover {
-		outline-color: var(--ac4);
+		outline-color: var(--ac1);
 	}
 	.comp:has(input:focus) {
-		outline-color: var(--ac4);
+		outline-color: var(--ac1);
 	}
 	.non_default {
 		border-radius: var(--sp0);
 	}
 
 	.show_close {
-		padding-right: var(--sp5);
+		padding-right: var(--sp4);
 	}
 
 	.clear {

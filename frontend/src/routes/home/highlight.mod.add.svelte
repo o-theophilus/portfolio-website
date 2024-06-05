@@ -5,7 +5,7 @@
 
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import IG from '$lib/input_group_new.svelte';
+	import IG from '$lib/input_group.svelte';
 
 	let emit = createEventDispatcher();
 

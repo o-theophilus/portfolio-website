@@ -43,12 +43,12 @@
 
 <style>
 	.dynamic {
-		color: var(--ac8);
+		color: var(--ac5);
 		font-size: xx-large;
 		font-weight: 800;
 		text-align: center;
 
-		transition: color var(--trans1);
+		transition: color var(--trans);
 	}
 
 	.highlight {

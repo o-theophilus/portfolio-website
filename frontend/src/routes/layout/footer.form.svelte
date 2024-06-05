@@ -6,8 +6,8 @@
 	import { template } from './footer.form.template.js';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Info from '$lib/info.svelte';
-	import IG from '$lib/input_group_new.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
+	import IG from '$lib/input_group.svelte';
 
 	import EmailTemplate from '$lib/email_template.svelte';
 	let email_template;
@@ -62,7 +62,7 @@
 			form = {};
 
 			$module = {
-				module: Info,
+				module: Dialogue,
 				title: 'Message Sent',
 				message: `
 					Thank you for contacting me,
@@ -112,7 +112,6 @@
 		bind:value={form.message}
 		error={error.message}
 		type="textarea"
-		icon="message"
 		placeholder="Your message"
 		on:input={() => (msgStore = form.message)}
 	>

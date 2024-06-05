@@ -9,7 +9,7 @@
 <Content>
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
-			<strong class="big dark"> Hi There! </strong>
+			<strong class="ititle dark"> Hi There! </strong>
 			<br />
 			I am a multidisciplinary designer with a passion for creating impactful designs for web and print.
 			From logos to brochures, websites to social media graphics, I've got you covered.
@@ -20,9 +20,9 @@
 
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
-			<strong class="big color"> What I Can Do: </strong>
+			<strong class="ititle color"> What I Can Do: </strong>
 			<br /><br />
-			<strong class="large">Design What You Want</strong>
+			<strong>Design What You Want</strong>
 			<br />
 			My design philosophy centers on simplicity and clarity. I believe in creating designs that are
 			not only aesthetically pleasing, but also easy to understand and effective in communicating your
@@ -34,7 +34,7 @@
 
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
-			<strong class="large">Develop What You Need</strong>
+			<strong>Develop What You Need</strong>
 			<br />
 			While I focus primarily on graphic design, I also have experience with web development and programming.
 			I can work with you to create a website that not only looks great, but also functions seamlessly
@@ -48,7 +48,7 @@
 		<div class="observe" class:intersecting>
 			<div class="h">
 				<div>
-					<strong class="big color"> How I Can Help </strong>
+					<strong class="ititle color"> How I Can Help </strong>
 					<br />
 					I am currently available for freelance work and collaborations. Whether you're looking to refresh
 					your branding, create a new website, or design marketing materials, I'm here to help.
@@ -86,10 +86,6 @@
 
 	.dark {
 		color: var(--ac1);
-	}
-	.large {
-		color: var(--ac1);
-		font-size: large;
 	}
 	.color {
 		color: var(--cl1);

@@ -4,8 +4,8 @@
 
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Input from '$lib/input_group.svelte';
-	import Info from '$lib/info.svelte';
+	import IG from '$lib/input_group.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 
 	console.log($module.post);
 
@@ -51,7 +51,7 @@
 			};
 
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: 'Date Saved',
 				buttons: [
 					{
@@ -69,10 +69,14 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big"> Edit Date & Time </strong>
-	<Input name="date" error={error.date} let:id>
-		<input type="datetime-local" bind:value={form.date} {id} placeholder="date here" />
-	</Input>
+	<strong class="ititle"> Edit Date & Time </strong>
+	<IG
+		name="date"
+		error={error.date}
+		type="datetime"
+		bind:value={form.date}
+		placeholder="date here"
+	/>
 
 	<Button on:click={validate}>
 		Submit

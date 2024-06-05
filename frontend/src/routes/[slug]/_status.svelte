@@ -3,7 +3,8 @@
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
+	import Icon from '$lib/icon.svelte';
 	import Delete from './_status.delete.svelte';
 
 	let _status = $module.post.status;
@@ -32,7 +33,7 @@
 			};
 
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: 'Status Changed',
 				buttons: [
 					{
@@ -50,22 +51,35 @@
 </script>
 
 <div class="content">
-	<strong class="big">Change Status</strong>
+	<strong class="ititle">Change Status</strong>
 	<br /><br />
 	<div>Status: <strong>{_status}</strong></div>
+	<br />
+
 	<div>Change to:</div>
 	<div class="line">
-		{#each ['draft', 'publish'] as x}
-			{#if _status != x}
-				<Button
-					on:click={() => {
-						submit(x);
-					}}
-				>
-					{x}
-				</Button>
-			{/if}
-		{/each}
+		{#if _status != 'publish'}
+			<Button
+				on:click={() => {
+					submit('publish');
+				}}
+			>
+				<Icon icon="check" />
+				{'publish'}
+			</Button>
+		{/if}
+
+		{#if _status != 'draft'}
+			<Button
+				on:click={() => {
+					submit('draft');
+				}}
+			>
+				<Icon icon="design_services" />
+				{'draft'}
+			</Button>
+		{/if}
+
 		{#if _status != 'delete'}
 			<Button
 				on:click={() => {
@@ -73,8 +87,11 @@
 						module: Delete,
 						post: $module.post
 					};
-				}}>Delete</Button
+				}}
 			>
+				<Icon icon="delete" />
+				Delete
+			</Button>
 		{/if}
 	</div>
 

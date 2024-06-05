@@ -33,28 +33,10 @@
 		width: 100%;
 
 		padding: var(--sp2);
-		border-radius: var(--sp0);
 		border: none;
 
-		outline: 2px solid transparent;
-		background-color: var(--ac7);
+		background-color: transparent;
 		color: var(--ac1);
-
-		transition: outline-color var(--trans1);
-	}
-
-	:disabled {
-		opacity: 0.4;
-	}
-
-	input:hover:not(:disabled),
-	textarea:hover:not(:disabled) {
-		outline-color: var(--ac1);
-	}
-
-	input:focus,
-	textarea:focus {
-		outline-color: var(--ac1);
 	}
 
 	textarea {

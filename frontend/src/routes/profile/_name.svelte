@@ -1,24 +1,23 @@
 <script>
-	import { module, portal, loading } from '$lib/store.js';
+	import { module, notification, loading, portal } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 	import Icon from '$lib/icon.svelte';
 
 	let form = {
-		title: $module.post.title
+		name: $module.user.name
 	};
 
 	let error = {};
 
 	const validate = () => {
 		error = {};
-		if (!form.title) {
-			error.title = 'cannot be empty';
-		} else if (form.title == $module.post.title) {
-			error.title = 'no change';
+		if (!form.name) {
+			error.name = 'cannot be empty';
+		} else if (form.name == $module.user.name) {
+			error.name = 'no change';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -26,7 +25,7 @@
 
 	const submit = async () => {
 		$loading = 'Saving Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${$module.post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/${$module.user.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -38,25 +37,17 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			window.history.replaceState(history.state, '', `/${resp.post.slug}`);
-
 			$portal = {
-				for: 'post',
-				data: resp.post
+				for: 'user',
+				data: resp.user
 			};
 
-			$module = {
-				module: Dialogue,
-				message: 'Title Saved',
-				buttons: [
-					{
-						name: 'OK',
-						fn: () => {
-							$module = '';
-						}
-					}
-				]
+			$notification = {
+				status: 200,
+				message: 'Name Changed'
 			};
+
+			$module = null;
 		} else {
 			error = resp;
 		}
@@ -64,7 +55,7 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Edit title </strong>
+	<strong class="ititle"> Edit Name </strong>
 	{#if error.error}
 		<span class="error">
 			{error.error}
@@ -72,12 +63,12 @@
 	{/if}
 
 	<IG
-		name="title"
-		icon="edit"
-		error={error.title}
-		placeholder="Title here"
+		name="name"
+		icon="person"
+		error={error.name}
+		placeholder="Name here"
 		type="text"
-		bind:value={form.title}
+		bind:value={form.name}
 	/>
 
 	<Button on:click={validate}>

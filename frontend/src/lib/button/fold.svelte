@@ -14,7 +14,7 @@
 <style>
 	.fold {
 		transform: rotate(180deg);
-		transition: transform var(--trans1);
+		transition: transform var(--trans);
 	}
 	.open {
 		transform: rotate(270deg);

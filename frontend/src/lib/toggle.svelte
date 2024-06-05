@@ -30,7 +30,7 @@
 
 		font-size: x-small;
 		cursor: pointer;
-		background-color: var(--ac7);
+		background-color: var(--ac4);
 
 		text-transform: capitalize;
 		color: var(--ac1);
@@ -51,7 +51,7 @@
 		position: absolute;
 		left: 0;
 
-		transition: left var(--trans1);
+		transition: left var(--trans);
 	}
 	.active .switch {
 		left: 100%;
@@ -65,9 +65,9 @@
 		height: var(--size);
 		border-radius: calc(var(--size) / 2);
 		background-color: var(--cl1);
-		color: var(--ac8_);
+		color: var(--ac5_);
 
-		transition: background-color var(--trans1), left var(--trans1);
+		transition: background-color var(--trans), left var(--trans);
 	}
 	.active .switch .knob {
 		left: -100%;

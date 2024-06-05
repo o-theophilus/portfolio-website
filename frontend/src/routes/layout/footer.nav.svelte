@@ -3,11 +3,11 @@
 </script>
 
 <div class="block">
-	<Link class="secondary" href="/">Home</Link>
+	<Link href="/">Home</Link>
 	&#8226;
-	<Link class="secondary" href="#about">About</Link>
+	<Link href="/#about">About</Link>
 	&#8226;
-	<Link class="secondary" href="/post">Post</Link>
+	<Link href="/post">Post</Link>
 </div>
 
 <style>

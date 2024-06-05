@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 
 	import Login from './login.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 
 	onMount(async () => {
 		console.log($module);
@@ -25,7 +25,7 @@ Please Login to repeat the process.`;
 		}
 
 		$module = {
-			module: Info,
+			module: Dialogue,
 			status: resp.status,
 			title,
 			message,

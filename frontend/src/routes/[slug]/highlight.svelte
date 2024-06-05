@@ -3,7 +3,7 @@
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 
 	export let post;
 	let is_highlight = false;
@@ -37,7 +37,7 @@
 			highlight();
 
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: `${is_highlight ? 'Added' : 'Removed'} as Highlight`,
 				buttons: [
 					{
@@ -50,7 +50,7 @@
 			};
 		} else {
 			$module = {
-				module: Info,
+				module: Dialogue,
 				title: 'Error',
 				message: resp.error,
 				status: 400,

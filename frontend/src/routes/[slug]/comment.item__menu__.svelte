@@ -9,7 +9,7 @@
 </script>
 
 <div class="content">
-	<strong class="big">Comment</strong>
+	<strong class="ititle">Comment</strong>
 	{#if comment.user_key == $user.key}
 		<br /><br />
 		<Button

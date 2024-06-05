@@ -16,7 +16,7 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			$user = resp.user;
+			$user.setting_theme = resp.user.setting_theme;
 		} else {
 			throw new Error('invalid request');
 		}
@@ -70,22 +70,22 @@
 		border: none;
 		cursor: pointer;
 
-		transition: color var(--trans1), background-color var(--trans1);
+		transition: color var(--trans), background-color var(--trans);
 	}
 
 	.is_home {
-		color: var(--ac8);
+		color: var(--ac5);
 	}
 
 	button:hover {
-		color: var(--ac8_);
+		color: var(--ac5_);
 		background-color: var(--cl1);
 	}
 
 	.switch {
 		position: absolute;
 		top: 0;
-		transition: top var(--trans1);
+		transition: top var(--trans);
 	}
 	.dark {
 		top: -100%;

@@ -6,7 +6,7 @@
 <Content>
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
-			<strong class="big">This Website</strong>
+			<strong class="ititle">This Website</strong>
 			<br /><br />
 
 			I built this website using Svelte<span class="heart">&#10084</span> and SvelteKit, two
@@ -40,8 +40,5 @@
 	.intersecting {
 		opacity: 1;
 		transform: translate(0, 0) scale(1);
-	}
-	.big {
-		color: var(--ac1);
 	}
 </style>

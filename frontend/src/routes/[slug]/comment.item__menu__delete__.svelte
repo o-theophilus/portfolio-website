@@ -3,7 +3,7 @@
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
-	import Info from '$lib/info.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
 
 	export let comment_key;
 
@@ -31,7 +31,7 @@
 			};
 
 			$module = {
-				module: Info,
+				module: Dialogue,
 				message: 'Comment Deleted',
 				buttons: [
 					{
@@ -49,8 +49,8 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="big error">Delete</strong>
-	<div class="error">Are you sure you want to delete</div>
+	<strong class="ititle">Delete</strong>
+	<div class="error">Are you sure you want to delete this comment</div>
 	{#if error.error}
 		<span class="error">
 			{error.error}

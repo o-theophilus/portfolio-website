@@ -67,7 +67,7 @@
 		width: var(--size2);
 		height: var(--size2);
 
-		background-color: var(--ac8);
+		background-color: var(--ac5);
 		border-radius: var(--sp1);
 	}
 
