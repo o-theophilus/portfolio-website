@@ -359,7 +359,7 @@ def send_password_otp():
 
     cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
 
-    otp = str(random.randint(1000, 9999))
+    otp = str(random.randint(100000, 999999))
     key = uuid4().hex
 
     cur.execute("""

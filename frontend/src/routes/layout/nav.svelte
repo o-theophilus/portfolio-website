@@ -54,6 +54,8 @@
 
 	.links {
 		display: flex;
+		/* align-items: center; */
+		/* justify-content: center; */
 		gap: var(--sp2);
 	}
 	a {
@@ -61,7 +63,7 @@
 		align-items: center;
 		gap: var(--sp1);
 
-		color: var(--ac1);
+		color: var(--ft1);
 		fill: var(--cl1);
 		font-size: large;
 		font-weight: 800;
@@ -80,6 +82,6 @@
 		background-color: #ffaf1b;
 	}
 	.home a {
-		color: var(--ac5);
+		color: var(--bg1);
 	}
 </style>

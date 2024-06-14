@@ -38,7 +38,7 @@
 		padding: var(--sp4) var(--sp3);
 		overflow-y: auto;
 
-		color: var(--ac1);
+		color: var(--ft1);
 		background-color: var(--overlay);
 	}
 
@@ -53,7 +53,7 @@
 		position: relative;
 	}
 	.content {
-		background-color: var(--ac5);
+		background-color: var(--bg1);
 		box-shadow: var(--shad1);
 		border-radius: var(--sp1);
 

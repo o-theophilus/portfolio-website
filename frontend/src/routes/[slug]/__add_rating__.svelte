@@ -142,12 +142,12 @@
 		border-radius: var(--sp1);
 		width: 5px;
 		height: 70px;
-		background-color: var(--ac3);
+		background-color: var(--bg2);
 	}
 
 	.b0:hover,
 	.b0.active {
-		background-color: var(--ac1);
+		background-color: var(--ft1);
 	}
 
 	button {
@@ -155,7 +155,7 @@
 		height: 50px;
 
 		border: none;
-		background-color: var(--ac4);
+		background-color: var(--bg2);
 
 		cursor: pointer;
 	}

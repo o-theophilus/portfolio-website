@@ -93,7 +93,7 @@ def get_post(key, cur=None):
 
 
 @bp.get("/post")
-def get_all(order="latest", page_size=4):
+def get_all(order="latest", page_size=24):
     con, cur = db_open()
     user = token_to_user(cur)
 

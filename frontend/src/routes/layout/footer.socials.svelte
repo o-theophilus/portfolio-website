@@ -52,7 +52,7 @@
 
 		border-radius: 50%;
 
-		fill: var(--ac3);
+		fill: var(--ft2);
 
 		transition: fill var(--trans);
 	}

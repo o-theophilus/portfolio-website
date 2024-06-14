@@ -6,16 +6,17 @@
 	import Meta from '$lib/meta.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
+	import Log from '$lib/log.svelte';
 
 	import Add from './_add.svelte';
 	import Tags from './tags.svelte';
 	import Note from './filter_note.svelte';
 
-	import OrderBy from './order_by.svelte';
-	import Pagination from './pagination.svelte';
-	import Search from './search.svelte';
+	import Drop from '$lib/dropdown_plus.svelte';
+	import Pagination from '$lib/pagination.svelte';
+	import Search from '$lib/search.svelte';
 
-	import UpdateUrl from './update_url.svelte';
+	import UpdateUrl from '$lib/update_url.svelte';
 
 	export let data;
 	$: posts = data.posts;
@@ -32,6 +33,7 @@
 	}
 </script>
 
+<Log entity_type={'page'} />
 <UpdateUrl />
 <Meta
 	title="Posts"
@@ -46,10 +48,9 @@
 			</strong>
 			{#if $user.permissions.includes('post:add')}
 				<div class="line">
-					<OrderBy list={post_status} name="status" />
+					<Drop list={post_status} name="status" />
 
 					<Button
-						extra="outline"
 						on:click={() => {
 							$module = {
 								module: Add
@@ -65,7 +66,7 @@
 
 		<div class="search_bar">
 			<Search />
-			<OrderBy list={order_by} name="order" button />
+			<Drop list={order_by} name="order" button />
 		</div>
 
 		<Note />
@@ -85,7 +86,7 @@
 
 <style>
 	.background {
-		background-color: var(--ac4);
+		background-color: var(--bg2);
 		padding: 1px 0;
 	}
 

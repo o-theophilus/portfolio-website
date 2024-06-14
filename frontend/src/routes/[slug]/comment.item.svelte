@@ -157,7 +157,7 @@
 		padding-right: 0;
 		padding-bottom: 0;
 
-		border: 2px solid var(--ac4);
+		border: 2px solid var(--bg2);
 		border-right-width: 0;
 		border-bottom-width: 0;
 
@@ -199,13 +199,13 @@
 		font-size: larger;
 		font-weight: bold;
 
-		color: var(--ac5_);
+		color: var(--ft1_b);
 	}
 	.light {
-		color: var(--ac1_);
+		color: var(--ft1_d);
 	}
 	.date {
-		color: var(--ac3);
+		color: var(--ft2);
 	}
 	.menu {
 		cursor: pointer;
@@ -215,7 +215,7 @@
 	}
 	.comment,
 	.name {
-		color: var(--ac1);
+		color: var(--ft1);
 	}
 
 	.buttons {

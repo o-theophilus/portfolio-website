@@ -125,40 +125,38 @@
 
 	<IG name="Current Email" icon="email" type="email" bind:value={user.email} disabled />
 
-	<IG name="New Email">
-		<form on:submit|preventDefault>
-			<IG
-				name="email"
-				icon="email"
-				label=" "
-				error={error.email}
-				type="email"
-				bind:value={form.email}
-				placeholder="your new email here"
-				no_pad
-			/>
-			<br />
-			<Button
-				primary={/\S+@\S+\.\S+/.test(form.email) && form.email != user.email}
-				on:click={validate_request_otp}
-			>
-				<Icon icon="key" />
-				Request OTPs
-			</Button>
-		</form>
-	</IG>
+	<IG
+		name="New Email"
+		icon="email"
+		error={error.email}
+		type="email"
+		bind:value={form.email}
+		placeholder="your new email here"
+		no_pad
+	/>
+
+	<br />
+	<hr />
+	<br />
+
+	<Button
+		size="small"
+		primary={/\S+@\S+\.\S+/.test(form.email) && form.email != user.email}
+		on:click={validate_request_otp}
+	>
+		<Icon icon="key" />
+		Request OTPs
+	</Button>
 
 	{#if message}
+		<br />
 		<div class="message">
 			{message}
 		</div>
-		<br />
 	{/if}
 
-	<hr />
 	<IG
-		name="otp_1"
-		label="Current Email OTP"
+		name="Current Email OTP"
 		error={error.otp_1}
 		type="text"
 		bind:value={form.otp_1}
@@ -166,8 +164,7 @@
 	/>
 
 	<IG
-		name="otp_2"
-		label="New Email OTP"
+		name="New Email OTP"
 		error={error.otp_2}
 		type="text"
 		bind:value={form.otp_2}
@@ -185,13 +182,13 @@
 </div>
 
 <style>
-	.form {
+	form {
 		padding: var(--sp3);
 	}
 
 	.message {
 		background-color: var(--cl1_l);
-		color: var(--ac2_);
+		color: var(--ft1_b);
 		padding: var(--sp1);
 		width: 100%;
 	}

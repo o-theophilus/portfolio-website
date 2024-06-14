@@ -120,17 +120,17 @@
 		border: none;
 
 		outline: 2px solid transparent;
-		background-color: var(--ac4);
-		color: var(--ac1);
+		background-color: var(--bg2);
+		color: var(--ft1);
 
 		transition: outline-color var(--trans);
 	}
 
 	textarea:hover:not(.disabled) {
-		outline-color: var(--ac1);
+		outline-color: var(--ft1);
 	}
 
 	textarea:focus {
-		outline-color: var(--ac1);
+		outline-color: var(--ft1);
 	}
 </style>

@@ -31,8 +31,8 @@
 	main {
 		position: relative;
 
-		background-color: var(--ac5);
-		color: var(--ac2);
+		background-color: var(--bg1);
+		color: var(--ft2);
 		transition: background-color var(--trans), color var(--trans);
 	}
 </style>

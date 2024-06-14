@@ -58,8 +58,7 @@
 </script>
 
 <IG
-	name="slug"
-	label=" "
+	name="URL Path"
 	type="text"
 	bind:value={slug}
 	error={error.error}

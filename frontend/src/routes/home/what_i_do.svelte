@@ -85,7 +85,7 @@
 	}
 
 	.dark {
-		color: var(--ac1);
+		color: var(--ft1);
 	}
 	.color {
 		color: var(--cl1);

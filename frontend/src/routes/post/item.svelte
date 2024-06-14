@@ -35,8 +35,8 @@
 	a {
 		padding: var(--sp3);
 
-		background-color: var(--ac5);
-		color: var(--ac2);
+		background-color: var(--bg1);
+		color: var(--ft2);
 		text-decoration: none;
 
 		border-radius: var(--sp1);
@@ -45,7 +45,7 @@
 		transition: background-color var(--trans), border-color var(--trans);
 	}
 	a:hover {
-		border-color: var(--ac2);
+		border-color: var(--ft2);
 	}
 
 	.img {
@@ -58,7 +58,7 @@
 		width: 100%;
 		object-fit: cover;
 		aspect-ratio: 1 / 1;
-		background-color: var(--ac4);
+		background-color: var(--bg2);
 
 		transition: transform var(--aTime);
 		transition-timing-function: ease-in-out;
@@ -73,7 +73,7 @@
 
 	.description {
 		margin: var(--sp2) 0;
-		color: var(--ac1);
+		color: var(--ft1);
 		transition: color var(--trans);
 	}
 

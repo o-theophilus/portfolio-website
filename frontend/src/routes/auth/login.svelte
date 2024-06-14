@@ -107,7 +107,9 @@
 		bind:value={form.password}
 	>
 		<svelte:fragment slot="right">
-			<PasswordShow bind:show_password />
+			<div class="right">
+				<PasswordShow bind:show_password />
+			</div>
 		</svelte:fragment>
 	</IG>
 
@@ -149,5 +151,8 @@
 <style>
 	form {
 		padding: var(--sp3);
+	}
+	.right {
+		padding-right: var(--sp2);
 	}
 </style>

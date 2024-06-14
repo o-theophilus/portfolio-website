@@ -127,7 +127,7 @@
 	section {
 		position: relative;
 		height: 300vh;
-		/* background-color: var(--ac4);
+		/* background-color: var(--bg2);
 		
 		transition: all var(--aTime);
 		transition-timing-function: ease-in-out; */
@@ -147,7 +147,7 @@
 	.blocker {
 		position: absolute;
 		inset: 0;
-		background-color: var(--ac4);
+		background-color: var(--bg2);
 		pointer-events: none;
 		transition: background-color var(--aTime);
 		transition-timing-function: ease-in-out;
@@ -165,7 +165,7 @@
 	}
 	.intersecting .title {
 		font-size: 40px;
-		color: var(--ac1);
+		color: var(--ft1);
 	}
 
 	.sticky {

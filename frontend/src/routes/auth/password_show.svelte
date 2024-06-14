@@ -36,8 +36,8 @@
 		border: none;
 		border-radius: var(--size);
 
-		background-color: var(--ac5);
-		color: var(--ac2);
+		background-color: var(--bg1);
+		color: var(--ft2);
 		fill: currentColor;
 		cursor: pointer;
 
@@ -46,6 +46,6 @@
 
 	button:hover {
 		background-color: var(--cl1);
-		color: var(--ac5_);
+		color: var(--ft1_b);
 	}
 </style>

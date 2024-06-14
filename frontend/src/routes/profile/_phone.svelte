@@ -63,8 +63,7 @@
 	{/if}
 
 	<IG
-		name="phone"
-		label="Phone Number"
+		name="Phone Number"
 		icon="phone"
 		error={error.phone}
 		placeholder="Phone Number here"

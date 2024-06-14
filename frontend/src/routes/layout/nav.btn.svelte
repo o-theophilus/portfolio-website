@@ -32,7 +32,7 @@
 
 		border-bottom: 2px solid transparent;
 
-		color: var(--ac2);
+		color: var(--ft2);
 		text-decoration: none;
 
 		transition: border-color var(--trans), color var(--trans), font-weight var(--trans);
@@ -40,21 +40,21 @@
 
 	button:hover,
 	a:hover {
-		color: var(--ac1);
+		color: var(--ft1);
 		border-color: var(--cl1);
 		text-decoration: none;
 	}
 
 	.home {
-		color: var(--ac5);
+		color: var(--bg1);
 	}
 	a.home:hover,
 	button.home:hover {
-		color: var(--ac5);
+		color: var(--bg1);
 	}
 
 	.active {
 		font-weight: bold;
-		color: var(--ac1);
+		color: var(--ft1);
 	}
 </style>

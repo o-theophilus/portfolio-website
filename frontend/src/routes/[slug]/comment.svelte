@@ -69,9 +69,9 @@
 		align-items: center;
 
 		font-weight: 800;
-		color: var(--ac1);
+		color: var(--ft1);
 	}
-	
+
 	/* .block { */
 	/* display: flex; */
 	/* flex-direction: column; */

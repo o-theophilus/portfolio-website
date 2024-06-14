@@ -54,26 +54,27 @@
 		font-size: calc(var(--size) / 3);
 		font-weight: bold;
 
-		color: var(--ac5_);
+		color: var(--ft1_b);
 	}
 	.light {
-		color: var(--ac1_);
+		color: var(--ft1_d);
 	}
 
 	.profile {
-		outline: 8px solid var(--ac4);
+		outline: 8px solid var(--bg2);
 		outline-offset: 2px;
 	}
 
 	img:not(.profile),
 	.avatar:not(.profile) {
-		outline: 2px solid var(--ac4);
+		/* outline: 2px solid var(--bg2); */
 		cursor: pointer;
-		transition: var(--trans);
+		transition: opacity var(--trans);
 	}
 
 	img:not(.profile):hover,
 	.avatar:not(.profile):hover {
-		outline-color: var(--cl1);
+		/* outline-color: var(--ft1); */
+		opacity: 0.8;
 	}
 </style>

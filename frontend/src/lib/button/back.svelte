@@ -5,8 +5,7 @@
 </script>
 
 <BRound
-	icon="angle"
-	icon_size="10"
+	icon="arrow_back"
 	large
 	on:click={() => {
 		window.history.back();

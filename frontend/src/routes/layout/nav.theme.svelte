@@ -59,7 +59,7 @@
 		position: relative;
 		overflow: hidden;
 
-		color: var(--ac1);
+		color: var(--ft1);
 		border-radius: 50%;
 
 		height: var(--size);
@@ -74,11 +74,11 @@
 	}
 
 	.is_home {
-		color: var(--ac5);
+		color: var(--bg1);
 	}
 
 	button:hover {
-		color: var(--ac5_);
+		color: var(--ft1_b);
 		background-color: var(--cl1);
 	}
 

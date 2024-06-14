@@ -23,8 +23,7 @@
 		height: 12px;
 		border-radius: var(--sp0);
 
-		background-color: var(--ac3);
-		/* background-color: var(--cl1); */
+		background-color: var(--button);
 
 		transition: width 2000ms;
 		transition-timing-function: cubic-bezier(0.47, 1.64, 0.41, 0.8);

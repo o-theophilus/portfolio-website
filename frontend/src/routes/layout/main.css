@@ -23,7 +23,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
 	transition: background-color 9999s;
-	-webkit-text-fill-color: var(--ac1);
+	-webkit-text-fill-color: var(--ft1);
 }
 
 .error {
@@ -32,11 +32,11 @@ input:-webkit-autofill:active {
 
 hr {
 	border: none;
-	border-top: 1px solid var(--ac3);
+	border-top: 2px solid var(--input);
 }
 
 .ititle {
-	color: var(--ac1);
+	color: var(--ft1);
 	font-size: x-large;
 }
 
@@ -44,15 +44,20 @@ hr {
 
 select {	
 	padding: var(--sp2);
+	width: 100%;
 	border-radius: var(--sp0);
 	outline: 2px solid transparent;
 	
 	border: none;
-	background-color: var(--ac4);
-	color: var(--ac2);
-
+	background-color: var(--input);
+	color: var(--ft2);
+	
 	transition: outline-color var(--trans);
 }
+select:not(.wide){
+	max-width: fit-content;
+}
+
 select:hover {
-	outline-color: var(--ac1);
+	outline-color: var(--ft1);
 }

@@ -46,9 +46,9 @@
 		font-size: larger;
 		font-weight: bold;
 
-		color: var(--ac5_);
+		color: var(--ft1_b);
 	}
 	.light {
-		color: var(--ac1_);
+		color: var(--ft1_d);
 	}
 </style>

@@ -41,8 +41,8 @@
 		height: var(--size);
 		border-radius: 50%;
 
-		background-color: var(--ac4);
-		color: var(--ac2);
+		background-color: var(--bg2);
+		color: var(--ft2);
 		cursor: pointer;
 
 		transition: background-color var(--trans), color var(--trans);
@@ -53,8 +53,8 @@
 	}
 
 	:disabled {
-		background-color: var(--ac5);
-		color: var(--ac2);
+		background-color: var(--bg1);
+		color: var(--ft2);
 		box-shadow: unset;
 
 		cursor: unset;
@@ -62,14 +62,14 @@
 	}
 
 	:not(:disabled):hover {
-		background-color: var(--cl1_d);
-		color: var(--ac5_);
+		background-color: var(--cl1);
+		color: var(--ft1_b);
 	}
 	:not(:disabled).hover_red:hover {
 		background-color: var(--cl2);
 	}
 
 	:not(:disabled).outline {
-		outline: 2px solid var(--ac4);
+		outline: 2px solid var(--bg2);
 	}
 </style>

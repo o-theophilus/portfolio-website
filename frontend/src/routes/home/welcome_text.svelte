@@ -43,7 +43,7 @@
 
 <style>
 	.dynamic {
-		color: var(--ac5);
+		color: var(--bg1);
 		font-size: xx-large;
 		font-weight: 800;
 		text-align: center;

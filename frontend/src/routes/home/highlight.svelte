@@ -144,7 +144,7 @@
 	}
 	.intersecting .title {
 		font-size: 40px;
-		color: var(--ac1);
+		color: var(--ft1);
 	}
 
 	.sticky {

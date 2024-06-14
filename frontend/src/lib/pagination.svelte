@@ -112,16 +112,14 @@
 		margin: var(--sp2) auto;
 		border-radius: var(--sp0);
 
-		color: var(--ac3);
 		outline: 2px solid transparent;
-		padding: var(--sp0);
-		background-color: var(--ac5);
+		background-color: var(--input);
 
 		transition: outline-color var(--trans);
 	}
 	section:hover,
 	section:has(input:focus) {
-		outline-color: var(--ac1);
+		outline-color: var(--ft1);
 	}
 
 	.input {
@@ -135,7 +133,7 @@
 		height: var(--height);
 		border: none;
 
-		color: var(--ac1);
+		color: var(--ft1);
 		background-color: transparent;
 	}
 
@@ -161,8 +159,8 @@
 		aspect-ratio: 1/1;
 
 		border-radius: var(--sp0);
-		background-color: var(--ac4);
-		color: var(--ac2);
+		background-color: var(--button);
+		color: var(--ft2_b);
 		border: none;
 		cursor: pointer;
 		font-weight: 700;
@@ -172,6 +170,6 @@
 
 	button:hover {
 		background-color: var(--cl1);
-		color: var(--ac5_);
+		color: var(--ft1_b);
 	}
 </style>

@@ -3,7 +3,6 @@
 	import Icon from '$lib/icon.svelte';
 
 	export let name = '';
-	export let label = '';
 	export let icon = '';
 	export let error = '';
 	let id = name.split(' ').join('_').toLowerCase();
@@ -19,7 +18,7 @@
 
 <div class="inputGroup" class:no_pad>
 	<slot name="label">
-		<label for={id}>{label || name}</label>
+		<label for={id}>{name}</label>
 	</slot>
 
 	{#if error}
@@ -29,7 +28,7 @@
 	{/if}
 
 	<slot {id}>
-		<div class="input" class:left_pad={icon} class:right_pad={$$slots.right} class:disabled>
+		<div class="input" class:left_pad={icon} class:disabled>
 			{#if icon}
 				<Icon {icon} />
 			{/if}
@@ -41,12 +40,11 @@
 </div>
 
 <style>
+	.inputGroup {
+		width: 100%;
+	}
 	.inputGroup:not(.no_pad) {
 		margin: var(--sp3) 0;
-	}
-
-	label {
-		text-transform: capitalize;
 	}
 
 	.input {
@@ -59,8 +57,8 @@
 		border: none;
 
 		outline: 2px solid transparent;
-		background-color: var(--ac4);
-		color: var(--ac2);
+		background-color: var(--input);
+		color: var(--ft2);
 
 		transition: outline-color var(--trans);
 	}
@@ -71,13 +69,10 @@
 
 	.input:hover:not(.disabled),
 	.input:has(:focus) {
-		outline-color: var(--ac1);
+		outline-color: var(--ft1);
 	}
 
 	.left_pad {
 		padding-left: var(--sp2);
-	}
-	.right_pad {
-		padding-right: var(--sp2);
 	}
 </style>

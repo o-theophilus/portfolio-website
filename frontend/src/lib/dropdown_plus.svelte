@@ -48,14 +48,6 @@
 	.comp {
 		position: relative;
 	}
-	select {
-		outline-color: var(--ac3);
-	}
-
-	.default select:focus:not(:disabled),
-	.default select:hover:not(:disabled) {
-		outline-color: var(--ac1);
-	}
 
 	.button select {
 		--size: 60px;
@@ -63,16 +55,16 @@
 		height: var(--size);
 		appearance: none;
 		color: transparent;
-		background-color: var(--ac3);
+		background-color: var(--button);
+		outline: transparent;
 
 		transition: background-color var(--trans);
 	}
 	.button select:hover:not(:disabled) {
-		background-color: var(--cl1_d);
-		outline: transparent;
+		background-color: var(--cl1);
 	}
 	.button:hover:not(:disabled) .icon {
-		color: var(--ac5_);
+		/* color: var(--ft1_b); */
 	}
 	.icon {
 		position: absolute;
@@ -82,10 +74,16 @@
 		justify-content: center;
 		align-items: center;
 		pointer-events: none;
+		color: var(--ft2_b);
 
-		transition: color var(--trans);
+		/* transition: color var(--trans); */
 	}
 	.button .icon {
 		display: flex;
+	}
+
+	option {
+		background-color: var(--bg2);
+		color: var(--ft2);
 	}
 </style>

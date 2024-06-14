@@ -124,7 +124,7 @@
 	select {
 		background-color: transparent;
 		border: none;
-		color: var(--ac2);
+		color: var(--ft2);
 		cursor: pointer;
 	}
 </style>

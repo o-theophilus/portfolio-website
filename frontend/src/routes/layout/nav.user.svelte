@@ -54,6 +54,9 @@
 			{#if is_admin && $page.url.pathname != '/admin'}
 				<Link href="/admin">Admin</Link>
 			{/if}
+			{#if $user.permissions.includes('log:view')}
+				<Link href="/log">Logs</Link>
+			{/if}
 			<Logout />
 		</div>
 	{/if}
@@ -62,6 +65,7 @@
 <style>
 	.user {
 		position: relative;
+		display: flex;
 	}
 
 	.dropdown {
@@ -74,7 +78,7 @@
 		flex-direction: column;
 		gap: var(--sp2);
 
-		background-color: var(--ac4);
+		background-color: var(--bg2);
 
 		padding: var(--sp2);
 		border-radius: var(--sp0);

@@ -36,7 +36,7 @@
 		border: none;
 
 		background-color: transparent;
-		color: var(--ac1);
+		color: var(--ft1);
 	}
 
 	textarea {

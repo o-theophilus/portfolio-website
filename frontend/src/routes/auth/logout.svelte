@@ -22,7 +22,7 @@
 	};
 </script>
 
-<Button size="small" extra="hover_red outline" on:click={submit}>
+<Button size="small" extra="hover_red" on:click={submit}>
 	<Icon icon="logout" size="16" />
 	Logout
 </Button>

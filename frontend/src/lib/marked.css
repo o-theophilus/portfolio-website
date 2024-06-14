@@ -4,13 +4,13 @@
 	/* padding: var(--sp2); */
 	border-radius: var(--sp1);
 	
-	background-color: var(--ac4);
+	background-color: var(--bg2);
 }
 
 blockquote {
 	margin: auto 40px;
 	font-style: italic;
-	background-color: var(--ac4);
+	background-color: var(--bg2);
 }
 .markdown blockquote img {
 	margin: 0;
@@ -37,7 +37,7 @@ h4,
 h5,
 h6 {
 	margin: 52px 0 16px;
-	color: var(--ac1);
+	color: var(--ft1);
 }
 
 h1 {

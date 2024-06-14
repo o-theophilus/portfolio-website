@@ -21,12 +21,13 @@
 <style>
 	button,
 	a {
-		display: inline-flex;
-		gap: var(--sp1);
+		/* display: inline-flex; */
+		/* gap: var(--sp1); */
 
-		color: var(--ac2);
+		color: var(--ft2);
 		font-weight: 700;
 		text-decoration: none;
+		text-align: left;
 		border: none;
 		background: none;
 		cursor: pointer;

@@ -13,6 +13,7 @@
 	import Scroller from '$lib/scroller.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Icon from '$lib/icon.svelte';
+	import Log from '$lib/log.svelte';
 
 	import Confirm from './auth/confirm.svelte';
 	import Dialogue from '$lib/dialogue.svelte';
@@ -45,6 +46,7 @@
 	});
 </script>
 
+<Log entity_type={'page'} />
 <Meta title="Home" description="Welcome to my personal portfolio website." />
 
 <section>

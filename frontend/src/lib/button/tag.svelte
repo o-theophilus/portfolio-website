@@ -22,7 +22,7 @@
 		background-color: var(--cl1_l);
 
 		text-transform: capitalize;
-		color: var(--ac2);
+		color: var(--ft2);
 
 		transition: color var(--trans), background-color var(--trans);
 	}
@@ -31,18 +31,18 @@
 	}
 
 	:disabled {
-		background-color: var(--ac5);
-		color: var(--ac2);
+		background-color: var(--bg1);
+		color: var(--ft2);
 		cursor: unset;
 		opacity: 0.4;
 	}
 
 	:not(:disabled).active {
 		background-color: var(--cl1);
-		color: var(--ac3_);
+		color: var(--ft1_b);
 	}
 	:not(:disabled):hover {
 		background-color: var(--cl1);
-		color: var(--ac5_);
+		color: var(--ft1_b);
 	}
 </style>

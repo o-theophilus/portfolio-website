@@ -6,12 +6,12 @@ import psycopg2.extras
 
 bp = Blueprint("postgres", __name__)
 
-# anonymous, verified, deleted
 setting_table = """CREATE TABLE IF NOT EXISTS setting (
     key VARCHAR(32) PRIMARY KEY,
     misc JSONB DEFAULT '{}'::JSONB
 );"""
 
+# anonymous, verified, deleted
 user_table = """CREATE TABLE IF NOT EXISTS "user" (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'anonymous' NOT NULL,

@@ -30,10 +30,10 @@
 
 		font-size: x-small;
 		cursor: pointer;
-		background-color: var(--ac4);
+		background-color: var(--bg2);
 
 		text-transform: capitalize;
-		color: var(--ac1);
+		color: var(--ft1);
 	}
 	button:disabled {
 		opacity: 0.4;
@@ -65,7 +65,7 @@
 		height: var(--size);
 		border-radius: calc(var(--size) / 2);
 		background-color: var(--cl1);
-		color: var(--ac5_);
+		color: var(--ft1_b);
 
 		transition: background-color var(--trans), left var(--trans);
 	}

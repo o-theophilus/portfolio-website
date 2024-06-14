@@ -5,7 +5,7 @@
 
 	export let primary = false;
 	export let size = ''; // small, large, wide
-	export let extra = ''; // outline, hover_red,
+	export let extra = ''; // hover_red,
 </script>
 
 <svelte:element
@@ -37,16 +37,16 @@
 		border-radius: var(--sp0);
 		width: fit-content;
 
-		background-color: var(--ac4);
+		background-color: var(--button);
 
-		color: var(--ac2);
+		color: var(--ft2_b);
 		fill: currentColor;
 		text-decoration: none;
 		text-align: center;
 		font-weight: 700;
 		cursor: pointer;
 
-		transition: background-color var(--trans), color var(--trans), outline-color var(--trans);
+		transition: background-color var(--trans), color var(--trans), opacity var(--trans);
 	}
 
 	.large {
@@ -65,37 +65,29 @@
 
 	.primary {
 		background-color: var(--cl1);
-		color: var(--ac5_);
+		color: var(--ft1_b);
 		box-shadow: 0 -4px 0 var(--cl1_d) inset;
 	}
 
 	:disabled {
-		background-color: var(--ac4);
-		color: var(--ac2);
 		box-shadow: unset;
 
 		cursor: unset;
-		opacity: 0.4;
+		opacity: 0.2;
 	}
 
 	:not(:disabled):hover {
 		background-color: var(--cl1);
-		color: var(--ac5_);
+		color: var(--ft1_b);
+		text-decoration: none;
 	}
 	:not(:disabled).primary:hover {
 		background-color: var(--cl1_d);
+		text-decoration: none;
 	}
 
 	:not(:disabled):not(.primary).hover_red:hover {
 		background-color: var(--cl2);
-	}
-
-	:not(:disabled):not(.primary).outline {
-		outline: 2px solid var(--ac3);
-		outline-offset: -2px;
-	}
-
-	:not(:disabled):not(.primary).outline:hover {
-		outline-color: transparent;
+		text-decoration: none;
 	}
 </style>

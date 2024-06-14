@@ -11,34 +11,34 @@
 	--sp4: 64px;
 
 	--cl1: rgb(255, 102, 51);
-	--cl1_l: color-mix(in srgb, var(--cl1), transparent 90%);
+	--cl1_l: color-mix(in srgb, var(--cl1), transparent 80%);
 	--cl1_d: color-mix(in srgb, var(--cl1), black 30%);
 	--cl2: red;
 	--cl3: green;
 	--cl4: rgb(255, 162, 0);
-
 	--overlay: rgba(128, 128, 128, 0.5);
 
-	--ac1_: black;
-	--ac2_: hsl(0, 0%, 30%);	
-	--ac3_: hsl(0, 0%, 75%);
-	--ac4_: hsl(0, 0%, 85%);
-	--ac5_: white;
+	--button: hsl(0, 0%, 18%);
+	--input: hsla(230, 30%, 41%, 0.1);
+	/* --bround: #D1D4E1; */
+	--gray: rgba(128, 128, 128, 0.4);
 
+	--ft1_d: black;
+	--ft1_b: white;
+	--ft2_d: hsl(0, 0%, 30%);	
+	--ft2_b: hsl(0, 0%, 70%);
 }
 
 main {
-	--ac1: var(--ac1_);
-	--ac2: var(--ac2_);
-	--ac3: var(--ac3_);
-	--ac4: var(--ac4_);
-	--ac5: var(--ac5_);
+	--ft1: var(--ft1_d);
+	--ft2: var(--ft2_d);
+	--bg2: hsl(233, 10%, 89%);
+	--bg1: white;
 }
 
 main.dark {
-	--ac1: white;
-	--ac2: hsl(0, 0%, 70%);
-	--ac3: hsl(0, 0%, 25%);
-	--ac4: hsl(0, 0%, 10%);
-	--ac5: hsl(0, 0%, 5%);
+	--ft1: var(--ft1_b);
+	--ft2: var(--ft2_b);
+	--bg2: hsl(0, 0%, 10%);
+	--bg1: hsl(0, 0%, 5%);
 }

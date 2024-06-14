@@ -61,12 +61,12 @@
 		align-items: center;
 
 		margin-top: var(--sp2);
-		
+
 		padding: var(--sp2);
 		border-radius: var(--sp0);
 
 		background-color: var(--cl1_l);
-		color: var(--ac1);
+		color: var(--ft1);
 		font-size: small;
 	}
 </style>

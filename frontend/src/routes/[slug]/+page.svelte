@@ -11,6 +11,7 @@
 	import Tags from './tags.svelte';
 	import Toggle from '$lib/toggle.svelte';
 	import Icon from '$lib/icon.svelte';
+	import Log from '$lib/log.svelte';
 
 	import Title from './_title.svelte';
 	import Description from './_description.svelte';
@@ -110,6 +111,7 @@
 	});
 </script>
 
+<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
 <Meta title={post.title} description={post.description} image={post.photos[0]} />
 
 <Content>
@@ -323,7 +325,7 @@
 		margin: var(--sp2) 0;
 		border-radius: var(--sp1);
 
-		background-color: var(--ac4);
+		background-color: var(--bg2);
 	}
 	.img .line {
 		position: absolute;

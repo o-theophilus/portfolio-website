@@ -10,8 +10,10 @@
 	import Dialogue from '$lib/dialogue.svelte';
 	import Login from './login.svelte';
 	import EmailTemplate from './confirm.email_template.svelte';
+	import ShowPassword from './password_show.svelte';
 
 	let email_template;
+	let show_password = false;
 
 	let form = {
 		email: $module.email
@@ -111,9 +113,14 @@
 		icon="key"
 		error={error.password}
 		placeholder="password here"
-		type="password"
+		type={show_password ? 'text' : 'password'}
 		bind:value={form.password}
 	>
+		<svelte:fragment slot="right">
+			<div class="right">
+				<ShowPassword bind:show_password />
+			</div>
+		</svelte:fragment>
 		<svelte:fragment slot="down">
 			<Password password={form.password} />
 		</svelte:fragment>
@@ -123,7 +130,7 @@
 		icon="key"
 		error={error.confirm_password}
 		placeholder="confirm password here"
-		type="password"
+		type={show_password ? 'text' : 'password'}
 		bind:value={form.confirm_password}
 	/>
 
@@ -153,5 +160,9 @@
 <style>
 	form {
 		padding: var(--sp3);
+	}
+
+	.right {
+		padding-right: var(--sp2);
 	}
 </style>

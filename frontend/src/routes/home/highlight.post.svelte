@@ -62,7 +62,7 @@
 		height: 100%;
 
 		object-fit: cover;
-		background-color: var(--ac4);
+		background-color: var(--bg2);
 
 		transition: transform var(--aTime);
 		transition-timing-function: ease-in-out;

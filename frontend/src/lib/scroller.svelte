@@ -31,22 +31,21 @@
 		justify-content: center;
 		align-items: center;
 
-		border: 2px solid var(--ac1);
+		border: 2px solid var(--ft1);
 		border-radius: 50%;
 		width: var(--size);
 		height: var(--size);
 
 		background-color: transparent;
 		transition: border-color var(--trans);
-	}
-	.invert {
-		border-color: var(--ac5_);
+
+		cursor: pointer;
 	}
 	button:hover {
 		border-color: transparent;
 	}
-	button:hover .content {
-		color: var(--ac5_);
+	.invert {
+		border-color: var(--ft1_b);
 	}
 
 	.content {
@@ -55,11 +54,15 @@
 		justify-content: center;
 		align-items: center;
 
-		color: var(--ac1);
+		color: var(--ft1);
 		transition: color var(--trans);
 	}
+	button:hover .content {
+		color: var(--ft1_b);
+	}
+
 	.invert .content {
-		color: var(--ac5_);
+		color: var(--ft1_b);
 	}
 
 	.highlight {
@@ -67,20 +70,15 @@
 		width: 0%;
 		height: 0%;
 
-		opacity: 0;
-
 		background-color: transparent;
 		border-radius: 50%;
 
-		transition-property: width var(--trans), height var(--trans), background-color var(--trans),
-			opacity var(--trans);
+		transition: width var(--trans), height var(--trans), background-color var(--trans);
 	}
 
 	button:hover .highlight {
 		width: var(--size);
 		height: var(--size);
-
 		background-color: var(--cl1);
-		opacity: 1;
 	}
 </style>
