@@ -5,20 +5,20 @@
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
 
-	export let ratings;
-	export let post_key;
-	let rating = 0;
+	let ratings = $module.ratings;
+	let post_key = $module.post_key;
+	let my_rating = 0;
 	let error = {};
 
 	for (const i in ratings) {
 		if (ratings[i].user_key == $user.key) {
-			rating = ratings[i].rating;
+			my_rating = ratings[i].rating;
 			break;
 		}
 	}
 
 	const set_active = (val) => {
-		rating = val;
+		my_rating = val;
 	};
 
 	const submit = async () => {
@@ -31,12 +31,13 @@
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify({ rating })
+			body: JSON.stringify({ rating: my_rating })
 		});
 		resp = await resp.json();
 		$loading = false;
 
 		if (resp.status == 200) {
+			console.log(resp.ratings);
 			$portal = {
 				for: 'rating',
 				data: resp.ratings
@@ -57,13 +58,13 @@
 		</span>
 	{/if}
 	<div>
-		Rating ({rating})
+		Rating ({my_rating})
 		<div class="block">
 			<div class="block red">
 				{#each Array(5) as _, i}
 					{@const j = -5 + i}
 					<button
-						class:active={j == rating}
+						class:active={j == my_rating}
 						on:click={() => {
 							set_active(j);
 						}}
@@ -71,7 +72,7 @@
 				{/each}
 			</div>
 			<button
-				class:active={0 == rating}
+				class:active={0 == my_rating}
 				class="b0"
 				on:click={() => {
 					set_active(0);
@@ -81,7 +82,7 @@
 				{#each Array(5) as _, i}
 					{@const j = 5 - i}
 					<button
-						class:active={j == rating}
+						class:active={j == my_rating}
 						on:click={() => {
 							set_active(j);
 						}}

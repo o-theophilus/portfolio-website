@@ -6,8 +6,8 @@ from .tools import send_mail
 from deta import Deta
 from .postgres import db_open, db_close
 from .postgres import (
-    post_table, user_table, log_table, feedback_table,
-    save_table, otp_table, setting_table)
+    post_table, user_table, log_table, comment_table,
+    rating_table, save_table, otp_table, setting_table)
 from uuid import uuid4
 from .admin import permissions
 
@@ -86,20 +86,17 @@ def create_tables():
         DROP TABLE IF EXISTS post CASCADE;
         DROP TABLE IF EXISTS log CASCADE;
         DROP TABLE IF EXISTS save CASCADE;
-        DROP TABLE IF EXISTS feedback CASCADE;
+        DROP TABLE IF EXISTS comment CASCADE;
+        DROP TABLE IF EXISTS rating CASCADE;
         DROP TABLE IF EXISTS otp CASCADE;
         {setting_table}
         {user_table}
         {post_table}
         {log_table}
         {save_table}
-        {feedback_table}
+        {comment_table}
+        {rating_table}
         {otp_table}
-    """)
-
-    cur.execute(f"""
-        DROP TABLE IF EXISTS setting CASCADE;
-        {setting_table}
     """)
 
     db_close(con, cur)
@@ -108,6 +105,7 @@ def create_tables():
     })
 
 
+# @bp.get("/fix")
 def general_fix():
     con, cur = db_open()
 
@@ -130,25 +128,30 @@ def general_fix():
     #     ALTER TABLE save
     #     DROP COLUMN date;
 
-    # ALTER TABLE order_item
-    # ADD COLUMN price FLOAT DEFAULT 0 NOT NULL;
-    # """)
-
-    # cur.execute("""
-    #     ALTER TABLE post
-    #     ADD COLUMN date TIMESTAMP;
+    #     ALTER TABLE order_item
+    #     ADD COLUMN price FLOAT DEFAULT 0 NOT NULL;
     # """)
 
     cur.execute("""
+        ALTER TABLE post
+        ADD COLUMN author CHAR(32);
+    """)
+
+    cur.execute("""
         UPDATE post
-        SET date = (
-            SELECT log.date
-            FROM log
-            WHERE
-                post.key = log.entity_key
-                AND log.action = 'created'
-                AND log.entity_type = 'post'
-        )
+        SET author = '00f5614de3224f0d87bad5614821587e'
+        WHERE author IS NULL;
+    """)
+
+    cur.execute("""
+        ALTER TABLE post
+        ALTER COLUMN author SET NOT NULL;
+    """)
+
+    cur.execute("""
+        ALTER TABLE post
+        ADD CONSTRAINT fk_author
+        FOREIGN KEY (author) REFERENCES "user"(key);
     """)
 
     db_close(con, cur)
@@ -157,7 +160,6 @@ def general_fix():
     })
 
 
-# @bp.get("/fix")
 def fix_permission():
     con, cur = db_open()
 

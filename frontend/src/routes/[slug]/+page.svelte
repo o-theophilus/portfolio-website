@@ -23,31 +23,44 @@
 	import Manage_Video from './_video.svelte';
 
 	import Share from './_share.svelte';
-	import Rating from './__add_rating__.svelte';
+	import Rating from './_rating.svelte';
 
-	import Comment from './comment.svelte';
+	import Comment from './comment/index.svelte';
 	import Highlight from './highlight.svelte';
 	import Author from './author.svelte';
 
 	export let data;
 	let { post } = data;
+	let { ratings } = data;
+	let o_rating = 0;
+	let my_rating = 0;
 	let content = '';
 	let tags = [];
-	let comments = [];
-	let ratings = [];
 	let photo_count = 1;
 	let video_count = 0;
+
+	const calc_rating = () => {
+		o_rating = 0;
+		for (const i in ratings) {
+			o_rating += ratings[i].rating;
+			if (ratings[i].user_key == $user.key) {
+				my_rating = ratings[i].rating;
+			}
+		}
+	};
+	calc_rating();
 
 	$: if ($portal) {
 		if ($portal.for == 'post') {
 			post = $portal.data;
-		} else if ($portal.for == 'comment') {
-			comments = $portal.data;
 		} else if ($portal.for == 'rating') {
 			ratings = $portal.data;
+			calc_rating();
 		}
 
-		$portal = {};
+		if (['post', 'rating'].includes($portal.for)) {
+			$portal = {};
+		}
 	}
 
 	$: if (post.content) {
@@ -56,7 +69,6 @@
 		let exist = content.search(/{#photo}/) >= 0;
 		while (exist) {
 			let i = `![${post.title}](${post.photos[photo_count]})`;
-			console.log(i);
 			content = content.replace(/{#photo}/, i);
 			exist = content.search(/{#photo}/) >= 0;
 			photo_count = photo_count + 1;
@@ -77,14 +89,6 @@
 			video_count = video_count + 1;
 		}
 	}
-
-	// let ratings_value = 0;
-	// $: {
-	// 	ratings_value = 0;
-	// 	for (const i in ratings) {
-	// 		ratings_value += ratings[i].rating;
-	// 	}
-	// }
 
 	let edit_mode = false;
 
@@ -230,8 +234,45 @@
 		<div class="margin">No content</div>
 	{/if}
 
-	{#if $user.permissions.includes('post:edit_tags') && edit_mode}
+	<div class="line">
+		<Button
+			size="small"
+			on:click={() => {
+				$module = {
+					module: Share,
+					post
+				};
+			}}
+		>
+			<Icon icon="share" />
+			Share
+		</Button>
+
+		{#if $user.login}
+			<Button
+				size="small"
+				on:click={() => {
+					$module = {
+						module: Rating,
+						post_key: post.key,
+						ratings
+					};
+				}}
+			>
+				<Icon icon="hotel_class" />
+				Rate: {my_rating} | Overall Rating: {o_rating}
+			</Button>
+		{/if}
+	</div>
+	<hr />
+
+	<Author {post} />
+
+	{#if post.tags.length > 0 || ($user.permissions.includes('post:edit_tags') && edit_mode)}
 		<hr />
+	{/if}
+
+	{#if $user.permissions.includes('post:edit_tags') && edit_mode}
 		<BRound
 			icon="edit"
 			icon_size={15}
@@ -250,10 +291,6 @@
 	{:else if edit_mode}
 		<div class="margin">No tag</div>
 	{/if}
-
-	<hr />
-
-	<Author />
 
 	{#if $user.permissions.includes('post:edit_status') && edit_mode}
 		<hr />
@@ -281,36 +318,7 @@
 
 	<hr />
 
-	<!-- {#if $user.login}
-		<Button
-			class="tiny"
-			name="Overall Rating: {ratings_value}"
-			icon="heart"
-			on:click={() => {
-				$module = {
-					module: Rating,
-					post_key: post.key,
-					ratings
-				};
-			}}
-		/>
-	{/if} -->
-
-	<Button
-		icon="share"
-		size="small"
-		on:click={() => {
-			$module = {
-				module: Share,
-				post
-			};
-		}}
-	>
-		<Icon icon="share" />
-		Share
-	</Button>
-
-	<Comment {comments} post_key={post.key} />
+	<Comment {post} />
 </Content>
 
 <style>

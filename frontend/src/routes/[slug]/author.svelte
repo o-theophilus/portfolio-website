@@ -1,54 +1,24 @@
 <script>
-	let author = {
-		name: 'Theophilus Ogbolu'
-	};
+	import Avatar from '$lib/avatar.svelte';
 
-	let hue = Math.floor(Math.random() * (360 + 1));
+	export let post;
 </script>
 
-<section>
-	<strong> Author </strong>
-	<class class="block">
-		<div class="img" class:light={hue > 29 && hue < 189} style:--hue={hue}>
-			{author.name[0]}
-		</div>
-		{author.name}
-	</class>
-</section>
+<class class="block">
+	<Avatar
+		user={{
+			name: post.author_name,
+			photo: post.author_photo
+		}}
+	/>
+
+	{post.author_name} | Author
+</class>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-		gap: var(--sp2);
-	}
-
 	.block {
 		display: flex;
 		gap: var(--sp2);
 		align-items: center;
-	}
-
-	.img {
-		--size: 40px;
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-shrink: 0;
-
-		width: var(--size);
-		height: var(--size);
-		border-radius: 50%;
-
-		background-color: hsl(var(--hue), 100%, 50%);
-		text-transform: capitalize;
-		font-size: larger;
-		font-weight: bold;
-
-		color: var(--ft1_b);
-	}
-	.light {
-		color: var(--ft1_d);
 	}
 </style>

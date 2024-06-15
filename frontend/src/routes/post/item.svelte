@@ -1,17 +1,7 @@
 <script>
-	import { timeAgo } from '$lib/store.js';
-	import { onMount } from 'svelte';
+	import Datetime from '$lib/datetime.svelte';
 
 	export let post;
-
-	let time = timeAgo(post.date);
-	onMount(() => {
-		const intervalId = setInterval(() => {
-			time = timeAgo(post.date);
-		}, 1000);
-
-		return () => clearInterval(intervalId);
-	});
 </script>
 
 <a href="/{post.slug}" data-sveltekit-preload-data>
@@ -27,7 +17,7 @@
 		{post.description}
 	</div>
 	<div class="date">
-		{time}
+		<Datetime datetime={post.date} type="ago" />
 	</div>
 </a>
 

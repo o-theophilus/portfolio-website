@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from .postgres import db_open, db_close
 from .tools import token_to_user
 from math import ceil
+from .rating import get_ratings
 
 bp = Blueprint("post_read", __name__)
 
@@ -45,13 +46,17 @@ def get_post(key, cur=None):
     cur.execute("""
         SELECT
             post.*,
-            COALESCE(ARRAY_AGG(feedback.rating), ARRAY[]::int[]) AS ratings
+            "user".name AS author_name,
+            "user".photo AS author_photo
         FROM post
-        LEFT JOIN feedback ON post.key = feedback.post_key
-        WHERE post.slug = %s OR post.key = %s
-        GROUP BY post.key;
+        LEFT JOIN "user" ON post.author = "user".key
+        WHERE post.slug = %s OR post.key = %s;
     """, (key, key))
     post = cur.fetchone()
+    post["author_photo"] = (
+        f"{request.host_url}photo/{post['author_photo']}"
+        if post["author_photo"] else None
+    )
 
     if not post:
         if close_conn:
@@ -84,11 +89,15 @@ def get_post(key, cur=None):
 
     post["photos"] = [f"{request.host_url}photo/{x}" for x in post["photos"]]
 
+    # TODO: pass cur
+    ratings = get_ratings(post["key"]).json["ratings"]
+
     if close_conn:
         db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post
+        "post": post,
+        "ratings": ratings
     })
 
 
@@ -152,11 +161,11 @@ def get_all(order="latest", page_size=24):
     cur.execute("""
         SELECT
             post.*,
-            COALESCE(AVG(feedback.rating), 0) AS rating,
-            COALESCE(ARRAY_AGG(feedback.rating), ARRAY[]::int[]) AS ratings,
+            COALESCE(AVG(rating.rating), 0) AS rating,
+            COALESCE(ARRAY_AGG(rating.rating), ARRAY[]::int[]) AS ratings,
             COUNT(*) OVER() AS total_posts
         FROM post
-        LEFT JOIN feedback ON post.key = feedback.post_key
+        LEFT JOIN rating ON post.key = rating.post_key
         WHERE
             post.status = %s
             AND (%s = '' OR post.title ILIKE %s) {}

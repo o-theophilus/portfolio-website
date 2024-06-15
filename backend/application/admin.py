@@ -275,11 +275,11 @@ def get_highlight(cur=None):
     cur.execute("""
         SELECT
             post.*,
-            COALESCE(ARRAY_AGG(feedback.rating) FILTER (
-                WHERE feedback.rating IS NOT NULL
+            COALESCE(ARRAY_AGG(rating.rating) FILTER (
+                WHERE rating.rating IS NOT NULL
             ), ARRAY[]::int[]) AS ratings
         FROM post
-        LEFT JOIN feedback ON post.key = feedback.post_key
+        LEFT JOIN rating ON post.key = rating.post_key
         WHERE
             post.status = 'publish'
             AND post.key = ANY(%s)

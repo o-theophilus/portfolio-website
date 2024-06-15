@@ -11,7 +11,6 @@ setting_table = """CREATE TABLE IF NOT EXISTS setting (
     misc JSONB DEFAULT '{}'::JSONB
 );"""
 
-# anonymous, verified, deleted
 user_table = """CREATE TABLE IF NOT EXISTS "user" (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'anonymous' NOT NULL,
@@ -32,6 +31,7 @@ post_table = """CREATE TABLE IF NOT EXISTS post (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'draft' NOT NULL,
     date TIMESTAMP NOT NULL,
+    author CHAR(32) NOT NULL,
 
     title VARCHAR(100) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,
@@ -39,7 +39,9 @@ post_table = """CREATE TABLE IF NOT EXISTS post (
     description TEXT,
     photos TEXT[] DEFAULT ARRAY[]::TEXT[],
     videos TEXT[] DEFAULT ARRAY[]::TEXT[],
-    tags TEXT[] DEFAULT ARRAY[]::TEXT[]
+    tags TEXT[] DEFAULT ARRAY[]::TEXT[],
+
+    FOREIGN KEY (author) REFERENCES "user"(key)
 );"""
 
 log_table = """CREATE TABLE IF NOT EXISTS log (
@@ -67,14 +69,30 @@ save_table = """CREATE TABLE IF NOT EXISTS save (
 );"""
 
 
-feedback_table = """CREATE TABLE IF NOT EXISTS feedback (
+# active, deleted
+comment_table = """CREATE TABLE IF NOT EXISTS comment (
+    key CHAR(32) PRIMARY KEY,
+    status VARCHAR(20) DEFAULT 'active' NOT NULL,
+
+    user_key CHAR(32) NOT NULL,
+    post_key CHAR(32) NOT NULL,
+
+    comment TEXT NOT NULL,
+    path TEXT[] DEFAULT ARRAY[]::TEXT[],
+    upvote TEXT[] DEFAULT ARRAY[]::TEXT[],
+    downvote TEXT[] DEFAULT ARRAY[]::TEXT[],
+
+    FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE,
+    FOREIGN KEY (post_key) REFERENCES post(key)
+);"""
+
+rating_table = """CREATE TABLE IF NOT EXISTS rating (
     key CHAR(32) PRIMARY KEY,
 
     user_key CHAR(32) NOT NULL,
     post_key CHAR(32) NOT NULL,
 
     rating INT DEFAULT 0,
-    review TEXT,
 
     FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE,
     FOREIGN KEY (post_key) REFERENCES post(key)
