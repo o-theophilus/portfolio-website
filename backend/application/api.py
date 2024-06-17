@@ -7,7 +7,8 @@ from deta import Deta
 from .postgres import db_open, db_close
 from .postgres import (
     post_table, user_table, log_table, comment_table,
-    rating_table, save_table, otp_table, setting_table)
+    rating_table, save_table, otp_table, setting_table,
+    report_table)
 from uuid import uuid4
 from .admin import permissions
 
@@ -87,6 +88,7 @@ def create_tables():
         DROP TABLE IF EXISTS log CASCADE;
         DROP TABLE IF EXISTS save CASCADE;
         DROP TABLE IF EXISTS comment CASCADE;
+        DROP TABLE IF EXISTS report CASCADE;
         DROP TABLE IF EXISTS rating CASCADE;
         DROP TABLE IF EXISTS otp CASCADE;
         {setting_table}
@@ -95,8 +97,13 @@ def create_tables():
         {log_table}
         {save_table}
         {comment_table}
+        {report_table}
         {rating_table}
         {otp_table}
+    """)
+    cur.execute(f"""
+        DROP TABLE IF EXISTS report CASCADE;
+        {report_table}
     """)
 
     db_close(con, cur)
@@ -105,7 +112,6 @@ def create_tables():
     })
 
 
-# @bp.get("/fix")
 def general_fix():
     con, cur = db_open()
 
@@ -133,26 +139,16 @@ def general_fix():
     # """)
 
     cur.execute("""
-        ALTER TABLE post
-        ADD COLUMN author CHAR(32);
+        ALTER TABLE report
+        ADD COLUMN resolve TEXT;
     """)
 
-    cur.execute("""
-        UPDATE post
-        SET author = '00f5614de3224f0d87bad5614821587e'
-        WHERE author IS NULL;
-    """)
-
-    cur.execute("""
-        ALTER TABLE post
-        ALTER COLUMN author SET NOT NULL;
-    """)
-
-    cur.execute("""
-        ALTER TABLE post
-        ADD CONSTRAINT fk_author
-        FOREIGN KEY (author) REFERENCES "user"(key);
-    """)
+    # cur.execute("""
+    # DELETE FROM log
+    # WHERE
+    #     log.misc ? 'entity_type'
+    #     AND log.misc ? 'entity_key'
+    # ;""")
 
     db_close(con, cur)
     return jsonify({
@@ -160,6 +156,7 @@ def general_fix():
     })
 
 
+# @bp.get("/fix")
 def fix_permission():
     con, cur = db_open()
 

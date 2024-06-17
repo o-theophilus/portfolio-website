@@ -4,7 +4,7 @@
 </script>
 
 <a href="/profile?search={user.key}">
-	<Avatar {user} />
+	<Avatar name={user.name} photo={user.photo} />
 	<div class="details">
 		<div class="name">
 			{user.name}

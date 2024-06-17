@@ -25,7 +25,7 @@
 	import Share from './_share.svelte';
 	import Rating from './_rating.svelte';
 
-	import Comment from './comment/index.svelte';
+	import Comment from './comment_area/index.svelte';
 	import Highlight from './highlight.svelte';
 	import Author from './author.svelte';
 

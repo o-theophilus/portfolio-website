@@ -5,7 +5,7 @@
 
 	import Search from '$lib/search.svelte';
 	import Button from '$lib/button/button.svelte';
-	import BRound from '$lib/button/round.svelte';
+	import Drop from '$lib/dropdown.svelte';
 	import Icon from '$lib/icon.svelte';
 
 	export let search_query;
@@ -15,6 +15,8 @@
 	let action = 'all';
 	let entity_key = '';
 	let search = `${user_key}:${entity_type}:${action}:${entity_key}`;
+	let drop_1;
+	let drop_2;
 
 	export const set_value = ({ u = '', e = '' }) => {
 		user_key = u || user_key;
@@ -31,6 +33,8 @@
 				action = temp[2];
 				entity_key = temp[3];
 				search = `${user_key}:${entity_type}:${action}:${entity_key}`;
+				drop_1.set(entity_type);
+				drop_2.set(action);
 			}
 		}
 	});
@@ -71,29 +75,29 @@
 		</Search>
 	{/if}
 
-	<div class="row">
-		<select
-			class="wide"
-			bind:value={entity_type}
-			on:input={() => {
+	<div class="line">
+		<Drop
+			wide
+			list={Object.keys(search_query)}
+			default_value="all"
+			bind:this={drop_1}
+			on:change={(e) => {
+				entity_type = e.target.value;
 				action = 'all';
+				drop_2.set(action);
 			}}
-		>
-			{#each Object.entries(search_query) as [type, _]}
-				<option value={type}>
-					{type}
-				</option>
-			{/each}
-		</select>
-		<select class="wide" bind:value={action}>
-			{#each search_query[entity_type] as x}
-				<option value={x}>
-					{x}
-				</option>
-			{/each}
-		</select>
+		/>
+		<Drop
+			wide
+			list={search_query[entity_type]}
+			default_value="all"
+			bind:this={drop_2}
+			on:change={(e) => {
+				action = e.target.value;
+			}}
+		/>
 	</div>
-	<div class="row">
+	<div class="line">
 		<Search
 			non_default
 			placeholder="Search for {entity_type}"
@@ -129,7 +133,7 @@
 		flex-direction: column;
 		gap: var(--sp1);
 	}
-	.row {
+	.line {
 		display: flex;
 		gap: var(--sp1);
 		align-items: center;

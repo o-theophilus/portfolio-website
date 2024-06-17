@@ -124,7 +124,7 @@ def get_many():
         SELECT
             log.*,
             "user".name AS user_name,
-            COALESCE(usr.name, post.title, log.entity_key
+            COALESCE(usr.name, post.title, RIGHT(log.entity_key, 10)
             ) AS entity_name,
             COUNT(*) OVER() AS total_page
         FROM log

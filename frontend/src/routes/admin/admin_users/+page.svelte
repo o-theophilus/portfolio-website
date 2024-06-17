@@ -8,7 +8,7 @@
 	import User from '../users/user.svelte';
 	import Pagination from '$lib/pagination.svelte';
 	import Search from './search.svelte';
-	import Drop from '$lib/dropdown_plus.svelte';
+	import DropPlus from '$lib/dropdown_plus.svelte';
 	import UpdateUrl from '$lib/update_url.svelte';
 	import Log from '$lib/log.svelte';
 
@@ -31,7 +31,7 @@
 				Admin{users.length > 1 ? 's' : ''}
 			</strong>
 		</div>
-		<Drop name="order" list={order_by} />
+		<DropPlus name="order" list={order_by} />
 	</div>
 
 	<Search {permissions} />

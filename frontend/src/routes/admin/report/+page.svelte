@@ -10,13 +10,14 @@
 	import DropPlus from '$lib/dropdown_plus.svelte';
 	import Search from '$lib/search.svelte';
 	import Log from '$lib/log.svelte';
-	import User from './user.svelte';
+	import One from './one.svelte';
 
 	export let data;
-	$: users = data.users;
+	$: reports = data.reports;
 	$: total_page = data.total_page;
 	let { order_by } = data;
 	let { _status } = data;
+	let { _type } = data;
 </script>
 
 <Log entity_type={'page'} />
@@ -25,27 +26,27 @@
 
 <Content>
 	<div class="title">
-		<div class="left">
-			<Back />
-			<strong class="ititle">
-				User{users.length > 1 ? 's' : ''}
-			</strong>
-		</div>
-
-		<DropPlus name="status" list={['all', ..._status]} default_value="all" />
+		<Back />
+		<strong class="ititle">
+			Report{reports.length > 1 ? 's' : ''}
+		</strong>
 	</div>
 
-	<div class="search_bar">
+	<div class="line">
+		<DropPlus name="status" list={_status} default_value={_status[0]} />
+		<DropPlus name="type" list={['all', ..._type]} default_value="all" />
+	</div>
+	<div class="line">
 		<Search />
 		<DropPlus name="order" list={order_by} icon="sort" />
 	</div>
 
-	{#each users as x (x.key)}
+	{#each reports as x (x.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<User user={x} />
+			<One one={x} />
 		</div>
 	{:else}
-		no item here
+		<div class="item">no item here</div>
 	{/each}
 
 	<Pagination {total_page} />
@@ -54,21 +55,20 @@
 <style>
 	.title {
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
-
-		/* margin-top: var(--sp3); */
-	}
-	.left {
-		display: flex;
 		align-items: center;
 		gap: var(--sp2);
+
+		margin: var(--sp2) 0;
 	}
 
-	.search_bar {
-		margin: var(--sp2) 0;
+	.line {
 		display: flex;
 		gap: var(--sp1);
 		align-items: center;
+		margin: var(--sp2) 0;
+	}
+
+	.item {
+		margin: var(--sp2) 0;
 	}
 </style>

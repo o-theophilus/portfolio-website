@@ -4,7 +4,7 @@ from .tools import token_to_user
 from math import ceil
 from .rating import get_ratings
 
-bp = Blueprint("post_read", __name__)
+bp = Blueprint("post_get", __name__)
 
 
 @bp.get("/tag")
@@ -163,7 +163,7 @@ def get_all(order="latest", page_size=24):
             post.*,
             COALESCE(AVG(rating.rating), 0) AS rating,
             COALESCE(ARRAY_AGG(rating.rating), ARRAY[]::int[]) AS ratings,
-            COUNT(*) OVER() AS total_posts
+            COUNT(*) OVER() AS _count
         FROM post
         LEFT JOIN rating ON post.key = rating.post_key
         WHERE
@@ -192,6 +192,6 @@ def get_all(order="latest", page_size=24):
         "status": 200,
         "posts": posts,
         "order_by": list(order_by.keys()),
-        "post_status": ['publish', 'draft', 'delete'],
-        "total_page": ceil(posts[0]["total_posts"] / page_size) if posts else 0
+        "_status": ['publish', 'draft', 'delete'],
+        "total_page": ceil(posts[0]["_count"] / page_size) if posts else 0
     })

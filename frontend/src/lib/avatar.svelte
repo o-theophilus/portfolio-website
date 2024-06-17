@@ -1,32 +1,28 @@
 <script>
 	let hue = Math.floor(Math.random() * (360 + 1));
 	export let size = 40;
-	export let user;
-	export let profile = false;
+	export let name;
+	export let photo;
 </script>
 
-{#if user.photo}
+{#if photo}
 	<img
-		on:click
 		role="presentation"
-		src={user.photo || '/site/no_photo.png'}
-		alt={user.name}
+		src={photo || '/site/no_photo.png'}
+		alt={name}
 		onerror="this.src='/site/no_photo.png'"
 		style:--size="{size}px"
-		class:profile
 	/>
 {:else}
 	<div
-		on:click
 		role="presentation"
 		class="avatar"
 		class:light={hue > 29 && hue < 189}
 		style:--hue={hue}
 		style:--size="{size}px"
-		class:profile
 	>
 		<span>
-			{user.name[0]}
+			{name[0]}
 		</span>
 	</div>
 {/if}
@@ -58,23 +54,5 @@
 	}
 	.light {
 		color: var(--ft1_d);
-	}
-
-	.profile {
-		outline: 8px solid var(--bg2);
-		outline-offset: 2px;
-	}
-
-	img:not(.profile),
-	.avatar:not(.profile) {
-		/* outline: 2px solid var(--bg2); */
-		cursor: pointer;
-		transition: opacity var(--trans);
-	}
-
-	img:not(.profile):hover,
-	.avatar:not(.profile):hover {
-		/* outline-color: var(--ft1); */
-		opacity: 0.8;
 	}
 </style>

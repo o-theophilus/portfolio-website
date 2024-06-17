@@ -134,7 +134,7 @@ def get_many():
         "status": 200,
         "users": [user_schema(x) for x in users],
         "order_by": list(order_by.keys()),
-        "user_status": ['anonymous', 'signedup', 'confirmed', "deleted"],
+        "_status": ['anonymous', 'signedup', 'confirmed', "deleted"],
         "total_page": ceil(users[0]["total_items"] / page_size) if users else 0
     })
 
@@ -195,6 +195,7 @@ def get_admins():
     user_key, _type, _action = search
     user_key = user_key.strip()
 
+# TODO: dond get deleted
     cur.execute("""
         SELECT
             "user".*,

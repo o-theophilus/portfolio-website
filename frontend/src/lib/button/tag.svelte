@@ -42,7 +42,7 @@
 		color: var(--ft1_b);
 	}
 	:not(:disabled):hover {
-		background-color: var(--cl1);
+		background-color: var(--cl1_d);
 		color: var(--ft1_b);
 	}
 </style>

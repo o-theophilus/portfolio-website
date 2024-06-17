@@ -5,7 +5,6 @@
 	import { page } from '$app/stores';
 	import { user } from '$lib/store.js';
 
-	import Icon from '$lib/icon.svelte';
 	import Link from './nav.btn.svelte';
 	import Logout from '../auth/logout.svelte';
 	import Avatar from '$lib/avatar.svelte';
@@ -37,17 +36,17 @@
 />
 
 <div class="user">
-	<Avatar
-		user={$user}
-		size="32"
+	<button
 		on:click={() => {
 			open = !open;
 			self = true;
 		}}
-	/>
+	>
+		<Avatar name={$user.name} photo={$user.photo} size="32" />
+	</button>
 
 	{#if open}
-		<div class="dropdown" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
+		<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
 			{#if $page.url.pathname != '/profile'}
 				<Link href="/profile">Profile</Link>
 			{/if}
@@ -68,7 +67,22 @@
 		display: flex;
 	}
 
-	.dropdown {
+	button {
+		line-height: 0;
+		border-radius: 50%;
+		border: none;
+		cursor: pointer;
+
+		outline: 2px solid transparent;
+
+		transition: outline-color var(--trans);
+	}
+
+	button:hover {
+		outline-color: var(--ft2);
+	}
+
+	.menu {
 		position: absolute;
 		right: 0;
 		top: 40px;

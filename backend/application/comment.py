@@ -11,8 +11,25 @@ bp = Blueprint("comment", __name__)
 def get_comments(key):
     con, cur = db_open()
 
-    order = request.args["order"] if "order" in request.args else "latest"
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
 
+    order = "latest"
+    status = "active"
+    if "order" in request.args:
+        order = request.args["order"]
+    if (
+        "comment:view_deleted" in user["permissions"]
+        and "status" in request.args
+    ):
+        status = request.args["status"]
+
+    # vote, upvote, downvote, ratings, rating_count
     order_by = {
         'latest': 'log.date',
         'oldest': 'log.date',
@@ -48,11 +65,17 @@ def get_comments(key):
         LEFT JOIN "user" ON comment.user_key = "user".key
         WHERE
             comment.post_key = %s
-            AND comment.status = 'active'
+            AND comment.status = %s
             AND log.action = 'added_comment'
             AND log.entity_type = 'comment'
         ORDER BY {} {};
-    """.format(order_by[order], order_dir[order]), (key,))
+    """.format(
+        order_by[order],
+        order_dir[order]
+    ), (
+        key,
+        status
+    ))
     comments = cur.fetchall()
     for x in comments:
         x["user_photo"] = f"{request.host_url}photo/{x[
@@ -71,7 +94,8 @@ def get_comments(key):
         "status": 200,
         "comments": comments,
         "ratings": ratings["ratings"],
-        "order_by": list(order_by.keys())
+        "order_by": list(order_by.keys()),
+        "_status": ["active", "deleted"]
     })
 
 
@@ -141,7 +165,7 @@ def create(key):
         entity_key=comment["key"],
         entity_type="comment",
         misc={
-            "comment":  request.json["comment"],
+            "comment": request.json["comment"],
             "path": request.json["path"]
         }
     )

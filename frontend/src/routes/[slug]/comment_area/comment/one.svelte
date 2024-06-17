@@ -1,20 +1,18 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { module, user, portal } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, user } from '$lib/store.js';
 
-	import Marked from '$lib/marked.svelte';
 	import Datetime from '$lib/datetime.svelte';
-	import Button from '$lib/button/button.svelte';
 	import Link from '$lib/button/link.svelte';
 	import BRound from '$lib/button/round.svelte';
-	import Add_Comment from './_add.svelte';
-	import Comment from './comment.svelte';
+	import Add from '../_add.svelte';
+	import Comment from './one.svelte';
+	import Marked from '$lib/marked.svelte';
 	import Avatar from '$lib/avatar.svelte';
 	import Delete from './_delete.svelte';
 	import Report from './_report.svelte';
-	import Vote from './comment.vote.svelte';
+	import Vote from './vote.svelte';
 
 	export let post_key;
 	export let comment = {};
@@ -36,14 +34,9 @@
 	}}
 />
 
-<section>
+<section id={comment.key}>
 	<div class="block">
-		<Avatar
-			user={{
-				name: comment.user_name,
-				photo: comment.user_photo
-			}}
-		/>
+		<Avatar name={comment.user_name} photo={comment.user_photo} />
 		<div class="content">
 			<div class="top">
 				<div>
@@ -72,18 +65,28 @@
 										};
 									}}>Delete</Link
 								>
-							{:else}
-								<Link
-									small
-									on:click={() => {
-										$module = {
-											module: Report,
-											owner_key: comment.key,
-											owner_type: 'comment'
-										};
-									}}>Report</Link
-								>
+								<br />
 							{/if}
+							<Link
+								small
+								on:click={() => {
+									$module = {
+										module: Report,
+										reported: {
+											key: comment.user_key,
+											name: comment.user_name,
+											photo: comment.user_photo
+										},
+										entity: {
+											type: 'comment',
+											key: comment.key,
+											extra: comment.comment
+										}
+									};
+								}}
+							>
+								Report
+							</Link>
 						</div>
 					{/if}
 				</div>
@@ -106,7 +109,7 @@
 						icon="reply"
 						on:click={() => {
 							$module = {
-								module: Add_Comment,
+								module: Add,
 								post_key,
 								path,
 								comment: comment.comment
@@ -181,6 +184,7 @@
 		position: relative;
 	}
 	.menu {
+		width: max-content;
 		position: absolute;
 		top: 30px;
 		right: 0;

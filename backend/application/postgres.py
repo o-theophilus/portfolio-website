@@ -69,7 +69,6 @@ save_table = """CREATE TABLE IF NOT EXISTS save (
 );"""
 
 
-# active, deleted
 comment_table = """CREATE TABLE IF NOT EXISTS comment (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'active' NOT NULL,
@@ -96,6 +95,23 @@ rating_table = """CREATE TABLE IF NOT EXISTS rating (
 
     FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE,
     FOREIGN KEY (post_key) REFERENCES post(key)
+);"""
+
+report_table = """CREATE TABLE IF NOT EXISTS report (
+    key CHAR(32) PRIMARY KEY,
+    status VARCHAR(20) DEFAULT 'unresolved' NOT NULL,
+
+    reporter_key CHAR(32) NOT NULL,
+    reported_key CHAR(32) NOT NULL,
+    entity_key CHAR(32),
+    entity_type VARCHAR(100),
+
+    report TEXT,
+    tags TEXT[] DEFAULT ARRAY[]::TEXT[],
+    resolve TEXT,
+
+    FOREIGN KEY (reporter_key) REFERENCES "user"(key) ON DELETE CASCADE,
+    FOREIGN KEY (reported_key) REFERENCES "user"(key) ON DELETE CASCADE
 );"""
 
 

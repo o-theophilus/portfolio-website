@@ -7,13 +7,13 @@
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Dialogue from '$lib/dialogue.svelte';
+	import Drop from '$lib/dropdown.svelte';
 	import IG from '$lib/input_group.svelte';
 
 	import EmailTemplate from '$lib/email_template.svelte';
 	let email_template;
 
 	let form = {};
-	let msgStore = '';
 	let error = {};
 	// if ($user.login) {
 	// form.name = $user.name;
@@ -113,15 +113,17 @@
 		error={error.message}
 		type="textarea"
 		placeholder="Your message"
-		on:input={() => (msgStore = form.message)}
 	>
 		<svelte:fragment slot="label">
-			<select bind:value={form.message}>
-				<option value={msgStore}>Message</option>
-				{#each template as temp}
-					<option value={temp.text}>{temp.name}</option>
-				{/each}
-			</select>
+			<Drop
+				wide
+				list={Object.keys(template)}
+				on:change={(e) => {
+					form.message = template[e.target.value];
+					e.target.value = 'Select Template';
+				}}
+			/>
+
 			<div class="gap" />
 		</svelte:fragment>
 	</IG>

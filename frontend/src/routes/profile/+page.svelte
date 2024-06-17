@@ -86,7 +86,9 @@
 		<br /><br /><br />
 
 		<div class="line">
-			<Avatar {user} size="120" profile />
+			<div class="avatar">
+				<Avatar name={user.name} photo={user.photo} size="120" profile />
+			</div>
 			{#if edit_mode}
 				<BRound
 					icon="edit"
@@ -218,6 +220,12 @@
 		gap: var(--sp2);
 		justify-content: center;
 		align-items: center;
+	}
+
+	.avatar {
+		outline: 8px solid var(--bg2);
+		border-radius: 50%;
+		line-height: 0;
 	}
 
 	.pad,

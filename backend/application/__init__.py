@@ -7,6 +7,7 @@ from . import user_get
 from . import post
 from . import post_get
 from . import comment
+from . import report
 from . import rating
 from . import storage
 from . import auth
@@ -35,6 +36,7 @@ def create_app(conf=None):
     app.register_blueprint(post.bp)
     app.register_blueprint(post_get.bp)
     app.register_blueprint(comment.bp)
+    app.register_blueprint(report.bp)
     app.register_blueprint(rating.bp)
     app.register_blueprint(storage.bp)
     app.register_blueprint(auth.bp)

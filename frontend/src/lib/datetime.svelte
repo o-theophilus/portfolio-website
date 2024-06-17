@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	export let datetime;
-	export let type;
+	export let type = 'date';
 	export let style = '';
 
 	$: if (datetime) {

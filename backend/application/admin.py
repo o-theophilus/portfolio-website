@@ -32,6 +32,13 @@ permissions = {
         ['edit_status', 2],
         ['edit_highlight', 2]
     ],
+    "report": [
+        ['view', 1],
+        ['edit_status', 3]
+    ],
+    "comment": [
+        ['view_deleted', 1]
+    ],
     "log": [
         ['view', 1]
     ]

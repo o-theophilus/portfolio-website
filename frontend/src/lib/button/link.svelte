@@ -1,6 +1,6 @@
 <script>
 	export let href = '';
-	export let target = '';
+	export let blank = false;
 	export let disabled = false;
 
 	export let small = false;
@@ -9,7 +9,7 @@
 <svelte:element
 	this={href ? 'a' : 'button'}
 	{href}
-	{target}
+	target={blank ? '_blank' : ''}
 	on:click
 	{disabled}
 	role="presentation"

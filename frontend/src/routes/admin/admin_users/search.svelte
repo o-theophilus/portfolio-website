@@ -6,6 +6,7 @@
 	import Search from '$lib/search.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Button from '$lib/button/button.svelte';
+	import Drop from '$lib/dropdown.svelte';
 
 	export let permissions;
 
@@ -13,6 +14,8 @@
 	let type = 'all';
 	let action = 'all';
 	let search = `${user_key}:${type}:${action}`;
+	let drop_1;
+	let drop_2;
 
 	onMount(() => {
 		if ($page.url.searchParams.has('search')) {
@@ -23,6 +26,8 @@
 				type = temp[1];
 				action = temp[2];
 				search = `${user_key}:${type}:${action}`;
+				drop_1.set(type);
+				drop_2.set(action);
 			}
 		}
 	});
@@ -44,26 +49,27 @@
 
 <section>
 	<div class="row">
-		<select
-			class="wide"
-			bind:value={type}
-			on:input={() => {
+		<Drop
+			wide
+			list={Object.keys(permissions)}
+			default_value="all"
+			bind:this={drop_1}
+			on:change={(e) => {
+				type = e.target.value;
 				action = 'all';
+				drop_2.set(action);
 			}}
-		>
-			{#each Object.entries(permissions) as [type, _]}
-				<option value={type}>
-					{type}
-				</option>
-			{/each}
-		</select>
-		<select class="wide" bind:value={action}>
-			{#each permissions[type] as x}
-				<option value={x}>
-					{x}
-				</option>
-			{/each}
-		</select>
+		/>
+
+		<Drop
+			wide
+			list={permissions[type]}
+			default_value="all"
+			bind:this={drop_2}
+			on:change={(e) => {
+				action = e.target.value;
+			}}
+		/>
 	</div>
 
 	<Search

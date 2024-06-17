@@ -12,7 +12,7 @@
 	import Tags from './tags.svelte';
 	import Note from './filter_note.svelte';
 
-	import Drop from '$lib/dropdown_plus.svelte';
+	import DropPlus from '$lib/dropdown_plus.svelte';
 	import Pagination from '$lib/pagination.svelte';
 	import Search from '$lib/search.svelte';
 
@@ -22,7 +22,7 @@
 	$: posts = data.posts;
 	$: total_page = data.total_page;
 	let { order_by } = data;
-	let { post_status } = data;
+	let { _status } = data;
 
 	$: if ($portal) {
 		if ($portal.for == 'posts') {
@@ -48,7 +48,7 @@
 			</strong>
 			{#if $user.permissions.includes('post:add')}
 				<div class="line">
-					<Drop list={post_status} name="status" />
+					<DropPlus list={_status} name="status" />
 
 					<Button
 						on:click={() => {
@@ -66,7 +66,7 @@
 
 		<div class="search_bar">
 			<Search />
-			<Drop list={order_by} name="order" button />
+			<DropPlus list={order_by} name="order" icon="sort" />
 		</div>
 
 		<Note />

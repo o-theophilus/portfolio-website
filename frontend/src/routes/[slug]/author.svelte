@@ -5,12 +5,7 @@
 </script>
 
 <class class="block">
-	<Avatar
-		user={{
-			name: post.author_name,
-			photo: post.author_photo
-		}}
-	/>
+	<Avatar name={post.author_name} photo={post.author_photo} />
 
 	{post.author_name} | Author
 </class>

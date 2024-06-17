@@ -1,6 +1,7 @@
 <script>
 	import { user } from '$lib/store.js';
 	import { createEventDispatcher } from 'svelte';
+	import { state } from '$lib/store.js';
 
 	import Datetime from '$lib/datetime.svelte';
 
@@ -10,6 +11,8 @@
 	let href = '';
 	if (log.entity_type == 'post') {
 		href = `/${log.entity_key}`;
+	} else if (log.entity_type == 'report') {
+		href = `/admin/report?search=${log.entity_key}`;
 	} else if (log.entity_type == 'page') {
 		href = log.entity_key;
 	} else if (['user', 'admin'].includes(log.entity_type) && log.entity_key) {
@@ -60,7 +63,19 @@
 	{#if href}
 		{log.entity_type}
 
-		<a {href}>
+		<a
+			{href}
+			data-sveltekit-preload-data="off"
+			on:click={() => {
+				if (log.entity_type == 'report') {
+					let pn = 'reports';
+					let i = $state.findIndex((x) => x.name == pn);
+					if (i != -1) {
+						$state.splice(i, 1);
+					}
+				}
+			}}
+		>
 			{log.entity_name}
 		</a>
 

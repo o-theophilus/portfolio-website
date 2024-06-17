@@ -1,0 +1,160 @@
+<script>
+	import { loading, module } from '$lib/store.js';
+	import { token } from '$lib/cookie.js';
+
+	import { template, tags } from './_report__template.js';
+	import IG from '$lib/input_group.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Tag from '$lib/button/tag.svelte';
+	import Icon from '$lib/icon.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
+	import Link from '$lib/button/link.svelte';
+	import Avatar from '$lib/avatar.svelte';
+	import Drop from '$lib/dropdown.svelte';
+
+	let reported = $module.reported;
+	let entity = $module.entity;
+
+	let form = {
+		reported_key: reported.key,
+		_entity_key: entity.key,
+		_entity_type: entity.type,
+
+		tags: [],
+		report: ''
+	};
+	let error = {};
+
+	const validate = () => {
+		error = {};
+
+		if (!form.report) {
+			error.report = 'cannot be empty';
+		}
+
+		Object.keys(error).length === 0 && submit();
+	};
+
+	const submit = async () => {
+		$loading = 'Sending Report . . .';
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/report`, {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: $token
+			},
+			body: JSON.stringify(form)
+		});
+		resp = await resp.json();
+		$loading = false;
+
+		if (resp.status == 200) {
+			$module = {
+				module: Dialogue,
+				message: 'Report Submitted',
+				buttons: [
+					{
+						name: 'OK',
+						fn: () => {
+							$module = '';
+						}
+					}
+				]
+			};
+		} else {
+			error = resp;
+		}
+	};
+</script>
+
+<form on:submit|preventDefault novalidate autocomplete="off">
+	<strong class="ititle"> Report </strong>
+
+	<div class="highlight">
+		<Avatar name={reported.name} photo={reported.photo} />
+		<Link href="/profile?search={reported.key}" blank>
+			{reported.name}
+		</Link>
+		<div />
+		{entity.extra}
+	</div>
+
+	<hr />
+
+	{#if error.error}
+		<br />
+		<span class="error">
+			{error.error}
+		</span>
+	{/if}
+
+	<IG
+		bind:value={form.report}
+		error={error.report}
+		type="textarea"
+		placeholder="Reason for reporting"
+	>
+		<svelte:fragment slot="label">
+			<Drop
+				wide
+				list={Object.keys(template)}
+				on:change={(e) => {
+					form.report = template[e.target.value];
+					e.target.value = 'Select Template';
+				}}
+			/>
+
+			<div class="gap" />
+		</svelte:fragment>
+	</IG>
+
+	Select applicable tags
+	<div class="tags">
+		{#each tags as x}
+			<Tag
+				active={form.tags.includes(x)}
+				on:click={() => {
+					if (form.tags.includes(x)) {
+						form.tags = form.tags.filter((i) => i != x);
+					} else {
+						form.tags.push(x);
+					}
+					form = form;
+				}}>{x}</Tag
+			>
+		{/each}
+	</div>
+
+	<Button on:click={validate}>
+		Submit
+		<Icon icon="send" />
+	</Button>
+</form>
+
+<style>
+	form {
+		padding: var(--sp3);
+	}
+
+	.highlight {
+		display: grid;
+		grid-template-columns: 1fr 100%;
+		gap: 0 var(--sp1);
+		align-items: center;
+
+		background-color: var(--bg2);
+		padding: var(--sp2);
+		border-radius: var(--sp0);
+		margin: var(--sp2) 0;
+	}
+
+	.gap {
+		height: var(--sp1);
+	}
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--sp1);
+		margin: var(--sp2) 0;
+	}
+</style>

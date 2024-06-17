@@ -22,18 +22,24 @@
 		<br />
 		<Button href="/admin/users" size="wide">Users</Button>
 	{/if}
+	{#if $user.permissions.includes('report:view')}
+		<br />
+		<Button href="/admin/report" size="wide">Reports</Button>
+	{/if}
 	{#if $user.permissions.includes('admin:manage_photo')}
 		<br />
 		<Button href="/admin/photo_error" size="wide">Photo Error</Button>
-		<br />
 	{/if}
+	<br />
 	<br />
 	<br />
 	Todo
 	<br />
-	* feedback
+	suggest similar post
 	<br />
-	* use Drop as <select />
+	sort comments by vote / retain order and status when adding, voting e.t.c
+	<br />
+	sort post by engagements (vote, comment, rating, view)
 	<br />
 	<br />
 </Content>
