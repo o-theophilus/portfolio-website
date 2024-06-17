@@ -30,6 +30,7 @@ permissions = {
         ['edit_content', 2],
         ['edit_tags', 2],
         ['edit_status', 2],
+        ['edit_author', 2],
         ['edit_highlight', 2]
     ],
     "report": [

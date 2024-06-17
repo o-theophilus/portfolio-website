@@ -1,7 +1,6 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { onMount } from 'svelte';
 	import { state } from '$lib/store.js';
 
 	import Loading from '$lib/loading_spinner.svelte';
@@ -13,7 +12,7 @@
 	let open = true;
 	let loading = true;
 
-	onMount(async () => {
+	export const get = async () => {
 		loading = true;
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/similar/${post_key}`);
 		resp = await resp.json();
@@ -21,10 +20,10 @@
 			posts = resp.posts;
 		}
 		loading = false;
-	});
+	};
 
 	const click = (post) => {
-		let sn = 'post';
+		let sn = 'post_item';
 		let i = $state.findIndex((x) => x.name == sn);
 		if (i == -1) {
 			$state.push({

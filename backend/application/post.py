@@ -178,6 +178,30 @@ def edit(key):
                 post["key"]
             ))
 
+    if "author_email" in request.json:
+        if "post:edit_author" not in user["permissions"]:
+            error["author_email"] = "unauthorized access"
+        elif not request.json["author_email"]:
+            error["author_email"] = "this field is required"
+        elif not re.match(r"\S+@\S+\.\S+", request.json["author_email"]):
+            error["author_email"] = "Please enter a valid email"
+        else:
+            cur.execute("""
+                SELECT key FROM "user" WHERE email = %s;
+            """, (request.json["author_email"],))
+            author = cur.fetchone()
+
+            if not author:
+                error["author_email"] = "no user found"
+            elif author["key"] == post["author_key"]:
+                error["author_email"] = "no change"
+            else:
+                cur.execute("""
+                    UPDATE post SET author_key = %s WHERE key = %s
+                ;""", (
+                    author["key"], post["key"]
+                ))
+
     if "status" in request.json:
         if "post:edit_status" not in user["permissions"]:
             error["status"] = "unauthorized access"

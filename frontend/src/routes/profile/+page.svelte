@@ -186,20 +186,20 @@
 			</div>
 		{/if}
 		<br /><br /><br />
-	{/if}
 
-	{#if $me.permissions.includes('log:view')}
-		<hr />
-		<div class="pad">
-			<Link href="/log?{new URLSearchParams(`search=${user.email}:all:all:`).toString()}">
-				view logs
-			</Link>
-		</div>
-	{/if}
+		{#if $me.permissions.includes('log:view')}
+			<hr />
+			<div class="pad">
+				<Link href="/log?{new URLSearchParams(`search=${user.email}:all:all:`).toString()}">
+					view logs
+				</Link>
+			</div>
+		{/if}
 
-	{#if user && user.key != $me.key && user.status == 'confirmed' && $me.permissions.includes('user:set_permission')}
-		<hr />
-		<Permission {user} {permissions} />
+		{#if user && user.key != $me.key && user.status == 'confirmed' && $me.permissions.includes('user:set_permission')}
+			<hr />
+			<Permission {user} {permissions} />
+		{/if}
 	{/if}
 </Content>
 

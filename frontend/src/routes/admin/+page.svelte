@@ -35,6 +35,8 @@
 	<br />
 	Todo
 	<br />
+	fix markdown
+	<br />
 	sort comments by vote / retain order and status when adding, voting e.t.c
 	<br />
 	sort post by engagements (vote, comment, rating, view)

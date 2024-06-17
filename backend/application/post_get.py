@@ -2,95 +2,10 @@ from flask import Blueprint, jsonify, request
 from .postgres import db_open, db_close
 from .tools import token_to_user
 from math import ceil
-from .rating import get_ratings
 import re
+import os
 
 bp = Blueprint("post_get", __name__)
-
-
-@bp.get("/tag")
-def all_tags():
-    con, cur = db_open()
-
-    cur.execute("SELECT tags FROM post WHERE status = 'publish';")
-    temp = cur.fetchall()
-
-    tags = []
-    for x in temp:
-        tags += x["tags"]
-
-    tags_count = []
-    unique_tags = []
-    for x in tags:
-        if x not in unique_tags:
-            unique_tags.append(x)
-            tags_count.append({
-                "tag":  x,
-                "count":  tags.count(x)
-            })
-
-    tags_count = sorted(tags_count, key=lambda d: d["count"], reverse=True)
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "tags": [x["tag"] for x in tags_count]
-    })
-
-
-@bp.get("/post/similar/<key>")
-def similar_posts(key):
-    con, cur = db_open()
-
-    cur.execute("""
-        SELECT *
-        FROM post
-        WHERE key = %s OR slug = %s
-    """, (key, key))
-    post = cur.fetchone()
-
-    if not post:
-        db_close(con, cur)
-        return jsonify({
-            "status": 200,
-            "posts": []
-        })
-
-    keywords = list(set(
-        post["tags"] + re.split(r'\s+', post["title"].lower())))
-
-    cur.execute("""
-        WITH
-            likeness AS (
-                SELECT
-                    post.key,
-                    (
-                        SELECT COUNT(*)
-                        FROM unnest(tags || STRING_TO_ARRAY(title, ' ')) AS tn
-                        WHERE tn = ANY(%s)
-                    ) AS likeness
-                FROM post
-            )
-
-        SELECT post.*
-        FROM post
-        LEFT JOIN likeness ON post.key = likeness.key
-        WHERE
-            post.status = 'publish'
-            AND post.key != %s
-            AND likeness.likeness > 0
-        ORDER BY likeness DESC
-        LIMIT 4;
-    """, (keywords, key))
-    posts = cur.fetchall()
-    for x in posts:
-        x["photos"] = [f"{request.host_url}photo/{y}" for y in x["photos"]]
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "posts": posts
-    })
 
 
 @bp.get("/post/<key>")
@@ -100,19 +15,9 @@ def get_post(key, cur=None):
         con, cur = db_open()
 
     cur.execute("""
-        SELECT
-            post.*,
-            "user".name AS author_name,
-            "user".photo AS author_photo
-        FROM post
-        LEFT JOIN "user" ON post.author = "user".key
-        WHERE post.slug = %s OR post.key = %s;
+        SELECT * FROM post WHERE post.slug = %s OR post.key = %s;
     """, (key, key))
     post = cur.fetchone()
-    post["author_photo"] = (
-        f"{request.host_url}photo/{post['author_photo']}"
-        if post["author_photo"] else None
-    )
 
     if not post:
         if close_conn:
@@ -121,6 +26,8 @@ def get_post(key, cur=None):
             "status": 400,
             "error": "invalid request"
         })
+
+    post["photos"] = [f"{request.host_url}photo/{x}" for x in post["photos"]]
 
     if post["status"] != "publish":
         user = token_to_user(cur)
@@ -143,17 +50,11 @@ def get_post(key, cur=None):
                 "error": "unauthorized access"
             })
 
-    post["photos"] = [f"{request.host_url}photo/{x}" for x in post["photos"]]
-
-    # TODO: pass cur
-    ratings = get_ratings(post["key"]).json["ratings"]
-
     if close_conn:
         db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post,
-        "ratings": ratings
     })
 
 
@@ -250,4 +151,113 @@ def get_all(order="latest", page_size=24):
         "order_by": list(order_by.keys()),
         "_status": ['publish', 'draft', 'delete'],
         "total_page": ceil(posts[0]["_count"] / page_size) if posts else 0
+    })
+
+
+@bp.get("/post/similar/<key>")
+def similar_posts(key):
+    con, cur = db_open()
+
+    cur.execute("""
+        SELECT * FROM post WHERE key = %s
+    """, (key,))
+    post = cur.fetchone()
+
+    if not post:
+        db_close(con, cur)
+        return jsonify({
+            "status": 200,
+            "posts": []
+        })
+
+    keywords = list(set(
+        post["tags"] + re.split(r'\s+', post["title"].lower())))
+
+    cur.execute("""
+        WITH
+            likeness AS (
+                SELECT
+                    post.key,
+                    (
+                        SELECT COUNT(*)
+                        FROM unnest(tags || STRING_TO_ARRAY(title, ' ')) AS tn
+                        WHERE tn = ANY(%s)
+                    ) AS likeness
+                FROM post
+            )
+
+        SELECT post.*
+        FROM post
+        LEFT JOIN likeness ON post.key = likeness.key
+        WHERE
+            post.status = 'publish'
+            AND post.key != %s
+            AND likeness.likeness > 0
+        ORDER BY likeness DESC
+        LIMIT 4;
+    """, (keywords, key))
+    posts = cur.fetchall()
+    for x in posts:
+        x["photos"] = [f"{request.host_url}photo/{y}" for y in x["photos"]]
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "posts": posts
+    })
+
+
+@bp.get("/post/author/<author_key>")
+def get_author(author_key):
+    con, cur = db_open()
+
+    cur.execute("""
+        SELECT name, photo FROM "user" WHERE key = %s;
+    """, (author_key,))
+    author = cur.fetchone()
+    if not author:
+        cur.execute("""
+            SELECT key, name, photo FROM "user" WHERE email = %s;
+        """, (os.environ["MAIL_USERNAME"],))
+        author = cur.fetchone()
+
+    author["photo"] = (
+        f"{request.host_url}photo/{author['photo']}"
+        if author["photo"] else None
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "author": author
+    })
+
+
+@bp.get("/tag")
+def all_tags():
+    con, cur = db_open()
+
+    cur.execute("SELECT tags FROM post WHERE status = 'publish';")
+    temp = cur.fetchall()
+
+    tags = []
+    for x in temp:
+        tags += x["tags"]
+
+    tags_count = []
+    unique_tags = []
+    for x in tags:
+        if x not in unique_tags:
+            unique_tags.append(x)
+            tags_count.append({
+                "tag":  x,
+                "count":  tags.count(x)
+            })
+
+    tags_count = sorted(tags_count, key=lambda d: d["count"], reverse=True)
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "tags": [x["tag"] for x in tags_count]
     })

@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import { module, user, portal } from '$lib/store.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -14,6 +13,7 @@
 
 	const calc_rating = () => {
 		o_rating = 0;
+		my_rating = 0;
 		for (const i in ratings) {
 			o_rating += ratings[i].rating;
 			if (ratings[i].user_key == $user.key) {
@@ -33,7 +33,7 @@
 		}
 	}
 
-	onMount(async () => {
+	export const get = async () => {
 		loading = true;
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/rating/${post_key}`);
 		resp = await resp.json();
@@ -42,7 +42,7 @@
 		}
 		loading = false;
 		calc_rating();
-	});
+	};
 </script>
 
 {#if $user.login}

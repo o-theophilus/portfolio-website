@@ -137,10 +137,10 @@ def general_fix():
     #     ALTER TABLE order_item
     #     ADD COLUMN price FLOAT DEFAULT 0 NOT NULL;
     # """)
-
     cur.execute("""
-        ALTER TABLE report
-        ADD COLUMN resolve TEXT;
+        ALTER TABLE post
+        RENAME COLUMN author
+        TO author_key;
     """)
 
     # cur.execute("""

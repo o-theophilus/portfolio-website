@@ -57,18 +57,17 @@
 						<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
 							{#if comment.user_key == $user.key}
 								<Link
-									small
 									on:click={() => {
 										$module = {
 											module: Delete,
 											comment
 										};
-									}}>Delete</Link
+									}}
 								>
-								<br />
+									Delete
+								</Link>
 							{/if}
 							<Link
-								small
 								on:click={() => {
 									$module = {
 										module: Report,
@@ -184,13 +183,16 @@
 		position: relative;
 	}
 	.menu {
+		display: flex;
+		flex-direction: column;
+		gap: var(--sp1);
+
 		width: max-content;
 		position: absolute;
 		top: 30px;
 		right: 0;
-		padding: var(--sp1);
+		padding: var(--sp2);
 		background-color: var(--bg2);
 		border-radius: var(--sp1);
-		/* cursor: pointer; */
 	}
 </style>

@@ -36,7 +36,7 @@
 	let select_status = '';
 	let select_order = '';
 
-	const get_comments = async () => {
+	export const get = async () => {
 		let search = {};
 		if (select_status) {
 			search.status = select_status;
@@ -68,10 +68,6 @@
 
 		loading = false;
 	};
-
-	onMount(async () => {
-		get_comments();
-	});
 </script>
 
 <div class="title">
@@ -100,7 +96,7 @@
 						list={_status}
 						on:change={(e) => {
 							select_status = e.target.value;
-							get_comments();
+							get();
 						}}
 					/>
 				{/if}
@@ -110,7 +106,7 @@
 						icon="sort"
 						on:change={(e) => {
 							select_order = e.target.value;
-							get_comments();
+							get();
 						}}
 					/>
 				{/if}

@@ -99,15 +99,22 @@
 		}
 	});
 
-	// const refresh = async () => {
-	// 	// await get_feedback();
-	// };
+	let rating;
+	let author;
+	let comment;
+	let similar;
+	const refresh = async () => {
+		await rating.get();
+		await author.get();
+		await comment.get();
+		await similar.get();
+	};
 </script>
 
 {#key post.key}
 	<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
 	<Meta title={post.title} description={post.description} image={post.photos[0]} />
-	<!-- <Refresh on:refresh={refresh} /> -->
+	<Refresh on:refresh={refresh} />
 {/key}
 
 <Content>
@@ -240,13 +247,10 @@
 			Share
 		</Button>
 
-		{#key post.key}
-			<Rating post_key={post.key} />
-		{/key}
+		<Rating post_key={post.key} bind:this={rating} />
 	</div>
-	<hr />
 
-	<Author {post} />
+	<Author {post} bind:this={author} {edit_mode} />
 
 	{#if post.tags.length > 0 || ($user.permissions.includes('post:edit_tags') && edit_mode)}
 		<hr />
@@ -298,10 +302,8 @@
 
 	<hr />
 
-	{#key post.key}
-		<Comment {post} />
-		<Similar post_key={post.key} />
-	{/key}
+	<Comment {post} bind:this={comment} />
+	<Similar post_key={post.key} bind:this={similar} />
 </Content>
 
 <style>

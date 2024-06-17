@@ -2,7 +2,7 @@
 	import { module, user, portal } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
-	import Item from './item.svelte';
+	import One from './one.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
@@ -73,7 +73,7 @@
 
 		<section class="items">
 			{#each posts as post}
-				<Item {post} />
+				<One {post} />
 			{:else}
 				No post found
 			{/each}

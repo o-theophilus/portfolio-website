@@ -1,10 +1,25 @@
 <script>
+	import { state } from '$lib/store.js';
+
 	import Datetime from '$lib/datetime.svelte';
 
 	export let post;
+
+	const click = () => {
+		let sn = 'post_item';
+		let i = $state.findIndex((x) => x.name == sn);
+		if (i == -1) {
+			$state.push({
+				name: sn,
+				data: post
+			});
+		} else {
+			$state[i].data = post;
+		}
+	};
 </script>
 
-<a href="/{post.slug}" data-sveltekit-preload-data>
+<a href="/{post.slug}" data-sveltekit-preload-data on:click={click} on:mouseenter={click}>
 	<div class="img">
 		<img src={post.photos[0] || ''} alt={post.title} onerror="this.src='/site/no_photo.png'" />
 	</div>

@@ -11,6 +11,7 @@
 	{href}
 	target={blank ? '_blank' : ''}
 	on:click
+	on:mouseenter
 	{disabled}
 	role="presentation"
 	class:small
