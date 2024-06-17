@@ -77,7 +77,7 @@
 
 	{#if comment}
 		<div class="comment">
-			<Marked md={comment} />
+			<Marked content={comment} />
 		</div>
 	{/if}
 

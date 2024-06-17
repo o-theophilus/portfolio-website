@@ -43,7 +43,7 @@
 				<Icon icon="check_circle" />
 			{/if}
 
-			<Marked md={$notification?.message || 'no message'} />
+			<Marked content={$notification?.message || 'no message'} />
 
 			<BRound icon="close" extra="hover_red" on:click={close} />
 		</div>

@@ -3,6 +3,7 @@ from .postgres import db_open, db_close
 from .tools import token_to_user
 from math import ceil
 from .rating import get_ratings
+import re
 
 bp = Blueprint("post_get", __name__)
 
@@ -34,6 +35,61 @@ def all_tags():
     return jsonify({
         "status": 200,
         "tags": [x["tag"] for x in tags_count]
+    })
+
+
+@bp.get("/post/similar/<key>")
+def similar_posts(key):
+    con, cur = db_open()
+
+    cur.execute("""
+        SELECT *
+        FROM post
+        WHERE key = %s OR slug = %s
+    """, (key, key))
+    post = cur.fetchone()
+
+    if not post:
+        db_close(con, cur)
+        return jsonify({
+            "status": 200,
+            "posts": []
+        })
+
+    keywords = list(set(
+        post["tags"] + re.split(r'\s+', post["title"].lower())))
+
+    cur.execute("""
+        WITH
+            likeness AS (
+                SELECT
+                    post.key,
+                    (
+                        SELECT COUNT(*)
+                        FROM unnest(tags || STRING_TO_ARRAY(title, ' ')) AS tn
+                        WHERE tn = ANY(%s)
+                    ) AS likeness
+                FROM post
+            )
+
+        SELECT post.*
+        FROM post
+        LEFT JOIN likeness ON post.key = likeness.key
+        WHERE
+            post.status = 'publish'
+            AND post.key != %s
+            AND likeness.likeness > 0
+        ORDER BY likeness DESC
+        LIMIT 4;
+    """, (keywords, key))
+    posts = cur.fetchall()
+    for x in posts:
+        x["photos"] = [f"{request.host_url}photo/{y}" for y in x["photos"]]
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "posts": posts
     })
 
 

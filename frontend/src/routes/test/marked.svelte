@@ -2,7 +2,7 @@
 	import Marked from '$lib/marked.svelte';
 	import Content from '$lib/content.svelte';
 
-	let md = `
+	let content = `
 \`\`\`javascript
 console.log("here")
 let a = 55;
@@ -14,7 +14,7 @@ let a = 55;
 <Marked />
 
 <section>
-	<Marked {md} />
+	<Marked {content} />
 	<textarea name="" id="" cols="30" rows="10" />
 </section>
 

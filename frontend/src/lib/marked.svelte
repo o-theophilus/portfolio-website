@@ -1,25 +1,11 @@
 <script>
-	import { marked } from 'marked';
-	import hljs from 'highlight.js';
+	import highlightjs from 'markdown-it-highlightjs';
+	import markdownIt from 'markdown-it';
 	import './marked.css';
 
-	marked.setOptions({
-		renderer: new marked.Renderer(),
-		highlight: function (code, lang) {
-			const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-			return hljs.highlight(code, { language }).value;
-		}
-		// langPrefix: 'hljs language-',
-		// pedantic: false,
-		// gfm: true,
-		// breaks: false,
-		// sanitize: false,
-		// smartLists: true,
-		// smartypants: false,
-		// xhtml: false
-	});
+	const md = markdownIt().use(highlightjs);
 
-	export let md = `	
+	export let content = `	
 ---
 # HEADERS
 
@@ -114,5 +100,5 @@ Content column 1 | Content column 2
 </script>
 
 <section class="markdown">
-	{@html marked.parse(md)}
+	{@html md.render(content)}
 </section>

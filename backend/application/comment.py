@@ -81,19 +81,10 @@ def get_comments(key):
         x["user_photo"] = f"{request.host_url}photo/{x[
             "user_photo"]}" if x["user_photo"] else None
 
-    cur.execute("""
-        SELECT
-            COALESCE(ARRAY_AGG(rating), ARRAY[]::int[]) AS ratings
-        FROM rating
-        WHERE post_key = %s;
-    """, (key,))
-    ratings = cur.fetchone()
-
     db_close(con, cur)
     return jsonify({
         "status": 200,
         "comments": comments,
-        "ratings": ratings["ratings"],
         "order_by": list(order_by.keys()),
         "_status": ["active", "deleted"]
     })

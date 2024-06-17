@@ -37,7 +37,6 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			console.log(resp.ratings);
 			$portal = {
 				for: 'rating',
 				data: resp.ratings

@@ -23,42 +23,27 @@
 	import Manage_Video from './_video.svelte';
 
 	import Share from './_share.svelte';
-	import Rating from './_rating.svelte';
+	import Rating from './rating.svelte';
+	import Refresh from './refresh.svelte';
 
 	import Comment from './comment_area/index.svelte';
+	import Similar from './similar.svelte';
 	import Highlight from './highlight.svelte';
 	import Author from './author.svelte';
 
 	export let data;
-	let { post } = data;
-	let { ratings } = data;
-	let o_rating = 0;
-	let my_rating = 0;
+	$: post = data.post;
 	let content = '';
 	let tags = [];
 	let photo_count = 1;
 	let video_count = 0;
 
-	const calc_rating = () => {
-		o_rating = 0;
-		for (const i in ratings) {
-			o_rating += ratings[i].rating;
-			if (ratings[i].user_key == $user.key) {
-				my_rating = ratings[i].rating;
-			}
-		}
-	};
-	calc_rating();
-
 	$: if ($portal) {
 		if ($portal.for == 'post') {
 			post = $portal.data;
-		} else if ($portal.for == 'rating') {
-			ratings = $portal.data;
-			calc_rating();
 		}
 
-		if (['post', 'rating'].includes($portal.for)) {
+		if (['post'].includes($portal.for)) {
 			$portal = {};
 		}
 	}
@@ -113,10 +98,17 @@
 			window.history.replaceState(history.state, '', $page.url.href);
 		}
 	});
+
+	// const refresh = async () => {
+	// 	// await get_feedback();
+	// };
 </script>
 
-<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
-<Meta title={post.title} description={post.description} image={post.photos[0]} />
+{#key post.key}
+	<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
+	<Meta title={post.title} description={post.description} image={post.photos[0]} />
+	<!-- <Refresh on:refresh={refresh} /> -->
+{/key}
 
 <Content>
 	{#if is_admin}
@@ -228,7 +220,7 @@
 		/>
 	{/if}
 	{#if post.content}
-		<Marked md={content} />
+		<Marked {content} />
 		<br />
 	{:else if edit_mode}
 		<div class="margin">No content</div>
@@ -248,21 +240,9 @@
 			Share
 		</Button>
 
-		{#if $user.login}
-			<Button
-				size="small"
-				on:click={() => {
-					$module = {
-						module: Rating,
-						post_key: post.key,
-						ratings
-					};
-				}}
-			>
-				<Icon icon="hotel_class" />
-				Rate: {my_rating} | Overall Rating: {o_rating}
-			</Button>
-		{/if}
+		{#key post.key}
+			<Rating post_key={post.key} />
+		{/key}
 	</div>
 	<hr />
 
@@ -318,7 +298,10 @@
 
 	<hr />
 
-	<Comment {post} />
+	{#key post.key}
+		<Comment {post} />
+		<Similar post_key={post.key} />
+	{/key}
 </Content>
 
 <style>

@@ -56,7 +56,7 @@
 	<br />
 
 	<div class="comment">
-		<Marked md={comment.comment} />
+		<Marked content={comment.comment} />
 	</div>
 
 	<br />

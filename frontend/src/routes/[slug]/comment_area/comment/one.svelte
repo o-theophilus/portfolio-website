@@ -93,7 +93,7 @@
 			</div>
 
 			<div class="comment">
-				<Marked md={comment.comment} />
+				<Marked content={comment.comment} />
 			</div>
 
 			{#if error.error}
