@@ -72,19 +72,19 @@ def default_admin():
             cur=cur,
             user_key=key,
             action="created",
-            entity_type="auth"
+            entity_type="account"
         )
         log(
             cur=cur,
             user_key=key,
-            action="signed_up",
-            entity_type="auth"
+            action="signedup",
+            entity_type="account"
         )
         log(
             cur=cur,
             user_key=key,
             action="confirmed",
-            entity_type="auth"
+            entity_type="account"
         )
 
     db_close(con, cur)
@@ -105,7 +105,7 @@ def permission(key):
     if not me or "user:set_permission" not in me["permissions"]:
         error = "unauthorized access"
     elif "password" not in request.json:
-        error = "this field is required"
+        error = "cannot be empty"
     elif not check_password_hash(me["password"], request.json["password"]):
         error = "incorrect password"
     elif (
@@ -289,7 +289,7 @@ def get_highlight(cur=None):
         FROM post
         LEFT JOIN rating ON post.key = rating.post_key
         WHERE
-            post.status = 'publish'
+            post.status = 'active'
             AND post.key = ANY(%s)
         GROUP BY post.key;
     """, (keys,))
@@ -322,7 +322,7 @@ def set_highlight(key):
 
     cur.execute('SELECT * FROM post WHERE key = %s OR slug = %s;', (key, key))
     post = cur.fetchone()
-    if not post or post["status"] != "publish":
+    if not post or post["status"] != "active":
         db_close(con, cur)
         return jsonify({
             "status": 400,

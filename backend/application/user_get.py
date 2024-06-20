@@ -105,9 +105,12 @@ def get_many():
         SELECT
             "user".*,
             log.date AS date,
-            COUNT(*) OVER() AS total_items
+            COUNT(*) OVER() AS _count
         FROM "user"
-        LEFT JOIN log ON "user".key = log.user_key
+        LEFT JOIN log ON
+            "user".key = log.user_key
+            AND log.action = 'created'
+            AND log.entity_type = 'account'
         WHERE
             (
                 %s = '' OR "user".status = %s
@@ -116,8 +119,6 @@ def get_many():
                 OR CONCAT_WS(', ', "user".key, "user".name, "user".email
                 ) ILIKE %s
             )
-            AND log.action = 'created'
-            AND log.entity_type = 'auth'
         ORDER BY {} {}
         LIMIT %s OFFSET %s;
     """.format(
@@ -135,7 +136,7 @@ def get_many():
         "users": [user_schema(x) for x in users],
         "order_by": list(order_by.keys()),
         "_status": ['anonymous', 'signedup', 'confirmed', "deleted"],
-        "total_page": ceil(users[0]["total_items"] / page_size) if users else 0
+        "total_page": ceil(users[0]["_count"] / page_size) if users else 0
     })
 
 
@@ -195,13 +196,16 @@ def get_admins():
     user_key, _type, _action = search
     user_key = user_key.strip()
 
-# TODO: dond get deleted
+# TODO: don't get deleted
     cur.execute("""
         SELECT
             "user".*,
-            COUNT(*) OVER() AS total_items
+            COUNT(*) OVER() AS _count
         FROM "user"
-        LEFT JOIN log ON "user".key = log.user_key
+        LEFT JOIN log ON
+            "user".key = log.user_key
+            AND log.action = 'created'
+            AND log.entity_type = 'account'
         WHERE
             array_length("user".permissions, 1) IS NOT NULL
             AND (%s = ''
@@ -211,8 +215,6 @@ def get_admins():
                 ILIKE %s)
             AND (%s = 'all' OR ARRAY_TO_STRING("user".permissions, ',')
                 ILIKE %s)
-            AND log.action = 'created'
-            AND log.entity_type = 'auth'
         ORDER BY {} {}
         LIMIT %s OFFSET %s;
     """.format(
@@ -240,5 +242,5 @@ def get_admins():
         "users": [user_schema(x) for x in users],
         "permissions": permits,
         "order_by": list(order_by.keys()),
-        "total_page": ceil(users[0]["total_items"] / page_size) if users else 0
+        "total_page": ceil(users[0]["_count"] / page_size) if users else 0
     })

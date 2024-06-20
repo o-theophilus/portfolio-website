@@ -42,7 +42,7 @@
 				data: resp.ratings
 			};
 
-			$module = '';
+			$module = null;
 		} else {
 			error = resp;
 		}
@@ -52,9 +52,9 @@
 <section>
 	<strong class="ititle"> Add Rating </strong>
 	{#if error.error}
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 	<div>
 		Rating ({my_rating})
@@ -158,5 +158,9 @@
 		background-color: var(--bg2);
 
 		cursor: pointer;
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

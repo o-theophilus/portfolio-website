@@ -36,11 +36,11 @@
 
 <section id={comment.key}>
 	<div class="block">
-		<Avatar name={comment.user_name} photo={comment.user_photo} />
+		<Avatar name={comment.user.name} photo={comment.user.photo} />
 		<div class="content">
 			<div class="top">
 				<div>
-					<strong class="name">{comment.user_name}</strong>
+					<strong class="name">{comment.user.name}</strong>
 					<div class="date"><Datetime datetime={comment.date} type="ago" /></div>
 				</div>
 
@@ -55,7 +55,7 @@
 
 					{#if open_menu}
 						<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
-							{#if comment.user_key == $user.key}
+							{#if comment.user.key == $user.key}
 								<Link
 									on:click={() => {
 										$module = {
@@ -72,9 +72,9 @@
 									$module = {
 										module: Report,
 										reported: {
-											key: comment.user_key,
-											name: comment.user_name,
-											photo: comment.user_photo
+											key: comment.user.key,
+											name: comment.user.name,
+											photo: comment.user.photo
 										},
 										entity: {
 											type: 'comment',
@@ -96,10 +96,9 @@
 			</div>
 
 			{#if error.error}
-				<span class="error">
+				<div class="error">
 					{error.error}
-				</span>
-				<br />
+				</div>
 			{/if}
 
 			{#if $user.login}
@@ -194,5 +193,9 @@
 		padding: var(--sp2);
 		background-color: var(--bg2);
 		border-radius: var(--sp1);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

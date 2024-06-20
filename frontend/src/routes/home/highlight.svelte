@@ -66,7 +66,7 @@
 				{#key active_post.key}
 					<div
 						class="bg"
-						style:--fff="url({import.meta.env.VITE_BACKEND}/{active_post.photos[0]})"
+						style:--bg_img="url({active_post.photos[0]})"
 						in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}
 					/>
 				{/key}
@@ -162,7 +162,7 @@
 	.bg {
 		position: absolute;
 		inset: 0;
-		background-image: var(--fff);
+		background-image: var(--bg_img);
 		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center;

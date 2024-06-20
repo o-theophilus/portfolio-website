@@ -40,9 +40,10 @@
 				buttons: [
 					{
 						name: 'OK',
+						icon: 'check',
 						fn: () => {
 							goto(`/${resp.post.slug}?edit=true`);
-							$module = '';
+							$module = null;
 						}
 					}
 				]
@@ -56,12 +57,12 @@
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Add Post </strong>
 	{#if error.error}
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 	<IG
-		name="title"
+		name="Title"
 		icon="edit"
 		error={error.title}
 		placeholder="Title here"
@@ -78,5 +79,9 @@
 <style>
 	form {
 		padding: var(--sp3);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

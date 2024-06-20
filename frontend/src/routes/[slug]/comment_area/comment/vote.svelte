@@ -75,9 +75,9 @@
 	</button>
 
 	{#if error.error}
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 </div>
 
@@ -115,5 +115,9 @@
 	button:hover {
 		background-color: var(--cl1);
 		color: var(--ft1);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

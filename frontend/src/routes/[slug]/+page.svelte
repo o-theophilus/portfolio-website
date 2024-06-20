@@ -294,7 +294,7 @@
 					Status: <strong>{post.status}</strong>
 				</span>
 			</Button>
-			{#if post.status == 'publish'}
+			{#if post.status == 'active'}
 				<Highlight {post} />
 			{/if}
 		</div>

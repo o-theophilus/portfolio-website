@@ -38,8 +38,9 @@
 				buttons: [
 					{
 						name: 'Ok',
+						icon: 'check',
 						fn: () => {
-							$module = '';
+							$module = null;
 						}
 					}
 				]
@@ -58,14 +59,14 @@
 
 	<div>Change to:</div>
 	<div class="line">
-		{#if _status != 'publish'}
+		{#if _status != 'active'}
 			<Button
 				on:click={() => {
-					submit('publish');
+					submit('active');
 				}}
 			>
 				<Icon icon="check" />
-				{'publish'}
+				{'active'}
 			</Button>
 		{/if}
 
@@ -96,14 +97,14 @@
 	</div>
 
 	{#if error.error}
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 	{#if error.status}
-		<span class="error">
+		<div class="error">
 			{error.status}
-		</span>
+		</div>
 	{/if}
 </div>
 
@@ -115,5 +116,9 @@
 	.line {
 		display: flex;
 		gap: var(--sp1);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

@@ -8,11 +8,11 @@
 	import Button from '$lib/button/button.svelte';
 	import Link from '$lib/button/link.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
-	import EmailTemplate from './confirm.email_template.svelte';
 	import Signup from './signup.svelte';
-	import Forgot from './forgot.svelte';
+	import Forgot from './forgot.email.svelte';
 	import PasswordShow from './password_show.svelte';
+	import EmailTemplate from './confirm.email_template.svelte';
+	import Confirm from './confirm.svelte';
 
 	let email_template;
 	let show_password = false;
@@ -64,18 +64,8 @@
 			document.location = return_url;
 		} else if (resp.error == 'not confirmed') {
 			$module = {
-				module: Dialogue,
-				title: 'Email has not been confirmed',
-				status: 201,
-				message: `A confirmation email has been sent to: <b>${form.email}</b>`,
-				buttons: [
-					{
-						name: 'OK',
-						fn: () => {
-							$module = '';
-						}
-					}
-				]
+				module: Confirm,
+				email: form.email
 			};
 		} else {
 			error = resp;
@@ -86,23 +76,23 @@
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Login </strong>
 	{#if error.error}
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 	<IG
-		name="email"
+		name="Email"
 		icon="email"
 		error={error.email}
-		placeholder="email here"
-		type="text"
+		type="email"
 		bind:value={form.email}
+		placeholder="Email here"
 	/>
 	<IG
-		name="password"
+		name="Password"
 		icon="key"
 		error={error.password}
-		placeholder="password here"
+		placeholder="Password here"
 		type={show_password ? 'text' : 'password'}
 		bind:value={form.password}
 	>
@@ -151,6 +141,9 @@
 <style>
 	form {
 		padding: var(--sp3);
+	}
+	.error {
+		margin: var(--sp2) 0;
 	}
 	.right {
 		padding-right: var(--sp2);

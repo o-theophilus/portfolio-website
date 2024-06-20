@@ -49,7 +49,7 @@
 	{#if user}
 		<Log
 			action={'viewed'}
-			entity_key={user.key == $me.key ? null : user.key}
+			entity_key={user.key}
 			entity_type={'user'}
 		/>
 	{:else if data.error}
@@ -87,7 +87,7 @@
 
 		<div class="line">
 			<div class="avatar">
-				<Avatar name={user.name} photo={user.photo} size="120" profile />
+				<Avatar name={user.name} photo={user.photo} size="120" />
 			</div>
 			{#if edit_mode}
 				<BRound

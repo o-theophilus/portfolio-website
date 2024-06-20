@@ -4,7 +4,7 @@
 
 	import Icon from '$lib/icon.svelte';
 	import Button from '$lib/button/button.svelte';
-	import ShowPassword from '../auth/password_show.svelte';
+	import ShowPassword from '../account/password_show.svelte';
 	import IG from '$lib/input_group.svelte';
 
 	let form = {
@@ -17,7 +17,7 @@
 		error = {};
 
 		if (!form.password) {
-			error.password = 'This field is required';
+			error.password = 'cannot be empty';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -38,7 +38,7 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$module = '';
+			$module = null;
 			$notification = {
 				status: 200,
 				message: 'Permissions saved'
@@ -52,14 +52,13 @@
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Accept Permissions </strong>
 	{#if error.error}
-		<br />
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 
 	<IG
-		name="password"
+		name="Password"
 		icon="key"
 		error={error.password}
 		bind:value={form.password}
@@ -82,6 +81,10 @@
 <style>
 	form {
 		padding: var(--sp3);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 
 	.right {

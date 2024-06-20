@@ -55,8 +55,9 @@
 				buttons: [
 					{
 						name: 'OK',
+						icon: 'check',
 						fn: () => {
-							$module = '';
+							$module = null;
 						}
 					}
 				]
@@ -82,10 +83,10 @@
 	<hr />
 
 	{#if error.error}
-		<br />
-		<span class="error">
+		
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 
 	<IG
@@ -155,6 +156,9 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--sp1);
+		margin: var(--sp2) 0;
+	}
+	.error {
 		margin: var(--sp2) 0;
 	}
 </style>

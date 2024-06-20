@@ -251,11 +251,9 @@
 		</div>
 
 		{#if error.error}
-			<br />
-			<span class="error">
+			<div class="error">
 				{error.error}
-			</span>
-			<br />
+			</div>
 		{/if}
 	{/if}
 </div>
@@ -296,5 +294,9 @@
 	.active {
 		outline-color: var(--cl1);
 		transform: scale(1.1);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

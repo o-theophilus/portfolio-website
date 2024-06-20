@@ -54,8 +54,9 @@
 				buttons: [
 					{
 						name: 'OK',
+						icon: 'check',
 						fn: () => {
-							$module = '';
+							$module = null;
 						}
 					}
 				]
@@ -110,13 +111,13 @@
 <form class="form" on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Edit tags </strong>
 	{#if error.error}
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 
 	<IG
-		name="tags"
+		name="Tags"
 		bind:value={tags}
 		error={error.tags}
 		type="textarea"
@@ -159,5 +160,9 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--sp1);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

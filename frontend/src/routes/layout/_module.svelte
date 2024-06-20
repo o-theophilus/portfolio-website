@@ -15,7 +15,7 @@
 					icon="close"
 					extra="hover_red"
 					on:click={() => {
-						$module = '';
+						$module = null;
 					}}
 				/>
 			</div>

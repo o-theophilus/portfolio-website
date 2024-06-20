@@ -55,8 +55,9 @@
 				buttons: [
 					{
 						name: 'OK',
+						icon: 'check',
 						fn: () => {
-							$module = '';
+							$module = null;
 						}
 					}
 				]
@@ -71,12 +72,12 @@
 	<strong class="ititle"> Edit Content </strong>
 
 	{#if error.error}
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 
-	<IG name="content" error={error.content} let:id>
+	<IG name="Content" error={error.content} let:id>
 		<textarea
 			placeholder="Content here"
 			{id}
@@ -132,5 +133,9 @@
 
 	textarea:focus {
 		outline-color: var(--ft1);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

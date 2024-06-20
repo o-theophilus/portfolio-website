@@ -1,31 +1,33 @@
 <script>
-	import { module, notification, loading, portal } from '$lib/store.js';
+	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
-	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
+	import Button from '$lib/button/button.svelte';
+
+	import Password from './forgot.password.svelte';
 
 	let form = {
-		name: $module.user.name
+		...$module.form
 	};
-
 	let error = {};
 
-	const validate = () => {
+	const validate_submit = async () => {
 		error = {};
-		if (!form.name) {
-			error.name = 'cannot be empty';
-		} else if (form.name == $module.user.name) {
-			error.name = 'no change';
+
+		if (!form.otp) {
+			error.otp = 'cannot be empty';
+		} else if (!Number.isInteger(form.otp) || form.otp < 100000 || form.otp > 999999) {
+			error.otp = 'invalid OTP';
 		}
 
 		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {
-		$loading = 'Saving Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/${$module.user.key}`, {
+		$loading = 'resetting . . .';
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/forgot`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -37,17 +39,10 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$portal = {
-				for: 'user',
-				data: resp.user
+			$module = {
+				module: Password,
+				form
 			};
-
-			$notification = {
-				status: 200,
-				message: 'Name Changed'
-			};
-
-			$module = null;
 		} else {
 			error = resp;
 		}
@@ -55,24 +50,18 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Edit Name </strong>
+	<strong class="ititle"> Forgot Password </strong>
+
 	{#if error.error}
 		<div class="error">
 			{error.error}
 		</div>
 	{/if}
 
-	<IG
-		name="Name"
-		icon="person"
-		error={error.name}
-		placeholder="Name here"
-		type="text"
-		bind:value={form.name}
-	/>
+	<IG name="OTP" error={error.otp} bind:value={form.otp} type="text" placeholder="OTP here" />
 
-	<Button on:click={validate}>
-		Submit
+	<Button primary on:click={validate_submit}
+		>Submit
 		<Icon icon="send" />
 	</Button>
 </form>
@@ -81,6 +70,7 @@
 	form {
 		padding: var(--sp3);
 	}
+
 	.error {
 		margin: var(--sp2) 0;
 	}

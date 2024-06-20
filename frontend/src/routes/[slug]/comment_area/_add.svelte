@@ -69,10 +69,9 @@
 		Comment
 	</strong>
 	{#if error.error}
-		<br />
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 
 	{#if comment}
@@ -107,5 +106,9 @@
 		background-color: var(--cl1_l);
 		color: var(--ft1);
 		font-size: small;
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

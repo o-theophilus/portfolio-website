@@ -37,6 +37,10 @@
 	<br />
 	fix markdown
 	<br />
+	scroll to comment when # routing
+	<br />
+	use otp for email confirmation
+	<br />
 	sort comments by vote / retain order and status when adding, voting e.t.c
 	<br />
 	sort post by engagements (vote, comment, rating, view)

@@ -42,8 +42,9 @@
 				buttons: [
 					{
 						name: 'OK',
+						icon: 'check',
 						fn: () => {
-							$module = '';
+							$module = null;
 						}
 					}
 				]
@@ -57,8 +58,9 @@
 				buttons: [
 					{
 						name: 'OK',
+						icon: 'check',
 						fn: () => {
-							$module = '';
+							$module = null;
 						}
 					}
 				]

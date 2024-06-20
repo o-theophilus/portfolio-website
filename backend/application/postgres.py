@@ -58,6 +58,7 @@ log_table = """CREATE TABLE IF NOT EXISTS log (
 );"""
 
 
+# TODO: delete save table
 save_table = """CREATE TABLE IF NOT EXISTS save (
     key CHAR(32) PRIMARY KEY,
 

@@ -1,7 +1,7 @@
 <script>
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
-	import { module } from '$lib/store.js';
+	// import { onMount } from 'svelte';
+	// import { page } from '$app/stores';
+	// import { module } from '$lib/store.js';
 
 	import Parallax from './home/parallax.svelte';
 	import WelcomeText from './home/welcome_text.svelte';
@@ -15,35 +15,31 @@
 	import Icon from '$lib/icon.svelte';
 	import Log from '$lib/log.svelte';
 
-	import Confirm from './auth/confirm.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
-	import Forgot from './auth/forgot.password.svelte';
+	// import Confirm from './account/confirm.svelte';
+	// import Dialogue from '$lib/dialogue.svelte';
 
-	onMount(() => {
-		if ($page.url.searchParams.has('module')) {
-			let _module = {};
-			switch ($page.url.searchParams.get('module')) {
-				case 'confirm':
-					_module.module = Confirm;
-					break;
-				case 'password':
-					_module.module = Forgot;
-					break;
-				case 'info':
-					_module.module = Dialogue;
-					break;
-			}
+	// onMount(() => {
+	// 	if ($page.url.searchParams.has('module')) {
+	// 		let _module = {};
+	// 		switch ($page.url.searchParams.get('module')) {
+	// 			case 'confirm':
+	// 				_module.module = Confirm;
+	// 				break;
+	// 			case 'info':
+	// 				_module.module = Dialogue;
+	// 				break;
+	// 		}
 
-			for (const x of ['return_url', 'token', 'email', 'title', 'status', 'message']) {
-				if ($page.url.searchParams.has(x)) {
-					_module[x] = $page.url.searchParams.get(x);
-				}
-			}
+	// 		for (const x of ['return_url', 'token', 'email', 'title', 'status', 'message']) {
+	// 			if ($page.url.searchParams.has(x)) {
+	// 				_module[x] = $page.url.searchParams.get(x);
+	// 			}
+	// 		}
 
-			$module = _module;
-			window.history.replaceState(history.state, '', '/');
-		}
-	});
+	// 		$module = _module;
+	// 		window.history.replaceState(history.state, '', '/');
+	// 	}
+	// });
 </script>
 
 <Log entity_type={'page'} />

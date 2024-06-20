@@ -140,11 +140,10 @@
 
 	{#if edit_mode}
 		{#if error.error}
-			<span class="error">
+			<div class="error">
 				{@html error.error}
-			</span>
-			<br />
-			<br />
+			</div>
+		
 		{/if}
 
 		{#if !user.photo}
@@ -175,6 +174,10 @@
 		padding: var(--sp3);
 	}
 
+	.error {
+		margin: var(--sp2) 0;
+	}
+	
 	img {
 		width: 100%;
 		border-radius: var(--sp1);

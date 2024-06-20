@@ -6,7 +6,7 @@
 	import Theme from './nav.theme.svelte';
 	import User from './nav.user.svelte';
 	import SVG from '$lib/svg.svelte';
-	import Login from '../auth/login.svelte';
+	import Login from '../account/login.svelte';
 
 	$: home = $page.url.pathname == '/';
 </script>

@@ -9,14 +9,16 @@
 	export let log;
 
 	let href = '';
-	if (log.entity_type == 'post') {
-		href = `/${log.entity_key}`;
-	} else if (log.entity_type == 'report') {
-		href = `/admin/report?search=${log.entity_key}`;
-	} else if (log.entity_type == 'page') {
-		href = log.entity_key;
-	} else if (['user', 'admin'].includes(log.entity_type) && log.entity_key) {
-		href = `/profile?search=${log.entity_key}`;
+	if (log.entity.type == 'post') {
+		href = `/${log.entity.key}`;
+	} else if (log.entity.type == 'report') {
+		href = `/admin/report?search=${log.entity.key}`;
+	} else if (log.entity.type == 'page') {
+		href = log.entity.key;
+	} else if (['user', 'admin'].includes(log.entity.type) && log.entity.key) {
+		href = `/profile?search=${log.entity.key}`;
+	} else if (log.entity.type == 'comment') {
+		href = `/${log.misc.post_key}#${log.entity.key}`;
 	}
 </script>
 
@@ -34,40 +36,29 @@
 	</span>
 	<br />
 
-	<a href="/profile?search={log.user_key}">
-		{log.user_name}
+	<a href="/profile?search={log.user.key}">
+		{log.user.name}
 	</a>
 
-	{#if log.user_key && $user.permissions.includes('log:view')}
+	{#if log.user.key && $user.permissions.includes('log:view')}
 		<button
 			on:click={() => {
-				emit('search', { u: log.user_key });
+				emit('search', { u: log.user.key });
 			}}
 		>
 			&#9679;
 		</button>
 	{/if}
 
-	{#if log.entity_type == 'page'} viewed {:else} {log.action} {/if}
-
-	{#if log.action == 'viewed'}
-		{#if log.entity_type == 'save'}
-			save
-		{:else if log.entity_type == 'user' && !log.entity_key}
-			profile
-		{/if}
-	{:else if log.entity_type == 'otp'}
-		otp
-	{/if}
+	{log.action}
+	{log.entity.type}
 
 	{#if href}
-		{log.entity_type}
-
 		<a
 			{href}
 			data-sveltekit-preload-data="off"
 			on:click={() => {
-				if (log.entity_type == 'report') {
+				if (log.entity.type == 'report') {
 					let pn = 'reports';
 					let i = $state.findIndex((x) => x.name == pn);
 					if (i != -1) {
@@ -76,12 +67,12 @@
 				}
 			}}
 		>
-			{log.entity_name}
+			{log.entity.name}
 		</a>
 
 		<button
 			on:click={() => {
-				emit('search', { e: log.entity_key });
+				emit('search', { e: log.entity.key });
 			}}
 		>
 			&#9679;
@@ -92,10 +83,12 @@
 		<br />
 		{#each Object.entries(log.misc) as [key, value]}
 			{key}:
-			{#if log.entity_type == 'voucher' && key == 'validity'}
+			{#if log.entity.type == 'voucher' && key == 'validity'}
 				<Datetime datetime={value} type="date" />
 			{:else}
-				{value}
+				<span class="break">
+					{value}
+				</span>
 			{/if}
 			<br />
 		{/each}
@@ -150,5 +143,8 @@
 	button:hover,
 	a:hover {
 		color: var(--cl1_b);
+	}
+	.break{
+		word-wrap: break-word;
 	}
 </style>

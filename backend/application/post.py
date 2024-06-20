@@ -34,7 +34,7 @@ def add():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "this field is required"
+            "error": "cannot be empty"
         })
 
     slug = re.sub('-+', '-', re.sub(
@@ -99,7 +99,7 @@ def edit(key):
         if "post:edit_title" not in user["permissions"]:
             error["title"] = "unauthorized access"
         elif not request.json["title"]:
-            error["title"] = "this field is required"
+            error["title"] = "cannot be empty"
         elif request.json["title"] == post["title"]:
             error["title"] = "no change"
         else:
@@ -165,7 +165,7 @@ def edit(key):
         if "post:edit_tags" not in user["permissions"]:
             error["tags"] = "unauthorized access"
         elif type(request.json["tags"]) is not list:
-            error["tags"] = "this field is required"
+            error["tags"] = "cannot be empty"
         elif set(request.json["tags"]) == set(post["tags"]):
             error["tags"] = "no change"
         else:
@@ -182,7 +182,7 @@ def edit(key):
         if "post:edit_author" not in user["permissions"]:
             error["author_email"] = "unauthorized access"
         elif not request.json["author_email"]:
-            error["author_email"] = "this field is required"
+            error["author_email"] = "cannot be empty"
         elif not re.match(r"\S+@\S+\.\S+", request.json["author_email"]):
             error["author_email"] = "Please enter a valid email"
         else:
@@ -207,14 +207,14 @@ def edit(key):
             error["status"] = "unauthorized access"
         elif (
             not request.json["status"]
-            or request.json["status"] not in ['publish', 'draft', 'delete']
+            or request.json["status"] not in ['active', 'draft', 'delete']
         ):
             error["status"] = "invalid request"
         elif request.json["status"] == post["status"]:
             error["status"] = "no change"
-        elif request.json["status"] == "publish" and len(post["photos"]) == 0:
+        elif request.json["status"] == "active" and len(post["photos"]) == 0:
             error["status"] = "add photo"
-        elif request.json["status"] == "publish" and not post["content"]:
+        elif request.json["status"] == "active" and not post["content"]:
             error["status"] = "no content"
         else:
             cur.execute("""
@@ -511,7 +511,7 @@ def update_videos(key):
         "videos" not in request.json
         or type(request.json["videos"]) is not list
     ):
-        error["videos"] = "this field is required"
+        error["videos"] = "cannot be empty"
     elif set(request.json["videos"]) == set(post["videos"]):
         error["videos"] = "no change"
     if error != {}:

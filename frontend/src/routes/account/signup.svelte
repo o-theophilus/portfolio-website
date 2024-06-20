@@ -7,10 +7,10 @@
 	import Link from '$lib/button/link.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Password from './password_checker.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 	import Login from './login.svelte';
-	import EmailTemplate from './confirm.email_template.svelte';
 	import ShowPassword from './password_show.svelte';
+	import EmailTemplate from './confirm.email_template.svelte';
+	import Confirm from './confirm.svelte';
 
 	let email_template;
 	let show_password = false;
@@ -42,9 +42,11 @@
 		) {
 			error.password =
 				'must include at least 1 lowercase letter, 1 uppercase letter, 1 number and must contain 8 - 18 characters';
-		} else if (!form.confirm_password) {
+		}
+
+		if (!form.confirm_password) {
 			error.confirm_password = 'cannot be empty';
-		} else if (form.password != form.confirm_password) {
+		} else if (form.password && form.password != form.confirm_password) {
 			error.confirm_password = 'does not match password';
 		}
 
@@ -68,16 +70,8 @@
 
 		if (resp.status == 200) {
 			$module = {
-				module: Dialogue,
-				message: `A confirmation email has been sent to <b>${form.email}</b>`,
-				buttons: [
-					{
-						name: 'OK',
-						fn: () => {
-							$module = '';
-						}
-					}
-				]
+				module: Confirm,
+				email: form.email
 			};
 		} else {
 			error = resp;
@@ -88,31 +82,31 @@
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Signup </strong>
 	{#if error.error}
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 	<IG
-		name="name"
+		name="Name"
 		icon="person"
 		error={error.name}
-		placeholder="name here"
+		placeholder="Name here"
 		type="text"
 		bind:value={form.name}
 	/>
 	<IG
-		name="email"
+		name="Email"
 		icon="email"
 		error={error.email}
-		placeholder="email here"
+		placeholder="Email here"
 		type="text"
 		bind:value={form.email}
 	/>
 	<IG
-		name="password"
+		name="Password"
 		icon="key"
 		error={error.password}
-		placeholder="password here"
+		placeholder="Password here"
 		type={show_password ? 'text' : 'password'}
 		bind:value={form.password}
 	>
@@ -126,10 +120,10 @@
 		</svelte:fragment>
 	</IG>
 	<IG
-		name="confirm password"
+		name="Confirm Password"
 		icon="key"
 		error={error.confirm_password}
-		placeholder="confirm password here"
+		placeholder="Password here"
 		type={show_password ? 'text' : 'password'}
 		bind:value={form.confirm_password}
 	/>
@@ -161,7 +155,9 @@
 	form {
 		padding: var(--sp3);
 	}
-
+	.error {
+		margin: var(--sp2) 0;
+	}
 	.right {
 		padding-right: var(--sp2);
 	}

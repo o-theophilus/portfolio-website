@@ -10,7 +10,7 @@ from . import comment
 from . import report
 from . import rating
 from . import storage
-from . import auth
+from . import account
 from . import admin
 from . import log
 
@@ -39,7 +39,7 @@ def create_app(conf=None):
     app.register_blueprint(report.bp)
     app.register_blueprint(rating.bp)
     app.register_blueprint(storage.bp)
-    app.register_blueprint(auth.bp)
+    app.register_blueprint(account.bp)
     app.register_blueprint(admin.bp)
     app.register_blueprint(log.bp)
 

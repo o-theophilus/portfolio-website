@@ -122,11 +122,26 @@ def get_many():
 
     cur.execute("""
         SELECT
-            log.*,
-            "user".name AS user_name,
-            COALESCE(usr.name, post.title, RIGHT(log.entity_key, 10)
-            ) AS entity_name,
-            COUNT(*) OVER() AS total_page
+            log.key,
+            log.date,
+            log.status,
+            log.misc,
+            log.action,
+
+            jsonb_build_object(
+                'key', "user".key,
+                'name', "user".name
+            ) AS user,
+
+            jsonb_build_object(
+                'key', log.entity_key,
+                'type', log.entity_type,
+                'name', COALESCE(usr.name, post.title, comment.comment,
+                    log.entity_key)
+            ) AS entity,
+
+            COUNT(*) OVER() AS _count
+
         FROM log
         LEFT JOIN "user" ON log.user_key = "user".key
         LEFT JOIN "user" usr ON log.entity_key = usr.key
@@ -134,6 +149,10 @@ def get_many():
         LEFT JOIN
             post ON log.entity_key = post.key
             AND log.entity_type = 'post'
+        LEFT JOIN
+            comment ON log.entity_key = comment.key
+            AND log.entity_type = 'comment'
+
         WHERE
             (%s = '' OR CONCAT_WS(
                 ', ', log.user_key, "user".name, "user".email
@@ -154,12 +173,30 @@ def get_many():
     ))
     logs = cur.fetchall()
 
-    sq = search_query(cur)
+    for x in logs:
+        if x["entity"]["type"] == "page":
+            x["action"] = "viewed"
 
+        elif x["entity"]["type"] == "report":
+            x["entity"]["name"] = x["entity"]["name"][-10:]
+
+        elif x["entity"]["type"] == "comment":
+            length = 20
+            ellipsis = "..." if len(x["entity"]["name"]) > length else ""
+            x["entity"]["name"] = f"{x["entity"]["name"][:length]}{ellipsis}"
+
+        elif x["entity"]["type"] == "user":
+            if x["action"] == "viewed":
+                if x["user"]["key"] == x["entity"]["key"]:
+                    x["entity"]["type"] = "profile"
+            else:
+                x["entity"]["type"] = ""
+
+    sq = search_query(cur)
     db_close(con, cur)
     return jsonify({
         "status": 200,
         "logs": logs,
         "search_query": sq,
-        "total_page": ceil(logs[0]["total_page"] / page_size) if logs else 0
+        "total_page": ceil(logs[0]["_count"] / page_size) if logs else 0
     })

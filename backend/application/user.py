@@ -2,12 +2,11 @@ from flask import Blueprint, jsonify, request
 from .postgres import db_open, db_close
 from .tools import token_to_user, user_schema, send_mail, token_tool
 from .log import log
-import random
 from uuid import uuid4
-from datetime import datetime, timedelta
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
 from .storage import storage
+from .otp import generate_otp, check_otp
 
 
 bp = Blueprint("user", __name__)
@@ -74,7 +73,7 @@ def edit_user(key):
 
     if "name" in request.json:
         if not request.json["name"]:
-            error['name'] = "this field is required"
+            error['name'] = "cannot be empty"
         elif request.json["name"] == user["name"]:
             error['name'] = "no change"
         else:
@@ -89,7 +88,7 @@ def edit_user(key):
 
     if "phone" in request.json:
         if not request.json["phone"]:
-            error['phone'] = "this field is required"
+            error['phone'] = "cannot be empty"
         elif request.json["phone"] == user["phone"]:
             error['phone'] = "no change"
         else:
@@ -129,214 +128,8 @@ def edit_user(key):
     })
 
 
-@bp.post("/user/email/otp")
-def send_email_otp():
-    con, cur = db_open()
-
-    user = token_to_user(cur)
-    if not user:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
-
-    if (
-        "email" not in request.json
-        or not request.json["email"]
-        or "email_template" not in request.json
-        or not request.json["email_template"]
-    ):
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid request"
-        })
-
-    if user["email"] == request.json["email"]:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "email": "please use a different email form your current email"
-        })
-
-    cur.execute('SELECT * FROM "user" WHERE email = %s;',
-                (request.json["email"],))
-    exist = cur.fetchone()
-    if exist:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "email": "email is already in use"
-        })
-
-    cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
-
-    otp_1 = str(random.randint(100000, 999999))
-    otp_2 = str(random.randint(100000, 999999))
-    key_1 = uuid4().hex
-    key_2 = uuid4().hex
-
-    cur.execute("""
-            INSERT INTO otp (key, user_key, pin, email)
-            VALUES (%s, %s, %s, %s), (%s, %s, %s, %s);
-        """, (
-        key_1,
-        user["key"],
-        otp_1,
-        user['email'],
-
-        key_2,
-        user["key"],
-        otp_2,
-        request.json["email"]
-    ))
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="requested",
-        entity_key=key_1,
-        entity_type="otp",
-        misc={"to": user['email']}
-    )
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="requested",
-        entity_key=key_2,
-        entity_type="otp",
-        misc={"to": request.json['email']}
-    )
-
-    send_mail(
-        user["email"],
-        "Email Change Confirmation - One-Time Password (OTP)",
-        request.json['email_template'].format(otp=otp_1)
-    )
-    send_mail(
-        request.json["email"],
-        "Email Change Confirmation - One-Time Password (OTP)",
-        request.json['email_template'].format(otp=otp_2)
-    )
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200
-    })
-
-
-@bp.put("/user/email")
-def email():
-    con, cur = db_open()
-
-    user = token_to_user(cur)
-
-    error = {}
-    cur.execute('SELECT * FROM "user" WHERE email = %s;',
-                (request.json["email"],))
-    email_exist = cur.fetchone()
-
-    if "email" not in request.json or not request.json["email"]:
-        error["email"] = "this field is required"
-    elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
-        error["email"] = "Please enter a valid email"
-    elif user["email"] == request.json["email"]:
-        error["email"] = "please use a different email form your current email"
-    elif email_exist:
-        error["email"] = "email is already in use"
-
-    if "otp_1" not in request.json or not request.json["otp_1"]:
-        error["otp_1"] = "this field is required"
-    else:
-        cur.execute("""
-            SELECT otp.*, log.date
-            FROM otp
-            LEFT JOIN log ON otp.key = log.entity_key
-            WHERE
-                otp.user_key = %s
-                AND otp.pin = %s
-                AND otp.email = %s
-                AND log.entity_type = 'otp'
-                AND log.action = 'requested';
-        """, (
-            user['key'],
-            request.json["otp_1"],
-            user['email']
-        ))
-        otp_1 = cur.fetchone()
-
-        if not otp_1:
-            error["otp_1"] = "invalid OTP"
-        elif datetime.now() - otp_1["date"] > timedelta(minutes=15):
-            cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
-            error["otp_1"] = "invalid OTP"
-
-    if "otp_2" not in request.json or not request.json["otp_2"]:
-        error["otp_2"] = "this field is required"
-    else:
-        cur.execute("""
-            SELECT otp.*, log.date
-            FROM otp
-            LEFT JOIN log ON otp.key = log.entity_key
-            WHERE
-                otp.user_key = %s
-                AND otp.pin = %s
-                AND otp.email = %s
-                AND log.entity_type = 'otp'
-                AND log.action = 'requested';
-        """, (
-            user['key'],
-            request.json["otp_2"],
-            request.json["email"]
-        ))
-        otp_2 = cur.fetchone()
-
-        if not otp_2:
-            error["otp_2"] = "invalid OTP"
-        elif datetime.now() - otp_2["date"] > timedelta(minutes=15):
-            cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
-            error["otp_2"] = "invalid OTP"
-
-    if error != {}:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            **error
-        })
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="changed_email",
-        entity_type="user",
-        misc={
-            "from": user['email'],
-            "to": request.json['email']
-        }
-    )
-
-    cur.execute("""
-        UPDATE "user"
-        SET email = %s
-        WHERE key = %s
-        RETURNING *;
-    """, (
-        request.json["email"],
-        user["key"]
-    ))
-    user = cur.fetchone()
-    cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "user": user_schema(user)
-    })
-
-
-@bp.post("/user/password/otp")
-def send_password_otp():
+@bp.post("/user/email/1")
+def email_1_old_email():
     con, cur = db_open()
 
     user = token_to_user(cur)
@@ -357,35 +150,12 @@ def send_password_otp():
             "error": "invalid request"
         })
 
-    cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
-
-    otp = str(random.randint(100000, 999999))
-    key = uuid4().hex
-
-    cur.execute("""
-            INSERT INTO otp (key, user_key, pin, email)
-            VALUES (%s, %s, %s, %s);
-        """, (
-        key,
-        user["key"],
-        otp,
-        user["email"]
-    ))
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="requested",
-        entity_key=key,
-        entity_type="otp",
-        misc={"to": user['email']}
-    )
-
     send_mail(
         user["email"],
-        "Password Change Confirmation - One-Time Password (OTP)",
+        "Email Change Confirmation - One-Time Password (OTP)",
         request.json['email_template'].format(
-            otp=otp
+            name=user["name"],
+            otp=generate_otp(cur, user["key"], user["email"], "change email")
         )
     )
 
@@ -395,15 +165,274 @@ def send_password_otp():
     })
 
 
-@bp.put("/user/password")
-def password():
+@bp.put("/user/email/2")
+def email_2_old_otp():
     con, cur = db_open()
 
     user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    error = check_otp(cur, user["key"], user["email"], "otp_1")
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "otp_1": error
+        })
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
+@bp.post("/user/email/3")
+def email_3_new_email():
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    error = check_otp(cur, user["key"], user["email"], "otp_1")
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    if (
+        "email_template" not in request.json
+        or not request.json["email_template"]
+    ):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    error = None
+    if "email" not in request.json or not request.json["email"]:
+        error = "cannot be empty"
+    elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
+        error = "invalid email"
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "email": error
+        })
+
+    if user["email"] == request.json["email"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "email": "please use a different email form your current email"
+        })
+
+    cur.execute('SELECT * FROM "user" WHERE email = %s;',
+                (request.json["email"],))
+    exist = cur.fetchone()
+    if exist:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "email": "email is already in use"
+        })
+
+    send_mail(
+        request.json["email"],
+        "Email Change Confirmation - One-Time Password (OTP)",
+        request.json['email_template'].format(
+            name=user["name"], otp=generate_otp(
+                cur, user["key"], request.json["email"], "change email")
+        )
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
+@bp.post("/user/email/4")
+def email_4_new_otp():
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    error = check_otp(cur, user["key"], user["email"], "otp_1")
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    if (
+        "email" not in request.json or not request.json["email"]
+        or not re.match(r"\S+@\S+\.\S+", request.json["email"])
+    ):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    if user["email"] == request.json["email"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    cur.execute('SELECT * FROM "user" WHERE email = %s;',
+                (request.json["email"],))
+    exist = cur.fetchone()
+    if exist:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    error = check_otp(cur, user["key"], request.json["email"], "otp_2")
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="changed_email",
+        entity_type="user",
+        misc={
+            "from": user['email'],
+            "to": request.json['email']
+        }
+    )
+
+    cur.execute("""
+        UPDATE "user" SET email = %s WHERE key = %s RETURNING *;
+    """, (
+        request.json["email"], user["key"]))
+    user = cur.fetchone()
+
+    cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "user": user_schema(user)
+    })
+
+
+@bp.post("/user/password/1")
+def password_1_email():
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    if (
+        "email_template" not in request.json
+        or not request.json["email_template"]
+    ):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    send_mail(
+        user["email"],
+        "Password Change Confirmation - One-Time Password (OTP)",
+        request.json['email_template'].format(
+            name=user["name"],
+            otp=generate_otp(
+                cur, user["key"], user["email"], "change password")
+        )
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
+@bp.post("/user/password/2")
+def password_2_otp():
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    error = check_otp(cur, user["key"], user["email"])
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "otp": error
+        })
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
+@bp.put("/user/password/3")
+def password_3_password():
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    error = check_otp(cur, user["key"], user["email"])
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
 
     error = {}
     if "password" not in request.json or not request.json["password"]:
-        error["password"] = "this field is required"
+        error["password"] = "cannot be empty"
     elif (
         not re.search("[a-z]", request.json["password"])
         or not re.search("[A-Z]", request.json["password"])
@@ -421,42 +450,13 @@ def password():
         "confirm_password" not in request.json
         or not request.json["confirm_password"]
     ):
-        error["confirm_password"] = "this field is required"
+        error["confirm_password"] = "cannot be empty"
     elif (
             request.json["password"]
-            and "password" not in error
             and request.json["confirm_password"] != request.json["password"]
     ):
         error["confirm_password"] = """Password and confirm_password password
          does not match"""
-
-    if "otp" not in request.json or not request.json["otp"]:
-        error["otp"] = "this field is required"
-    else:
-        cur.execute("""
-            SELECT otp.*, log.date
-            FROM otp
-            LEFT JOIN log ON
-                otp.key = log.entity_kty
-            WHERE
-                otp.user = %s
-                AND otp.pin = %s
-                AND otp.email = %s;
-                AND log.entity_type = 'otp'
-                AND log.action = 'requested'
-        """, (
-            user['key'],
-            request.json["otp"],
-            user["email"]
-        ))
-        otp = cur.fetchone()
-
-        if not otp:
-            error["otp"] = "invalid OTP"
-        elif datetime.now() - otp["date"] > timedelta(minutes=15):
-            cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
-            error["otp"] = "invalid OTP"
-
     if error != {}:
         db_close(con, cur)
         return jsonify({
@@ -464,6 +464,12 @@ def password():
             **error
         })
 
+    cur.execute("""
+        UPDATE "user" SET password = %s WHERE key = %s;
+    """, (
+        generate_password_hash(request.json["password"], method="scrypt"),
+        user["key"]
+    ))
     log(
         cur=cur,
         user_key=user["key"],
@@ -471,14 +477,6 @@ def password():
         entity_type="user"
     )
 
-    cur.execute("""
-        UPDATE "user"
-        SET password = %s
-        WHERE key = %s;
-    """, (
-        generate_password_hash(request.json["password"], method="scrypt"),
-        user["key"]
-    ))
     cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
 
     db_close(con, cur)
@@ -502,9 +500,9 @@ def delete():
     error = {}
 
     if "note" not in request.json or not request.json["note"]:
-        error["note"] = "this field is required"
+        error["note"] = "cannot be empty"
     if "password" not in request.json or not request.json["password"]:
-        error["password"] = "this field is required"
+        error["password"] = "cannot be empty"
 
     if error != {}:
         db_close(con, cur)

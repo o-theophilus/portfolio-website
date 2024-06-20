@@ -6,8 +6,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .postgres import db_open, db_close
 from .log import log
 from .admin import get_highlight
+from .otp import generate_otp, check_otp
 
-bp = Blueprint("auth", __name__)
+bp = Blueprint("account", __name__)
 
 max_age = 3600
 
@@ -37,7 +38,7 @@ def init():
             cur=cur,
             user_key=user["key"],
             action="created",
-            entity_type="auth",
+            entity_type="account",
         )
 
         token = token_tool().dumps(user["key"])
@@ -85,10 +86,10 @@ def signup():
     error = {}
 
     if "name" not in request.json or not request.json["name"]:
-        error["name"] = "this field is required"
+        error["name"] = "cannot be empty"
 
     if "email" not in request.json or not request.json["email"]:
-        error["email"] = "this field is required"
+        error["email"] = "cannot be empty"
     elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
         error["email"] = "Please enter a valid email"
     else:
@@ -98,7 +99,7 @@ def signup():
             error["email"] = "email taken"
 
     if "password" not in request.json or not request.json["password"]:
-        error["password"] = "this field is required"
+        error["password"] = "cannot be empty"
     elif (
         not re.search("[a-z]", request.json["password"])
         or not re.search("[A-Z]", request.json["password"])
@@ -111,10 +112,9 @@ def signup():
 
     if "confirm_password" not in request.json or not request.json[
             "confirm_password"]:
-        error["confirm_password"] = "this field is required"
+        error["confirm_password"] = "cannot be empty"
     elif (
             request.json["password"]
-            and "password" not in error
             and request.json["confirm_password"] != request.json["password"]
     ):
         error["confirm_password"] = """password and confirm password does not
@@ -141,7 +141,7 @@ def signup():
 
     cur.execute("""
         UPDATE "user"
-        SET name = %s, email = %s, password = %s, status = 'signed_up'
+        SET name = %s, email = %s, password = %s, status = 'signedup'
         WHERE key = %s
         RETURNING *;
     """, (
@@ -155,18 +155,16 @@ def signup():
     log(
         cur=cur,
         user_key=user["key"],
-        action="signed_up",
-        entity_type="auth",
+        action="signedup",
+        entity_type="account",
     )
 
     send_mail(
         user["email"],
-        "Welcome to Meji! Please Confirm Your Email to Get Started",
+        "Welcome to my portfolio website! Complete your signup with this OTP",
         request.json['email_template'].format(
             name=user["name"],
-            token=token_tool().dumps(
-                user["key"]
-            )
+            otp=generate_otp(cur, user["key"], user["email"], "signup")
         )
     )
 
@@ -176,62 +174,58 @@ def signup():
     })
 
 
-@bp.get("/confirm/<token>")
-def confirm_email(token):
+@bp.post("/confirm")
+def confirm():
     con, cur = db_open()
 
-    try:
-        token = token_tool().loads(token, max_age=max_age)
-    except Exception:
+    error = None
+    if (
+        "email" not in request.json
+        or not request.json["email"]
+        or not re.match(r"\S+@\S+\.\S+", request.json["email"])
+    ):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid token"
+            "error": "invalid request"
         })
 
-    cur.execute('SELECT * FROM "user" WHERE key = %s;', (token,))
+    cur.execute("""
+        SELECT * FROM "user" WHERE email = %s
+    ;""", (request.json["email"],))
     user = cur.fetchone()
-    if not user:
+    if not user or user["status"] != 'signedup':
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid token"
+            "error": "invalid request"
         })
 
-    output = {
-        "status": 200,
-        "user": user_schema(user)
-    }
+    error = check_otp(cur, user["key"], user["email"])
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": error
+        })
 
-    if user["status"] != "confirmed":
-        cur.execute("""
-            UPDATE "user" SET status = 'confirmed'
-            WHERE key = %s RETURNING *;
-        """, (user["key"],))
-        user = cur.fetchone()
-        output['user'] = user_schema(user)
+    cur.execute("""
+        UPDATE "user" SET status = 'confirmed' WHERE key = %s;
+    """, (user["key"],))
 
-        log(
-            cur=cur,
-            user_key=user["key"],
-            action="confirmed_email",
-            entity_type="auth",
-        )
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="confirmed_email",
+        entity_type="account",
+    )
 
-    else:
-        output['error'] = "email has already been confirmed"
-
-        log(
-            cur=cur,
-            user_key=user["key"],
-            action="confirmed_email",
-            entity_type="auth",
-            status=201,
-            misc={"error": "already confirmed"}
-        )
+    cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
 
     db_close(con, cur)
-    return jsonify(output)
+    return jsonify({
+        "status": 200
+    })
 
 
 @bp.post("/login")
@@ -259,9 +253,9 @@ def login():
 
     error = {}
     if "email" not in request.json or not request.json["email"]:
-        error["email"] = "this field is required"
+        error["email"] = "cannot be empty"
     if "password" not in request.json or not request.json["password"]:
-        error["password"] = "this field is required"
+        error["password"] = "cannot be empty"
 
     if error != {}:
         db_close(con, cur)
@@ -280,7 +274,7 @@ def login():
 
     if (
         not in_user
-        or in_user["status"] in ["anonymous", "deleted"]
+        or in_user["status"] not in ['signedup', 'confirmed']
         or not check_password_hash(
             in_user["password"], request.json["password"])
     ):
@@ -290,44 +284,22 @@ def login():
             "error": "your email or password is incorrect"
         })
 
-    if in_user["status"] == "signed_up":
+    if in_user["status"] != "confirmed":
         send_mail(
             in_user["email"],
-            "Welcome to Meji! Please Confirm Your Email to Get Started",
+            "Welcome to my portfolio website! \
+            Complete your signup with this OTP",
             request.json['email_template'].format(
                 name=in_user["name"],
-                token=token_tool().dumps(
-                    in_user["key"]
-                )
-            ))
-
+                otp=generate_otp(
+                    cur, in_user["key"], in_user["email"], "login")
+            )
+        )
         db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "not confirmed"
         })
-
-    if out_user['key'] != in_user['key'] and out_user['status'] == "anonymous":
-        cur.execute('SELECT * FROM save WHERE user_key = %s;',
-                    (out_user["key"],))
-        out_saves = cur.fetchall()
-        cur.execute('SELECT * FROM save WHERE user_key = %s;',
-                    (in_user["key"],))
-        in_saves = cur.fetchall()
-        in_saves = [x["item_key"] for x in in_saves]
-        for x in out_saves:
-            if x["item_key"] not in in_saves:
-                cur.execute("""
-                    UPDATE save
-                    SET user_key = %s
-                    WHERE key = %s;
-                """, (
-                    in_user["key"],
-                    x["key"]
-                ))
-
-        cur.execute("DELETE FROM save WHERE user_key = %s;",
-                    (out_user["key"],))
 
     cur.execute("""
         UPDATE "user" SET login = %s
@@ -346,7 +318,7 @@ def login():
         cur=cur,
         user_key=in_user["key"],
         action="logged_in",
-        entity_type="auth",
+        entity_type="account",
         misc={
             "from": out_user["key"],
             "name": out_user["name"]
@@ -356,9 +328,9 @@ def login():
         cur=cur,
         user_key=out_user["key"],
         action="logged_out",
-        entity_type="auth",
+        entity_type="account",
         misc={
-            "from": in_user["key"],
+            "to": in_user["key"],
             "name": in_user["name"]
         }
     )
@@ -404,7 +376,7 @@ def logout():
         cur=cur,
         user_key=user["key"],
         action="logged_out",
-        entity_type="auth",
+        entity_type="account",
         misc={
             "to": anon_user["key"],
             "name": anon_user["name"]
@@ -414,7 +386,7 @@ def logout():
         cur=cur,
         user_key=anon_user["key"],
         action="created",
-        entity_type="auth",
+        entity_type="account",
         misc={
             "from": user["key"],
             "name": user["name"]
@@ -429,14 +401,14 @@ def logout():
     })
 
 
-@bp.post("/forgot")
-def forgot():
+@bp.post("/forgot/1")
+def forgot_1_email():
     con, cur = db_open()
 
     if (
-       "email_template" not in request.json
+        "email_template" not in request.json
         or not request.json["email_template"]
-       ):
+    ):
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -445,41 +417,35 @@ def forgot():
 
     error = None
     if "email" not in request.json or not request.json["email"]:
-        error = "this field is required"
+        error = "cannot be empty"
     elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
-        error = "please enter a valid email"
+        error = "invalid email"
     if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": error
+            "email": error
         })
 
-    cur.execute('SELECT * FROM "user" WHERE email = %s;',
-                (request.json["email"],))
+    cur.execute("""
+        SELECT * FROM "user" WHERE email = %s
+    ;""", (request.json["email"],))
     user = cur.fetchone()
-    if not user or user["status"] == "deleted":
+    if not user or user["status"] not in ['signedup', 'confirmed']:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "there is no user registered with this email"
+            "email": "there is no user registered with this email"
         })
 
     send_mail(
         user["email"],
-        "Welcome!",
+        "Password Change Confirmation - One-Time Password (OTP)",
         request.json['email_template'].format(
-            token=token_tool().dumps(
-                user["key"]
-            ),
-            name=user["name"]
-        ))
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="forgot_password",
-        entity_type="auth",
+            name=user["name"],
+            otp=generate_otp(
+                cur, user["key"], user["email"], "forgot password")
+        )
     )
 
     db_close(con, cur)
@@ -488,55 +454,105 @@ def forgot():
     })
 
 
-@bp.post("/forgot/<token>")
-def forgot_password(token):
+@bp.post("/forgot/2")
+def forgot_2_otp():
     con, cur = db_open()
 
-    try:
-        token = token_tool().loads(token, max_age=max_age)
-    except Exception:
+    if (
+        "email" not in request.json or not request.json["email"]
+        or not re.match(r"\S+@\S+\.\S+", request.json["email"])
+    ):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid token"
+            "error": "invalid request"
         })
 
-    cur.execute('SELECT * FROM "user" WHERE key = %s;', (token,))
+    cur.execute("""
+        SELECT * FROM "user" WHERE email = %s
+    ;""", (request.json["email"],))
     user = cur.fetchone()
-    if not user:
+    if not user or user["status"] not in ['signedup', 'confirmed']:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid token"
+            "error": "invalid request"
+        })
+
+    error = check_otp(cur, user["key"], user["email"])
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "otp": error
+        })
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
+@bp.put("/forgot/3")
+def forgot_3_password():
+    con, cur = db_open()
+
+    if (
+        "email" not in request.json or not request.json["email"]
+        or not re.match(r"\S+@\S+\.\S+", request.json["email"])
+    ):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    cur.execute("""
+        SELECT * FROM "user" WHERE email = %s
+    ;""", (request.json["email"],))
+    user = cur.fetchone()
+    if not user or user["status"] not in ['signedup', 'confirmed']:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    error = check_otp(cur, user["key"], user["email"])
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
         })
 
     error = {}
     if "password" not in request.json or not request.json["password"]:
-        error["password"] = "this field is required"
+        error["password"] = "cannot be empty"
     elif (
         not re.search("[a-z]", request.json["password"])
         or not re.search("[A-Z]", request.json["password"])
         or not re.search("[0-9]", request.json["password"])
         or len(request.json["password"]) not in range(8, 19)
     ):
-        error["password"] = """password must include at least 1 lowercase
+        error["password"] = """Password must include at least 1 lowercase
         letter, 1 uppercase letter, 1 number and must contain 8 - 18
         characters"""
     elif check_password_hash(user["password"], request.json["password"]):
         error["password"
-              ] = "new password should be different from old password"
+              ] = "New password should be different from old password"
 
-    if "confirm_password" not in request.json or not request.json[
-            "confirm_password"]:
-        error["confirm_password"] = "this field is required"
+    if (
+        "confirm_password" not in request.json
+        or not request.json["confirm_password"]
+    ):
+        error["confirm_password"] = "cannot be empty"
     elif (
             request.json["password"]
-            and "password" not in error
             and request.json["confirm_password"] != request.json["password"]
     ):
-        error["confirm_password"] = """password and confirm password does not
-         match"""
-
+        error["confirm_password"] = """Password and confirm_password password
+         does not match"""
     if error != {}:
         db_close(con, cur)
         return jsonify({
@@ -545,22 +561,32 @@ def forgot_password(token):
         })
 
     cur.execute("""
-        UPDATE "user" SET password = %s
-        WHERE key = %s RETURNING *;""", (
-        generate_password_hash(
-            request.json["password"], method="scrypt"),
+        UPDATE "user" SET password = %s WHERE key = %s;
+    """, (
+        generate_password_hash(request.json["password"], method="scrypt"),
         user["key"]
     ))
-
     log(
         cur=cur,
         user_key=user["key"],
         action="changed_password",
-        entity_type="auth",
+        entity_type="account"
     )
+
+    if user["status"] != "confirmed":
+        cur.execute("""
+            UPDATE "user" SET status = 'confirmed' WHERE key = %s;
+        """, (user["key"],))
+        log(
+            cur=cur,
+            user_key=user["key"],
+            action="confirmed_email",
+            entity_type="account",
+        )
+
+    cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
 
     db_close(con, cur)
     return jsonify({
-        "status": 200,
-        "user": user_schema(user)
+        "status": 200
     })

@@ -7,6 +7,7 @@ from .log import log
 bp = Blueprint("comment", __name__)
 
 
+# TODO: accept cur
 @bp.get("/comment/<key>")
 def get_comments(key):
     con, cur = db_open()
@@ -55,19 +56,22 @@ def get_comments(key):
             comment.path,
             comment.upvote,
             comment.downvote,
-            log.date AS date,
-            "user".key AS user_key,
-            "user".name AS user_name,
-            "user".photo AS user_photo,
-            COUNT(*) OVER() AS total_items
+            log.date,
+            jsonb_build_object(
+                'key', "user".key,
+                'name', "user".name,
+                'photo', "user".photo
+            ) AS user
+
         FROM comment
-        LEFT JOIN log ON comment.key = log.entity_key
         LEFT JOIN "user" ON comment.user_key = "user".key
+        LEFT JOIN log ON
+            comment.key = log.entity_key
+            AND log.action = 'created'
+            AND log.entity_type = 'comment'
         WHERE
             comment.post_key = %s
             AND comment.status = %s
-            AND log.action = 'added_comment'
-            AND log.entity_type = 'comment'
         ORDER BY {} {};
     """.format(
         order_by[order],
@@ -78,8 +82,8 @@ def get_comments(key):
     ))
     comments = cur.fetchall()
     for x in comments:
-        x["user_photo"] = f"{request.host_url}photo/{x[
-            "user_photo"]}" if x["user_photo"] else None
+        x["user"]["photo"] = f"{request.host_url}photo/{x[
+            "user"]["photo"]}" if x["user"]["photo"] else None
 
     db_close(con, cur)
     return jsonify({
@@ -122,7 +126,7 @@ def create(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "comment": "This field is required"
+            "comment": "cannot be empty"
         })
 
     cur.execute("""
@@ -152,12 +156,11 @@ def create(key):
     log(
         cur=cur,
         user_key=user["key"],
-        action="added_comment",
+        action="created",
         entity_key=comment["key"],
         entity_type="comment",
         misc={
-            "comment": request.json["comment"],
-            "path": request.json["path"]
+            "post_key": post["key"]
         }
     )
 
@@ -184,10 +187,13 @@ def vote(key):
             comment.path,
             comment.upvote,
             comment.downvote,
-            log.date AS date,
-            "user".key AS user_key,
-            "user".name AS user_name,
-            "user".photo AS user_photo
+            log.date,
+            jsonb_build_object(
+                'key', "user".key,
+                'name', "user".name,
+                'photo', "user".photo
+            ) AS user
+
         FROM comment
         LEFT JOIN log ON comment.key = log.entity_key
         LEFT JOIN "user" ON comment.user_key = "user".key
@@ -206,6 +212,9 @@ def vote(key):
             "status": 400,
             "error": "invalid request"
         })
+
+    comment["user"]["photo"] = f"{request.host_url}photo/{comment[
+        "user"]["photo"]}" if comment["user"]["photo"] else None
 
     if request.json["vote"] == "up":
         if user["key"] in comment["downvote"]:
@@ -233,8 +242,6 @@ def vote(key):
         comment["downvote"],
         comment["key"]
     ))
-    comment["user_photo"] = f"{request.host_url}photo/{comment[
-        "user_photo"]}" if comment["user_photo"] else None
 
     log(
         cur=cur,
@@ -243,6 +250,7 @@ def vote(key):
         entity_key=comment["key"],
         entity_type="comment",
         misc={
+            "post_key": comment["post_key"],
             "vote": request.json["vote"]
         }
     )
@@ -295,6 +303,9 @@ def delete(key):
         action="deleted",
         entity_key=comment["key"],
         entity_type="comment",
+        misc={
+            "post_key": comment["post_key"]
+        }
     )
 
     db_close(con, cur)

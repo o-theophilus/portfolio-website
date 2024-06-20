@@ -112,6 +112,7 @@ def create_tables():
     })
 
 
+# @bp.get("/fix")
 def general_fix():
     con, cur = db_open()
 
@@ -137,11 +138,6 @@ def general_fix():
     #     ALTER TABLE order_item
     #     ADD COLUMN price FLOAT DEFAULT 0 NOT NULL;
     # """)
-    cur.execute("""
-        ALTER TABLE post
-        RENAME COLUMN author
-        TO author_key;
-    """)
 
     # cur.execute("""
     # DELETE FROM log
@@ -150,13 +146,24 @@ def general_fix():
     #     AND log.misc ? 'entity_key'
     # ;""")
 
+    # cur.execute("""
+    # DELETE FROM log
+    # WHERE
+    #     entity_type = 'app_setting'
+    # ;""")
+
+    cur.execute("""
+        UPDATE post
+        SET status = 'active'
+        WHERE status = 'publish';
+    """,)
+
     db_close(con, cur)
     return jsonify({
         "status": 200
     })
 
 
-# @bp.get("/fix")
 def fix_permission():
     con, cur = db_open()
 

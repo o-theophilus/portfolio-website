@@ -56,8 +56,9 @@
 				buttons: [
 					{
 						name: 'OK',
+						icon: 'check',
 						fn: () => {
-							$module = '';
+							$module = null;
 						}
 					}
 				]
@@ -71,11 +72,11 @@
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Edit Date & Time </strong>
 	<IG
-		name="date"
+		name="Date"
 		error={error.date}
 		type="datetime"
 		bind:value={form.date}
-		placeholder="date here"
+		placeholder="Date here"
 	/>
 
 	<Button on:click={validate}>

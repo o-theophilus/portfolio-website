@@ -4,7 +4,6 @@
 
 	import Button from '$lib/button/button.svelte';
 	import IG from '$lib/input_group.svelte';
-	import Input from '$lib/input.svelte';
 	import Icon from '$lib/icon.svelte';
 	import EmailTemplate from './_email.template.svelte';
 
@@ -19,7 +18,7 @@
 		message = '';
 
 		if (!form.email) {
-			error.email = 'This field is required';
+			error.email = 'cannot be empty';
 		} else if (!/\S+@\S+\.\S+/.test(form.email)) {
 			error.email = 'please enter a valid email';
 		} else if (form.email == user.email) {
@@ -62,7 +61,7 @@
 		message = '';
 
 		if (!form.email) {
-			error.email = 'This field is required';
+			error.email = 'cannot be empty';
 		} else if (!/\S+@\S+\.\S+/.test(form.email)) {
 			error.email = 'Please enter a valid email';
 		} else if (form.email == user.email) {
@@ -70,11 +69,11 @@
 		}
 
 		if (!form.otp_1) {
-			error.otp_1 = 'This field is required';
+			error.otp_1 = 'cannot be empty';
 		}
 
 		if (!form.otp_2) {
-			error.otp_2 = 'This field is required';
+			error.otp_2 = 'cannot be empty';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -112,14 +111,12 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off" class="form">
-	<strong class="ititle"> Change Name </strong>
+	<strong class="ititle"> Change Email </strong>
 
 	{#if error.error}
-		<br />
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
-		<br />
+		</div>
 	{/if}
 	<br />
 
@@ -131,7 +128,7 @@
 		error={error.email}
 		type="email"
 		bind:value={form.email}
-		placeholder="your new email here"
+		placeholder="Email here"
 		no_pad
 	/>
 
@@ -160,7 +157,7 @@
 		error={error.otp_1}
 		type="text"
 		bind:value={form.otp_1}
-		placeholder="your OTP here"
+		placeholder="OTP here"
 	/>
 
 	<IG
@@ -168,7 +165,7 @@
 		error={error.otp_2}
 		type="text"
 		bind:value={form.otp_2}
-		placeholder="your OTP here"
+		placeholder="OTP here"
 	/>
 
 	<Button primary on:click={validate}>
@@ -184,6 +181,10 @@
 <style>
 	form {
 		padding: var(--sp3);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 
 	.message {

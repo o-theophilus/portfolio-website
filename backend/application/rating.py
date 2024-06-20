@@ -55,7 +55,7 @@ def rating(key):
 
     error = {}
     if "rating" not in request.json or not request.json["rating"]:
-        error["rating"] = "this field is required"
+        error["rating"] = "cannot be empty"
     elif request.json["rating"] not in range(-5, 6):
         error["rating"] = "invalid rating"
 

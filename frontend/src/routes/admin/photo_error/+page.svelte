@@ -10,7 +10,7 @@
 	import Button from '$lib/button/button.svelte';
 	import Back from '$lib/button/back.svelte';
 	import Log from '$lib/log.svelte';
-	
+
 	export let data;
 	let { unused } = data;
 	let { users } = data;
@@ -95,11 +95,9 @@
 			</div>
 
 			{#if error.error}
-				<br />
-				<span class="error">
+				<div class="error">
 					{error.error}
-				</span>
-				<br />
+				</div>
 			{/if}
 
 			{#if unused.length > 0}
@@ -217,5 +215,9 @@
 	}
 	img.selected {
 		outline: 2px solid var(--cl1);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

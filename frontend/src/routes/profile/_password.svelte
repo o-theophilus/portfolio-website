@@ -3,9 +3,9 @@
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
-	import Password from '../auth/password_checker.svelte';
+	import Password from '../account/password_checker.svelte';
 	import Button from '$lib/button/button.svelte';
-	import ShowPassword from '../auth/password_show.svelte';
+	import ShowPassword from '../account/password_show.svelte';
 
 	import Email from './_password.email_template.svelte';
 	import Dialogue from '$lib/dialogue.svelte';
@@ -46,7 +46,7 @@
 		error = {};
 
 		if (!form.password) {
-			error.password = 'This field is required';
+			error.password = 'cannot be empty';
 		} else if (
 			!/[a-z]/.test(form.password) ||
 			!/[A-Z]/.test(form.password) ||
@@ -59,13 +59,13 @@
 		}
 
 		if (!form.confirm_password) {
-			error.confirm_password = 'This field is required';
-		} else if (form.password && !error.password && form.password !== form.confirm_password) {
+			error.confirm_password = 'cannot be empty';
+		} else if (form.password && form.password != form.confirm_password) {
 			error.confirm_password = 'Password and confirm password does not match';
 		}
 
 		if (!form.otp) {
-			error.otp = 'This field is required';
+			error.otp = 'cannot be empty';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -90,12 +90,12 @@
 				status: 200,
 				title: 'Password Changed',
 				message: 'Your password has been changed successfully.',
-				button: [
+				buttons: [
 					{
 						name: 'Ok',
-						icon: 'ok',
+						icon: 'check',
 						fn: () => {
-							$module = '';
+							$module = null;
 						}
 					}
 				]
@@ -113,13 +113,26 @@
 	Reset your password.
 
 	{#if error.error}
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 
+	<br />
+	<br />
+	<Button size="small" on:click={request_otp}>Request OTP</Button>
+	{#if message}
+		<div class="message">
+			{message}
+		</div>
+	{/if}
+
+	<IG name="OTP" error={error.otp} bind:value={form.otp} type="text" placeholder="OTP here" />
+
+	<hr />
+
 	<IG
-		name="password"
+		name="Password"
 		icon="key"
 		error={error.password}
 		bind:value={form.password}
@@ -137,33 +150,13 @@
 	</IG>
 
 	<IG
-		name="confirm password"
+		name="Confirm Password"
 		icon="key"
 		error={error.confirm_password}
 		bind:value={form.confirm_password}
 		type={show_password ? 'text' : 'password'}
 		placeholder="Password here"
 	/>
-
-	<hr />
-	<br />
-
-	<Button size="small" on:click={request_otp}>Request OTP</Button>
-	{#if message}
-		<br />
-		<div class="message">
-			{message}
-		</div>
-	{/if}
-
-	<IG name="OTP" error={error.otp} bind:value={form.otp} type="text" placeholder="OTP here" />
-
-	{#if error.error}
-		<p class="error">
-			{error.error}
-		</p>
-		<br />
-	{/if}
 
 	<Button primary on:click={validate}>Reset</Button>
 </form>
@@ -176,11 +169,15 @@
 	form {
 		padding: var(--sp3);
 	}
+	.error {
+		margin: var(--sp2) 0;
+	}
 
 	.message {
 		background-color: var(--cl1_l);
 		color: var(--ft1_b);
 		padding: var(--sp1);
+		margin: var(--sp2) 0;
 		width: 100%;
 	}
 

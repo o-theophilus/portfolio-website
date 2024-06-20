@@ -72,8 +72,9 @@
 				buttons: [
 					{
 						name: 'OK',
+						icon: 'check',
 						fn: () => {
-							$module = '';
+							$module = null;
 						}
 					}
 				]
@@ -86,7 +87,7 @@
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	{#if error.error}
-		<div class="err">
+		<div class="error">
 			{error.error}
 		</div>
 	{/if}
@@ -97,7 +98,7 @@
 		bind:value={form.name}
 		error={error.name}
 		type="text"
-		placeholder="Your name"
+		placeholder="Name Here"
 	/>
 	<IG
 		name="Email Address"
@@ -105,14 +106,14 @@
 		bind:value={form.email}
 		error={error.email}
 		type="text"
-		placeholder="Your email address"
+		placeholder="Email here"
 	/>
 	<IG
 		name="Message"
 		bind:value={form.message}
 		error={error.message}
 		type="textarea"
-		placeholder="Your message"
+		placeholder="Message here"
 	>
 		<svelte:fragment slot="label">
 			<Drop
@@ -147,5 +148,9 @@
 <style>
 	.gap {
 		height: var(--sp1);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

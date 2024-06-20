@@ -49,8 +49,9 @@
 				buttons: [
 					{
 						name: 'OK',
+						icon: 'check',
 						fn: () => {
-							$module = '';
+							$module = null;
 						}
 					}
 				]
@@ -64,17 +65,17 @@
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Manage Video </strong>
 	{#if error.error}
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
+		</div>
 	{/if}
 
-	<IG name="video{video_count > 1 ? 's' : ''}" error={error.videos}>
+	<IG name="Video{video_count > 1 ? 's' : ''}" error={error.videos}>
 		{#each Array(video_count) as _, i}
 			<IG
-				icon="movie"
+				icon="Movie"
 				error={error.title}
-				placeholder="video {i + 1} here"
+				placeholder="Video {i + 1} here"
 				type="text"
 				bind:value={videos[i]}
 				no_pad
@@ -91,5 +92,8 @@
 <style>
 	form {
 		padding: var(--sp3);
+	}
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

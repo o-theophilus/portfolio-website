@@ -4,6 +4,8 @@
 
 	import { loading } from '$lib/store.js';
 
+	import Loading from '$lib/loading_spinner.svelte';
+
 	let typewriter = (node, { speed = 1 }) => {
 		const text = node.textContent;
 		const duration = text.length / (speed * 0.01);
@@ -29,7 +31,7 @@
 {#if $loading}
 	<section>
 		<div class="block" transition:scale|local={{ delay: 0, duration: 200, easing: backInOut }}>
-			<div class="circle" />
+			<Loading active />
 			{#if typeof $loading == 'string' && $loading.length > 0}
 				<br />
 				{#if visible}
@@ -57,39 +59,18 @@
 	}
 
 	.block {
-		--size2: 250px;
+		--size: 250px;
 
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 
-		width: var(--size2);
-		height: var(--size2);
-
-		background-color: var(--bg1);
-		border-radius: var(--sp1);
-	}
-
-	.circle {
-		--size: 50px;
-
 		width: var(--size);
 		height: var(--size);
 
-		background-image: url('/site/loading.png');
-		background-size: contain;
-
-		animation: rotation 1s infinite linear;
-	}
-
-	@keyframes rotation {
-		from {
-			transform: rotate(0deg);
-		}
-		to {
-			transform: rotate(359deg);
-		}
+		background-color: var(--bg1);
+		border-radius: var(--sp1);
 	}
 
 	strong {

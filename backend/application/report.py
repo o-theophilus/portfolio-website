@@ -162,7 +162,7 @@ def create():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "report": "This field is required"
+            "report": "cannot be empty"
         })
 
     cur.execute("""
@@ -257,7 +257,7 @@ def status(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "note": "This field is required"
+            "note": "cannot be empty"
         })
 
     cur.execute("""

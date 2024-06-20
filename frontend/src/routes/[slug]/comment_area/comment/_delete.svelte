@@ -37,8 +37,9 @@
 				buttons: [
 					{
 						name: 'Ok',
+						icon: 'check',
 						fn: () => {
-							$module = '';
+							$module = null;
 						}
 					}
 				]
@@ -63,10 +64,9 @@
 
 	<div class="error">Are you sure you want to delete this comment</div>
 	{#if error.error}
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
-		<br />
+		</div>
 	{/if}
 
 	<br />
@@ -78,7 +78,7 @@
 		</Button>
 		<Button
 			on:click={() => {
-				$module = '';
+				$module = null;
 			}}
 		>
 			<Icon icon="close" />
@@ -104,5 +104,9 @@
 	.line {
 		display: flex;
 		gap: var(--sp1);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

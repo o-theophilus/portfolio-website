@@ -62,7 +62,7 @@
 	type="text"
 	bind:value={slug}
 	error={error.error}
-	placeholder="post url path"
+	placeholder="Post url path"
 />
 
 <Button class="tiny" on:click={validate} disabled={!slug}>

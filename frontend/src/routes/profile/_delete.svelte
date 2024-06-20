@@ -5,7 +5,7 @@
 	import Button from '$lib/button/button.svelte';
 	import IG from '$lib/input_group.svelte';
 	import Icon from '$lib/icon.svelte';
-	import ShowPassword from '../auth/password_show.svelte';
+	import ShowPassword from '../account/password_show.svelte';
 
 	let form = {};
 	let error = {};
@@ -15,11 +15,11 @@
 		error = {};
 
 		if (!form.note) {
-			error.note = 'This field is required';
+			error.note = 'cannot be empty';
 		}
 
 		if (!form.password) {
-			error.password = 'This field is required';
+			error.password = 'cannot be empty';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -53,11 +53,9 @@
 	Are you sure you want to delete account?
 
 	{#if error.error}
-		<br />
-		<span class="error">
+		<div class="error">
 			{error.error}
-		</span>
-		<br />
+		</div>
 	{/if}
 
 	<IG
@@ -69,7 +67,7 @@
 	/>
 
 	<IG
-		name="password"
+		name="Password"
 		icon="key"
 		error={error.password}
 		bind:value={form.password}
@@ -90,5 +88,8 @@
 <style>
 	form {
 		padding: var(--sp3);
+	}
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

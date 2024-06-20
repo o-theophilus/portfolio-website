@@ -9,7 +9,7 @@
 	import Button from '$lib/button/button.svelte';
 	import Fold from '$lib/button/fold.svelte';
 	import Link from '$lib/button/link.svelte';
-	import Login from '../../auth/login.svelte';
+	import Login from '../../account/login.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Loading from '$lib/loading_spinner.svelte';
 	import Comment from './comment/one.svelte';
@@ -90,26 +90,25 @@
 {#if open}
 	<div class="margin" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 		<div class="line">
-			{#if !loading}
-				{#if $user.permissions.includes('comment:view_deleted')}
-					<Drop
-						list={_status}
-						on:change={(e) => {
-							select_status = e.target.value;
-							get();
-						}}
-					/>
-				{/if}
-				{#if comments.length > 1}
-					<Drop
-						list={order_by}
-						icon="sort"
-						on:change={(e) => {
-							select_order = e.target.value;
-							get();
-						}}
-					/>
-				{/if}
+			{#if $user.permissions.includes('comment:view_deleted')}
+				<Drop
+					list={_status}
+					default_value="active"
+					on:change={(e) => {
+						select_status = e.target.value;
+						get();
+					}}
+				/>
+			{/if}
+			{#if comments.length > 1}
+				<Drop
+					list={order_by}
+					icon="sort"
+					on:change={(e) => {
+						select_order = e.target.value;
+						get();
+					}}
+				/>
 			{/if}
 		</div>
 

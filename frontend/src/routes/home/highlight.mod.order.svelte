@@ -118,11 +118,9 @@
 </div>
 
 {#if error.error}
-	<br />
 	<span class="error">
 		{error.error}
 	</span>
-	<br />
 {/if}
 
 <style>
@@ -134,5 +132,9 @@
 
 	.post_name {
 		width: 100%;
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

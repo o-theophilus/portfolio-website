@@ -29,7 +29,7 @@ def get_post(key, cur=None):
 
     post["photos"] = [f"{request.host_url}photo/{x}" for x in post["photos"]]
 
-    if post["status"] != "publish":
+    if post["status"] != "active":
         user = token_to_user(cur)
         if not user:
             if close_conn:
@@ -63,7 +63,7 @@ def get_all(order="latest", page_size=24):
     con, cur = db_open()
     user = token_to_user(cur)
 
-    status = "publish"
+    status = "active"
     search = ""
     tag = ""
     page_no = 1
@@ -149,7 +149,7 @@ def get_all(order="latest", page_size=24):
         "status": 200,
         "posts": posts,
         "order_by": list(order_by.keys()),
-        "_status": ['publish', 'draft', 'delete'],
+        "_status": ['active', 'draft', 'delete'],
         "total_page": ceil(posts[0]["_count"] / page_size) if posts else 0
     })
 
@@ -190,7 +190,7 @@ def similar_posts(key):
         FROM post
         LEFT JOIN likeness ON post.key = likeness.key
         WHERE
-            post.status = 'publish'
+            post.status = 'active'
             AND post.key != %s
             AND likeness.likeness > 0
         ORDER BY likeness DESC
@@ -237,7 +237,7 @@ def get_author(author_key):
 def all_tags():
     con, cur = db_open()
 
-    cur.execute("SELECT tags FROM post WHERE status = 'publish';")
+    cur.execute("SELECT tags FROM post WHERE status = 'active';")
     temp = cur.fetchall()
 
     tags = []
