@@ -1,10 +1,10 @@
 <script>
 	import { module, loading } from '$lib/store.js';
-	// import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Button from '$lib/button/button.svelte';
+	import OTP from '$lib/input_otp.svelte';
 
 	import Dialogue from '$lib/dialogue.svelte';
 	import Login from './login.svelte';
@@ -14,12 +14,12 @@
 	};
 	let error = {};
 
-	const validate = async () => {
+	const validate = () => {
 		error = {};
 
 		if (!form.otp) {
 			error.otp = 'cannot be empty';
-		} else if (!Number.isInteger(form.otp) || form.otp < 100000 || form.otp > 999999) {
+		} else if (form.otp.length != 6) {
 			error.otp = 'invalid OTP';
 		}
 
@@ -32,7 +32,6 @@
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json'
-				// Authorization: $token
 			},
 			body: JSON.stringify(form)
 		});
@@ -75,7 +74,9 @@
 		</div>
 	{/if}
 
-	<IG name="OTP" error={error.otp} bind:value={form.otp} type="number" placeholder="OTP here" />
+	<IG name="OTP" error={error.otp}>
+		<OTP bind:value={form.otp} />
+	</IG>
 
 	<Button primary on:click={validate}>
 		Submit <Icon icon="send" />

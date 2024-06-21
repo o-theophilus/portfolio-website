@@ -15,9 +15,9 @@
 	import Photo from './_photo.svelte';
 	import Name from './_name.svelte';
 	import Phone from './_phone.svelte';
-	import Email from './_email.svelte';
+	import Email from './_email_1.svelte';
 	import Delete from './_delete.svelte';
-	import Password from './_password.svelte';
+	import Password from './_password_1_email.svelte';
 	import Permission from './permission.svelte';
 
 	export let data;
@@ -47,11 +47,7 @@
 	<!-- <Meta title={user.name} description="This page includes the user profile" /> -->
 
 	{#if user}
-		<Log
-			action={'viewed'}
-			entity_key={user.key}
-			entity_type={'user'}
-		/>
+		<Log action={'viewed'} entity_key={user.key} entity_type={'user'} />
 	{:else if data.error}
 		<Log
 			action={'viewed'}
@@ -131,8 +127,7 @@
 					icon="edit"
 					on:click={() => {
 						$module = {
-							module: Email,
-							user
+							module: Email
 						};
 					}}
 				/>
@@ -162,8 +157,7 @@
 					size="small"
 					on:click={() => {
 						$module = {
-							module: Password,
-							user
+							module: Password
 						};
 					}}
 				>

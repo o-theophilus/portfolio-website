@@ -1,24 +1,25 @@
 <script>
-	import { module, loading } from '$lib/store.js';
+	import { module, loading, user } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
+	import Button from '$lib/button/button.svelte';
 	import IG from '$lib/input_group.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Button from '$lib/button/button.svelte';
+	import OTP from '$lib/input_otp.svelte';
 
-	import Password from './forgot.password.svelte';
+	import Password from './_password_3_password.svelte';
 
 	let form = {
 		...$module.form
 	};
 	let error = {};
 
-	const validate_submit = async () => {
+	const validate = () => {
 		error = {};
 
 		if (!form.otp) {
 			error.otp = 'cannot be empty';
-		} else if (!Number.isInteger(form.otp) || form.otp < 100000 || form.otp > 999999) {
+		} else if (form.otp.length != 6) {
 			error.otp = 'invalid OTP';
 		}
 
@@ -26,9 +27,9 @@
 	};
 
 	const submit = async () => {
-		$loading = 'resetting . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/forgot`, {
-			method: 'put',
+		$loading = 'loading . . .';
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/password/2`, {
+			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
@@ -50,18 +51,24 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Forgot Password </strong>
+	<strong class="ititle"> Change Password </strong>
 
 	{#if error.error}
 		<div class="error">
 			{error.error}
 		</div>
 	{/if}
+	<br />
 
-	<IG name="OTP" error={error.otp} bind:value={form.otp} type="text" placeholder="OTP here" />
+	<br />
+	<div class="message">OTP has been sent to: {$user.email}.</div>
 
-	<Button primary on:click={validate_submit}
-		>Submit
+	<IG name="OTP" error={error.otp}>
+		<OTP bind:value={form.otp} />
+	</IG>
+
+	<Button primary on:click={validate}>
+		Submit
 		<Icon icon="send" />
 	</Button>
 </form>
@@ -73,5 +80,12 @@
 
 	.error {
 		margin: var(--sp2) 0;
+	}
+
+	.message {
+		background-color: var(--cl1_l);
+		color: var(--ft1_b);
+		padding: var(--sp1);
+		width: 100%;
 	}
 </style>

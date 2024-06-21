@@ -1,26 +1,28 @@
 <script>
-	let hue = Math.floor(Math.random() * (360 + 1));
 	export let size = 40;
 	export let name;
 	export let photo;
+
+	function hashString(str) {
+		let hash = 5381;
+		for (let i = 0; i < str.length; i++) {
+			hash = (hash << 5) + hash + str.charCodeAt(i);
+		}
+		return hash;
+	}
+	$: hue = Math.abs(hashString(name)) % 361;
+	// let hue = Math.floor(Math.random() * (360 + 1));
 </script>
 
 {#if photo}
 	<img
-		role="presentation"
 		src={photo || '/site/no_photo.png'}
 		alt={name}
 		onerror="this.src='/site/no_photo.png'"
 		style:--size="{size}px"
 	/>
 {:else}
-	<div
-		role="presentation"
-		class="avatar"
-		class:light={hue > 29 && hue < 189}
-		style:--hue={hue}
-		style:--size="{size}px"
-	>
+	<div class="avatar" class:light={hue > 29 && hue < 189} style:--hue={hue} style:--size="{size}px">
 		<span>
 			{name[0]}
 		</span>
@@ -54,5 +56,10 @@
 	}
 	.light {
 		color: var(--ft1_d);
+	}
+
+	span {
+		position: relative;
+		top: 5%;
 	}
 </style>

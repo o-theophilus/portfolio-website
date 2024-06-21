@@ -44,8 +44,9 @@ def token_to_user(cur):
     return user
 
 
-def generate_otp(cur, key, email, _from):
-    cur.execute("DELETE FROM otp WHERE user_key = %s;", (key,))
+def generate_otp(cur, key, email, _from, clear=True):
+    if clear:
+        cur.execute("DELETE FROM otp WHERE user_key = %s;", (key,))
 
     otp = f"{random.randint(100000, 999999)}"
     otp_key = uuid4().hex
@@ -85,12 +86,8 @@ def check_otp(cur, key, email, n="otp"):
     error = None
     if n not in request.json or not request.json[n]:
         error = "cannot be empty"
-    elif (
-        type(request.json[n]) is not int
-        or request.json[n] < 100000
-        or request.json[n] > 999999
-    ):
-        error = "invalid"
+    elif len(request.json[n]) != 6:
+        error = "invalid OTP"
 
     cur.execute("""
         SELECT otp.*, log.date
@@ -105,7 +102,7 @@ def check_otp(cur, key, email, n="otp"):
             AND otp.email = %s;
     """, (
         key,
-        f"{request.json['otp']}",
+        request.json[n],
         email
     ))
     otp = cur.fetchone()

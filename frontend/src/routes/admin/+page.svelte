@@ -37,9 +37,13 @@
 	<br />
 	fix markdown
 	<br />
-	scroll to comment when # routing
+	check all loading message
 	<br />
-	use otp for email confirmation
+	check all email template
+	<br />
+	replace most dialogue with notification
+	<br />
+	scroll to comment when # routing
 	<br />
 	sort comments by vote / retain order and status when adding, voting e.t.c
 	<br />

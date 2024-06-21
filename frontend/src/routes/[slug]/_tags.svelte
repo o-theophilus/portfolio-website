@@ -108,7 +108,7 @@
 	});
 </script>
 
-<form class="form" on:submit|preventDefault novalidate autocomplete="off">
+<form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Edit tags </strong>
 	{#if error.error}
 		<div class="error">
@@ -152,7 +152,7 @@
 </form>
 
 <style>
-	.form {
+	form {
 		padding: var(--sp3);
 	}
 

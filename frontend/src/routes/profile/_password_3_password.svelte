@@ -1,14 +1,11 @@
 <script>
-	import { module, loading } from '$lib/store.js';
+	import { module, loading, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Password from './password_checker.svelte';
+	import Password from '../account/password_checker.svelte';
 	import Button from '$lib/button/button.svelte';
-	import ShowPassword from './password_show.svelte';
-
-	import Login from './login.svelte';
+	import ShowPassword from '../account/password_show.svelte';
 
 	let form = {
 		...$module.form
@@ -16,7 +13,7 @@
 	let error = {};
 	let show_password = false;
 
-	const validate_submit = async () => {
+	const validate = async () => {
 		error = {};
 
 		if (!form.password) {
@@ -42,9 +39,9 @@
 	};
 
 	const submit = async () => {
-		$loading = 'resetting . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/forgot`, {
-			method: 'put',
+		$loading = 'loading . . .';
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/password/3`, {
+			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
@@ -55,10 +52,11 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$module = {
-				module: Login,
-				email: form.email
+			$notification = {
+				status: 200,
+				message: 'Password changed'
 			};
+			$module = null;
 		} else {
 			error = resp;
 		}
@@ -66,7 +64,7 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Forgot Password </strong>
+	<strong class="ititle"> Change Password </strong>
 
 	{#if error.error}
 		<div class="error">
@@ -101,17 +99,13 @@
 		placeholder="Password here"
 	/>
 
-	<Button primary on:click={validate_submit}
-		>Submit
-		<Icon icon="send" />
-	</Button>
+	<Button primary on:click={validate}>Reset</Button>
 </form>
 
 <style>
 	form {
 		padding: var(--sp3);
 	}
-
 	.error {
 		margin: var(--sp2) 0;
 	}

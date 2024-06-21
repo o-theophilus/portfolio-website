@@ -1,12 +1,14 @@
 from flask import Blueprint, jsonify, request
 from .postgres import db_open, db_close
-from .tools import token_to_user, user_schema, send_mail, token_tool
+from .tools import (
+    token_to_user, user_schema, send_mail, token_tool,
+    generate_otp, check_otp)
 from .log import log
 from uuid import uuid4
 import re
+import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from .storage import storage
-from .otp import generate_otp, check_otp
 
 
 bp = Blueprint("user", __name__)
@@ -165,7 +167,7 @@ def email_1_old_email():
     })
 
 
-@bp.put("/user/email/2")
+@bp.post("/user/email/2")
 def email_2_old_otp():
     con, cur = db_open()
 
@@ -255,7 +257,7 @@ def email_3_new_email():
         "Email Change Confirmation - One-Time Password (OTP)",
         request.json['email_template'].format(
             name=user["name"], otp=generate_otp(
-                cur, user["key"], request.json["email"], "change email")
+                cur, user["key"], request.json["email"], "change email", False)
         )
     )
 
@@ -280,6 +282,7 @@ def email_4_new_otp():
     error = check_otp(cur, user["key"], user["email"], "otp_1")
     if error:
         db_close(con, cur)
+        print(0)
         return jsonify({
             "status": 400,
             "error": "invalid request"
@@ -290,6 +293,7 @@ def email_4_new_otp():
         or not re.match(r"\S+@\S+\.\S+", request.json["email"])
     ):
         db_close(con, cur)
+        print(1)
         return jsonify({
             "status": 400,
             "error": "invalid request"
@@ -297,6 +301,7 @@ def email_4_new_otp():
 
     if user["email"] == request.json["email"]:
         db_close(con, cur)
+        print(2)
         return jsonify({
             "status": 400,
             "error": "invalid request"
@@ -307,6 +312,7 @@ def email_4_new_otp():
     exist = cur.fetchone()
     if exist:
         db_close(con, cur)
+        print(3)
         return jsonify({
             "status": 400,
             "error": "invalid request"
@@ -315,9 +321,18 @@ def email_4_new_otp():
     error = check_otp(cur, user["key"], request.json["email"], "otp_2")
     if error:
         db_close(con, cur)
+        print(4)
         return jsonify({
             "status": 400,
             "error": "invalid request"
+        })
+
+    if user["email"] == os.environ["MAIL_USERNAME"]:
+        cur.execute("DELETE FROM otp WHERE user_key = %s;", (user["key"],))
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "LoL"
         })
 
     log(
@@ -410,7 +425,7 @@ def password_2_otp():
     })
 
 
-@bp.put("/user/password/3")
+@bp.post("/user/password/3")
 def password_3_password():
     con, cur = db_open()
 

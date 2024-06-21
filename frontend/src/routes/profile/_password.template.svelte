@@ -1,11 +1,10 @@
 <script>
 	import Template from '$lib/email_template.svelte';
 
-	export let name;
 </script>
 
 <Template>
-	<b> Dear {name}, </b>
+	<b> Dear {'{'}name{'}'}, </b>
 	<br />
 	<br />
 	Thank you for initiating the process to change your password on Meji. To proceed with the password

@@ -1,12 +1,13 @@
 from flask import Blueprint, jsonify, request
-from .tools import token_tool, token_to_user, user_schema, send_mail
+from .tools import (
+    token_tool, token_to_user, user_schema, send_mail,
+    generate_otp, check_otp)
 from uuid import uuid4
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
 from .postgres import db_open, db_close
 from .log import log
 from .admin import get_highlight
-from .otp import generate_otp, check_otp
 
 bp = Blueprint("account", __name__)
 
@@ -493,7 +494,7 @@ def forgot_2_otp():
     })
 
 
-@bp.put("/forgot/3")
+@bp.post("/forgot/3")
 def forgot_3_password():
     con, cur = db_open()
 

@@ -9,7 +9,7 @@
 	import Link from '$lib/button/link.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Signup from './signup.svelte';
-	import Forgot from './forgot.email.svelte';
+	import Forgot from './forgot_1.email.svelte';
 	import PasswordShow from './password_show.svelte';
 	import EmailTemplate from './confirm.email_template.svelte';
 	import Confirm from './confirm.svelte';
@@ -54,7 +54,6 @@
 		});
 
 		resp = await resp.json();
-		console.log(resp);
 		if (resp.status != 200) {
 			$loading = false;
 		}
@@ -80,6 +79,7 @@
 			{error.error}
 		</div>
 	{/if}
+
 	<IG
 		name="Email"
 		icon="email"
@@ -88,6 +88,7 @@
 		bind:value={form.email}
 		placeholder="Email here"
 	/>
+
 	<IG
 		name="Password"
 		icon="key"
