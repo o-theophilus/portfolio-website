@@ -1,9 +1,8 @@
 <script>
-	import { module, loading, settings } from '$lib/store.js';
+	import { loading, settings, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 
 	export let post_key;
 	let is_highlight = false;
@@ -34,35 +33,13 @@
 
 		if (resp.status == 200) {
 			$settings.highlight = resp.posts;
-
-			$module = {
-				module: Dialogue,
-				message: `${is_highlight ? 'Added' : 'Removed'} as Highlight`,
-				buttons: [
-					{
-						name: 'OK',
-						icon: 'check',
-						fn: () => {
-							$module = null;
-						}
-					}
-				]
+			$notification = {
+				message: `${is_highlight ? 'Added' : 'Removed'} as Highlight`
 			};
 		} else {
-			$module = {
-				module: Dialogue,
-				title: 'Error',
-				message: resp.error,
+			$notification = {
 				status: 400,
-				buttons: [
-					{
-						name: 'OK',
-						icon: 'check',
-						fn: () => {
-							$module = null;
-						}
-					}
-				]
+				message: resp.error
 			};
 		}
 		highlight();

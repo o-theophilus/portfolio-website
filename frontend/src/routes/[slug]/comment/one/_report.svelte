@@ -1,5 +1,5 @@
 <script>
-	import { loading, module } from '$lib/store.js';
+	import { loading, module, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import { template, tags } from './_report__template.js';
@@ -7,7 +7,6 @@
 	import Button from '$lib/button/button.svelte';
 	import Tag from '$lib/button/tag.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 	import Link from '$lib/button/link.svelte';
 	import Avatar from '$lib/avatar.svelte';
 	import Drop from '$lib/dropdown.svelte';
@@ -49,18 +48,9 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$module = {
-				module: Dialogue,
-				message: 'Report Submitted',
-				buttons: [
-					{
-						name: 'OK',
-						icon: 'check',
-						fn: () => {
-							$module = null;
-						}
-					}
-				]
+			$module = null;
+			$notification = {
+				message: 'Report Submitted'
 			};
 		} else {
 			error = resp;
@@ -83,7 +73,6 @@
 	<hr />
 
 	{#if error.error}
-		
 		<div class="error">
 			{error.error}
 		</div>

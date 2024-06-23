@@ -1,11 +1,10 @@
 <script>
-	import { loading, module } from '$lib/store.js';
+	import { loading, module, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 
 	let report_key = $module.report_key;
 	let form = {};
@@ -37,18 +36,9 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$module = {
-				module: Dialogue,
-				message: 'Done',
-				buttons: [
-					{
-						name: 'OK',
-						icon: 'check',
-						fn: () => {
-							$module = null;
-						}
-					}
-				]
+			$module = null;
+			$notification = {
+				message: 'Resolved'
 			};
 		} else {
 			error = resp;
@@ -65,7 +55,6 @@
 	</strong>
 
 	{#if error.error}
-		
 		<div class="error">
 			{error.error}
 		</div>

@@ -37,7 +37,6 @@
 	<br />
 	check all email template
 	<br />
-	replace most dialogue with notification
 	<br />
 	scroll to comment when # routing
 	<br />

@@ -1,13 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import { module, loading, state } from '$lib/store.js';
+	import { module, loading, state, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Tag from '$lib/button/tag.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 
 	let post = { ...$module.post };
 	let tags = post.tags.join(', ');
@@ -42,19 +41,9 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
-
-			$module = {
-				module: Dialogue,
-				message: `Tag${resp.post.tags.length > 1 ? 's' : ''} Saved`,
-				buttons: [
-					{
-						name: 'OK',
-						icon: 'check',
-						fn: () => {
-							$module = null;
-						}
-					}
-				]
+			$module = null;
+			$notification = {
+				message: `Tag${resp.post.tags.length > 1 ? 's' : ''} Saved`
 			};
 		} else {
 			error = resp;

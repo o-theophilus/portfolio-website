@@ -1,12 +1,11 @@
 <script>
-	import { module, loading } from '$lib/store.js';
+	import { module, loading, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 	import { onMount } from 'svelte';
 
 	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 	import Marked from '$lib/marked.svelte';
 
 	let textarea;
@@ -76,19 +75,9 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
-
-			$module = {
-				module: Dialogue,
-				message: 'Content Saved',
-				buttons: [
-					{
-						name: 'OK',
-						icon: 'check',
-						fn: () => {
-							$module = null;
-						}
-					}
-				]
+			$module = null;
+			$notification = {
+				message: 'Content Saved'
 			};
 		} else {
 			error = resp;

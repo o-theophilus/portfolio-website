@@ -1,10 +1,9 @@
 <script>
-	import { module, loading } from '$lib/store.js';
+	import { module, loading, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 	import Icon from '$lib/icon.svelte';
 
 	let form = {
@@ -40,19 +39,9 @@
 		if (resp.status == 200) {
 			window.history.replaceState(history.state, '', `/${resp.post.slug}`);
 			$module.update(resp.post);
-
-			$module = {
-				module: Dialogue,
-				message: 'Title Saved',
-				buttons: [
-					{
-						name: 'OK',
-						icon: 'check',
-						fn: () => {
-							$module = null;
-						}
-					}
-				]
+			$module = null;
+			$notification = {
+				message: 'Title Saved'
 			};
 		} else {
 			error = resp;

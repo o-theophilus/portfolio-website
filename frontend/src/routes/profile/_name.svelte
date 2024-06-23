@@ -38,12 +38,10 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.user);
-
 			$notification = {
-				status: 200,
+				status: 200, //TODO: remove 200
 				message: 'Name Changed'
 			};
-
 			$module = null;
 		} else {
 			error = resp;

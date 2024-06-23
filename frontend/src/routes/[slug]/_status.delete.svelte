@@ -1,10 +1,9 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { module, loading } from '$lib/store.js';
+	import { module, loading, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 	import Icon from '$lib/icon.svelte';
 
 	let error = {};
@@ -24,18 +23,9 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			$module = {
-				module: Dialogue,
-				message: 'Post Deleted',
-				buttons: [
-					{
-						name: 'Ok',
-						icon: 'check',
-						fn: () => {
-							$module = null;
-						}
-					}
-				]
+			$module = null;
+			$notification = {
+				message: 'Post Deleted'
 			};
 			goto('/post');
 		} else {

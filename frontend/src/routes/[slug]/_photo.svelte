@@ -1,7 +1,7 @@
 <script>
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { loading, module } from '$lib/store.js';
+	import { loading, module, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -57,10 +57,9 @@
 			}
 			$module.update(resp.post);
 
-			// $toast = {
-			// 	status: 200,
-			// 	message: msg
-			// };
+			$notification = {
+				message: msg
+			};
 		} else {
 			error = resp;
 		}
@@ -113,10 +112,9 @@
 			active_photo = active_photo || post.photos[0];
 			post = resp.post;
 			$module.update(resp.post);
-			// $toast = {
-			// 	status: 200,
-			// 	message: 'Photo added'
-			// };
+			$notification = {
+				message: 'Photo added'
+			};
 
 			if (resp.error) {
 				error.error = error.error ? `${error.error}, ${resp.error}` : resp.error;

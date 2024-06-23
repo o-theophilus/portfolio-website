@@ -1,11 +1,10 @@
 <script>
-	import { module, loading } from '$lib/store.js';
+	import { module, loading, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 
 	let post = $module.post;
 	let video_count = $module.video_count;
@@ -39,19 +38,9 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
-
-			$module = {
-				module: Dialogue,
-				message: `Videos Updated`,
-				buttons: [
-					{
-						name: 'OK',
-						icon: 'check',
-						fn: () => {
-							$module = null;
-						}
-					}
-				]
+			$module = null;
+			$notification = {
+				message: 'Videos Updated'
 			};
 		} else {
 			error = resp;

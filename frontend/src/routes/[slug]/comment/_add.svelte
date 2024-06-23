@@ -41,13 +41,10 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
-
+			$module = null;
 			$notification = {
-				status: 200,
 				message: 'Comment Added'
 			};
-
-			$module = null;
 		} else {
 			error = resp;
 		}

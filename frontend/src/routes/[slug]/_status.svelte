@@ -1,9 +1,8 @@
 <script>
-	import { module, loading } from '$lib/store.js';
+	import { module, loading, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Delete from './_status.delete.svelte';
 
@@ -28,19 +27,9 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
-
-			$module = {
-				module: Dialogue,
-				message: 'Status Changed',
-				buttons: [
-					{
-						name: 'Ok',
-						icon: 'check',
-						fn: () => {
-							$module = null;
-						}
-					}
-				]
+			$module = null;
+			$notification = {
+				message: 'Status Changed'
 			};
 		} else {
 			error = resp;

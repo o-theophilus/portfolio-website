@@ -1,11 +1,10 @@
 <script>
-	import { module, loading } from '$lib/store.js';
+	import { module, loading, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
 	import IG from '$lib/input_group.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 
 	console.log($module.post);
 
@@ -46,19 +45,9 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
-
-			$module = {
-				module: Dialogue,
-				message: 'Date Saved',
-				buttons: [
-					{
-						name: 'OK',
-						icon: 'check',
-						fn: () => {
-							$module = null;
-						}
-					}
-				]
+			$module = null;
+			$notification = {
+				message: 'Date Saved'
 			};
 		} else {
 			error = resp;
