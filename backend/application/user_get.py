@@ -196,7 +196,6 @@ def get_admins():
     user_key, _type, _action = search
     user_key = user_key.strip()
 
-# TODO: don't get deleted
     cur.execute("""
         SELECT
             "user".*,
@@ -208,6 +207,7 @@ def get_admins():
             AND log.entity_type = 'account'
         WHERE
             array_length("user".permissions, 1) IS NOT NULL
+            -- AND "user".status = "confirmed"
             AND (%s = ''
                 OR CONCAT_WS(', ', "user".key, "user".name, "user".email)
                 ILIKE %s)

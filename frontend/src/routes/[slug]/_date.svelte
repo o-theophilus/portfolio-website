@@ -6,8 +6,6 @@
 	import Icon from '$lib/icon.svelte';
 	import IG from '$lib/input_group.svelte';
 
-	console.log($module.post);
-
 	let date = new Date($module.post.date);
 	var year = date.getFullYear();
 	var month = (date.getMonth() + 1).toString().padStart(2, '0');

@@ -6,7 +6,7 @@
 
 <div class="scroll_1" />
 <br /><br />
-<Content>
+<Content fit >
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
 			<strong class="ititle dark"> Hi There! </strong>

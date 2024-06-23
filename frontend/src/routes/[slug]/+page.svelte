@@ -50,7 +50,9 @@
 			'post:edit_description',
 			'post:edit_content',
 			'post:edit_tags',
-			'post:edit_status'
+			'post:edit_status',
+			'post:edit_author',
+			'post:edit_highlight'
 		].includes(x)
 	);
 
@@ -85,9 +87,8 @@
 		}
 	};
 
-	const update = (data) => {
+	const update = async (data) => {
 		post = data;
-		process(post.content);
 	};
 
 	onMount(() => {
@@ -260,7 +261,7 @@
 		<Rating post_key={post.key} bind:this={rating} />
 	</div>
 
-	<Author {post} bind:this={author} {edit_mode} {update} />
+	<Author {post} bind:this={author} {edit_mode} />
 
 	{#if post.tags.length > 0 || ($user.permissions.includes('post:edit_tags') && edit_mode)}
 		<hr />
@@ -287,26 +288,28 @@
 		<div class="margin">No tag</div>
 	{/if}
 
-	{#if $user.permissions.includes('post:edit_status') && edit_mode}
+	{#if edit_mode && ($user.permissions.includes('post:edit_status') || ($user.permissions.includes('post:edit_highlight') && post.status == 'active'))}
 		<hr />
 		<div class="line">
-			<Button
-				size="small"
-				on:click={() => {
-					$module = {
-						module: Edit_Status,
-						post,
-						update
-					};
-				}}
-			>
-				<Icon icon="edit" size="16" />
-				|
-				<span>
-					Status: <strong>{post.status}</strong>
-				</span>
-			</Button>
-			{#if post.status == 'active'}
+			{#if $user.permissions.includes('post:edit_status') && edit_mode}
+				<Button
+					size="small"
+					on:click={() => {
+						$module = {
+							module: Edit_Status,
+							post,
+							update
+						};
+					}}
+				>
+					<Icon icon="edit" size="16" />
+					|
+					<span>
+						Status: <strong>{post.status}</strong>
+					</span>
+				</Button>
+			{/if}
+			{#if $user.permissions.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
 				<Highlight post_key={post.key} />
 			{/if}
 		</div>
@@ -356,6 +359,7 @@
 
 	.line {
 		display: flex;
+		align-items: center;
 		gap: var(--sp1);
 	}
 </style>

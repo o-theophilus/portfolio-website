@@ -42,7 +42,6 @@
 
 {#key `${$page.url.pathname}${$page.url.search}`}
 	<Meta title={user?.name || data.error} />
-	<!-- <Meta title={user.name} description="This page includes the user profile" /> -->
 
 	{#if user}
 		<Log action={'viewed'} entity_key={user.key} entity_type={'user'} />

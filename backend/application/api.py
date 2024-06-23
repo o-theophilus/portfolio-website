@@ -7,7 +7,7 @@ from deta import Deta
 from .postgres import db_open, db_close
 from .postgres import (
     post_table, user_table, log_table, comment_table,
-    rating_table, save_table, otp_table, setting_table,
+    rating_table, otp_table, setting_table,
     report_table)
 from uuid import uuid4
 from .admin import permissions
@@ -94,7 +94,6 @@ def create_tables():
         {user_table}
         {post_table}
         {log_table}
-        {save_table}
         {comment_table}
         {report_table}
         {rating_table}

@@ -8,10 +8,14 @@
 
 	export let post;
 	export let edit_mode;
-	export let update;
 	let name = '';
 	let photo = '';
 	let loading = true;
+
+	const update = async (data) => {
+		post = data;
+		await refresh();
+	};
 
 	export const refresh = async () => {
 		loading = true;
@@ -36,7 +40,7 @@
 		</Link>
 		| Author
 
-		{#if $user.permissions.includes('post:edit_tags') && edit_mode}
+		{#if $user.permissions.includes('post:edit_author') && edit_mode}
 			<BRound
 				icon="edit"
 				icon_size={15}

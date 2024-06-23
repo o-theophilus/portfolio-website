@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from .tools import reserved_words, token_to_user
 import re
+import os
 from uuid import uuid4
 from .postgres import db_open, db_close
 from .storage import storage
@@ -131,7 +132,6 @@ def edit(key):
                     "%Y-%m-%dT%H:%M:%S"
                 )
             except Exception:
-                print(request.json['date'])
                 error["date"] = "invalid request"
 
             cur.execute("""
@@ -183,12 +183,17 @@ def edit(key):
             error["author_email"] = "unauthorized access"
         elif not request.json["author_email"]:
             error["author_email"] = "cannot be empty"
-        elif not re.match(r"\S+@\S+\.\S+", request.json["author_email"]):
+        elif (
+            not re.match(r"\S+@\S+\.\S+", request.json["author_email"])
+            and request.json["author_email"] != "default"
+        ):
             error["author_email"] = "Please enter a valid email"
         else:
             cur.execute("""
                 SELECT key FROM "user" WHERE email = %s;
-            """, (request.json["author_email"],))
+            """, (os.environ["MAIL_USERNAME"]
+                  if request.json["author_email"] == "default" else
+                  request.json["author_email"],))
             author = cur.fetchone()
 
             if not author:
@@ -342,7 +347,6 @@ def add_photos(key):
 
 @bp.put("/post/photo/<key>")
 def order_photo(key):
-
     con, cur = db_open()
 
     user = token_to_user(cur)
@@ -409,7 +413,6 @@ def order_photo(key):
 
 @bp.delete("/post/photo/<key>")
 def delete_photo(key):
-
     con, cur = db_open()
 
     user = token_to_user(cur)

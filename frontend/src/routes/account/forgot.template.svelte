@@ -22,24 +22,18 @@
 		<b> {'{'}otp{'}'} </b>
 	</div>
 	<br />
-	Please enter this OTP on the password change form to validate your request.
+	Please enter this OTP on the password reset form to validate your request. Please note that the OTP
+	is only valid for a limited time.
 	<br />
 	<br />
-
-	Note:
-	<ul>
-		<li>
-			This OTP will be valid for 15 minutes.
-		</li>
-
-		<li>If you did not request this change, please disregard this message.</li>
-	</ul>
+	If you did not request this change, please disregard this message.
 	<br />
-	If you have any questions or concerns, please feel free to contact me.
+	<br />
+	If you have any questions or need further assistance, please don't hesitate to reach out to me.
 	<br />
 	<br />
 	Best regards,
 	<br />
 	<br />
-	<b> Theophilus. </b>
+	<b> Theophilus </b>
 </Template>

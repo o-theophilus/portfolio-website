@@ -56,6 +56,5 @@ def storage(
 @bp.get("/photo/<key>")
 @bp.get("/photo/<key>/<thumbnail>")
 def get_photo(key, thumbnail=False):
-    print()
     photo = storage(key, thumbnail=thumbnail)
     return send_file(photo, mimetype="image/jpg")

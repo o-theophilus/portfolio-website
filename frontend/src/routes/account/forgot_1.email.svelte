@@ -9,7 +9,7 @@
 
 	import Login from './login.svelte';
 	import OTP from './forgot_2.otp.svelte';
-	import EmailTemplate from './forgot_1.email_template.svelte';
+	import EmailTemplate from './forgot.template.svelte';
 
 	let form = {
 		email: $module.email

@@ -24,7 +24,7 @@
 	];
 </script>
 
-<Content>
+<Content fit>
 	<br /> <br />
 	<strong>Programming Skills / Stack</strong>
 	<br /><br />

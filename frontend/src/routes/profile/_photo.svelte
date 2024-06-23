@@ -41,7 +41,6 @@
 			user = resp.user;
 			$module.update(resp.user.photo);
 			$notification = {
-				status: 200,
 				message: 'Photo added'
 			};
 
@@ -69,7 +68,6 @@
 			user.photo = null;
 			$module.update(null);
 			$notification = {
-				status: 200,
 				message: 'Photo removed'
 			};
 		} else {

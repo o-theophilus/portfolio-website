@@ -1,14 +1,12 @@
 <script>
 	import Template from '$lib/email_template.svelte';
-
 </script>
 
 <Template>
 	<b> Dear {'{'}name{'}'}, </b>
 	<br />
 	<br />
-	Thank you for initiating the process to change your password on Meji. To proceed with the password
-	change, please use the following One-Time Password (OTP):
+	To change your password, please use the following One-Time Password (OTP):
 	<br />
 	<br />
 	<div
@@ -28,17 +26,14 @@
 	is only valid for a limited time.
 	<br />
 	<br />
-	If you did not request this change, please disregard this message. The security of your account is
-	important to us, and we advise you to contact our customer support immediately if you suspect any unauthorized
-	activity.
+	If you did not request this change, please disregard this message.
 	<br />
 	<br />
-	Thank you for being a valued customer. If you have any questions or need further assistance, please
-	don't hesitate to reach out to our customer support team.
+	If you have any questions or need further assistance, please don't hesitate to reach out to me.
 	<br />
 	<br />
 	Best regards,
 	<br />
 	<br />
-	<b> Meji </b>
+	<b> Theophilus </b>
 </Template>

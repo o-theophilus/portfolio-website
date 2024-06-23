@@ -4,7 +4,7 @@
 </script>
 
 <div id="about" />
-<Content>
+<Content fit>
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
 			<strong class="ititle">About Me</strong>

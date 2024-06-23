@@ -8,9 +8,6 @@
 	let status = $module.status || 200;
 	let message = $module.message || 'The action was successful';
 	let buttons = $module.buttons || [];
-
-	console.log(title);
-	console.log(message);
 </script>
 
 <div

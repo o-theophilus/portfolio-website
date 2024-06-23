@@ -282,7 +282,6 @@ def email_4_new_otp():
     error = check_otp(cur, user["key"], user["email"], "otp_1")
     if error:
         db_close(con, cur)
-        print(0)
         return jsonify({
             "status": 400,
             "error": "invalid request"
@@ -293,7 +292,6 @@ def email_4_new_otp():
         or not re.match(r"\S+@\S+\.\S+", request.json["email"])
     ):
         db_close(con, cur)
-        print(1)
         return jsonify({
             "status": 400,
             "error": "invalid request"
@@ -301,7 +299,6 @@ def email_4_new_otp():
 
     if user["email"] == request.json["email"]:
         db_close(con, cur)
-        print(2)
         return jsonify({
             "status": 400,
             "error": "invalid request"
@@ -312,7 +309,6 @@ def email_4_new_otp():
     exist = cur.fetchone()
     if exist:
         db_close(con, cur)
-        print(3)
         return jsonify({
             "status": 400,
             "error": "invalid request"
@@ -321,7 +317,6 @@ def email_4_new_otp():
     error = check_otp(cur, user["key"], request.json["email"], "otp_2")
     if error:
         db_close(con, cur)
-        print(4)
         return jsonify({
             "status": 400,
             "error": "invalid request"

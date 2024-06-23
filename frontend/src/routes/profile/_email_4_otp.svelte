@@ -41,7 +41,6 @@
 			$module.update(resp.user);
 
 			$notification = {
-				status: 200,
 				message: 'Email changed'
 			};
 

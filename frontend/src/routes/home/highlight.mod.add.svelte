@@ -45,7 +45,6 @@
 			}
 
 			$notification = {
-				status: 200,
 				message: `Highlight ${is_highlight ? 'Added' : 'Removed'}`
 			};
 

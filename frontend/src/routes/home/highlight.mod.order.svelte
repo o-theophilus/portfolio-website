@@ -67,7 +67,6 @@
 			$settings.highlight = resp.posts;
 
 			$notification = {
-				status: 200,
 				message: 'Highlight updated'
 			};
 		} else {

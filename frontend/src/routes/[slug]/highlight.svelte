@@ -3,6 +3,7 @@
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
+	import Toggle from '$lib/toggle.svelte';
 
 	export let post_key;
 	let is_highlight = false;
@@ -46,14 +47,15 @@
 	};
 </script>
 
-<Button size="small" on:click={submit}>
-	Highlight:
-	{#if is_highlight}
-		ON
-	{:else}
-		Off
-	{/if}
-</Button>
+<Toggle
+	state_1="off"
+	state_2="highlight"
+	active={is_highlight}
+	on:click={() => {
+		is_highlight = !is_highlight;
+		submit();
+	}}
+/>
 
 <style>
 </style>

@@ -40,7 +40,6 @@
 		if (resp.status == 200) {
 			$module = null;
 			$notification = {
-				status: 200,
 				message: 'Permissions saved'
 			};
 		} else {

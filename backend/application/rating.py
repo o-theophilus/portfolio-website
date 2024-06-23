@@ -8,8 +8,10 @@ bp = Blueprint("rating", __name__)
 
 
 @bp.get("/rating/<key>")
-def get_ratings(key):
-    con, cur = db_open()
+def get_ratings(key, cur=None):
+    close_conn = not cur
+    if not cur:
+        con, cur = db_open()
 
     cur.execute("""
         SELECT
@@ -22,7 +24,8 @@ def get_ratings(key):
     """, (key,))
     ratings = cur.fetchall()
 
-    db_close(con, cur)
+    if close_conn:
+        db_close(con, cur)
     return jsonify({
         "status": 200,
         "ratings": ratings
@@ -96,11 +99,9 @@ def rating(key):
         }
     )
 
+    ratings = get_ratings(post["key"], cur).json["ratings"]
+
     db_close(con, cur)
-
-    # TODO: pass cur
-    ratings = get_ratings(post["key"]).json["ratings"]
-
     return jsonify({
         "status": 200,
         "ratings": ratings

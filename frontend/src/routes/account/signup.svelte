@@ -9,7 +9,7 @@
 	import Password from './password_checker.svelte';
 	import Login from './login.svelte';
 	import ShowPassword from './password_show.svelte';
-	import EmailTemplate from './confirm.email_template.svelte';
+	import EmailTemplate from './confirm.template.svelte';
 	import Confirm from './confirm.svelte';
 
 	let email_template;

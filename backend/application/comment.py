@@ -7,14 +7,16 @@ from .log import log
 bp = Blueprint("comment", __name__)
 
 
-# TODO: accept cur
 @bp.get("/comment/<key>")
-def get_comments(key):
-    con, cur = db_open()
+def get_comments(key, cur=None):
+    close_conn = not cur
+    if not cur:
+        con, cur = db_open()
 
     user = token_to_user(cur)
     if not user:
-        db_close(con, cur)
+        if close_conn:
+            db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid token"
@@ -85,7 +87,8 @@ def get_comments(key):
         x["user"]["photo"] = f"{request.host_url}photo/{x[
             "user"]["photo"]}" if x["user"]["photo"] else None
 
-    db_close(con, cur)
+    if close_conn:
+        db_close(con, cur)
     return jsonify({
         "status": 200,
         "comments": comments,
@@ -164,8 +167,9 @@ def create(key):
         }
     )
 
+    comments = get_comments(post["key"], cur)
     db_close(con, cur)
-    return get_comments(post["key"])
+    return comments
 
 
 @bp.post("/comment/like/<key>")
@@ -306,5 +310,6 @@ def delete(key):
         }
     )
 
+    comments = get_comments(comment["post_key"], cur)
     db_close(con, cur)
-    return get_comments(comment["post_key"], )
+    return comments

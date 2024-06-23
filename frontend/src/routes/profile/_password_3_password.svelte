@@ -53,7 +53,6 @@
 
 		if (resp.status == 200) {
 			$notification = {
-				status: 200,
 				message: 'Password changed'
 			};
 			$module = null;

@@ -18,10 +18,10 @@
 			error.author_email = 'invalid email';
 		}
 
-		Object.keys(error).length === 0 && submit();
+		Object.keys(error).length === 0 && submit(form.author_email);
 	};
 
-	const submit = async () => {
+	const submit = async (_in = 'default') => {
 		$loading = 'Loading . . .';
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${$module.post_key}`, {
 			method: 'put',
@@ -29,7 +29,7 @@
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify(form)
+			body: JSON.stringify({ author_email: _in })
 		});
 		resp = await resp.json();
 		$loading = false;
@@ -63,11 +63,20 @@
 		bind:value={form.author_email}
 	/>
 
-	<!-- TODO: set default author -->
-	<Button on:click={validate}>
-		Submit
-		<Icon icon="send" />
-	</Button>
+	<div class="line">
+		<Button on:click={validate}>
+			Submit
+			<Icon icon="send" />
+		</Button>
+		<Button
+			on:click={() => {
+				submit();
+			}}
+		>
+			Reset
+			<Icon icon="undo" />
+		</Button>
+	</div>
 </form>
 
 <style>
@@ -76,5 +85,10 @@
 	}
 	.error {
 		margin: var(--sp2) 0;
+	}
+
+	.line {
+		display: flex;
+		gap: var(--sp1);
 	}
 </style>

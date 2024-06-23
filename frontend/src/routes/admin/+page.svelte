@@ -35,10 +35,7 @@
 	<br />
 	Todo
 	<br />
-	check all email template
-	<br />
-	<br />
-	scroll to comment when # routing
+	scroll to comment when # routing from log
 	<br />
 	sort comments by likes, dislike / retain order and status when adding, voting e.t.c
 	<br />

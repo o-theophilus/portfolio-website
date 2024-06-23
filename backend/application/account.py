@@ -44,18 +44,12 @@ def init():
 
         token = token_tool().dumps(user["key"])
 
-    cur.execute("SELECT * FROM save WHERE save.user_key = %s;", (user["key"],))
-    saves = cur.fetchall()
-
     posts = get_highlight(cur)
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "user": user_schema(
-            user,
-            saves=[x['item_key'] for x in saves],
-        ),
+        "user": user_schema(user),
         "token": token,
         "posts": posts
     })

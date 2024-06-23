@@ -41,7 +41,6 @@
 		if (resp.status == 200) {
 			unused = unused.filter((x) => !photos.includes(x));
 			$notification = {
-				status: 200,
 				message: `Photo${photos.length > 1 ? 's' : ''} Deleted`
 			};
 			photos = [];
@@ -106,7 +105,6 @@
 					<Button
 						on:click={() => {
 							if (photos.length != unused.length) {
-								// photos = [];
 								photos = unused;
 							} else {
 								photos = [];

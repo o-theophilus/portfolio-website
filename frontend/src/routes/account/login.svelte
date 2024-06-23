@@ -11,7 +11,7 @@
 	import Signup from './signup.svelte';
 	import Forgot from './forgot_1.email.svelte';
 	import PasswordShow from './password_show.svelte';
-	import EmailTemplate from './confirm.email_template.svelte';
+	import EmailTemplate from './confirm.template.svelte';
 	import Confirm from './confirm.svelte';
 
 	let email_template;

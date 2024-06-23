@@ -29,6 +29,7 @@
     "jsonify",
     "lt",
     "lxp",
+    "mailjet",
     "nltk",
     "omni",
     "onupdate",
