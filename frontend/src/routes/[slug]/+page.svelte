@@ -12,6 +12,7 @@
 	import Toggle from '$lib/toggle.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Log from '$lib/log.svelte';
+	import Datetime from '$lib/datetime.svelte';
 
 	import Title from './_title.svelte';
 	import Description from './_description.svelte';
@@ -33,23 +34,32 @@
 
 	export let data;
 	$: post = data.post;
-	let content = '';
 	let tags = [];
+
+	let content = '';
 	let photo_count = 1;
 	let video_count = 0;
 
-	$: if ($portal) {
-		if ($portal.for == 'post') {
-			post = $portal.data;
+	let edit_mode = false;
+	let admin = $user.permissions.some((x) =>
+		[
+			'post:edit_photos',
+			'post:edit_videos',
+			'post:edit_title',
+			'post:edit_date',
+			'post:edit_description',
+			'post:edit_content',
+			'post:edit_tags',
+			'post:edit_status'
+		].includes(x)
+	);
+
+	const process = (_in) => {
+		if (!_in) {
+			_in = '';
 		}
 
-		if (['post'].includes($portal.for)) {
-			$portal = {};
-		}
-	}
-
-	$: if (post.content) {
-		content = post.content;
+		content = _in;
 		photo_count = 1;
 		let exist = content.search(/{#photo}/) >= 0;
 		while (exist) {
@@ -73,30 +83,27 @@
 			exist = content.search(/{#video}/) >= 0;
 			video_count = video_count + 1;
 		}
+	};
+
+	$: if ($portal) {
+		if ($portal.for == 'post') {
+			post = $portal.data;
+			process(post.content);
+		}
+
+		if (['post'].includes($portal.for)) {
+			$portal = {};
+		}
 	}
 
-	let edit_mode = false;
-
-	let is_admin = $user.permissions.some((x) =>
-		[
-			'post:edit_photos',
-			'post:edit_videos',
-			'post:edit_title',
-			'post:edit_date',
-			'post:edit_description',
-			'post:edit_content',
-			'post:edit_tags',
-			'post:edit_status'
-		].includes(x)
-	);
-
 	onMount(() => {
-		if ($page.url.searchParams.has('edit') && is_admin) {
+		if ($page.url.searchParams.has('edit') && admin) {
 			$page.url.searchParams.delete('edit');
 			edit_mode = true;
 
 			window.history.replaceState(history.state, '', $page.url.href);
 		}
+		process(post.content);
 	});
 
 	let rating;
@@ -118,7 +125,7 @@
 {/key}
 
 <Content>
-	{#if is_admin}
+	{#if admin}
 		<div class="toggle">
 			<Toggle
 				state_1="off"
@@ -190,7 +197,9 @@
 			}}
 		/>
 	{/if}
-	<span class="date">{post.date}</span>
+	<span class="date">
+		<Datetime datetime={post.date} />
+	</span>
 
 	{#if $user.permissions.includes('post:edit_description') && edit_mode}
 		<hr />
@@ -213,8 +222,9 @@
 		</div>
 	{/if}
 
+	<hr />
+
 	{#if $user.permissions.includes('post:edit_content') && edit_mode}
-		<hr />
 		<BRound
 			icon="edit"
 			icon_size={15}

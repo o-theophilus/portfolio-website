@@ -35,10 +35,6 @@
 	<br />
 	Todo
 	<br />
-	fix markdown
-	<br />
-	check all loading message
-	<br />
 	check all email template
 	<br />
 	replace most dialogue with notification

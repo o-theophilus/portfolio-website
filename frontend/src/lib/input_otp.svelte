@@ -55,7 +55,7 @@
 			on:keypress={(e) => {
 				e.preventDefault();
 			}}
-			on:keyup={(e) => {
+			on:keydown={(e) => {
 				press(e, i);
 			}}
 			on:paste={(e) => {

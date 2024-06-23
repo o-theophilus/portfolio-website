@@ -1,20 +1,51 @@
 <script>
 	import { module, portal, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
+	import { onMount } from 'svelte';
 
 	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Dialogue from '$lib/dialogue.svelte';
-	import { onMount } from 'svelte';
-
-	let error = {};
+	import Marked from '$lib/marked.svelte';
 
 	let textarea;
+	let error = {};
 
-	onMount(() => {
-		textarea.value = $module.post.content;
-	});
+	let content = '';
+	let photo_count = 1;
+	let video_count = 0;
+
+	const process = (_in) => {
+		if (!_in) {
+			_in = '';
+		}
+
+		content = _in;
+		photo_count = 1;
+		let exist = content.search(/{#photo}/) >= 0;
+		while (exist) {
+			let i = `![${$module.post.title}](${$module.post.photos[photo_count]})`;
+			content = content.replace(/{#photo}/, i);
+			exist = content.search(/{#photo}/) >= 0;
+			photo_count = photo_count + 1;
+		}
+
+		video_count = 0;
+		exist = content.search(/{#video}/) >= 0;
+		while (exist) {
+			let i = `<iframe
+			width="100%"
+			height="500px"
+			frameborder="0"
+			src="https://www.youtube.com/embed/${$module.post.videos[video_count]}">
+			</iframe>
+			`;
+			content = content.replace(/{#video}/, i);
+			exist = content.search(/{#video}/) >= 0;
+			video_count = video_count + 1;
+		}
+	};
 
 	const validate = () => {
 		error = {};
@@ -66,10 +97,42 @@
 			error = resp;
 		}
 	};
+
+	onMount(() => {
+		textarea.value = $module.post.content;
+		process($module.post.content);
+	});
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Edit Content </strong>
+
+	<IG>
+		<div class="block">
+			<div class="marked">
+				<Marked {content} />
+			</div>
+			<textarea
+				placeholder="Content here"
+				bind:this={textarea}
+				on:keydown={(e) => {
+					if (e.key === 'Tab') {
+						e.preventDefault();
+						const start = e.target.selectionStart;
+						const end = e.target.selectionEnd;
+
+						const text = textarea.value;
+						textarea.value = `${text.substring(0, start)}\t${text.substring(end)}`;
+
+						e.target.selectionStart = e.target.selectionEnd = start + 1;
+					}
+				}}
+				on:keyup={() => {
+					process(textarea.value);
+				}}
+			/>
+		</div>
+	</IG>
 
 	{#if error.error}
 		<div class="error">
@@ -77,25 +140,11 @@
 		</div>
 	{/if}
 
-	<IG name="Content" error={error.content} let:id>
-		<textarea
-			placeholder="Content here"
-			{id}
-			bind:this={textarea}
-			on:keydown={(e) => {
-				if (e.key === 'Tab') {
-					e.preventDefault();
-					const start = e.target.selectionStart;
-					const end = e.target.selectionEnd;
-
-					const text = textarea.value;
-					textarea.value = `${text.substring(0, start)}\t${text.substring(end)}`;
-
-					e.target.selectionStart = e.target.selectionEnd = start + 1;
-				}
-			}}
-		/>
-	</IG>
+	{#if error.content}
+		<div class="error">
+			{error.content}
+		</div>
+	{/if}
 
 	<Button on:click={validate}>
 		Submit
@@ -108,13 +157,47 @@
 		padding: var(--sp3);
 	}
 
+	.block {
+		display: flex;
+		flex-direction: column;
+		gap: var(--sp2);
+
+		width: calc(100vw - var(--sp4) * 2);
+		height: calc(100vh - var(--sp4) * 5);
+	}
+	.marked,
+	textarea {
+		height: 100%;
+	}
+
+	.marked {
+		overflow: auto;
+		display: none;
+	}
+	
+	@media screen and (min-width: 700px) {
+		.block {
+			flex-direction: unset;
+		}
+		.marked {
+			display: block;
+		}
+		.marked,
+		textarea {
+			width: 100%;
+		}
+	}
+
+
+	@media screen and (min-height: 600px) {
+		.marked {
+			display: block;
+		}
+	}
+
 	textarea {
 		display: block;
 
-		max-width: 600px;
-		width: calc(100vw - var(--sp4) * 2);
-		min-height: 160px;
-		height: calc(100vh - var(--sp4) * 9);
 		resize: none;
 		padding: var(--sp2);
 		border-radius: var(--sp0);

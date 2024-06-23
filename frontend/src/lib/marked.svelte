@@ -1,102 +1,22 @@
 <script>
-	import highlightjs from 'markdown-it-highlightjs';
 	import markdownIt from 'markdown-it';
+	import highlightjs from 'markdown-it-highlightjs';
+	import video from 'markdown-it-video';
 	import './marked.css';
 
-	const md = markdownIt().use(highlightjs);
+	const md = markdownIt({
+		html: true,
+		linkify: true,
+		typographer: true
+	})
+		.use(highlightjs)
+		.use(video, {
+			youtube: { width: '100%', height: 500 }
+		});
 
-	export let content = `	
----
-# HEADERS
+	// https://markdown-it.github.io/
 
-# This is an \\<h1> tag
-## This is an \\<h2> tag
-### This is an \\<h3> tag
-#### This is an \\<h4> tag
-##### This is an \\<h5> tag
-###### This is an \\<h6> tag
-
-	
----
-# EMPHASIS
-
-*This text will be italic*
-
-**This text will be bold**
-
-*You **can** combine them*
-
-
----
-# BLOCKQUOTES
-
-> I’ve always been more interested
-> in the future than in the past.
-
-
----
-# LISTS
-
-* Item 1
-* Item 2
-   * Item 2a
-   * Item 2b
-
-1. Item 1
-1. Item 2
-1. Item 3
-   * Item 3a
-   * Item 3b
-
-
----
-# IMAGES
-
-![GitHub Logo](/images/akropol_001.jpg)
-
-
----
-# LINKS
-
-http://github.com - automatic!
-
-or
-
-[GitHub](http://github.com)
-
-
----
-# BACKSLASH ESCAPES
-
-\\*literal asterisks*
-
-
----
-# FENCED CODE BLOCKS
-
-\`\`\`javascript
-// comment
-function test() {
-	console.log("look ma’, no spaces");
-\`\`\`
-
-
----
-# TASK L ISTS
-
-1. [x] done
-* [ ] undone
-
-	
----
-# TABLES
-
-First Header | Second Header
------------- | -------------
-Content cell 1 | Content cell 2
-Content column 1 | Content column 2
-
-	`;
+	export let content = '';
 </script>
 
 <section class="markdown">

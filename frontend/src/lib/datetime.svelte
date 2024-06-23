@@ -18,6 +18,7 @@
 		'Friday',
 		'Saturday'
 	];
+	export const days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 	export const months = [
 		'January',
 		'February',
@@ -83,21 +84,36 @@
 
 {#if datetime}
 	{#if type == 'day'}
-		{days[datetime.getDay()]}
+		{#if style == '1'}
+			{days_short[datetime.getDay()]}
+		{:else}
+			{days[datetime.getDay()]}
+		{/if}
 	{/if}
 
 	{#if type == 'date'}
-		{#if style == 'a'}
+		{#if style == '1'}
 			{ordinal_suffix_of(datetime.getDate())} of
 			{months[datetime.getMonth()]}
 			{datetime.getFullYear()}
+		{:else if style == '2'}
+			{datetime.getDate().toString().padStart(2, '0')}/{datetime
+				.getMonth()
+				.toString()
+				.padStart(2, '0')}/{datetime.getFullYear()}
+		{:else if style == '3'}
+			{datetime.getDate().toString().padStart(2, '0')}-{months[
+				datetime.getMonth()
+			]}-{datetime.getFullYear()}
 		{:else}
-			{datetime.getDate()}-{months[datetime.getMonth()]}-{datetime.getFullYear()}
+			{datetime.getDate().toString().padStart(2, '0')}
+			{months[datetime.getMonth()]}
+			{datetime.getFullYear()}
 		{/if}
 	{/if}
 
 	{#if type == 'time'}
-		{#if style == 'a'}
+		{#if style == '1'}
 			{#if datetime.getHours() < 12}
 				Morning
 			{:else if datetime.getHours() < 16}

@@ -6,4 +6,7 @@
     "highlightjs",
     "ititle"
   ],
+  "cSpell.ignoreWords": [
+    "linkify"
+  ],
 }
