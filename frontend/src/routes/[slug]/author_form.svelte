@@ -36,6 +36,7 @@
 		$loading = false;
 
 		if (resp.status == 200) {
+			$module.update(resp.post);
 			$module = {
 				module: Dialogue,
 				message: `A confirmation email has been sent to <b>${form.author_email}</b>`,

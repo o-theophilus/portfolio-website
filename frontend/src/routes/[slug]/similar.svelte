@@ -12,7 +12,7 @@
 	let open = true;
 	let loading = true;
 
-	export const get = async () => {
+	export const refresh = async () => {
 		loading = true;
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/similar/${post_key}`);
 		resp = await resp.json();

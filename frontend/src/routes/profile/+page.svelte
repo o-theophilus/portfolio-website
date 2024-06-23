@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/stores';
-	import { user as me, module, portal } from '$lib/store.js';
+	import { user as me, module } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import Meta from '$lib/meta.svelte';
@@ -25,21 +25,19 @@
 	let { permissions } = data;
 	let edit_mode = false;
 
-	$: if ($portal) {
-		if ($portal.for == 'user') {
-			user = $portal.data;
-			if (user.key == $me.key) {
-				$me = user;
-			}
-		} else if ($portal.for == 'photo') {
-			user.photo = $portal.data;
-			if (user.key == $me.key) {
-				$me = user;
-			}
+	const update = (data) => {
+		user = data;
+		if (user.key == $me.key) {
+			$me = user;
 		}
+	};
 
-		$portal = {};
-	}
+	const update_photo = (data) => {
+		user.photo = data;
+		if (user.key == $me.key) {
+			$me = user;
+		}
+	};
 </script>
 
 {#key `${$page.url.pathname}${$page.url.search}`}
@@ -91,7 +89,8 @@
 					on:click={() => {
 						$module = {
 							module: Photo,
-							user
+							user,
+							update: update_photo
 						};
 					}}
 				/>
@@ -111,7 +110,8 @@
 					on:click={() => {
 						$module = {
 							module: Name,
-							user
+							user,
+							update
 						};
 					}}
 				/>
@@ -127,7 +127,8 @@
 					icon="edit"
 					on:click={() => {
 						$module = {
-							module: Email
+							module: Email,
+							update
 						};
 					}}
 				/>
@@ -143,7 +144,8 @@
 					on:click={() => {
 						$module = {
 							module: Phone,
-							user
+							user,
+							update
 						};
 					}}
 				/>

@@ -9,42 +9,42 @@
 	let error = {};
 	let emit = createEventDispatcher();
 
-	const vote = async (v) => {
+	const like = async (x = true) => {
 		error = {};
 
-		if (v == 'up') {
-			if (comment.downvote.includes($user.key)) {
-				comment.downvote = comment.downvote.filter((e) => e != $user.key);
+		if (x) {
+			if (comment.dislike.includes($user.key)) {
+				comment.dislike = comment.dislike.filter((e) => e != $user.key);
 			}
-			if (comment.upvote.includes($user.key)) {
-				comment.upvote = comment.upvote.filter((e) => e != $user.key);
+			if (comment.like.includes($user.key)) {
+				comment.like = comment.like.filter((e) => e != $user.key);
 			} else {
-				comment.upvote.push($user.key);
+				comment.like.push($user.key);
 			}
-		} else if (v == 'down') {
-			if (comment.upvote.includes($user.key)) {
-				comment.upvote = comment.upvote.filter((e) => e != $user.key);
+		} else {
+			if (comment.like.includes($user.key)) {
+				comment.like = comment.like.filter((e) => e != $user.key);
 			}
-			if (comment.downvote.includes($user.key)) {
-				comment.downvote = comment.downvote.filter((e) => e != $user.key);
+			if (comment.dislike.includes($user.key)) {
+				comment.dislike = comment.dislike.filter((e) => e != $user.key);
 			} else {
-				comment.downvote.push($user.key);
+				comment.dislike.push($user.key);
 			}
 		}
 		comment = comment;
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comment/vote/${comment.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comment/like/${comment.key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify({ vote: v })
+			body: JSON.stringify({ like: x })
 		});
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			emit('ok', comment);
+			emit('update', comment);
 		} else {
 			error = resp;
 		}
@@ -55,23 +55,23 @@
 	<button
 		class="left"
 		on:click={() => {
-			vote('up');
+			like();
 		}}
 	>
 		<Icon icon="thumb_up" size="16" />
 		|
-		{comment.upvote.length}
+		{comment.like.length}
 	</button>
 
 	<button
 		class="right"
 		on:click={() => {
-			vote('down');
+			like(false);
 		}}
 	>
 		<Icon icon="thumb_down" size="16" />
 		|
-		{comment.downvote.length}
+		{comment.dislike.length}
 	</button>
 
 	{#if error.error}

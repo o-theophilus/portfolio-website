@@ -86,7 +86,6 @@ def create_tables():
         DROP TABLE IF EXISTS "user" CASCADE;
         DROP TABLE IF EXISTS post CASCADE;
         DROP TABLE IF EXISTS log CASCADE;
-        DROP TABLE IF EXISTS save CASCADE;
         DROP TABLE IF EXISTS comment CASCADE;
         DROP TABLE IF EXISTS report CASCADE;
         DROP TABLE IF EXISTS rating CASCADE;
@@ -152,11 +151,7 @@ def general_fix():
     #     entity_type = 'app_setting'
     # ;""")
 
-    cur.execute("""
-        UPDATE post
-        SET status = 'active'
-        WHERE status = 'publish';
-    """,)
+    cur.execute("DROP TABLE IF EXISTS save;")
 
     db_close(con, cur)
     return jsonify({

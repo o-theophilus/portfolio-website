@@ -1,5 +1,5 @@
 <script>
-	import { module, portal, loading } from '$lib/store.js';
+	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 	import { onMount } from 'svelte';
 
@@ -75,10 +75,7 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$portal = {
-				for: 'post',
-				data: resp.post
-			};
+			$module.update(resp.post);
 
 			$module = {
 				module: Dialogue,
@@ -174,7 +171,7 @@
 		overflow: auto;
 		display: none;
 	}
-	
+
 	@media screen and (min-width: 700px) {
 		.block {
 			flex-direction: unset;
@@ -187,7 +184,6 @@
 			width: 100%;
 		}
 	}
-
 
 	@media screen and (min-height: 600px) {
 		.marked {

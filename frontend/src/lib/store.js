@@ -4,7 +4,6 @@ import { invalidate } from '$app/navigation';
 
 export const user = writable();
 export const settings = writable({});
-export const portal = writable();
 
 export const loading = writable(false);
 export const module = writable();
@@ -17,7 +16,6 @@ export const state = writable([])
 export const set_state = (key, value) => {
 	let _page = get(page);
 	_page.url.searchParams.set(key, value);
-
 
 	if (value == '') {
 		_page.url.searchParams.delete(key);

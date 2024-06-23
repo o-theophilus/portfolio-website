@@ -1,5 +1,5 @@
 <script>
-	import { loading, notification, portal, module } from '$lib/store.js';
+	import { loading, notification, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -39,11 +39,7 @@
 
 		if (resp.status == 200) {
 			user = resp.user;
-
-			$portal = {
-				for: 'photo',
-				data: resp.user.photo
-			};
+			$module.update(resp.user.photo);
 			$notification = {
 				status: 200,
 				message: 'Photo added'
@@ -71,11 +67,7 @@
 
 		if (resp.status == 200) {
 			user.photo = null;
-
-			$portal = {
-				for: 'photo',
-				data: null
-			};
+			$module.update(null);
 			$notification = {
 				status: 200,
 				message: 'Photo removed'

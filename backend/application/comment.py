@@ -30,7 +30,7 @@ def get_comments(key):
     ):
         status = request.args["status"]
 
-    # vote, upvote, downvote, ratings, rating_count
+    # likes, like, dislike, ratings, rating_count
     order_by = {
         'latest': 'log.date',
         'oldest': 'log.date',
@@ -54,8 +54,8 @@ def get_comments(key):
             comment.key,
             comment.comment,
             comment.path,
-            comment.upvote,
-            comment.downvote,
+            comment."like",
+            comment.dislike,
             log.date,
             jsonb_build_object(
                 'key', "user".key,
@@ -168,8 +168,8 @@ def create(key):
     return get_comments(post["key"])
 
 
-@bp.post("/comment/vote/<key>")
-def vote(key):
+@bp.post("/comment/like/<key>")
+def like(key):
     con, cur = db_open()
 
     user = token_to_user(cur)
@@ -185,8 +185,8 @@ def vote(key):
             comment.key,
             comment.comment,
             comment.path,
-            comment.upvote,
-            comment.downvote,
+            comment."like",
+            comment.dislike,
             log.date,
             jsonb_build_object(
                 'key', "user".key,
@@ -203,9 +203,8 @@ def vote(key):
 
     if (
         not comment
-        or "vote" not in request.json
-        or not request.json["vote"]
-        or request.json["vote"] not in ["up", "down"]
+        or "like" not in request.json
+        or type(request.json["like"]) is not bool
     ):
         db_close(con, cur)
         return jsonify({
@@ -216,42 +215,41 @@ def vote(key):
     comment["user"]["photo"] = f"{request.host_url}photo/{comment[
         "user"]["photo"]}" if comment["user"]["photo"] else None
 
-    if request.json["vote"] == "up":
-        if user["key"] in comment["downvote"]:
-            comment["downvote"].remove(user["key"])
-        if user["key"] in comment["upvote"]:
-            comment["upvote"].remove(user["key"])
+    if request.json["like"]:
+        if user["key"] in comment["dislike"]:
+            comment["dislike"].remove(user["key"])
+        if user["key"] in comment["like"]:
+            comment["like"].remove(user["key"])
         else:
-            comment["upvote"].append(user["key"])
-    elif request.json["vote"] == "down":
-        if user["key"] in comment["upvote"]:
-            comment["upvote"].remove(user["key"])
-        if user["key"] in comment["downvote"]:
-            comment["downvote"].remove(user["key"])
+            comment["like"].append(user["key"])
+    else:
+        if user["key"] in comment["like"]:
+            comment["like"].remove(user["key"])
+        if user["key"] in comment["dislike"]:
+            comment["dislike"].remove(user["key"])
         else:
-            comment["downvote"].append(user["key"])
+            comment["dislike"].append(user["key"])
 
     cur.execute("""
         UPDATE comment
         SET
-            upvote = %s,
-            downvote = %s
+            "like" = %s,
+            dislike = %s
         WHERE key = %s;
     """, (
-        comment["upvote"],
-        comment["downvote"],
+        comment["like"],
+        comment["dislike"],
         comment["key"]
     ))
 
     log(
         cur=cur,
         user_key=user["key"],
-        action="voted",
+        action='liked' if request.json['like'] else 'disliked',
         entity_key=comment["key"],
         entity_type="comment",
         misc={
-            "post_key": comment["post_key"],
-            "vote": request.json["vote"]
+            "post_key": comment["post_key"]
         }
     )
 

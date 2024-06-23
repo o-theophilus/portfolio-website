@@ -42,7 +42,8 @@
 		if (resp.status == 200) {
 			$module = {
 				module: Email,
-				form
+				form,
+				update: $module.update
 			};
 		} else {
 			error = resp;

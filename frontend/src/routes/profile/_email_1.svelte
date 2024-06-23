@@ -30,7 +30,8 @@
 		if (resp.status == 200) {
 			$module = {
 				module: OTP,
-				form
+				form,
+				update: $module.update
 			};
 		} else {
 			error = resp;

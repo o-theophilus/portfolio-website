@@ -1,11 +1,10 @@
 <script>
-	import { module, portal, loading, notification } from '$lib/store.js';
+	import { module, loading, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
 	import Marked from '$lib/marked.svelte';
 
 	let form = {
@@ -41,11 +40,7 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			console.log(resp.comments);
-			$portal = {
-				for: 'comment',
-				data: resp.comments
-			};
+			$module.update(resp.post);
 
 			$notification = {
 				status: 200,

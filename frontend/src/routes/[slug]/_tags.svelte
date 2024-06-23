@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { module, portal, loading, state } from '$lib/store.js';
+	import { module, loading, state } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
@@ -41,16 +41,11 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$portal = {
-				for: 'post',
-				data: resp.post
-			};
-
-			let s = resp.post.tags.length > 1;
+			$module.update(resp.post);
 
 			$module = {
 				module: Dialogue,
-				message: `Tag${s ? 's' : ''} Saved`,
+				message: `Tag${resp.post.tags.length > 1 ? 's' : ''} Saved`,
 				buttons: [
 					{
 						name: 'OK',

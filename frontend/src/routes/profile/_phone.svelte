@@ -1,5 +1,5 @@
 <script>
-	import { module, notification, loading, portal } from '$lib/store.js';
+	import { module, notification, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
@@ -37,10 +37,7 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$portal = {
-				for: 'user',
-				data: resp.user
-			};
+			$module.update(resp.user);
 
 			$notification = {
 				status: 200,

@@ -7,14 +7,15 @@
 	import Link from '$lib/button/link.svelte';
 	import BRound from '$lib/button/round.svelte';
 	import Add from '../_add.svelte';
-	import Comment from './one.svelte';
+	import Comment from './index.svelte';
 	import Marked from '$lib/marked.svelte';
 	import Avatar from '$lib/avatar.svelte';
 	import Delete from './_delete.svelte';
 	import Report from './_report.svelte';
-	import Vote from './vote.svelte';
+	import Like from './like.svelte';
 
 	export let post_key;
+	export let update;
 	export let comment = {};
 	export let comments = [];
 	let error = {};
@@ -60,7 +61,8 @@
 									on:click={() => {
 										$module = {
 											module: Delete,
-											comment
+											comment,
+											update
 										};
 									}}
 								>
@@ -110,14 +112,16 @@
 								module: Add,
 								post_key,
 								path,
-								comment: comment.comment
+								comment: comment.comment,
+								update
 							};
 						}}
 					/>
 
-					<Vote
+					<Like
 						{comment}
-						on:ok={(e) => {
+						{update}
+						on:update={(e) => {
 							comment = e.detail;
 						}}
 					/>

@@ -1,7 +1,7 @@
 <script>
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { loading, portal, module } from '$lib/store.js';
+	import { loading, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -55,10 +55,8 @@
 				msg = 'Photo deleted';
 				active_photo = post.photos[0] || '';
 			}
-			$portal = {
-				for: 'post',
-				data: resp.post
-			};
+			$module.update(resp.post);
+
 			// $toast = {
 			// 	status: 200,
 			// 	message: msg
@@ -114,10 +112,7 @@
 			init_order = [...resp.post.photos];
 			active_photo = active_photo || post.photos[0];
 			post = resp.post;
-			$portal = {
-				for: 'post',
-				data: resp.post
-			};
+			$module.update(resp.post);
 			// $toast = {
 			// 	status: 200,
 			// 	message: 'Photo added'

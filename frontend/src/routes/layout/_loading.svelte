@@ -26,6 +26,7 @@
 	setTimeout(call, 3000);
 
 	let visible = false;
+	console.log($loading);
 </script>
 
 {#if $loading}

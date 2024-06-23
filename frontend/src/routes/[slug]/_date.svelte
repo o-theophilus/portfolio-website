@@ -1,5 +1,5 @@
 <script>
-	import { module, portal, loading } from '$lib/store.js';
+	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -45,10 +45,7 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$portal = {
-				for: 'post',
-				data: resp.post
-			};
+			$module.update(resp.post);
 
 			$module = {
 				module: Dialogue,

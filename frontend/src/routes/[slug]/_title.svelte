@@ -1,5 +1,5 @@
 <script>
-	import { module, portal, loading } from '$lib/store.js';
+	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
@@ -39,11 +39,7 @@
 
 		if (resp.status == 200) {
 			window.history.replaceState(history.state, '', `/${resp.post.slug}`);
-
-			$portal = {
-				for: 'post',
-				data: resp.post
-			};
+			$module.update(resp.post);
 
 			$module = {
 				module: Dialogue,

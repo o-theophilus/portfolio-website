@@ -57,19 +57,6 @@ log_table = """CREATE TABLE IF NOT EXISTS log (
     FOREIGN KEY (user_key) REFERENCES "user"(key)
 );"""
 
-
-# TODO: delete save table
-save_table = """CREATE TABLE IF NOT EXISTS save (
-    key CHAR(32) PRIMARY KEY,
-
-    user_key CHAR(32) NOT NULL,
-    post_key CHAR(32) NOT NULL,
-
-    FOREIGN KEY (user_key) REFERENCES "user"(key),
-    FOREIGN KEY (post_key) REFERENCES post(key)
-);"""
-
-
 comment_table = """CREATE TABLE IF NOT EXISTS comment (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'active' NOT NULL,
@@ -79,8 +66,8 @@ comment_table = """CREATE TABLE IF NOT EXISTS comment (
 
     comment TEXT NOT NULL,
     path TEXT[] DEFAULT ARRAY[]::TEXT[],
-    upvote TEXT[] DEFAULT ARRAY[]::TEXT[],
-    downvote TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "like" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    dislike TEXT[] DEFAULT ARRAY[]::TEXT[],
 
     FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE,
     FOREIGN KEY (post_key) REFERENCES post(key)

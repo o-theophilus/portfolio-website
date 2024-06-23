@@ -1,5 +1,5 @@
 <script>
-	import { module, portal, notification, loading } from '$lib/store.js';
+	import { module, notification, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -38,10 +38,7 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$portal = {
-				for: 'user',
-				data: resp.user
-			};
+			$module.update(resp.user);
 
 			$notification = {
 				status: 200,
@@ -55,7 +52,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off" >
+<form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Change Email </strong>
 
 	{#if error.error}

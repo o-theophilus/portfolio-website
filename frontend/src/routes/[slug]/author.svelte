@@ -1,5 +1,5 @@
 <script>
-	import { module, portal, user } from '$lib/store.js';
+	import { module, user } from '$lib/store.js';
 
 	import BRound from '$lib/button/round.svelte';
 	import Avatar from '$lib/avatar.svelte';
@@ -8,11 +8,12 @@
 
 	export let post;
 	export let edit_mode;
+	export let update;
 	let name = '';
 	let photo = '';
 	let loading = true;
 
-	export const get = async () => {
+	export const refresh = async () => {
 		loading = true;
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/author/${post.author_key}`);
 		resp = await resp.json();
@@ -42,7 +43,8 @@
 				on:click={() => {
 					$module = {
 						module: Form,
-						post_key: post.key
+						post_key: post.key,
+						update
 					};
 				}}
 			/>

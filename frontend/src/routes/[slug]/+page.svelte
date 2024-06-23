@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import { module, portal, user } from '$lib/store.js';
+	import { module, user } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import Marked from '$lib/marked.svelte';
@@ -27,7 +27,7 @@
 	import Rating from './rating.svelte';
 	import Refresh from './refresh.svelte';
 
-	import Comment from './comment_area/index.svelte';
+	import Comment from './comment/index.svelte';
 	import Similar from './similar.svelte';
 	import Highlight from './highlight.svelte';
 	import Author from './author.svelte';
@@ -77,24 +77,18 @@
 					height="500px"
 					frameborder="0"
 					src="https://www.youtube.com/embed/${post.videos[video_count]}">
-				</iframe>
-				`;
+					</iframe>
+					`;
 			content = content.replace(/{#video}/, i);
 			exist = content.search(/{#video}/) >= 0;
 			video_count = video_count + 1;
 		}
 	};
 
-	$: if ($portal) {
-		if ($portal.for == 'post') {
-			post = $portal.data;
-			process(post.content);
-		}
-
-		if (['post'].includes($portal.for)) {
-			$portal = {};
-		}
-	}
+	const update = (data) => {
+		post = data;
+		process(post.content);
+	};
 
 	onMount(() => {
 		if ($page.url.searchParams.has('edit') && admin) {
@@ -111,10 +105,10 @@
 	let comment;
 	let similar;
 	const refresh = async () => {
-		await rating.get();
-		await author.get();
-		await comment.get();
-		await similar.get();
+		await rating.refresh();
+		await author.refresh();
+		await comment.refresh();
+		await similar.refresh();
 	};
 </script>
 
@@ -147,7 +141,8 @@
 						$module = {
 							module: Manage_Photo,
 							post,
-							photo_count
+							photo_count,
+							update
 						};
 					}}
 				/>
@@ -160,7 +155,8 @@
 						$module = {
 							module: Manage_Video,
 							post,
-							video_count
+							video_count,
+							update
 						};
 					}}
 				/>
@@ -175,7 +171,8 @@
 				on:click={() => {
 					$module = {
 						module: Title,
-						post
+						post,
+						update
 					};
 				}}
 			/>
@@ -192,7 +189,8 @@
 			on:click={() => {
 				$module = {
 					module: Edit_Date,
-					post
+					post,
+					update
 				};
 			}}
 		/>
@@ -209,7 +207,8 @@
 			on:click={() => {
 				$module = {
 					module: Description,
-					post
+					post,
+					update
 				};
 			}}
 		/>
@@ -231,7 +230,8 @@
 			on:click={() => {
 				$module = {
 					module: Edit_Content,
-					post
+					post,
+					update
 				};
 			}}
 		/>
@@ -260,7 +260,7 @@
 		<Rating post_key={post.key} bind:this={rating} />
 	</div>
 
-	<Author {post} bind:this={author} {edit_mode} />
+	<Author {post} bind:this={author} {edit_mode} {update} />
 
 	{#if post.tags.length > 0 || ($user.permissions.includes('post:edit_tags') && edit_mode)}
 		<hr />
@@ -274,7 +274,8 @@
 				$module = {
 					module: Edit_Tags,
 					post,
-					tags_in: tags
+					tags_in: tags,
+					update
 				};
 			}}
 		/>
@@ -294,7 +295,8 @@
 				on:click={() => {
 					$module = {
 						module: Edit_Status,
-						post
+						post,
+						update
 					};
 				}}
 			>
@@ -305,7 +307,7 @@
 				</span>
 			</Button>
 			{#if post.status == 'active'}
-				<Highlight {post} />
+				<Highlight post_key={post.key} />
 			{/if}
 		</div>
 	{/if}

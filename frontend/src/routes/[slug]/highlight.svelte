@@ -5,13 +5,13 @@
 	import Button from '$lib/button/button.svelte';
 	import Dialogue from '$lib/dialogue.svelte';
 
-	export let post;
+	export let post_key;
 	let is_highlight = false;
 
 	const highlight = () => {
 		is_highlight = false;
 		for (const x of $settings.highlight) {
-			if (x.key == post.key) {
+			if (x.key == post_key) {
 				is_highlight = true;
 				break;
 			}
@@ -22,7 +22,7 @@
 
 	const submit = async () => {
 		$loading = 'Adding Highlight . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight/${post_key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -34,7 +34,6 @@
 
 		if (resp.status == 200) {
 			$settings.highlight = resp.posts;
-			highlight();
 
 			$module = {
 				module: Dialogue,
@@ -66,6 +65,7 @@
 				]
 			};
 		}
+		highlight();
 	};
 </script>
 

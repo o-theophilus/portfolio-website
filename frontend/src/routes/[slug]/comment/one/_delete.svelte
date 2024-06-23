@@ -1,5 +1,5 @@
 <script>
-	import { module, loading, portal } from '$lib/store.js';
+	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -26,10 +26,7 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			$portal = {
-				for: 'comment',
-				data: resp.comments
-			};
+			$module.update(resp.comments);
 
 			$module = {
 				module: Dialogue,

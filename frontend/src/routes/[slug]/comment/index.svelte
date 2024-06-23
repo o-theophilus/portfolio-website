@@ -2,8 +2,7 @@
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { onMount } from 'svelte';
-	import { module, portal, user } from '$lib/store.js';
+	import { module, user } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -12,7 +11,7 @@
 	import Login from '../../account/login.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Loading from '$lib/loading_spinner.svelte';
-	import Comment from './comment/one.svelte';
+	import One from './one/index.svelte';
 	import Add from './_add.svelte';
 	import Drop from '$lib/dropdown.svelte';
 
@@ -22,21 +21,15 @@
 	let _status = [];
 	let open = true;
 
-	$: if ($portal) {
-		if ($portal.for == 'comment') {
-			comments = $portal.data;
-		}
-
-		if (['comment'].includes($portal.for)) {
-			$portal = {};
-		}
-	}
+	const update = (data) => {
+		comments = data;
+	};
 
 	let loading = true;
 	let select_status = '';
 	let select_order = '';
 
-	export const get = async () => {
+	export const refresh = async () => {
 		let search = {};
 		if (select_status) {
 			search.status = select_status;
@@ -96,7 +89,7 @@
 					default_value="active"
 					on:change={(e) => {
 						select_status = e.target.value;
-						get();
+						refresh();
 					}}
 				/>
 			{/if}
@@ -106,7 +99,7 @@
 					icon="sort"
 					on:change={(e) => {
 						select_order = e.target.value;
-						get();
+						refresh();
 					}}
 				/>
 			{/if}
@@ -115,7 +108,7 @@
 		{#each comments as x (x.key)}
 			<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
 				{#if x.path.length == 0}
-					<Comment comment={x} {comments} post_key={post.key} />
+					<One comment={x} {comments} post_key={post.key} {update} />
 				{/if}
 			</div>
 		{:else}

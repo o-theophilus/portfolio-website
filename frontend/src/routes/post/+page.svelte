@@ -1,5 +1,5 @@
 <script>
-	import { module, user, portal } from '$lib/store.js';
+	import { module, user } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import One from './one.svelte';
@@ -23,14 +23,6 @@
 	$: total_page = data.total_page;
 	let { order_by } = data;
 	let { _status } = data;
-
-	$: if ($portal) {
-		if ($portal.for == 'posts') {
-			posts = $portal.data;
-		}
-
-		$portal = {};
-	}
 </script>
 
 <Log entity_type={'page'} />
