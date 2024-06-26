@@ -14,7 +14,7 @@
 	let drop;
 	onMount(() => {
 		if ($page.url.searchParams.has(name)) {
-			drop.set(url.searchParams.get(name));
+			drop.set($page.url.searchParams.get(name));
 		}
 	});
 </script>

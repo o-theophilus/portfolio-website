@@ -2,20 +2,23 @@
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 	import { module, user } from '$lib/store.js';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 
 	import Datetime from '$lib/datetime.svelte';
 	import Link from '$lib/button/link.svelte';
 	import BRound from '$lib/button/round.svelte';
 	import Add from '../_add.svelte';
-	import Comment from './index.svelte';
+	import One from './index.svelte';
 	import Marked from '$lib/marked.svelte';
 	import Avatar from '$lib/avatar.svelte';
 	import Delete from './_delete.svelte';
 	import Report from './_report.svelte';
-	import Like from './like.svelte';
+	import Like from '../../like.svelte';
 
 	export let post_key;
 	export let update;
+	export let search;
 	export let comment = {};
 	export let comments = [];
 	let error = {};
@@ -24,6 +27,13 @@
 
 	let open_menu = false;
 	let self = false;
+
+	let _this;
+	onMount(() => {
+		if (`#${comment.key}` == $page.url.hash) {
+			_this.scrollIntoView({ behavior: 'smooth' });
+		}
+	});
 </script>
 
 <svelte:window
@@ -35,7 +45,7 @@
 	}}
 />
 
-<section id={comment.key}>
+<section bind:this={_this}>
 	<div class="block">
 		<Avatar name={comment.user.name} photo={comment.user.photo} />
 		<div class="content">
@@ -68,26 +78,27 @@
 								>
 									Delete
 								</Link>
+							{:else}
+								<Link
+									on:click={() => {
+										$module = {
+											module: Report,
+											reported: {
+												key: comment.user.key,
+												name: comment.user.name,
+												photo: comment.user.photo
+											},
+											entity: {
+												type: 'comment',
+												key: comment.key,
+												extra: comment.comment
+											}
+										};
+									}}
+								>
+									Report
+								</Link>
 							{/if}
-							<Link
-								on:click={() => {
-									$module = {
-										module: Report,
-										reported: {
-											key: comment.user.key,
-											name: comment.user.name,
-											photo: comment.user.photo
-										},
-										entity: {
-											type: 'comment',
-											key: comment.key,
-											extra: comment.comment
-										}
-									};
-								}}
-							>
-								Report
-							</Link>
 						</div>
 					{/if}
 				</div>
@@ -113,16 +124,18 @@
 								post_key,
 								path,
 								comment: comment.comment,
-								update
+								update,
+								search
 							};
 						}}
 					/>
 
 					<Like
-						{comment}
-						{update}
+						name="comment"
+						entity={comment}
+						{search}
 						on:update={(e) => {
-							comment = e.detail;
+							update(e.detail.comments);
 						}}
 					/>
 				</div>
@@ -130,9 +143,9 @@
 		</div>
 	</div>
 
-	{#each comments as c}
-		{#if c.path[c.path.length - 1] == comment.key}
-			<Comment comment={c} {comments} {post_key} />
+	{#each comments as x}
+		{#if x.path[x.path.length - 1] == comment.key}
+			<One comment={x} {comments} {post_key} {update} {search} />
 		{/if}
 	{/each}
 </section>

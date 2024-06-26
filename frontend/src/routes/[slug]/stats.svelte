@@ -7,23 +7,25 @@
 	import Loading from '$lib/loading.svelte';
 
 	export let post_key;
+	let ratings = [];
+	let o_rating = 0;
 	let rating = 0;
 	let loading = true;
 
-	const update = (ratings) => {
+	const update = (_in) => {
+		ratings = _in;
+		o_rating = 0;
 		rating = 0;
 		for (const i in ratings) {
+			o_rating += ratings[i].rating;
 			if (ratings[i].user_key == $user.key) {
 				rating = ratings[i].rating;
 			}
 		}
 	};
 
-	export const reset = () => {
-		loading = true;
-	};
-
 	export const refresh = async () => {
+		loading = true;
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/rating/${post_key}`);
 		resp = await resp.json();
 		if (resp.status == 200) {
@@ -46,8 +48,7 @@
 		}}
 	>
 		<Icon icon="hotel_class" />
-		Rate{#if !loading}: {rating}{/if}
-		<Loading active={loading} size="20" />
+		Rate: {rating} | Overall Rating: {o_rating}
 	</Button>
 {/if}
 

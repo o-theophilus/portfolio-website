@@ -3,10 +3,11 @@
 	import { state, set_state } from '$lib/store.js';
 
 	import Link from '$lib/button/link.svelte';
+	import Loading from '$lib/loading.svelte';
 
 	let tags = [];
 
-	let loading_tags = true;
+	let loading = true;
 	onMount(async () => {
 		let pn = 'tags';
 		let i = $state.findIndex((x) => x.name == pn);
@@ -24,13 +25,16 @@
 		} else {
 			tags = $state[i].data;
 		}
-		loading_tags = false;
+		loading = false;
 	});
 </script>
 
-{#if loading_tags}
+{#if loading}
 	<hr />
-	<div class="line">Loading tags . . .</div>
+	<div class="line">
+		<Loading active={loading} size="20" />
+		Loading tags . . .
+	</div>
 {:else if tags.length > 0}
 	<hr />
 	<div class="line">

@@ -97,7 +97,11 @@ def get_all(order="latest", page_size=24):
         'oldest': 'post.date',
         'title (a-z)': 'post.title',
         'title (z-a)': 'post.title',
-        'rating': 'rating'
+        'rating': 'rating',
+        'comment': 'comment',
+        'view': 'view',
+        'like': '_like'
+
     }
 
     order_dir = {
@@ -105,7 +109,10 @@ def get_all(order="latest", page_size=24):
         'oldest': 'ASC',
         'title (a-z)': 'ASC',
         'title (z-a)': 'DESC',
-        'rating': 'DESC'
+        'rating': 'DESC',
+        'comment': 'DESC',
+        'view': 'DESC',
+        'like': 'DESC'
     }
 
     query = ""
@@ -116,19 +123,73 @@ def get_all(order="latest", page_size=24):
         """
 
     cur.execute("""
+        WITH
+        _like AS (
+            SELECT
+                key,
+                COALESCE(array_length("like", 1), 0) -
+                COALESCE(array_length(dislike, 1), 0) AS _count
+            FROM post
+        ),
+
+        rating AS (
+            SELECT
+                post_key AS key,
+                AVG(rating) AS rating,
+                COUNT(*) AS _count
+            FROM rating
+            GROUP BY post_key
+        ),
+
+        comment AS (
+            SELECT
+                post_key AS key,
+                COUNT(*) AS _count
+            FROM comment
+            WHERE
+                status = 'active'
+            GROUP BY post_key
+        ),
+
+        view1 AS (
+            SELECT
+                DISTINCT ON (user_key, entity_key)
+                entity_key
+            FROM log
+            WHERE
+                entity_type = 'post'
+                AND action = 'viewed'
+        ),
+        view AS (
+            SELECT
+                entity_key AS key,
+                COUNT(*) AS _count
+            FROM view1
+            GROUP BY entity_key
+        )
+
         SELECT
             post.*,
-            COALESCE(AVG(rating.rating), 0) AS rating,
-            COALESCE(ARRAY_AGG(rating.rating), ARRAY[]::int[]) AS ratings,
+            COALESCE(rating.rating, 0) AS rating,
+            COALESCE(rating._count, 0) AS ratings,
+            COALESCE(comment._count, 0) AS comment,
+            COALESCE(view._count, 0) AS view,
+            COALESCE(_like._count, 0) AS _like,
             COUNT(*) OVER() AS _count
         FROM post
-        LEFT JOIN rating ON post.key = rating.post_key
+        LEFT JOIN _like ON post.key = _like.key
+        LEFT JOIN rating ON post.key = rating.key
+        LEFT JOIN comment ON post.key = comment.key
+        LEFT JOIN view ON post.key = view.key
+
         WHERE
             post.status = %s
             AND (%s = '' OR post.title ILIKE %s) {}
         GROUP BY
             post.key, post.status, post.title, post.slug, post.content,
-            post.description, post.photos, post.videos, post.tags
+            post.description, post.photos, post.tags,
+            _like._count,
+            rating.rating, rating._count, comment._count, view._count
         ORDER BY {} {}
         LIMIT %s OFFSET %s;
     """.format(

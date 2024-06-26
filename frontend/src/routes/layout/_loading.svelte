@@ -4,7 +4,7 @@
 
 	import { loading } from '$lib/store.js';
 
-	import Loading from '$lib/loading_spinner.svelte';
+	import Loading from '$lib/loading.svelte';
 
 	let typewriter = (node, { speed = 1 }) => {
 		const text = node.textContent;

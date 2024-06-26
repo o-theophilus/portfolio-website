@@ -23,7 +23,6 @@ permissions = {
     "post": [
         ['add', 2],
         ['edit_photos', 2],
-        ['edit_videos', 2],
         ['edit_title', 2],
         ['edit_date', 2],
         ['edit_description', 2],
@@ -90,6 +89,19 @@ def default_admin():
     db_close(con, cur)
     return jsonify({
         "status": 200
+    })
+
+
+@bp.get("/admin/permission")
+@bp.get("/admin/permission/<search>")
+def get_permission(search=None):
+    _all = [f"{x}:{y[0]}" for x in permissions for y in permissions[x]]
+    if search:
+        _all = [x for x in _all if x.find(search) != -1]
+
+    return jsonify({
+        "status": 200,
+        "permissions": _all
     })
 
 

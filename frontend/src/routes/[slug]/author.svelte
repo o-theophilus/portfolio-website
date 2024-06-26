@@ -5,6 +5,7 @@
 	import Avatar from '$lib/avatar.svelte';
 	import Link from '$lib/button/link.svelte';
 	import Form from './author_form.svelte';
+	import Loading from '$lib/loading.svelte';
 
 	export let post;
 	export let edit_mode;
@@ -17,8 +18,11 @@
 		await refresh();
 	};
 
-	export const refresh = async () => {
+	export const reset = () => {
 		loading = true;
+	};
+
+	export const refresh = async () => {
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/author/${post.author_key}`);
 		resp = await resp.json();
 		if (resp.status == 200) {
@@ -29,32 +33,33 @@
 	};
 </script>
 
-{#if !loading}
-	<hr />
-	<class class="block">
+<hr />
+<div class="block">
+	{#if !loading}
 		<Link href="/profile?search={post.author_key}">
 			<Avatar {name} {photo} />
 		</Link>
 		<Link href="/profile?search={post.author_key}">
 			{name}
 		</Link>
-		| Author
+	{/if}
+	<Loading active={loading} size="40" />
+	| Author
 
-		{#if $user.permissions.includes('post:edit_author') && edit_mode}
-			<BRound
-				icon="edit"
-				icon_size={15}
-				on:click={() => {
-					$module = {
-						module: Form,
-						post_key: post.key,
-						update
-					};
-				}}
-			/>
-		{/if}
-	</class>
-{/if}
+	{#if $user.permissions.includes('post:edit_author') && edit_mode}
+		<BRound
+			icon="edit"
+			icon_size={15}
+			on:click={() => {
+				$module = {
+					module: Form,
+					post_key: post.key,
+					update
+				};
+			}}
+		/>
+	{/if}
+</div>
 
 <style>
 	.block {

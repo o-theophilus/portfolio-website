@@ -5,7 +5,9 @@
 	import Icon from '$lib/icon.svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	export let comment = {};
+	export let name;
+	export let entity = {};
+	export let search = {};
 	let error = {};
 	let emit = createEventDispatcher();
 
@@ -13,27 +15,32 @@
 		error = {};
 
 		if (x) {
-			if (comment.dislike.includes($user.key)) {
-				comment.dislike = comment.dislike.filter((e) => e != $user.key);
+			if (entity.dislike.includes($user.key)) {
+				entity.dislike = entity.dislike.filter((e) => e != $user.key);
 			}
-			if (comment.like.includes($user.key)) {
-				comment.like = comment.like.filter((e) => e != $user.key);
+			if (entity.like.includes($user.key)) {
+				entity.like = entity.like.filter((e) => e != $user.key);
 			} else {
-				comment.like.push($user.key);
+				entity.like.push($user.key);
 			}
 		} else {
-			if (comment.like.includes($user.key)) {
-				comment.like = comment.like.filter((e) => e != $user.key);
+			if (entity.like.includes($user.key)) {
+				entity.like = entity.like.filter((e) => e != $user.key);
 			}
-			if (comment.dislike.includes($user.key)) {
-				comment.dislike = comment.dislike.filter((e) => e != $user.key);
+			if (entity.dislike.includes($user.key)) {
+				entity.dislike = entity.dislike.filter((e) => e != $user.key);
 			} else {
-				comment.dislike.push($user.key);
+				entity.dislike.push($user.key);
 			}
 		}
-		comment = comment;
+		entity = entity;
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comment/like/${comment.key}`, {
+		let url = `${import.meta.env.VITE_BACKEND}/${name}/like/${entity.key}`;
+		if (Object.keys(search).length != 0) {
+			url = `${url}?${new URLSearchParams(search).toString()}`;
+		}
+
+		let resp = await fetch(url, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -44,34 +51,36 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			emit('update', comment);
+			emit('update', resp);
 		} else {
 			error = resp;
 		}
 	};
 </script>
 
-<div class="vote">
+<div class="line">
 	<button
 		class="left"
+		class:active={entity.like.includes($user.key)}
 		on:click={() => {
 			like();
 		}}
 	>
 		<Icon icon="thumb_up" size="16" />
 		|
-		{comment.like.length}
+		{entity.like.length}
 	</button>
 
 	<button
 		class="right"
+		class:active={entity.dislike.includes($user.key)}
 		on:click={() => {
 			like(false);
 		}}
 	>
 		<Icon icon="thumb_down" size="16" />
 		|
-		{comment.dislike.length}
+		{entity.dislike.length}
 	</button>
 
 	{#if error.error}
@@ -82,7 +91,7 @@
 </div>
 
 <style>
-	.vote {
+	.line {
 		display: flex;
 		align-items: center;
 		gap: 1px;
@@ -115,6 +124,9 @@
 	button:hover {
 		background-color: var(--cl1);
 		color: var(--ft1);
+	}
+	button.active {
+		background-color: var(--cl1);
 	}
 
 	.error {

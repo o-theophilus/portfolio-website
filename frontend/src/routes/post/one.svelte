@@ -34,10 +34,20 @@
 	<div class="date">
 		<Datetime datetime={post.date} type="ago" />
 	</div>
+	<div>
+		{#if post.rating > 0}
+			Rating: {parseFloat(post.rating)}/{post.ratings}
+			|
+		{/if}
+		like: {post._like}
+		| comment: {post.comment}
+		| view: {post.view}
+	</div>
 </a>
 
 <style>
 	a {
+		display: block;
 		padding: var(--sp3);
 
 		background-color: var(--bg1);

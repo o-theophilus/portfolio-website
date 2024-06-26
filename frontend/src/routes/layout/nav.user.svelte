@@ -1,6 +1,7 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
+	import { onMount } from 'svelte';
 
 	import { page } from '$app/stores';
 	import { user } from '$lib/store.js';
@@ -11,19 +12,15 @@
 
 	let open = false;
 	let self = false;
+	let admin = false;
 
-	let is_admin = $user.permissions.some((x) =>
-		[
-			'post:edit_photos',
-			'post:edit_videos',
-			'post:edit_title',
-			'post:edit_date',
-			'post:edit_description',
-			'post:edit_content',
-			'post:edit_tags',
-			'post:edit_status'
-		].includes(x)
-	);
+	onMount(async () => {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/permission`);
+		resp = await resp.json();
+		if (resp.status == 200) {
+			admin = $user.permissions.some((x) => resp.permissions.includes(x));
+		}
+	});
 </script>
 
 <svelte:window
@@ -50,7 +47,7 @@
 			{#if $page.url.pathname != '/profile'}
 				<Link href="/profile">Profile</Link>
 			{/if}
-			{#if is_admin && $page.url.pathname != '/admin'}
+			{#if admin && $page.url.pathname != '/admin'}
 				<Link href="/admin">Admin</Link>
 			{/if}
 			{#if $user.permissions.includes('log:view')}

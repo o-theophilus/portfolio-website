@@ -10,7 +10,7 @@
 	import Link from '$lib/button/link.svelte';
 	import Login from '../../account/login.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Loading from '$lib/loading_spinner.svelte';
+	import Loading from '$lib/loading.svelte';
 	import One from './one/index.svelte';
 	import Add from './_add.svelte';
 	import Drop from '$lib/dropdown.svelte';
@@ -20,29 +20,29 @@
 	let order_by = [];
 	let _status = [];
 	let open = true;
+	let loading = true;
+	let search = {};
 
 	const update = (data) => {
 		comments = data;
 	};
 
-	let loading = true;
-	let select_status = '';
-	let select_order = '';
+	export const reset = () => {
+		loading = true;
+		comments = [];
+	};
 
 	export const refresh = async () => {
-		let search = {};
-		if (select_status) {
-			search.status = select_status;
+		let s = {};
+		if (search.status) {
+			s.status = search.status;
 		}
-		if (select_order) {
-			search.order = select_order;
+		if (search.order) {
+			s.order = search.order;
 		}
 
-		loading = true;
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/comment/${post.key}?${new URLSearchParams(
-				search
-			).toString()}`,
+			`${import.meta.env.VITE_BACKEND}/comment/${post.key}?${new URLSearchParams(s).toString()}`,
 			{
 				method: 'get',
 				headers: {
@@ -58,7 +58,6 @@
 			order_by = resp.order_by;
 			_status = resp._status;
 		}
-
 		loading = false;
 	};
 </script>
@@ -86,9 +85,9 @@
 			{#if $user.permissions.includes('comment:view_deleted')}
 				<Drop
 					list={_status}
-					default_value="active"
+					default_value={search.status || 'active'}
 					on:change={(e) => {
-						select_status = e.target.value;
+						search.status = e.target.value;
 						refresh();
 					}}
 				/>
@@ -96,9 +95,10 @@
 			{#if comments.length > 1}
 				<Drop
 					list={order_by}
-					icon="sort"
+					icon='sort'
+					default_value={search.order || 'sort'}
 					on:change={(e) => {
-						select_order = e.target.value;
+						search.order = e.target.value;
 						refresh();
 					}}
 				/>
@@ -108,7 +108,7 @@
 		{#each comments as x (x.key)}
 			<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
 				{#if x.path.length == 0}
-					<One comment={x} {comments} post_key={post.key} {update} />
+					<One comment={x} {comments} post_key={post.key} {update} {search} />
 				{/if}
 			</div>
 		{:else}
@@ -123,7 +123,9 @@
 			$module = {
 				module: Add,
 				post_key: post.key,
-				path: []
+				path: [],
+				update,
+				search
 			};
 		}}
 	>

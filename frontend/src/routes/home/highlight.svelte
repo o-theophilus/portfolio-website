@@ -28,7 +28,7 @@
 
 	let intersecting = false;
 	onMount(() => {
-		if (browser && $settings.highlight) {
+		if (browser && $settings.highlight && $settings.highlight.length > 0) {
 			let ob = new IntersectionObserver(
 				(entries) => {
 					intersecting = entries[0].isIntersecting;
@@ -47,14 +47,14 @@
 <svelte:window
 	bind:innerWidth={width}
 	on:scroll={(e) => {
-		pos.a = set_pos(scroller.a);
+		if ($settings.highlight && $settings.highlight.length > 0) {
+			pos.a = set_pos(scroller.a);
+		}
 	}}
 />
 
-{#if $settings.highlight}
-	{#if $settings.highlight.length > 0}
-		<br /><br />
-	{/if}
+{#if $settings.highlight && $settings.highlight.length > 0}
+	<br /><br />
 
 	<section
 		bind:this={section}

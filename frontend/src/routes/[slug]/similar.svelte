@@ -3,23 +3,27 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { state } from '$lib/store.js';
 
-	import Loading from '$lib/loading_spinner.svelte';
+	// import Loading from '$lib/loading.svelte';
 	import Fold from '$lib/button/fold.svelte';
 	import Link from '$lib/button/link.svelte';
 
 	export let post_key;
 	let posts = [];
 	let open = true;
-	let loading = true;
+	// let loading = true;
+
+	export const reset = () => {
+		posts = [];
+		// loading = true;
+	};
 
 	export const refresh = async () => {
-		loading = true;
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/similar/${post_key}`);
 		resp = await resp.json();
 		if (resp.status == 200) {
 			posts = resp.posts;
 		}
-		loading = false;
+		// loading = false;
 	};
 
 	const click = (post) => {
@@ -41,7 +45,7 @@
 	<div class="title line">
 		<strong class="ititle line">
 			Similar Posts
-			<Loading active={loading} size="20" />
+			<!-- <Loading active={loading} size="20" /> -->
 		</strong>
 
 		<Fold

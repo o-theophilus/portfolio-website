@@ -1,5 +1,5 @@
 <script>
-	export let active = false;
+	export let active = true;
 	export let size = 50;
 </script>
 

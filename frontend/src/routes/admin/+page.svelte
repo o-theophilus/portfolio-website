@@ -35,13 +35,6 @@
 	<br />
 	Todo
 	<br />
-	scroll to comment when # routing from log
-	<br />
-	sort comments by likes, dislike / retain order and status when adding, voting e.t.c
-	<br />
-	sort post by engagements (likes, dislike, comment, rating, view)
-	<br />
-	<br />
 </Content>
 
 <style>

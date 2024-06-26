@@ -31,30 +31,18 @@ post_table = """CREATE TABLE IF NOT EXISTS post (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'draft' NOT NULL,
     date TIMESTAMP NOT NULL,
-    author CHAR(32) NOT NULL,
+    author_key CHAR(32) NOT NULL,
 
     title VARCHAR(100) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,
     content TEXT,
     description TEXT,
     photos TEXT[] DEFAULT ARRAY[]::TEXT[],
-    videos TEXT[] DEFAULT ARRAY[]::TEXT[],
     tags TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "like" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    dislike TEXT[] DEFAULT ARRAY[]::TEXT[],
 
     FOREIGN KEY (author) REFERENCES "user"(key)
-);"""
-
-log_table = """CREATE TABLE IF NOT EXISTS log (
-    key CHAR(32) PRIMARY KEY,
-    date TIMESTAMP NOT NULL,
-    user_key CHAR(32) NOT NULL,
-    action VARCHAR(20) NOT NULL,
-    entity_key TEXT,
-    entity_type VARCHAR(100) NOT NULL,
-    status INT DEFAULT 200,
-    misc JSONB DEFAULT '{}'::JSONB,
-
-    FOREIGN KEY (user_key) REFERENCES "user"(key)
 );"""
 
 comment_table = """CREATE TABLE IF NOT EXISTS comment (
@@ -109,6 +97,19 @@ otp_table = """CREATE TABLE IF NOT EXISTS otp (
     user_key CHAR(32) NOT NULL,
     pin VARCHAR(10) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+
+    FOREIGN KEY (user_key) REFERENCES "user"(key)
+);"""
+
+log_table = """CREATE TABLE IF NOT EXISTS log (
+    key CHAR(32) PRIMARY KEY,
+    date TIMESTAMP NOT NULL,
+    user_key CHAR(32) NOT NULL,
+    action VARCHAR(20) NOT NULL,
+    entity_key TEXT,
+    entity_type VARCHAR(100) NOT NULL,
+    status INT DEFAULT 200,
+    misc JSONB DEFAULT '{}'::JSONB,
 
     FOREIGN KEY (user_key) REFERENCES "user"(key)
 );"""

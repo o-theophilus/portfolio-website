@@ -21,11 +21,11 @@
 	import Edit_Date from './_date.svelte';
 	import Edit_Status from './_status.svelte';
 	import Manage_Photo from './_photo.svelte';
-	import Manage_Video from './_video.svelte';
 
 	import Share from './_share.svelte';
 	import Rating from './rating.svelte';
 	import Refresh from './refresh.svelte';
+	import Like from './like.svelte';
 
 	import Comment from './comment/index.svelte';
 	import Similar from './similar.svelte';
@@ -35,26 +35,11 @@
 	export let data;
 	$: post = data.post;
 	let tags = [];
+	let edit_mode = false;
+	let admin = false;
 
 	let content = '';
 	let photo_count = 1;
-	let video_count = 0;
-
-	let edit_mode = false;
-	let admin = $user.permissions.some((x) =>
-		[
-			'post:edit_photos',
-			'post:edit_videos',
-			'post:edit_title',
-			'post:edit_date',
-			'post:edit_description',
-			'post:edit_content',
-			'post:edit_tags',
-			'post:edit_status',
-			'post:edit_author',
-			'post:edit_highlight'
-		].includes(x)
-	);
 
 	const process = (_in) => {
 		if (!_in) {
@@ -70,28 +55,13 @@
 			exist = content.search(/{#photo}/) >= 0;
 			photo_count = photo_count + 1;
 		}
-
-		video_count = 0;
-		exist = content.search(/{#video}/) >= 0;
-		while (exist) {
-			let i = `<iframe
-					width="100%"
-					height="500px"
-					frameborder="0"
-					src="https://www.youtube.com/embed/${post.videos[video_count]}">
-					</iframe>
-					`;
-			content = content.replace(/{#video}/, i);
-			exist = content.search(/{#video}/) >= 0;
-			video_count = video_count + 1;
-		}
 	};
 
 	const update = async (data) => {
 		post = data;
 	};
 
-	onMount(() => {
+	onMount(async () => {
 		if ($page.url.searchParams.has('edit') && admin) {
 			$page.url.searchParams.delete('edit');
 			edit_mode = true;
@@ -99,6 +69,12 @@
 			window.history.replaceState(history.state, '', $page.url.href);
 		}
 		process(post.content);
+
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/permission/post:edit`);
+		resp = await resp.json();
+		if (resp.status == 200) {
+			admin = $user.permissions.some((x) => resp.permissions.includes(x));
+		}
 	});
 
 	let rating;
@@ -106,6 +82,11 @@
 	let comment;
 	let similar;
 	const refresh = async () => {
+		process(post.content);
+		rating.reset();
+		author.reset();
+		comment.reset();
+		similar.reset();
 		await rating.refresh();
 		await author.refresh();
 		await comment.refresh();
@@ -143,20 +124,6 @@
 							module: Manage_Photo,
 							post,
 							photo_count,
-							update
-						};
-					}}
-				/>
-			{/if}
-
-			{#if video_count > 0 && $user.permissions.includes('post:edit_videos') && edit_mode}
-				<BRound
-					icon="movie"
-					on:click={() => {
-						$module = {
-							module: Manage_Video,
-							post,
-							video_count,
 							update
 						};
 					}}
@@ -245,6 +212,16 @@
 	{/if}
 
 	<div class="line">
+		<Like
+			name="post"
+			entity={post}
+			on:update={(e) => {
+				post = e.detail.post;
+			}}
+		/>
+
+		<Rating post_key={post.key} bind:this={rating} />
+
 		<Button
 			size="small"
 			on:click={() => {
@@ -257,8 +234,6 @@
 			<Icon icon="share" />
 			Share
 		</Button>
-
-		<Rating post_key={post.key} bind:this={rating} />
 	</div>
 
 	<Author {post} bind:this={author} {edit_mode} />

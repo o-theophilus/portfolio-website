@@ -256,6 +256,78 @@ def edit(key):
     })
 
 
+@bp.post("/post/like/<key>")
+def like(key):
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    cur.execute("""
+        SELECT * FROM post WHERE post.key = %s;
+    """, (key,))
+    post = cur.fetchone()
+
+    if (
+        not post
+        or "like" not in request.json
+        or type(request.json["like"]) is not bool
+    ):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    post["photos"] = [f"{request.host_url}photo/{x}" for x in post["photos"]]
+
+    if request.json["like"]:
+        if user["key"] in post["dislike"]:
+            post["dislike"].remove(user["key"])
+        if user["key"] in post["like"]:
+            post["like"].remove(user["key"])
+        else:
+            post["like"].append(user["key"])
+    else:
+        if user["key"] in post["like"]:
+            post["like"].remove(user["key"])
+        if user["key"] in post["dislike"]:
+            post["dislike"].remove(user["key"])
+        else:
+            post["dislike"].append(user["key"])
+
+    cur.execute("""
+        UPDATE post
+        SET
+            "like" = %s,
+            dislike = %s
+        WHERE key = %s;
+    """, (
+        post["like"],
+        post["dislike"],
+        post["key"]
+    ))
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action='liked' if request.json['like'] else 'disliked',
+        entity_key=post["key"],
+        entity_type="post"
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "post": post
+    })
+
+
 @bp.post("/post/photo/<key>")
 def add_photos(key):
     con, cur = db_open()
@@ -477,74 +549,6 @@ def delete_photo(key):
         entity_key=post["key"],
         entity_type="post",
         misc={"photo": file_name}
-    )
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "post": post
-    })
-
-
-@bp.put("/post/videos/<key>")
-def update_videos(key):
-    con, cur = db_open()
-
-    user = token_to_user(cur)
-    if not user:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
-
-    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
-    post = cur.fetchone()
-    if not post:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid request"
-        })
-
-    error = {}
-    if "post:edit_videos" not in user["permissions"]:
-        error["videos"] = "unauthorized access"
-    elif (
-        "videos" not in request.json
-        or type(request.json["videos"]) is not list
-    ):
-        error["videos"] = "cannot be empty"
-    elif set(request.json["videos"]) == set(post["videos"]):
-        error["videos"] = "no change"
-    if error != {}:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            **error
-        })
-
-    cur.execute("""
-        UPDATE post
-        SET videos = %s
-        WHERE key = %s;
-    """, (
-        request.json["videos"],
-        post["key"]
-    ))
-
-    post = get_post(key, cur).json["post"]
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="edited_videos",
-        entity_key=post["key"],
-        entity_type="post",
-        misc={
-            "from": post["videos"],
-            "to": request.json["videos"]
-        }
     )
 
     db_close(con, cur)

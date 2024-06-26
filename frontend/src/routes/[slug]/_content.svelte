@@ -9,11 +9,8 @@
 	import Marked from '$lib/marked.svelte';
 
 	let textarea;
-	let error = {};
-
 	let content = '';
-	let photo_count = 1;
-	let video_count = 0;
+	let error = {};
 
 	const process = (_in) => {
 		if (!_in) {
@@ -21,28 +18,13 @@
 		}
 
 		content = _in;
-		photo_count = 1;
+		let photo_count = 1;
 		let exist = content.search(/{#photo}/) >= 0;
 		while (exist) {
 			let i = `![${$module.post.title}](${$module.post.photos[photo_count]})`;
 			content = content.replace(/{#photo}/, i);
 			exist = content.search(/{#photo}/) >= 0;
 			photo_count = photo_count + 1;
-		}
-
-		video_count = 0;
-		exist = content.search(/{#video}/) >= 0;
-		while (exist) {
-			let i = `<iframe
-			width="100%"
-			height="500px"
-			frameborder="0"
-			src="https://www.youtube.com/embed/${$module.post.videos[video_count]}">
-			</iframe>
-			`;
-			content = content.replace(/{#video}/, i);
-			exist = content.search(/{#video}/) >= 0;
-			video_count = video_count + 1;
 		}
 	};
 

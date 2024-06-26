@@ -13,45 +13,59 @@ def get_comments(key, cur=None):
     if not cur:
         con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
-        if close_conn:
-            db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
-
     order = "latest"
     status = "active"
     if "order" in request.args:
         order = request.args["order"]
-    if (
-        "comment:view_deleted" in user["permissions"]
-        and "status" in request.args
-    ):
+    if "status" in request.args:
         status = request.args["status"]
 
-    # likes, like, dislike, ratings, rating_count
+    if status != "active":
+        user = token_to_user(cur)
+        if not user or "comment:view_deleted" not in user["permissions"]:
+            status = "active"
+
+    # TODO: sub comments count
     order_by = {
         'latest': 'log.date',
         'oldest': 'log.date',
-        'high_rating': 'feedback.rating',
-        'low_rating': 'feedback.rating',
-        'name (a-z)': '"user".name',
-        'name (z-a)': '"user".name'
+        # 'like': 'sub_2."like"',
+        # 'dislike': 'sub_2.dislike',
+        # 'most reaction': 'sub_2.most_reaction',
+        # 'more like': 'sub_2.more_like',
+        # 'more dislike': 'sub_2.more_like'
+        'like': 'sub_2.more_like',
     }
 
     order_dir = {
         'latest': 'DESC',
         'oldest': 'ASC',
-        'high_rating': 'DESC',
-        'low_rating': 'ASC',
-        'name (a-z)': 'ASC',
-        'name (z-a)': 'DESC'
+        'like': 'DESC',
+        'dislike': 'DESC',
+        'most reaction': 'DESC',
+        'more like': 'DESC',
+        'more dislike': 'ASC'
     }
 
     cur.execute("""
+        WITH
+        sub_1 AS (
+            SELECT
+                key,
+                COALESCE(array_length("like", 1), 0) AS "like",
+                COALESCE(array_length(dislike, 1), 0) AS dislike
+            FROM comment
+        ),
+        sub_2 AS (
+            SELECT
+                key,
+                "like",
+                dislike,
+                ("like" + dislike) AS most_reaction,
+                ("like" - dislike) AS more_like
+            FROM sub_1
+        )
+
         SELECT
             comment.key,
             comment.comment,
@@ -66,6 +80,7 @@ def get_comments(key, cur=None):
             ) AS user
 
         FROM comment
+        LEFT JOIN sub_2 ON comment.key = sub_2.key
         LEFT JOIN "user" ON comment.user_key = "user".key
         LEFT JOIN log ON
             comment.key = log.entity_key
@@ -74,6 +89,9 @@ def get_comments(key, cur=None):
         WHERE
             comment.post_key = %s
             AND comment.status = %s
+        GROUP BY comment.key, log.date, "user".key,
+            sub_2."like", sub_2.dislike,
+            sub_2.most_reaction, sub_2.more_like
         ORDER BY {} {};
     """.format(
         order_by[order],
@@ -187,6 +205,7 @@ def like(key):
     cur.execute("""
         SELECT
             comment.key,
+            comment.post_key,
             comment.comment,
             comment.path,
             comment."like",
@@ -199,7 +218,10 @@ def like(key):
             ) AS user
 
         FROM comment
-        LEFT JOIN log ON comment.key = log.entity_key
+        LEFT JOIN log ON
+            comment.key = log.entity_key
+            AND log.action = 'created'
+            AND log.entity_type = 'comment'
         LEFT JOIN "user" ON comment.user_key = "user".key
         WHERE comment.key = %s;
     """, (key,))
@@ -257,11 +279,9 @@ def like(key):
         }
     )
 
+    comments = get_comments(comment["post_key"], cur)
     db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "comment": comment
-    })
+    return comments
 
 
 @ bp.delete("/comment/<key>")

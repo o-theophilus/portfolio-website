@@ -1,4 +1,6 @@
 <script>
+	import { flip } from 'svelte/animate';
+	import { cubicInOut } from 'svelte/easing';
 	import { module, user } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
@@ -64,8 +66,10 @@
 		<Note />
 
 		<section class="items">
-			{#each posts as post}
-				<One {post} />
+			{#each posts as post (post.key)}
+				<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
+					<One {post} />
+				</div>
 			{:else}
 				No post found
 			{/each}

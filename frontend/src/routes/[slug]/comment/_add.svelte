@@ -28,19 +28,24 @@
 
 	const submit = async () => {
 		$loading = 'Adding Comment . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comment/${$module.post_key}`, {
-			method: 'post',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: $token
-			},
-			body: JSON.stringify(form)
-		});
+		let resp = await fetch(
+			`${import.meta.env.VITE_BACKEND}/comment/${$module.post_key}?${new URLSearchParams(
+				$module.search
+			).toString()}`,
+			{
+				method: 'post',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: $token
+				},
+				body: JSON.stringify(form)
+			}
+		);
 		resp = await resp.json();
 		$loading = false;
 
 		if (resp.status == 200) {
-			$module.update(resp.post);
+			$module.update(resp.comments);
 			$module = null;
 			$notification = {
 				message: 'Comment Added'
