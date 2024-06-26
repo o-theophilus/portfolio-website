@@ -7,7 +7,6 @@
 
 	import Button from '$lib/button/button.svelte';
 	import Fold from '$lib/button/fold.svelte';
-	import Link from '$lib/button/link.svelte';
 	import Login from '../../account/login.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Loading from '$lib/loading.svelte';
@@ -95,7 +94,7 @@
 			{#if comments.length > 1}
 				<Drop
 					list={order_by}
-					icon='sort'
+					icon="sort"
 					default_value={search.order || 'sort'}
 					on:change={(e) => {
 						search.order = e.target.value;
@@ -133,15 +132,16 @@
 		Add comment
 	</Button>
 {:else}
-	<Link
+	<Button
+		size="small"
 		on:click={() => {
 			$module = {
 				module: Login
 			};
 		}}
 	>
-		Login
-	</Link> to add comment
+		Login to add comment
+	</Button>
 {/if}
 
 <br />

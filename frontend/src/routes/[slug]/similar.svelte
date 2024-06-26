@@ -72,7 +72,8 @@
 						<img src={x.photos[0] || ''} alt={x.title} onerror="this.src='/site/no_photo.png'" />
 					</a>
 					<div class="details">
-						<Link
+						<a
+							class="link"
 							href="/{x.slug}"
 							on:click={() => {
 								click(x);
@@ -82,7 +83,8 @@
 							}}
 						>
 							{x.title}
-						</Link>
+						</a>
+
 						<br />
 						{x.description}
 					</div>
@@ -127,5 +129,17 @@
 
 		flex-shrink: 0;
 		flex-grow: 0;
+	}
+
+	.link {
+		text-decoration: none;
+		color: var(--ft1);
+		font-weight: 700;
+
+		transition: color var(--trans);
+	}
+
+	.link:hover {
+		color: var(--cl1);
 	}
 </style>

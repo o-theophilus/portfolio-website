@@ -3,6 +3,7 @@ from .tools import token_to_user
 from uuid import uuid4
 from .postgres import db_close, db_open
 from .log import log
+from .post_get import get_post
 
 bp = Blueprint("rating", __name__)
 
@@ -99,10 +100,10 @@ def rating(key):
         }
     )
 
-    ratings = get_ratings(post["key"], cur).json["ratings"]
+    post = get_post(post["key"], cur).json["post"]
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "ratings": ratings
+        "post": post
     })

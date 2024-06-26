@@ -21,9 +21,9 @@
 	import Edit_Date from './_date.svelte';
 	import Edit_Status from './_status.svelte';
 	import Manage_Photo from './_photo.svelte';
+	import Rating from './_rating.svelte';
 
 	import Share from './_share.svelte';
-	import Rating from './rating.svelte';
 	import Refresh from './refresh.svelte';
 	import Like from './like.svelte';
 
@@ -61,6 +61,11 @@
 		post = data;
 	};
 
+	let my_rating = null;
+	const update_my_rating = async (data) => {
+		my_rating = data;
+	};
+
 	onMount(async () => {
 		if ($page.url.searchParams.has('edit') && admin) {
 			$page.url.searchParams.delete('edit');
@@ -77,17 +82,15 @@
 		}
 	});
 
-	let rating;
 	let author;
 	let comment;
 	let similar;
 	const refresh = async () => {
 		process(post.content);
-		rating.reset();
+		my_rating = null;
 		author.reset();
 		comment.reset();
 		similar.reset();
-		await rating.refresh();
 		await author.refresh();
 		await comment.refresh();
 		await similar.refresh();
@@ -220,7 +223,23 @@
 			}}
 		/>
 
-		<Rating post_key={post.key} bind:this={rating} />
+		{#if $user.login}
+			<Button
+				size="small"
+				on:click={() => {
+					$module = {
+						module: Rating,
+						post_key: post.key,
+						my_rating,
+						update_my_rating,
+						update
+					};
+				}}
+			>
+				<Icon icon="hotel_class" />
+				Rate: {parseFloat(post.rating)}/{post.ratings}
+			</Button>
+		{/if}
 
 		<Button
 			size="small"

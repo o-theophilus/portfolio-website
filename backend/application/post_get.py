@@ -15,7 +15,25 @@ def get_post(key, cur=None):
         con, cur = db_open()
 
     cur.execute("""
-        SELECT * FROM post WHERE post.slug = %s OR post.key = %s;
+        WITH
+        rating AS (
+            SELECT
+                post_key AS key,
+                AVG(rating) AS rating,
+                COUNT(*) AS _count
+            FROM rating
+            GROUP BY post_key
+        )
+
+        SELECT
+            post.*,
+            COALESCE(rating.rating, 0) AS rating,
+            COALESCE(rating._count, 0) AS ratings
+        FROM post
+        LEFT JOIN rating ON post.key = rating.key
+        WHERE
+            post.slug = %s
+            OR post.key = %s;
     """, (key, key))
     post = cur.fetchone()
 
@@ -236,20 +254,33 @@ def similar_posts(key):
 
     cur.execute("""
         WITH
-            likeness AS (
-                SELECT
-                    post.key,
-                    (
-                        SELECT COUNT(*)
-                        FROM unnest(tags || STRING_TO_ARRAY(title, ' ')) AS tn
-                        WHERE tn = ANY(%s)
-                    ) AS likeness
-                FROM post
-            )
+        likeness AS (
+            SELECT
+                post.key,
+                (
+                    SELECT COUNT(*)
+                    FROM unnest(tags || STRING_TO_ARRAY(title, ' ')) AS tn
+                    WHERE tn = ANY(%s)
+                ) AS likeness
+            FROM post
+        ),
 
-        SELECT post.*
+        rating AS (
+            SELECT
+                post_key AS key,
+                AVG(rating) AS rating,
+                COUNT(*) AS _count
+            FROM rating
+            GROUP BY post_key
+        )
+
+        SELECT
+            post.*,
+            COALESCE(rating.rating, 0) AS rating,
+            COALESCE(rating._count, 0) AS ratings
         FROM post
         LEFT JOIN likeness ON post.key = likeness.key
+        LEFT JOIN rating ON post.key = rating.key
         WHERE
             post.status = 'active'
             AND post.key != %s

@@ -1,11 +1,13 @@
 <script>
-	import { module, loading, notification } from '$lib/store.js';
+	import { module, loading, notification, user } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
+	import Loading from '$lib/loading.svelte';
+	import { onMount } from 'svelte';
 
-	let rating = $module.rating;
+	let rating = $module.my_rating;
 	let post_key = $module.post_key;
 	let error = {};
 
@@ -23,13 +25,14 @@
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify({ rating: rating })
+			body: JSON.stringify({ rating })
 		});
 		resp = await resp.json();
 		$loading = false;
 
 		if (resp.status == 200) {
-			$module.update(resp.ratings);
+			$module.update(resp.post);
+			$module.update_my_rating(rating);
 			$module = null;
 			$notification = {
 				message: 'Rating Saved'
@@ -38,6 +41,28 @@
 			error = resp;
 		}
 	};
+
+	let _loading = false;
+	onMount(async () => {
+		if (rating == null) {
+			_loading = true;
+
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/rating/${post_key}`);
+			resp = await resp.json();
+
+			if (resp.status == 200) {
+				rating = 0;
+				for (const i in resp.ratings) {
+					if (resp.ratings[i].user_key == $user.key) {
+						rating = resp.ratings[i].rating;
+						break;
+					}
+				}
+				$module.update_my_rating(rating);
+			}
+			_loading = false;
+		}
+	});
 </script>
 
 <section>
@@ -47,9 +72,10 @@
 			{error.error}
 		</div>
 	{/if}
+
 	<div>
 		Rating ({rating})
-		<div class="block">
+		<div class="block" class:disable={_loading}>
 			<div class="block red">
 				{#each Array(5) as _, i}
 					{@const j = -5 + i}
@@ -79,6 +105,11 @@
 					/>
 				{/each}
 			</div>
+			{#if _loading}
+				<div class="loading">
+					<Loading size="40" />
+				</div>
+			{/if}
 		</div>
 	</div>
 
@@ -98,10 +129,27 @@
 	}
 
 	.block {
+		position: relative;
+
 		display: flex;
 		align-items: center;
 		overflow: hidden;
 	}
+
+	.disable {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+
+	.loading {
+		position: absolute;
+		inset: 0;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
 	.green {
 		flex-direction: row-reverse;
 		border-radius: 0 var(--sp1) var(--sp1) 0;

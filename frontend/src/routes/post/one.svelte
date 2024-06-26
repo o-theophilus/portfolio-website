@@ -2,6 +2,7 @@
 	import { state } from '$lib/store.js';
 
 	import Datetime from '$lib/datetime.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	export let post;
 
@@ -31,17 +32,28 @@
 	<div class="description">
 		{post.description}
 	</div>
-	<div class="date">
+	<div class="date line">
 		<Datetime datetime={post.date} type="ago" />
-	</div>
-	<div>
-		{#if post.rating > 0}
-			Rating: {parseFloat(post.rating)}/{post.ratings}
-			|
-		{/if}
-		like: {post._like}
-		| comment: {post.comment}
-		| view: {post.view}
+		<div class="line info">
+			<div class="line">
+				<Icon size="16" icon="visibility" />
+				{post.view}
+			</div>
+			<div class="line">
+				<Icon size="16" icon="thumb_up" />
+				{post._like}
+			</div>
+			<div class="line">
+				<Icon size="16" icon="comment" />
+				{post.comment}
+			</div>
+			{#if post.rating > 0}
+				<div class="line">
+					<Icon size="16" icon="hotel_class" />
+					{parseFloat(post.rating)}
+				</div>
+			{/if}
+		</div>
 	</div>
 </a>
 
@@ -92,8 +104,21 @@
 		transition: color var(--trans);
 	}
 
+	.line {
+		display: flex;
+		align-items: center;
+		gap: var(--sp0);
+	}
+
 	.date {
 		font-size: small;
 		transition: color var(--trans);
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: var(--sp2);
+	}
+
+	.info {
+		gap: var(--sp2);
 	}
 </style>
