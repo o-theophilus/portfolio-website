@@ -54,8 +54,6 @@
 
 	.links {
 		display: flex;
-		/* align-items: center; */
-		/* justify-content: center; */
 		gap: var(--sp2);
 	}
 	a {
@@ -80,6 +78,7 @@
 
 	.home {
 		background-color: #ffaf1b;
+		background-color: #6CBCFF;
 	}
 	.home a {
 		color: var(--bg1);

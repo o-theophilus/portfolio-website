@@ -52,7 +52,6 @@
 		transition: all var(--aTime);
 		transition-timing-function: ease-in-out;
 
-		/* box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.131); */
 		border: 2px solid transparent;
 	}
 
@@ -69,7 +68,6 @@
 	}
 
 	a.active {
-		/* transform: scale(1.05); */
 		border-color: var(--cl1);
 	}
 	a.active img {

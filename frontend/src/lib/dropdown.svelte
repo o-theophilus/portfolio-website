@@ -57,10 +57,7 @@
 		outline-color: var(--ft1);
 		color: var(--ft1);
 	}
-	/*  */
-	/*  */
-	/*  */
-	/*  */
+
 	button {
 		position: relative;
 
@@ -72,7 +69,7 @@
 		background-color: var(--input);
 		color: var(--ft2);
 
-		transition: color var(--trans);
+		transition: color var(--trans), outline-color var(--trans);
 	}
 	button:hover:not(:disabled) {
 		color: var(--ft1);
@@ -94,5 +91,9 @@
 		width: var(--size);
 		height: var(--size);
 		opacity: 0;
+	}
+
+	option {
+		color: var(--ft1_d);
 	}
 </style>

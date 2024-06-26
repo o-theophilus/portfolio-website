@@ -221,6 +221,8 @@
 		outline: 8px solid var(--bg2);
 		border-radius: 50%;
 		line-height: 0;
+
+		transition: outline-color var(--trans);
 	}
 
 	.pad,

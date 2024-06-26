@@ -61,25 +61,21 @@
 <div class="line">
 	<button
 		class="left"
-		class:active={entity.like.includes($user.key)}
 		on:click={() => {
 			like();
 		}}
 	>
-		<Icon icon="thumb_up" size="16" />
-		|
+		<Icon icon="thumb_up" size="16" fill={entity.like.includes($user.key)} />
 		{entity.like.length}
 	</button>
 
 	<button
 		class="right"
-		class:active={entity.dislike.includes($user.key)}
 		on:click={() => {
 			like(false);
 		}}
 	>
-		<Icon icon="thumb_down" size="16" />
-		|
+		<Icon icon="thumb_down" size="16" fill={entity.dislike.includes($user.key)} />
 		{entity.dislike.length}
 	</button>
 
@@ -123,10 +119,7 @@
 
 	button:hover {
 		background-color: var(--cl1);
-		color: var(--ft1);
-	}
-	button.active {
-		background-color: var(--cl1);
+		color: var(--ft1_b);
 	}
 
 	.error {

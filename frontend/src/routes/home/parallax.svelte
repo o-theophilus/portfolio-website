@@ -42,6 +42,7 @@
 		min-height: 800px;
 
 		background-color: #ffaf1b;
+		background-color: #6CBCFF;
 
 		mask-image: url('/site/parallax/parallax8.png');
 		mask-repeat: no-repeat;
@@ -59,5 +60,6 @@
 		width: 100%;
 		object-fit: cover;
 		transform: translateY(var(--top));
+		filter: hue-rotate(180deg);
 	}
 </style>

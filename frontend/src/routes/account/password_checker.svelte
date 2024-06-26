@@ -21,7 +21,7 @@
 		overflow: hidden;
 
 		font-size: small;
-		color: var(--gray);
+		color: var(--overlay);
 	}
 	.active {
 		color: var(--cl3);

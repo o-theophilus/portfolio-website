@@ -5,7 +5,7 @@
 
 	export let primary = false;
 	export let size = ''; // small, large, wide
-	export let extra = ''; // hover_red,
+	export let extra = ''; // hover_red, outline
 </script>
 
 <svelte:element
@@ -32,7 +32,7 @@
 		align-items: center;
 		gap: var(--sp1);
 
-		padding: var(--sp2);
+		padding: calc(var(--sp2) - 2px) var(--sp2);
 		border: none;
 		border-radius: var(--sp0);
 		width: fit-content;
@@ -79,15 +79,25 @@
 	:not(:disabled):hover {
 		background-color: var(--cl1);
 		color: var(--ft1_b);
-		text-decoration: none;
 	}
 	:not(:disabled).primary:hover {
 		background-color: var(--cl1_d);
-		text-decoration: none;
 	}
 
 	:not(:disabled):not(.primary).hover_red:hover {
 		background-color: var(--cl2);
-		text-decoration: none;
+	}
+
+	:not(:disabled):not(.primary).outline {
+		outline: 2px solid var(--overlay);
+		outline-offset: -2px;
+		transition: outline-color var(--trans);
+	}
+	:not(:disabled):not(.primary):not(:hover).outline {
+		background-color: transparent;
+		transition: background-color var(--trans);
+	}
+	:not(:disabled):not(.primary).outline:hover {
+		outline-color: transparent;
 	}
 </style>

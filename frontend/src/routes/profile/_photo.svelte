@@ -133,7 +133,6 @@
 			<div class="error">
 				{@html error.error}
 			</div>
-		
 		{/if}
 
 		{#if !user.photo}
@@ -167,21 +166,12 @@
 	.error {
 		margin: var(--sp2) 0;
 	}
-	
+
 	img {
 		width: 100%;
 		border-radius: var(--sp1);
 		outline: 2px solid transparent;
 		transition: outline-color var(--trans), transform var(--trans);
-
-		/* overflow: hidden; */
-		/* object-fit: cover; */
-		/* outline: 2px solid transparent; */
-
-		/* background-color: red; */
-		/* background-image: url('/site/no_photo.png'); */
-		/* background-size: cover; */
-		/* background-position: center; */
 	}
 	img.edit_mode:hover,
 	.dragover.edit_mode {

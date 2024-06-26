@@ -52,8 +52,6 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-
-		/* margin-top: var(--sp3); */
 	}
 	.left {
 		display: flex;

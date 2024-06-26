@@ -45,6 +45,7 @@
 					<DropPlus list={_status} name="status" />
 
 					<Button
+						extra="outline"
 						on:click={() => {
 							$module = {
 								module: Add

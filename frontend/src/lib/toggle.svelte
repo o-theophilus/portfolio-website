@@ -18,22 +18,24 @@
 <style>
 	button {
 		--size: 24px;
-
+		
 		display: flex;
 		align-items: center;
-
+		
 		position: relative;
-
+		
 		height: var(--size);
 		border: none;
 		border-radius: calc(var(--size) / 2);
-
+		
 		font-size: x-small;
 		cursor: pointer;
 		background-color: var(--bg2);
-
+		
 		text-transform: capitalize;
 		color: var(--ft1);
+		
+		transition: background-color var(--trans), left var(--trans);
 	}
 	button:disabled {
 		opacity: 0.4;

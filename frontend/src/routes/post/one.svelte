@@ -82,7 +82,7 @@
 		transform: scale(1.2);
 	}
 	.ititle {
-		color: var(--cl1);
+		color: var(--ft1);
 		margin: var(--sp2) 0;
 	}
 
