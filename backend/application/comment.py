@@ -102,10 +102,10 @@ def get_comments(key, cur=None):
     ))
     comments = cur.fetchall()
     for x in comments:
-        _p = None
-        if x["user"]["photo"]:
-            _p = f"{request.host_url}photo/{x['user']['photo']}"
-        x["user"]["photo"] = _p
+        x["user"]["photo"] = (
+            f"{request.host_url}photo/{x['user']['photo']}"
+            if x["user"]["photo"] else None
+        )
 
     if close_conn:
         db_close(con, cur)
@@ -240,10 +240,10 @@ def like(key):
             "error": "invalid request"
         })
 
-    _p = None
-    if comment["user"]["photo"]:
-        _p = f"{request.host_url}photo/{comment['user']['photo']}"
-    comment["user"]["photo"] = _p
+    comment["user"]["photo"] = (
+        f"{request.host_url}photo/{comment['user']['photo']}"
+        if comment["user"]["photo"] else None
+    )
 
     if request.json["like"]:
         if user["key"] in comment["dislike"]:

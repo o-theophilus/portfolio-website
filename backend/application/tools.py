@@ -142,6 +142,8 @@ def send_mail(to, subject, body):
 
 def user_schema(user):
     del user["password"]
-    user["photo"] = (f"{request.host_url}photo/{user['photo']}"
-                     if user["photo"] else None)
+    user["photo"] = (
+        f"{request.host_url}photo/{user['photo']}"
+        if user["photo"] else None
+    )
     return user

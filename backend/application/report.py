@@ -119,8 +119,10 @@ def get_reports():
     ))
     reports = cur.fetchall()
     for x in reports:
-        x["reported"]["photo"] = f"{request.host_url}photo/{x[
-            "reported"]["photo"]}" if x["reported"]["photo"] else None
+        x["reported"]["photo"] = (
+            f"{request.host_url}photo/{x['reported']['photo']}"
+            if x["reported"]["photo"] else None
+        )
 
     db_close(con, cur)
     return jsonify({
