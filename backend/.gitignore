@@ -2,7 +2,7 @@
 .venv
 __pycache__
 *.pyc
-static
+# static
 ./meji.db
 meji.db
 *.db
