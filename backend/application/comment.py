@@ -102,8 +102,10 @@ def get_comments(key, cur=None):
     ))
     comments = cur.fetchall()
     for x in comments:
-        x["user"]["photo"] = f"{request.host_url}photo/{x[
-            'user']['photo']}" if x["user"]["photo"] else None
+        _p = None
+        if x["user"]["photo"]:
+            _p = f"{request.host_url}photo/{x['user']['photo']}"
+        x["user"]["photo"] = _p
 
     if close_conn:
         db_close(con, cur)
