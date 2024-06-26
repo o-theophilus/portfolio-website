@@ -240,8 +240,10 @@ def like(key):
             "error": "invalid request"
         })
 
-    comment["user"]["photo"] = f"{request.host_url}photo/{comment[
-        "user"]["photo"]}" if comment["user"]["photo"] else None
+    _p = None
+    if comment["user"]["photo"]:
+        _p = f"{request.host_url}photo/{comment['user']['photo']}"
+    comment["user"]["photo"] = _p
 
     if request.json["like"]:
         if user["key"] in comment["dislike"]:
