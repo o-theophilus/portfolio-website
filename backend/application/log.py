@@ -183,7 +183,7 @@ def get_many():
         elif x["entity"]["type"] == "comment":
             length = 20
             ellipsis = "..." if len(x["entity"]["name"]) > length else ""
-            x["entity"]["name"] = f"{x["entity"]["name"][:length]}{ellipsis}"
+            x["entity"]["name"] = f"{x['entity']['name'][:length]}{ellipsis}"
 
         elif x["entity"]["type"] == "user":
             if x["action"] == "viewed":
