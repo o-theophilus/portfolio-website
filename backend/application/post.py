@@ -46,11 +46,17 @@ def add():
         slug = f"{slug}-{str(uuid4().hex)[:10]}"
 
     cur.execute("""
-            INSERT INTO post (key, title, slug, date)
-            VALUES (%s, %s, %s, %s)
+        SELECT key FROM "user" WHERE email = %s;
+    """, (os.environ["MAIL_USERNAME"],))
+    author = cur.fetchone()
+
+    cur.execute("""
+            INSERT INTO post (key, author_key, title, slug, date)
+            VALUES (%s, %s, %s, %s, %s)
             RETURNING *;
         """, (
         uuid4().hex,
+        author["key"],
         request.json["title"],
         slug,
         datetime.now()
@@ -73,7 +79,7 @@ def add():
     })
 
 
-@bp.put("/post/<key>")
+@ bp.put("/post/<key>")
 def edit(key):
     con, cur = db_open()
 
@@ -256,7 +262,7 @@ def edit(key):
     })
 
 
-@bp.post("/post/like/<key>")
+@ bp.post("/post/like/<key>")
 def like(key):
     con, cur = db_open()
 
@@ -328,7 +334,7 @@ def like(key):
     })
 
 
-@bp.post("/post/photo/<key>")
+@ bp.post("/post/photo/<key>")
 def add_photos(key):
     con, cur = db_open()
 
@@ -417,7 +423,7 @@ def add_photos(key):
     })
 
 
-@bp.put("/post/photo/<key>")
+@ bp.put("/post/photo/<key>")
 def order_photo(key):
     con, cur = db_open()
 
@@ -483,7 +489,7 @@ def order_photo(key):
     })
 
 
-@bp.delete("/post/photo/<key>")
+@ bp.delete("/post/photo/<key>")
 def delete_photo(key):
     con, cur = db_open()
 
