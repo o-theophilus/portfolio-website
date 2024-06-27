@@ -34,7 +34,7 @@
 	on:mouseenter
 	on:mouseleave
 >
-	<img src={post.photos[0] || ''} alt={post.title} onerror="this.src='/site/no_photo.png'" />
+	<img src={post.photos[0] || '/site/no_photo.png'} alt={post.title} />
 </a>
 
 <style>

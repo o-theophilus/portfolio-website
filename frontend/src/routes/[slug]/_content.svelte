@@ -12,22 +12,6 @@
 	let content = '';
 	let error = {};
 
-	const process = (_in) => {
-		if (!_in) {
-			_in = '';
-		}
-
-		content = _in;
-		let photo_count = 1;
-		let exist = content.search(/{#photo}/) >= 0;
-		while (exist) {
-			let i = `![${$module.post.title}](${$module.post.photos[photo_count]})`;
-			content = content.replace(/{#photo}/, i);
-			exist = content.search(/{#photo}/) >= 0;
-			photo_count = photo_count + 1;
-		}
-	};
-
 	const validate = () => {
 		error = {};
 
@@ -68,7 +52,7 @@
 
 	onMount(() => {
 		textarea.value = $module.post.content;
-		process($module.post.content);
+		content = $module.process_content($module.post.content);
 	});
 </script>
 
@@ -96,7 +80,7 @@
 					}
 				}}
 				on:keyup={() => {
-					process(textarea.value);
+					content = $module.process_content(textarea.value);
 				}}
 			/>
 		</div>

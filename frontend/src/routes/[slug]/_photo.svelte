@@ -9,7 +9,7 @@
 	import Icon from '$lib/icon.svelte';
 
 	let post = $module.post;
-	let photo_count = $module.photo_count;
+	let photo_count = post.content.split('{#photo}').length;
 	let edit_mode = true;
 
 	let input;
@@ -136,7 +136,6 @@
 	<img
 		src={active_photo || '/site/no_photo.png'}
 		alt={post.title}
-		onerror="this.src='/site/no_photo.png'"
 		class="main"
 		class:dragover
 		class:edit_mode={edit_mode && post.photos.length < photo_count}
@@ -177,9 +176,8 @@
 			{#each post.photos as photo (photo)}
 				<img
 					animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
-					src="{photo}/200"
+					src={photo ? `${photo}/200` : '/site/no_photo.png'}
 					alt={post.name}
-					onerror="this.src='/site/no_photo.png'"
 					on:click={() => {
 						error = {};
 						active_photo = photo;

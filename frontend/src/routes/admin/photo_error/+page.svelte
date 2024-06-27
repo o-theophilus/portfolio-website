@@ -75,9 +75,8 @@
 				{#each unused as x}
 					<img
 						class:selected={photos.includes(x)}
-						src={`${x}/100` || ''}
+						src={x ? `${x}/100` : '/site/no_photo.png'}
 						alt="missing"
-						onerror="this.src='/site/no_photo.png'"
 						on:click={() => {
 							if (photos.includes(x)) {
 								photos = photos.filter((y) => y != x);

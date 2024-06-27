@@ -37,28 +37,31 @@
 	let tags = [];
 	let edit_mode = false;
 	let admin = false;
-
 	let content = '';
-	let photo_count = 1;
 
-	const process = (_in) => {
-		if (!_in) {
-			_in = '';
+	const process_content = (content) => {
+		if (!content) {
+			content = '';
 		}
 
-		content = _in;
-		photo_count = 1;
+		let i = 0;
+
 		let exist = content.search(/{#photo}/) >= 0;
 		while (exist) {
-			let i = `![${post.title}](${post.photos[photo_count]})`;
-			content = content.replace(/{#photo}/, i);
+			i++;
+			content = content.replace(
+				/{#photo}/,
+				`![${post.title}](${post.photos[i] ? post.photos[i] : '/site/no_photo.png'})`
+			);
 			exist = content.search(/{#photo}/) >= 0;
-			photo_count = photo_count + 1;
 		}
+
+		return content;
 	};
 
 	const update = async (data) => {
 		post = data;
+		content = process_content(post.content);
 	};
 
 	let my_rating = null;
@@ -67,18 +70,18 @@
 	};
 
 	onMount(async () => {
-		if ($page.url.searchParams.has('edit') && admin) {
-			$page.url.searchParams.delete('edit');
-			edit_mode = true;
-
-			window.history.replaceState(history.state, '', $page.url.href);
-		}
-		process(post.content);
+		content = process_content(post.content);
 
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/permission/post:edit`);
 		resp = await resp.json();
 		if (resp.status == 200) {
 			admin = $user.permissions.some((x) => resp.permissions.includes(x));
+		}
+
+		if ($page.url.searchParams.has('edit') && admin) {
+			$page.url.searchParams.delete('edit');
+			edit_mode = true;
+			window.history.replaceState(history.state, '', $page.url.href);
 		}
 	});
 
@@ -86,7 +89,7 @@
 	let comment;
 	let similar;
 	const refresh = async () => {
-		process(post.content);
+		content = process_content(post.content);
 		my_rating = null;
 		author.reset();
 		comment.reset();
@@ -117,7 +120,7 @@
 		</div>
 	{/if}
 	<div class="img">
-		<img src={post.photos[0] || ''} alt={post.title} onerror="this.src='/site/no_photo.png'" />
+		<img src={post.photos[0] || '/site/no_photo.png'} alt={post.title} />
 		<div class="line">
 			{#if $user.permissions.includes('post:edit_photos') && edit_mode}
 				<BRound
@@ -126,7 +129,6 @@
 						$module = {
 							module: Manage_Photo,
 							post,
-							photo_count,
 							update
 						};
 					}}
@@ -202,7 +204,8 @@
 				$module = {
 					module: Edit_Content,
 					post,
-					update
+					update,
+					process_content
 				};
 			}}
 		/>

@@ -92,7 +92,6 @@
 	<img
 		src={user.photo || '/site/no_photo.png'}
 		alt={user.name}
-		onerror="this.src='/site/no_photo.png'"
 		class:dragover
 		class:edit_mode
 		style:--ar={dim[0] / dim[1]}
