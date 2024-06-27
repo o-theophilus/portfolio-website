@@ -1,4 +1,8 @@
 <script>
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import { module } from '$lib/store.js';
+
 	import Parallax from './home/parallax.svelte';
 	import WelcomeText from './home/welcome_text.svelte';
 	import WhatIDo from './home/what_i_do.svelte';
@@ -10,6 +14,27 @@
 	import Meta from '$lib/meta.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Log from '$lib/log.svelte';
+	import Dialogue from '$lib/dialogue.svelte';
+
+	onMount(() => {
+		if ($page.url.searchParams.has('module')) {
+			let _module = {};
+			switch ($page.url.searchParams.get('module')) {
+				case 'dialogue':
+					_module.module = Dialogue;
+					break;
+			}
+
+			for (const x of ['title', 'status', 'message']) {
+				if ($page.url.searchParams.has(x)) {
+					_module[x] = $page.url.searchParams.get(x);
+				}
+			}
+
+			$module = _module;
+			window.history.replaceState(history.state, '', '/');
+		}
+	});
 </script>
 
 <Log entity_type={'page'} />

@@ -8,7 +8,7 @@ export const load = async ({ parent, fetch }) => {
     let a = await parent();
     if (!a.locals.user.login || a.locals.user.permissions.length == 0) {
         throw redirect(307, `/?${new URLSearchParams({
-            "module": "info",
+            "module": "dialogue",
             "title": "Warning",
             "status": 201,
             "message": "Unauthorized Access",
