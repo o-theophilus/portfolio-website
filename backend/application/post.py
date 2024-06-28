@@ -364,13 +364,15 @@ def add_photos(key):
 
     error = ""
     files = []
+    _req = post["content"].count("{#photo}") + 1 - len(post["photos"])
+
     for x in request.files.getlist("files"):
         media, format = x.content_type.split("/")
 
         err = ""
         if media != "image" or format in ['svg+xml', 'x-icon']:
             err = f"{x.filename} => invalid file"
-        elif len(files) + len(post["photos"]) >= 10:
+        elif _req - len(files) < 1:
             err = f"{x.filename} => excess file"
 
         if err:
