@@ -51,7 +51,7 @@
 			i++;
 			content = content.replace(
 				/{#photo}/,
-				`![${post.title}](${post.photos[i] ? post.photos[i] : '/site/no_photo.png'})`
+				`![${post.title}](${post.photos[i] ? post.photos[i] : '/no_photo.png'})`
 			);
 			exist = content.search(/{#photo}/) >= 0;
 		}
@@ -120,7 +120,7 @@
 		</div>
 	{/if}
 	<div class="img">
-		<img src={post.photos[0] || '/site/no_photo.png'} alt={post.title} />
+		<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
 		<div class="line">
 			{#if $user.permissions.includes('post:edit_photos') && edit_mode}
 				<BRound

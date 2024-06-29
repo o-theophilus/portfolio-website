@@ -77,8 +77,7 @@
 	}
 
 	.home {
-		background-color: #ffaf1b;
-		background-color: #6CBCFF;
+		background-color: #82c6ff;
 	}
 	.home a {
 		color: var(--bg1);

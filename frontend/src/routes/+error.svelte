@@ -21,7 +21,7 @@
 			<br />
 			{error}
 		</div>
-		<img src="/site/error.png" alt="error" />
+		<img src="/error.png" alt="error" />
 
 		<Button href="/">
 			<Icon icon="home" />

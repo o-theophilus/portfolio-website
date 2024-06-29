@@ -22,7 +22,7 @@
 
 <a href="/{post.slug}" data-sveltekit-preload-data on:click={click} on:mouseenter={click}>
 	<div class="img">
-		<img src={post.photos[0] || '/site/no_photo.png'} alt={post.title} />
+		<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
 	</div>
 	<div class="ititle">
 		<strong>

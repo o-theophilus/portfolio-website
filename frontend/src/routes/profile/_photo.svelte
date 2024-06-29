@@ -90,7 +90,7 @@
 	<br />
 	<br />
 	<img
-		src={user.photo || '/site/no_photo.png'}
+		src={user.photo || '/no_photo.png'}
 		alt={user.name}
 		class:dragover
 		class:edit_mode

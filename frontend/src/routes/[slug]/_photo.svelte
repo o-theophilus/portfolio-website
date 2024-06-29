@@ -134,7 +134,7 @@
 	<br />
 	<br />
 	<img
-		src={active_photo || '/site/no_photo.png'}
+		src={active_photo || '/no_photo.png'}
 		alt={post.title}
 		class="main"
 		class:dragover
@@ -176,7 +176,7 @@
 			{#each post.photos as photo (photo)}
 				<img
 					animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
-					src={photo ? `${photo}/200` : '/site/no_photo.png'}
+					src={photo ? `${photo}/200` : '/no_photo.png'}
 					alt={post.name}
 					on:click={() => {
 						error = {};

@@ -69,7 +69,7 @@
 							click(x);
 						}}
 					>
-						<img src={x.photos[0] || '/site/no_photo.png'} alt={x.title} />
+						<img src={x.photos[0] || '/no_photo.png'} alt={x.title} />
 					</a>
 					<div class="details">
 						<a

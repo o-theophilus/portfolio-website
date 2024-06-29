@@ -10,7 +10,6 @@
 	--sp3: 24px;
 	--sp4: 64px;
 
-	--cl1: rgb(255, 102, 51);
 	--cl1: rgb(0, 0, 204);
 	--cl1_l: color-mix(in srgb, var(--cl1), transparent 80%);
 	--cl1_d: color-mix(in srgb, var(--cl1), black 30%);
