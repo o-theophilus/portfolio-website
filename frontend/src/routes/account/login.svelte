@@ -87,6 +87,7 @@
 		type="email"
 		bind:value={form.email}
 		placeholder="Email here"
+		required
 	/>
 
 	<IG

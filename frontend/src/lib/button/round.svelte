@@ -7,7 +7,7 @@
 	export let disabled = false;
 
 	export let icon = '';
-	export let icon_size = 1.4;
+	export let icon_size = 1;
 
 	export let large = false;
 	export let extra = ''; // outline, hov_red

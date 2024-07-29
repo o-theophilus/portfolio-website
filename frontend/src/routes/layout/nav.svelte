@@ -14,7 +14,7 @@
 <nav class:home>
 	<div class="block">
 		<a href="/">
-			<Icon icon="logo" />
+			<Icon icon="logo" size=1.5 />
 			<span> Loup </span>
 		</a>
 		<div class="links">

@@ -21,35 +21,38 @@
 </script>
 
 <a href="/{post.slug}" data-sveltekit-preload-data on:click={click} on:mouseenter={click}>
-	<div class="img">
-		<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
+	<div>
+		<div class="img">
+			<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
+		</div>
+		<div class="ititle">
+			<strong>
+				{post.title}
+			</strong>
+		</div>
+		<div class="description">
+			{post.description}
+		</div>
 	</div>
-	<div class="ititle">
-		<strong>
-			{post.title}
-		</strong>
-	</div>
-	<div class="description">
-		{post.description}
-	</div>
+
 	<div class="date line">
 		<Datetime datetime={post.date} type="ago" />
 		<div class="line info">
 			<div class="line">
-				<Icon icon="visibility" size=1.4/>
+				<Icon icon="visibility" size="1.4" />
 				{post.view}
 			</div>
 			<div class="line">
-				<Icon icon="thumb_up" size=1.4/>
+				<Icon icon="thumb_up" size="1.4" />
 				{post._like}
 			</div>
 			<div class="line">
-				<Icon icon="comment" size=1.4/>
+				<Icon icon="comment" size="1.4" />
 				{post.comment}
 			</div>
 			{#if post.rating > 0}
 				<div class="line">
-					<Icon icon="hotel_class" size=1.4/>
+					<Icon icon="hotel_class" size="1.4" />
 					{parseFloat(post.rating)}
 				</div>
 			{/if}
@@ -59,8 +62,12 @@
 
 <style>
 	a {
-		display: block;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
 		padding: var(--sp3);
+		height: 100%;
 
 		background-color: var(--bg1);
 		color: var(--ft2);
@@ -91,7 +98,7 @@
 		transition-timing-function: ease-in-out;
 	}
 	a:hover img {
-		transform: scale(1.2);
+		transform: scale(1.2) rotate(5deg);
 	}
 	.ititle {
 		color: var(--ft1);

@@ -33,8 +33,8 @@
 	</div>
 
 	<div class="line">
-		<DropPlus name="status" list={_status} default_value={_status[0]} />
-		<DropPlus name="type" list={['all', ..._type]} default_value="all" />
+		<DropPlus name="status" list={_status} default_value={_status[0]} wide />
+		<DropPlus name="type" list={['all', ..._type]} default_value="all" wide />
 	</div>
 	<div class="line">
 		<Search />

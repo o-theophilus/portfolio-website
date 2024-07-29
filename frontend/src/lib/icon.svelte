@@ -316,6 +316,18 @@
 	<svg viewBox="0 -960 960 960" width="{size}em" height="{size}em">
 		<path d="M120-240v-80h240v80H120Zm0-200v-80h480v80H120Zm0-200v-80h720v80H120Z" />
 	</svg>
+{:else if icon == 'code'}
+	<svg viewBox="0 -960 960 960" width="{size}em" height="{size}em">
+		<path
+			d="M320-240 80-480l240-240 57 57-184 184 183 183-56 56Zm320 0-57-57 184-184-183-183 56-56 240 240-240 240Z"
+		/>
+	</svg>
+{:else if icon == 'wysiwyg'}
+	<svg viewBox="0 -960 960 960" width="{size}em" height="{size}em">
+		<path
+			d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-480H200v480Zm80-280v-80h400v80H280Zm0 160v-80h240v80H280Z"
+		/>
+	</svg>
 {/if}
 
 <style>

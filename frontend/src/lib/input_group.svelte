@@ -12,13 +12,20 @@
 	export let placeholder = '';
 	export let min = '';
 	export let disabled = false;
+	export let required = false;
 
 	export let no_pad = false;
 </script>
 
 <div class="inputGroup" class:no_pad>
 	<slot name="label">
-		<label for={id}>{name}</label>
+		<label for={id}>
+			{name}
+
+			{#if required}
+				<span class="error">*</span>
+			{/if}
+		</label>
 	</slot>
 
 	{#if error}
@@ -44,7 +51,7 @@
 		width: 100%;
 	}
 	.inputGroup:not(.no_pad) {
-		margin: var(--sp3) 0;
+		margin: var(--sp2) 0;
 	}
 
 	.input {
@@ -74,5 +81,10 @@
 
 	.left_pad {
 		padding-left: var(--sp2);
+	}
+
+	label,
+	.error {
+		font-size: 0.8rem;
 	}
 </style>

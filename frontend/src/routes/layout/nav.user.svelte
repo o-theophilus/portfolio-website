@@ -89,9 +89,11 @@
 		flex-direction: column;
 		gap: var(--sp2);
 
-		background-color: var(--bg2);
+		background-color: var(--bg1);
 
 		padding: var(--sp2);
 		border-radius: var(--sp0);
+
+		outline: 2px solid var(--bg2);
 	}
 </style>

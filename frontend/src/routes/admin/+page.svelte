@@ -13,35 +13,35 @@
 
 <Content>
 	<strong class="ititle"> Admin Dashboard</strong>
-	<br />
-	{#if $user.access.includes('user:set_access')}
-		<br />
-		<Button href="/admin/admin_users" size="wide">Admins</Button>
-	{/if}
-	{#if $user.access.includes('user:view')}
-		<br />
-		<Button href="/admin/users" size="wide">Users</Button>
-	{/if}
-	{#if $user.access.includes('report:view')}
-		<br />
-		<Button href="/admin/report" size="wide">Reports</Button>
-	{/if}
-	{#if $user.access.includes('admin:manage_photo')}
-		<br />
-		<Button href="/admin/photo_error" size="wide">Photo Error</Button>
-	{/if}
-	<br />
-	<br />
-	<br />
-	TODO:
-	<br />
-	upgrade dropdown
-	<br />
-	update IG
-	<br />
-	use protonmail
-	<br />
+
+	<div class="btns">
+		{#if $user.access.includes('user:set_access')}
+			<Button href="/admin/admin_users" size="wide">Admins</Button>
+		{/if}
+
+		{#if $user.access.includes('user:view')}
+			<Button href="/admin/users" size="wide">Users</Button>
+		{/if}
+
+		{#if $user.access.includes('report:view')}
+			<Button href="/admin/report" size="wide">Reports</Button>
+		{/if}
+
+		{#if $user.access.includes('admin:manage_photo')}
+			<Button href="/admin/photo_error" size="wide">Photo Error</Button>
+		{/if}
+	</div>
+
+	<!-- TODO: use protonmail -->
 </Content>
 
 <style>
+	.btns {
+		display: flex;
+		flex-direction: column;
+		gap: var(--sp1);
+
+		margin: var(--sp2) 0;
+		max-width: 400px;
+	}
 </style>

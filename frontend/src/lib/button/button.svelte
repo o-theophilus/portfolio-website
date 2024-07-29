@@ -79,6 +79,7 @@
 	:not(:disabled):hover {
 		background-color: var(--cl1);
 		color: var(--ft1_b);
+		text-decoration: none;
 	}
 	:not(:disabled).primary:hover {
 		background-color: var(--cl1_d);

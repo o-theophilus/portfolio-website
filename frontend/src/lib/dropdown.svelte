@@ -12,6 +12,8 @@
 	};
 </script>
 
+<!-- TODO: upgrade dropdown -->
+
 {#if icon}
 	<button>
 		<div class="icon">

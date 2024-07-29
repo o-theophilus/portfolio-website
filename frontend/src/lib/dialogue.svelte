@@ -17,11 +17,11 @@
 	class:warning={status == 201}
 >
 	{#if status == 200}
-		<Icon icon="check_circle" />
+		<Icon icon="check_circle" size="2" />
 	{:else if status == 400}
-		<Icon icon="cancel" />
+		<Icon icon="cancel" size="2" />
 	{:else if status == 201}
-		<Icon icon="error" />
+		<Icon icon="error" size="2" />
 	{/if}
 	{title}
 </div>
@@ -29,32 +29,37 @@
 	<div class="text">
 		{@html message}
 	</div>
-	<div class="line">
-		{#each buttons as x}
-			<Button
-				size="wide"
-				on:click={() => {
-					x.fn();
-				}}
-			>
-				{#if x.icon}
-					<Icon icon={x.icon} />
-				{/if}
-				{x.name}
-			</Button>
-		{/each}
-	</div>
+
+	{#if buttons.length > 0}
+		<div class="line">
+			{#each buttons as x}
+				<Button
+					size="wide"
+					on:click={() => {
+						x.fn();
+					}}
+				>
+					{#if x.icon}
+						<Icon icon={x.icon} />
+					{/if}
+					{x.name}
+				</Button>
+			{/each}
+		</div>
+	{/if}
 </div>
 
 <style>
 	.title {
 		display: flex;
 		align-items: center;
-		gap: var(--sp2);
+		gap: var(--sp1);
 
 		padding: var(--sp2);
 		padding-right: var(--sp4);
 
+		font-size: 1.2rem;
+		font-weight: 800;
 		color: var(--ft1_b);
 		text-transform: capitalize;
 	}

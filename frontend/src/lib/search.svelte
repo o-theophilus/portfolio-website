@@ -80,6 +80,7 @@
 	.right {
 		display: flex;
 		align-items: center;
+		margin-right: 6px;
 	}
 	.close {
 		margin-right: var(--sp1);

@@ -74,11 +74,13 @@
 			<Content>
 				<div class="post-block" bind:this={block}>
 					<div class="title">
-						Post{$settings.highlight.length > 1 ? 's' : ''}
+						<span class="name">
+							Post{$settings.highlight.length > 1 ? 's' : ''}
+						</span>
+
 						{#if $user.access.includes('post:edit_photos')}
 							<BRround
 								icon="edit"
-								large
 								on:click={() => {
 									$module = {
 										module: Edit
@@ -137,13 +139,19 @@
 	.title {
 		display: flex;
 		gap: var(--sp2);
-		font-size: 1.5rem;
+	}
+
+	.title .name {
 		font-weight: 800;
+
+		font-size: 1.5rem;
+		color: var(--ft2);
 
 		transition: font-size var(--trans), color var(--trans);
 	}
-	.intersecting .title {
-		font-size: 1.2rem;
+
+	.intersecting .title .name {
+		font-size: 2rem;
 		color: var(--ft1);
 	}
 

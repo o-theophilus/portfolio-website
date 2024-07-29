@@ -9,7 +9,7 @@
 	import Content from '$lib/content.svelte';
 </script>
 
-<Content>
+<Content fit>
 	{#if $page.url.pathname != '/post'}
 		<hr />
 	{/if}
@@ -30,7 +30,7 @@
 			</div>
 		</section>
 		<div class="copyright">&copy Loup 2023. All rights reserved.</div>
-		<br /><br />
+		<br /><br /><br />
 	</footer>
 </Content>
 
@@ -46,7 +46,7 @@
 		margin: var(--sp3) 0;
 	}
 	.copyright {
-		margin: var(--sp4) 0;
+		margin-top: var(--sp4) ;
 	}
 	@media screen and (min-width: 600px) {
 		section {

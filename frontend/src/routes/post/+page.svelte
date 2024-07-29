@@ -68,7 +68,7 @@
 
 		<section class="items">
 			{#each posts as post (post.key)}
-				<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
+				<div animate:flip={{ delay: 0, duration: 500, easing: cubicInOut }}>
 					<One {post} />
 				</div>
 			{:else}
