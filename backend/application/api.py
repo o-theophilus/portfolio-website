@@ -7,10 +7,10 @@ from deta import Deta
 from .postgres import db_open, db_close
 from .postgres import (
     post_table, user_table, log_table, comment_table,
-    rating_table, otp_table, setting_table,
+    rating_table, code_table, setting_table,
     report_table)
 from uuid import uuid4
-from .admin import permissions
+from .admin import access
 
 
 bp = Blueprint("api", __name__)
@@ -88,7 +88,7 @@ def create_tables():
         DROP TABLE IF EXISTS comment CASCADE;
         DROP TABLE IF EXISTS report CASCADE;
         DROP TABLE IF EXISTS rating CASCADE;
-        DROP TABLE IF EXISTS otp CASCADE;
+        DROP TABLE IF EXISTS code CASCADE;
         DROP TABLE IF EXISTS log CASCADE;
         {setting_table}
         {user_table}
@@ -96,7 +96,7 @@ def create_tables():
         {comment_table}
         {report_table}
         {rating_table}
-        {otp_table}
+        {code_table}
         {log_table}
     """)
 
@@ -170,6 +170,7 @@ def deta_to_postgres():
     })
 
 
+# @bp.get("/fix")
 def general_fix():
     con, cur = db_open()
 
@@ -196,14 +197,17 @@ def general_fix():
     #     ADD COLUMN price FLOAT DEFAULT 0 NOT NULL;
     # """)
 
-    # cur.execute("""
-    # DELETE FROM log
-    # WHERE
-    #     log.misc ? 'entity_type'
-    #     AND log.misc ? 'entity_key'
-    # ;""")
+    cur.execute(f"""
+        DROP TABLE IF EXISTS otp CASCADE;
+        DROP TABLE IF EXISTS code CASCADE;
+        {code_table}
+    """)
 
-    cur.execute("DROP TABLE IF EXISTS save;")
+    cur.execute("""
+        ALTER TABLE "user"
+        RENAME COLUMN permissions
+        TO access;
+    ;""")
 
     db_close(con, cur)
     return jsonify({
@@ -211,16 +215,15 @@ def general_fix():
     })
 
 
-# @bp.get("/fix")
-def fix_permission():
+def fix_access():
     con, cur = db_open()
 
     cur.execute("""
             UPDATE "user"
-            SET permissions = %s
+            SET access = %s
             WHERE email = %s;
         """, (
-        [f"{x}:{y[0]}" for x in permissions for y in permissions[x]],
+        [f"{x}:{y[0]}" for x in access for y in access[x]],
         os.environ["MAIL_USERNAME"]
     ))
 

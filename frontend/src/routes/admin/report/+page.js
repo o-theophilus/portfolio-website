@@ -4,7 +4,7 @@ import { state, loading } from "$lib/store.js"
 
 export const load = async ({ fetch, url, parent }) => {
 	let a = await parent();
-	if (!a.locals.user.permissions.includes("report:view")) {
+	if (!a.locals.user.access.includes("report:view")) {
 		throw error(400, "unauthorized access")
 	}
 

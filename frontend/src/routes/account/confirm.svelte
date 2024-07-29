@@ -4,7 +4,7 @@
 	import IG from '$lib/input_group.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Button from '$lib/button/button.svelte';
-	import OTP from '$lib/input_otp.svelte';
+	import Code from '$lib/input_code.svelte';
 
 	import Dialogue from '$lib/dialogue.svelte';
 	import Login from './login.svelte';
@@ -17,10 +17,10 @@
 	const validate = () => {
 		error = {};
 
-		if (!form.otp) {
-			error.otp = 'cannot be empty';
-		} else if (form.otp.length != 6) {
-			error.otp = 'invalid OTP';
+		if (!form.code) {
+			error.code = 'cannot be empty';
+		} else if (form.code.length != 6) {
+			error.code = 'invalid Code';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -65,7 +65,7 @@
 <form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Confirm Email </strong>
 	<br />
-	OTP has been sent to your email
+	Code has been sent to your email
 	<br />
 
 	{#if error.error}
@@ -74,8 +74,8 @@
 		</div>
 	{/if}
 
-	<IG name="OTP" error={error.otp}>
-		<OTP bind:value={form.otp} />
+	<IG name="Code" error={error.code}>
+		<Code bind:value={form.code} />
 	</IG>
 
 	<Button primary on:click={validate}>

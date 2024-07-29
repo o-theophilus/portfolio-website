@@ -20,7 +20,7 @@ def get_reports():
             "error": "invalid token"
         })
 
-    if "report:view" not in user["permissions"]:
+    if "report:view" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -248,7 +248,7 @@ def status(key):
             "error": "invalid token"
         })
 
-    if "report:edit_status" not in user["permissions"]:
+    if "report:edit_status" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,

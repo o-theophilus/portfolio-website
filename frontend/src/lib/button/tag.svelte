@@ -17,7 +17,7 @@
 		border-radius: calc(var(--size) / 2);
 		padding: 0 var(--sp2);
 
-		font-size: small;
+		font-size: 0.8rem;
 		cursor: pointer;
 		background-color: var(--cl1_l);
 

@@ -60,7 +60,7 @@ def get_post(key, cur=None):
         if set([
             "post:add",
             "post:edit_status"
-        ]).isdisjoint(user["permissions"]):
+        ]).isdisjoint(user["access"]):
             if close_conn:
                 db_close(con, cur)
             return jsonify({
@@ -88,8 +88,8 @@ def get_all(order="latest", page_size=24):
 
     if (
         "status" in request.args and user and (
-            "post:edit_status" in user["permissions"]
-            or "post:add" in user["permissions"]
+            "post:edit_status" in user["access"]
+            or "post:add" in user["access"]
         )
     ):
         status = request.args["status"]

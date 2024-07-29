@@ -12,10 +12,10 @@ from .storage import drive, storage
 bp = Blueprint("admin", __name__)
 
 
-permissions = {
+access = {
     "user": [
         ['view', 1],
-        ['set_permission', 3]
+        ['set_access', 3]
     ],
     "admin": [
         ['manage_photo', 3]
@@ -55,7 +55,7 @@ def default_admin():
         key = uuid4().hex
         cur.execute("""
                 INSERT INTO "user" ( key, status, name, email,
-                    password, permissions)
+                    password, access)
                 VALUES (%s, %s, %s, %s, %s, %s);
             """, (
             key,
@@ -64,7 +64,7 @@ def default_admin():
             email,
             generate_password_hash(
                 os.environ["MAIL_PASSWORD"], method="scrypt"),
-            [f"{x}:{y[0]}" for x in permissions for y in permissions[x]]
+            [f"{x}:{y[0]}" for x in access for y in access[x]]
         ))
 
         log(
@@ -92,21 +92,21 @@ def default_admin():
     })
 
 
-@bp.get("/admin/permission")
-@bp.get("/admin/permission/<search>")
-def get_permission(search=None):
-    _all = [f"{x}:{y[0]}" for x in permissions for y in permissions[x]]
+@bp.get("/admin/access")
+@bp.get("/admin/access/<search>")
+def get_access(search=None):
+    _all = [f"{x}:{y[0]}" for x in access for y in access[x]]
     if search:
         _all = [x for x in _all if x.find(search) != -1]
 
     return jsonify({
         "status": 200,
-        "permissions": _all
+        "access": _all
     })
 
 
-@bp.put("/admin/permission/<key>")
-def permission(key):
+@bp.put("/admin/access/<key>")
+def set_access(key):
     con, cur = db_open()
 
     me = token_to_user(cur)
@@ -114,7 +114,7 @@ def permission(key):
     user = cur.fetchone()
 
     error = None
-    if not me or "user:set_permission" not in me["permissions"]:
+    if not me or "user:set_access" not in me["access"]:
         error = "unauthorized access"
     elif "password" not in request.json:
         error = "cannot be empty"
@@ -123,8 +123,8 @@ def permission(key):
     elif (
         not user
         or me["key"] == user["key"]
-        or "permissions" not in request.json
-        or type(request.json["permissions"]) is not list
+        or "access" not in request.json
+        or type(request.json["access"]) is not list
         or user["email"] == os.environ["MAIL_USERNAME"]
         or user["status"] != "confirmed"
     ):
@@ -139,22 +139,22 @@ def permission(key):
 
     cur.execute("""
         UPDATE "user"
-        SET permissions = %s
+        SET access = %s
         WHERE key = %s;
     """, (
-        request.json["permissions"],
+        request.json["access"],
         user["key"]
     ))
 
     log(
         cur=cur,
         user_key=me["key"],
-        action="changed_permission",
+        action="changed_access",
         entity_key=user["key"],
         entity_type="admin",
         misc={
-            "from": user["permissions"],
-            "to": request.json["permissions"]
+            "from": user["access"],
+            "to": request.json["access"]
         }
     )
 
@@ -177,7 +177,7 @@ def photo_error():
             "error": "invalid token"
         })
 
-    if "admin:manage_photo" not in user["permissions"]:
+    if "admin:manage_photo" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -243,7 +243,7 @@ def delete_photo():
             "error": "invalid token"
         })
 
-    if "admin:manage_photo" not in user["permissions"]:
+    if "admin:manage_photo" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -325,7 +325,7 @@ def set_highlight(key):
             "error": "invalid token"
         })
 
-    if "post:edit_highlight" not in user["permissions"]:
+    if "post:edit_highlight" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -385,7 +385,7 @@ def edit_highlight():
             "error": "invalid token"
         })
 
-    if "post:edit_highlight" not in user["permissions"]:
+    if "post:edit_highlight" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,

@@ -46,7 +46,7 @@
 	<Loading active={loading} size="40" />
 	| Author
 
-	{#if $user.permissions.includes('post:edit_author') && edit_mode}
+	{#if $user.access.includes('post:edit_author') && edit_mode}
 		<BRound
 			icon="edit"
 			icon_size={15}

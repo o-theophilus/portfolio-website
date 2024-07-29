@@ -1,5 +1,5 @@
 <script>
-	import { module, user, loading, notification } from '$lib/store.js';
+	import { module, user, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
@@ -8,7 +8,7 @@
 	import Link from '$lib/button/link.svelte';
 
 	import Login from './login.svelte';
-	import OTP from './forgot_2.otp.svelte';
+	import Code from './forgot_2.code.svelte';
 	import EmailTemplate from './forgot.template.svelte';
 
 	let form = {
@@ -30,7 +30,7 @@
 	};
 
 	const submit = async () => {
-		$loading = 'Requesting OTP . . .';
+		$loading = 'Requesting Code . . .';
 		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/forgot/1`, {
@@ -46,7 +46,7 @@
 
 		if (resp.status == 200) {
 			$module = {
-				module: OTP,
+				module: Code,
 				form
 			};
 		} else {

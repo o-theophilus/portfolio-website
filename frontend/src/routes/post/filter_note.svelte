@@ -67,6 +67,6 @@
 
 		background-color: var(--cl1_l);
 		color: var(--ft1);
-		font-size: small;
+		font-size: 0.8rem;
 	}
 </style>

@@ -5,7 +5,7 @@
 	import Link from './nav.btn.svelte';
 	import Theme from './nav.theme.svelte';
 	import User from './nav.user.svelte';
-	import SVG from '$lib/svg.svelte';
+	import Icon from '$lib/icon.svelte';
 	import Login from '../account/login.svelte';
 
 	$: home = $page.url.pathname == '/';
@@ -14,8 +14,8 @@
 <nav class:home>
 	<div class="block">
 		<a href="/">
-			<SVG type="logo" />
-			Loup
+			<Icon icon="logo" />
+			<span> Loup </span>
 		</a>
 		<div class="links">
 			<Link {home} href="/post">Post</Link>
@@ -61,14 +61,17 @@
 		align-items: center;
 		gap: var(--sp1);
 
-		color: var(--ft1);
-		fill: var(--cl1);
-		font-size: large;
+		color: var(--cl1);
+		font-size: 1.2rem;
 		font-weight: 800;
 
 		text-decoration: none;
 
 		transition: color var(--trans);
+	}
+
+	a span {
+		color: var(--ft1);
 	}
 
 	.block,
@@ -79,7 +82,7 @@
 	.home {
 		background-color: #82c6ff;
 	}
-	.home a {
+	.home a span {
 		color: var(--bg1);
 	}
 </style>

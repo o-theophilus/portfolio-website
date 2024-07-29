@@ -6,7 +6,7 @@
 	<b> Dear {'{'}name{'}'}, </b>
 	<br />
 	<br />
-	To change your email, please use the following One-Time Password (OTP):
+	To change your email, please use the following Code:
 	<br />
 	<br />
 	<div
@@ -18,11 +18,11 @@
 		border-radius: 4px;
 	"
 	>
-		<b> {'{'}otp{'}'} </b>
+		<b> {'{'}code{'}'} </b>
 	</div>
 	<br />
 	<br />
-	Please enter this OTP on the email change form to validate your request. Please note that the OTP
+	Please enter this Code on the email change form to validate your request. Please note that the Code
 	is only valid for a limited time.
 	<br />
 	<br />

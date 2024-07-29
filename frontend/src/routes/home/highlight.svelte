@@ -75,7 +75,7 @@
 				<div class="post-block" bind:this={block}>
 					<div class="title">
 						Post{$settings.highlight.length > 1 ? 's' : ''}
-						{#if $user.permissions.includes('post:edit_photos')}
+						{#if $user.access.includes('post:edit_photos')}
 							<BRround
 								icon="edit"
 								large
@@ -137,13 +137,13 @@
 	.title {
 		display: flex;
 		gap: var(--sp2);
-		font-size: 30px;
+		font-size: 1.5rem;
 		font-weight: 800;
 
 		transition: font-size var(--trans), color var(--trans);
 	}
 	.intersecting .title {
-		font-size: 40px;
+		font-size: 1.2rem;
 		color: var(--ft1);
 	}
 

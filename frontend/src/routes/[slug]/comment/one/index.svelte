@@ -180,7 +180,7 @@
 	}
 
 	.date {
-		font-size: small;
+		font-size: 0.8rem;
 		transition: color var(--trans);
 	}
 	.comment,

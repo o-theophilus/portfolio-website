@@ -7,7 +7,7 @@
 	<b> Hello {'{'}name{'}'}, </b>
 	<br />
 	<br />
-	To reset your password, please use the following One-Time Password (OTP):
+	To reset your password, please use the following Code:
 	<br />
 	<br />
 	<div
@@ -19,10 +19,10 @@
 	border-radius: 4px;
 	"
 	>
-		<b> {'{'}otp{'}'} </b>
+		<b> {'{'}code{'}'} </b>
 	</div>
 	<br />
-	Please enter this OTP on the password reset form to validate your request. Please note that the OTP
+	Please enter this Code on the password reset form to validate your request. Please note that the Code
 	is only valid for a limited time.
 	<br />
 	<br />

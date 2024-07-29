@@ -23,6 +23,6 @@
 </script>
 
 <Button size="small" extra="hover_red" on:click={submit}>
-	<Icon icon="logout" size="16" />
+	<Icon icon="logout" size="1.4" />
 	Logout
 </Button>

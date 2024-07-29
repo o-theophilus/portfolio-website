@@ -72,10 +72,10 @@
 	onMount(async () => {
 		content = process_content(post.content);
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/permission/post:edit`);
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/access/post:edit`);
 		resp = await resp.json();
 		if (resp.status == 200) {
-			admin = $user.permissions.some((x) => resp.permissions.includes(x));
+			admin = $user.access.some((x) => resp.access.includes(x));
 		}
 
 		if ($page.url.searchParams.has('edit') && admin) {
@@ -122,9 +122,9 @@
 	<div class="img">
 		<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
 		<div class="line">
-			{#if $user.permissions.includes('post:edit_photos') && edit_mode}
+			{#if $user.access.includes('post:edit_photos') && edit_mode}
 				<BRound
-					icon="photo"
+					icon="image"
 					on:click={() => {
 						$module = {
 							module: Manage_Photo,
@@ -138,7 +138,7 @@
 	</div>
 
 	<div class="ititle">
-		{#if $user.permissions.includes('post:edit_title') && edit_mode}
+		{#if $user.access.includes('post:edit_title') && edit_mode}
 			<BRound
 				icon="edit"
 				on:click={() => {
@@ -155,7 +155,7 @@
 		</strong>
 	</div>
 
-	{#if $user.permissions.includes('post:edit_date') && edit_mode}
+	{#if $user.access.includes('post:edit_date') && edit_mode}
 		<hr />
 		<BRound
 			icon="edit"
@@ -172,7 +172,7 @@
 		<Datetime datetime={post.date} />
 	</span>
 
-	{#if $user.permissions.includes('post:edit_description') && edit_mode}
+	{#if $user.access.includes('post:edit_description') && edit_mode}
 		<hr />
 		<BRound
 			icon="edit"
@@ -196,7 +196,7 @@
 
 	<hr />
 
-	{#if $user.permissions.includes('post:edit_content') && edit_mode}
+	{#if $user.access.includes('post:edit_content') && edit_mode}
 		<BRound
 			icon="edit"
 			icon_size={15}
@@ -260,11 +260,11 @@
 
 	<Author {post} bind:this={author} {edit_mode} />
 
-	{#if post.tags.length > 0 || ($user.permissions.includes('post:edit_tags') && edit_mode)}
+	{#if post.tags.length > 0 || ($user.access.includes('post:edit_tags') && edit_mode)}
 		<hr />
 	{/if}
 
-	{#if $user.permissions.includes('post:edit_tags') && edit_mode}
+	{#if $user.access.includes('post:edit_tags') && edit_mode}
 		<BRound
 			icon="edit"
 			icon_size={15}
@@ -285,10 +285,10 @@
 		<div class="margin">No tag</div>
 	{/if}
 
-	{#if edit_mode && ($user.permissions.includes('post:edit_status') || ($user.permissions.includes('post:edit_highlight') && post.status == 'active'))}
+	{#if edit_mode && ($user.access.includes('post:edit_status') || ($user.access.includes('post:edit_highlight') && post.status == 'active'))}
 		<hr />
 		<div class="line">
-			{#if $user.permissions.includes('post:edit_status') && edit_mode}
+			{#if $user.access.includes('post:edit_status') && edit_mode}
 				<Button
 					size="small"
 					on:click={() => {
@@ -299,14 +299,14 @@
 						};
 					}}
 				>
-					<Icon icon="edit" size="16" />
+					<Icon icon="edit" size="1.4" />
 					|
 					<span>
 						Status: <strong>{post.status}</strong>
 					</span>
 				</Button>
 			{/if}
-			{#if $user.permissions.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
+			{#if $user.access.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
 				<Highlight post_key={post.key} />
 			{/if}
 		</div>
@@ -342,7 +342,7 @@
 		margin-top: var(--sp3);
 	}
 	.date {
-		font-size: small;
+		font-size: 0.8rem;
 		margin-bottom: var(--sp3);
 	}
 

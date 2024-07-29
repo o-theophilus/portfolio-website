@@ -36,10 +36,10 @@
 	>
 		<div class="switch" class:dark={$user.setting_theme == 'dark'}>
 			<div class="state">
-				<Icon icon="light_mode" size="16" />
+				<Icon icon="light_mode" />
 			</div>
 			<div class="state">
-				<Icon icon="dark_mode" size="16" />
+				<Icon icon="dark_mode" />
 			</div>
 		</div>
 	</button>

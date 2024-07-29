@@ -40,7 +40,7 @@
 		{log.user.name}
 	</a>
 
-	{#if log.user.key && $user.permissions.includes('log:view')}
+	{#if log.user.key && $user.access.includes('log:view')}
 		<button
 			on:click={() => {
 				emit('search', { u: log.user.key });
@@ -124,7 +124,7 @@
 	}
 
 	.date {
-		font-size: smaller;
+		font-size: 0.8rem;
 		color: var(--ft2);
 	}
 
@@ -144,7 +144,7 @@
 	a:hover {
 		color: var(--cl1_b);
 	}
-	.break{
+	.break {
 		word-wrap: break-word;
 	}
 </style>

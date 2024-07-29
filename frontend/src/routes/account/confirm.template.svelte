@@ -9,7 +9,7 @@
 	You'll find my latest works and blog posts on design, development, and industry trends. I hope you
 	find it inspiring and informative.
 	<br /><br />
-	To complete you signup, please confirm your email address using the One-Time Password (OTP) below:
+	To complete you signup, please confirm your email address using the Code below:
 	<br /><br />
 	<div
 		style="
@@ -20,10 +20,10 @@
 		border-radius: 4px;
 	"
 	>
-		<b>{'{'}otp{'}'}</b>
+		<b>{'{'}code{'}'}</b>
 	</div>
 	<br /><br />
-	Enter this OTP on the confirmation form. Note that it is valid for a limited time. If you didn't request
+	Enter this Code on the confirmation form. Note that it is valid for a limited time. If you didn't request
 	this, please disregard this message.
 	<br /><br />
 	If you have any questions or comments, feel free to reach out. I'd love to hear from you. Thank you

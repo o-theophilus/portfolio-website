@@ -28,7 +28,7 @@
 		border: none;
 		border-radius: calc(var(--size) / 2);
 		
-		font-size: x-small;
+		font-size: 0.6rem;
 		cursor: pointer;
 		background-color: var(--bg2);
 		
@@ -63,7 +63,7 @@
 		position: relative;
 		left: 0;
 
-		font-size: small;
+		font-size: 0.8rem;
 		height: var(--size);
 		border-radius: calc(var(--size) / 2);
 		background-color: var(--cl1);

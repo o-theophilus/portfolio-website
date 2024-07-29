@@ -14,26 +14,32 @@
 <Content>
 	<strong class="ititle"> Admin Dashboard</strong>
 	<br />
-	{#if $user.permissions.includes('user:set_permission')}
+	{#if $user.access.includes('user:set_access')}
 		<br />
 		<Button href="/admin/admin_users" size="wide">Admins</Button>
 	{/if}
-	{#if $user.permissions.includes('user:view')}
+	{#if $user.access.includes('user:view')}
 		<br />
 		<Button href="/admin/users" size="wide">Users</Button>
 	{/if}
-	{#if $user.permissions.includes('report:view')}
+	{#if $user.access.includes('report:view')}
 		<br />
 		<Button href="/admin/report" size="wide">Reports</Button>
 	{/if}
-	{#if $user.permissions.includes('admin:manage_photo')}
+	{#if $user.access.includes('admin:manage_photo')}
 		<br />
 		<Button href="/admin/photo_error" size="wide">Photo Error</Button>
 	{/if}
 	<br />
 	<br />
 	<br />
-	Todo
+	TODO:
+	<br />
+	upgrade dropdown
+	<br />
+	update IG
+	<br />
+	use protonmail
 	<br />
 </Content>
 

@@ -1,28 +1,28 @@
 <script>
-	import SVG from '$lib/svg.svelte';
+	import Icon from '$lib/icon.svelte';
 </script>
 
 <div class="block">
 	<a href="https://wa.me/2348067397793/?text=Hello%20Theophilus">
-		<SVG type="whatsapp" />
+		<Icon icon="whatsapp" />
 	</a>
 	<a href="https://twitter.com/o__theophilus" target="_blank" rel="noopener noreferrer">
-		<SVG type="twitter" />
+		<Icon icon="twitter" />
 	</a>
 	<a href="https://github.com/o-theophilus" target="_blank" rel="noopener noreferrer">
-		<SVG type="github" />
+		<Icon icon="github" />
 	</a>
 	<!-- <a href="https://discord.com/users/theophilus#6682" target="_blank" rel="noopener noreferrer">
-		<SVG type="discord" />
+		<Icon icon="discord" />
 	</a> -->
 	<a href="https://m.facebook.com/o.theophilus" target="_blank" rel="noopener noreferrer">
-		<SVG type="facebook" />
+		<Icon icon="facebook" />
 	</a>
 	<!-- <a href="https://www.instagram.com/o_theophilus_/" target="_blank" rel="noopener noreferrer">
-		<SVG type="instagram" />
+		<Icon icon="instagram" />
 	</a> -->
 	<a href="https://www.linkedin.com/in/o-theophilus/" target="_blank" rel="noopener noreferrer">
-		<SVG type="linkedin" />
+		<Icon icon="linkedin" />
 	</a>
 </div>
 
@@ -52,12 +52,12 @@
 
 		border-radius: 50%;
 
-		fill: var(--ft2);
+		color: var(--ft2);
 
-		transition: fill var(--trans);
+		transition: color var(--trans);
 	}
 
 	a:hover {
-		fill: var(--cl1);
+		color: var(--cl1);
 	}
 </style>

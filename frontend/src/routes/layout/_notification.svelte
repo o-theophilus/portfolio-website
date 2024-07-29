@@ -69,7 +69,7 @@
 		background-color: var(--cl3);
 		border-radius: var(--sp0);
 		color: var(--ft1_b);
-		font-size: small;
+		font-size: 0.8rem;
 	}
 
 	.line {

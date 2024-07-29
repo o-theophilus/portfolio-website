@@ -15,10 +15,10 @@
 	let admin = false;
 
 	onMount(async () => {
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/permission`);
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/access`);
 		resp = await resp.json();
 		if (resp.status == 200) {
-			admin = $user.permissions.some((x) => resp.permissions.includes(x));
+			admin = $user.access.some((x) => resp.access.includes(x));
 		}
 	});
 </script>
@@ -50,7 +50,7 @@
 			{#if admin && $page.url.pathname != '/admin'}
 				<Link href="/admin">Admin</Link>
 			{/if}
-			{#if $user.permissions.includes('log:view')}
+			{#if $user.access.includes('log:view')}
 				<Link href="/log">Logs</Link>
 			{/if}
 			<Logout />

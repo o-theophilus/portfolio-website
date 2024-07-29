@@ -56,7 +56,7 @@
 </script>
 
 <section>
-	{#if $user.permissions.includes('log:view')}
+	{#if $user.access.includes('log:view')}
 		<Search
 			non_default
 			placeholder="Search for User"

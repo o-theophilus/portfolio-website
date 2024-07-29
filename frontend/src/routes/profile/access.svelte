@@ -7,18 +7,18 @@
 	import Link from '$lib/button/link.svelte';
 	import Tag from '$lib/button/tag.svelte';
 	import ButtonFold from '$lib/button/fold.svelte';
-	import Permission_Ok from './permission._ok.svelte';
+	import Access_Ok from './access._ok.svelte';
 	import Icon from '$lib/icon.svelte';
 
 	export let user;
-	export let permissions;
-	let permits = [...user.permissions];
-	let init = [...user.permissions];
+	export let access;
+	let mods = [...user.access];
+	let init = [...user.access];
 	let open = false;
 
 	const select_group = (_in) => {
 		let group = [];
-		for (const [name, r0les] of Object.entries(permissions)) {
+		for (const [name, r0les] of Object.entries(access)) {
 			for (const x of r0les) {
 				if (_in == name) {
 					group.push(`${name}:${x[0]}`);
@@ -32,7 +32,7 @@
 
 		let add_all = false;
 		for (const x of group) {
-			if (!permits.includes(x)) {
+			if (!mods.includes(x)) {
 				add_all = true;
 				break;
 			}
@@ -40,35 +40,35 @@
 
 		if (add_all) {
 			for (const x of group) {
-				if (!permits.includes(x)) {
-					permits.push(x);
+				if (!mods.includes(x)) {
+					mods.push(x);
 				}
 			}
-			permits = permits;
+			mods = mods;
 		} else {
-			permits = permits.filter((x) => !group.includes(x));
+			mods = mods.filter((x) => !group.includes(x));
 		}
 	};
 
 	const select = (_in) => {
-		if (permits.includes(_in)) {
-			permits = permits.filter((x) => x != _in);
+		if (mods.includes(_in)) {
+			mods = mods.filter((x) => x != _in);
 		} else {
-			permits.push(_in);
-			permits = permits;
+			mods.push(_in);
+			mods = mods;
 		}
 	};
 
 	let disabled = true;
 	$: {
-		let t1 = permits.sort((a, b) => a - b).join(',');
+		let t1 = mods.sort((a, b) => a - b).join(',');
 		let t2 = init.sort((a, b) => a - b).join(',');
 		disabled = t1 == t2;
 	}
 </script>
 
 <div class="title">
-	Permissions
+	Access
 	<ButtonFold
 		{open}
 		on:click={() => {
@@ -102,7 +102,7 @@
 				</span>
 			{/each}
 
-			{#each Object.entries(permissions) as [_type, _actions]}
+			{#each Object.entries(access) as [_type, _actions]}
 				<span>
 					<Link
 						on:click={() => {
@@ -118,7 +118,7 @@
 						{#each _actions as action}
 							{#if action[1] == x}
 								<Tag
-									active={permits.includes(`${_type}:${action[0]}`)}
+									active={mods.includes(`${_type}:${action[0]}`)}
 									on:click={() => {
 										select(`${_type}:${action[0]}`);
 									}}
@@ -138,9 +138,9 @@
 			{disabled}
 			on:click={() => {
 				$module = {
-					module: Permission_Ok,
+					module: Access_Ok,
 					key: user.key,
-					permissions: permits
+					access: mods
 				};
 			}}
 		>

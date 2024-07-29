@@ -22,7 +22,7 @@ def get_comments(key, cur=None):
 
     if status != "active":
         user = token_to_user(cur)
-        if not user or "comment:view_deleted" not in user["permissions"]:
+        if not user or "comment:view_deleted" not in user["access"]:
             status = "active"
 
     # TODO: sub comments count

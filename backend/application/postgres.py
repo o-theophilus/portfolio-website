@@ -21,7 +21,7 @@ user_table = """CREATE TABLE IF NOT EXISTS "user" (
     password VARCHAR(200) NOT NULL,
     photo VARCHAR(50),
 
-    permissions TEXT[] DEFAULT ARRAY[]::TEXT[],
+    access TEXT[] DEFAULT ARRAY[]::TEXT[],
     login BOOLEAN DEFAULT FALSE,
 
     setting_theme VARCHAR(20) DEFAULT 'dark'
@@ -91,7 +91,7 @@ report_table = """CREATE TABLE IF NOT EXISTS report (
 );"""
 
 
-otp_table = """CREATE TABLE IF NOT EXISTS otp (
+code_table = """CREATE TABLE IF NOT EXISTS code (
     key CHAR(32) PRIMARY KEY,
 
     user_key CHAR(32) NOT NULL,

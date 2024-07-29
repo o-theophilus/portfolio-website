@@ -24,7 +24,7 @@ def add():
             "error": "invalid token"
         })
 
-    if "post:add" not in user["permissions"]:
+    if "post:add" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -103,7 +103,7 @@ def edit(key):
     error = {}
 
     if "title" in request.json:
-        if "post:edit_title" not in user["permissions"]:
+        if "post:edit_title" not in user["access"]:
             error["title"] = "unauthorized access"
         elif not request.json["title"]:
             error["title"] = "cannot be empty"
@@ -129,7 +129,7 @@ def edit(key):
             ))
 
     if "date" in request.json:
-        if "post:edit_date" not in user["permissions"]:
+        if "post:edit_date" not in user["access"]:
             error["date"] = "unauthorized access"
         else:
             try:
@@ -150,7 +150,7 @@ def edit(key):
             ))
 
     if "description" in request.json:
-        if "post:edit_description" not in user["permissions"]:
+        if "post:edit_description" not in user["access"]:
             error["description"] = "unauthorized access"
         elif request.json["description"] == post["description"]:
             error["description"] = "no change"
@@ -159,7 +159,7 @@ def edit(key):
                 request.json["description"], post["key"]))
 
     if "content" in request.json:
-        if "post:edit_content" not in user["permissions"]:
+        if "post:edit_content" not in user["access"]:
             error["content"] = "unauthorized access"
         elif request.json["content"] == post["content"]:
             error["content"] = "no change"
@@ -168,7 +168,7 @@ def edit(key):
                 request.json["content"], post["key"]))
 
     if "tags" in request.json:
-        if "post:edit_tags" not in user["permissions"]:
+        if "post:edit_tags" not in user["access"]:
             error["tags"] = "unauthorized access"
         elif type(request.json["tags"]) is not list:
             error["tags"] = "cannot be empty"
@@ -185,7 +185,7 @@ def edit(key):
             ))
 
     if "author_email" in request.json:
-        if "post:edit_author" not in user["permissions"]:
+        if "post:edit_author" not in user["access"]:
             error["author_email"] = "unauthorized access"
         elif not request.json["author_email"]:
             error["author_email"] = "cannot be empty"
@@ -214,7 +214,7 @@ def edit(key):
                 ))
 
     if "status" in request.json:
-        if "post:edit_status" not in user["permissions"]:
+        if "post:edit_status" not in user["access"]:
             error["status"] = "unauthorized access"
         elif (
             not request.json["status"]
@@ -346,7 +346,7 @@ def add_photos(key):
             "error": "invalid token"
         })
 
-    if "post:edit_photos" not in user["permissions"]:
+    if "post:edit_photos" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -437,7 +437,7 @@ def order_photo(key):
             "error": "invalid token"
         })
 
-    if "post:edit_photos" not in user["permissions"]:
+    if "post:edit_photos" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -503,7 +503,7 @@ def delete_photo(key):
             "error": "invalid token"
         })
 
-    if "post:edit_photos" not in user["permissions"]:
+    if "post:edit_photos" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,

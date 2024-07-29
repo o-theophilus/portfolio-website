@@ -2,32 +2,32 @@
 	import { module, notification, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Icon from '$lib/icon.svelte';
 	import Button from '$lib/button/button.svelte';
-	import ShowPassword from '../account/password_show.svelte';
 	import IG from '$lib/input_group.svelte';
+	import Icon from '$lib/icon.svelte';
+	import Code from '$lib/input_code.svelte';
 
 	let form = {
-		permissions: $module.permissions
+		...$module.form
 	};
 	let error = {};
-	let show_password = false;
 
-	const validate = async () => {
+	const validate = () => {
 		error = {};
 
-		if (!form.password) {
-			error.password = 'cannot be empty';
+		if (!form.code_2) {
+			error.code_2 = 'cannot be empty';
+		} else if (form.code_2.length != 6) {
+			error.code_2 = 'invalid code';
 		}
 
 		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {
-		error = {};
-		$loading = 'saving . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/permission/${$module.key}`, {
-			method: 'put',
+		$loading = 'loading . . .';
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/email/4`, {
+			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
@@ -38,10 +38,13 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$module = null;
+			$module.update(resp.user);
+
 			$notification = {
-				message: 'Permissions saved'
+				message: 'Email changed'
 			};
+
+			$module = null;
 		} else {
 			error = resp;
 		}
@@ -49,29 +52,21 @@
 </script>
 
 <form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Accept Permissions </strong>
+	<strong class="ititle"> Change Email </strong>
+
 	{#if error.error}
 		<div class="error">
 			{error.error}
 		</div>
 	{/if}
 
-	<IG
-		name="Password"
-		icon="key"
-		error={error.password}
-		bind:value={form.password}
-		type={show_password ? 'text' : 'password'}
-		placeholder="Password here"
-	>
-		<svelte:fragment slot="right">
-			<div class="right">
-				<ShowPassword bind:show_password />
-			</div>
-		</svelte:fragment>
+	<div class="message">Code has been sent to: {form.email}.</div>
+
+	<IG name="Code" error={error.code_2}>
+		<Code bind:value={form.code_2} />
 	</IG>
 
-	<Button on:click={validate}>
+	<Button primary on:click={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>
@@ -82,11 +77,15 @@
 		padding: var(--sp3);
 	}
 
-	.error {
+	.error,
+	.message {
 		margin: var(--sp2) 0;
 	}
 
-	.right {
-		padding-right: var(--sp2);
+	.message {
+		background-color: var(--cl1_l);
+		color: var(--ft1_b);
+		padding: var(--sp1);
+		width: 100%;
 	}
 </style>

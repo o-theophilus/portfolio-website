@@ -36,20 +36,20 @@
 		<Datetime datetime={post.date} type="ago" />
 		<div class="line info">
 			<div class="line">
-				<Icon size="16" icon="visibility" />
+				<Icon icon="visibility" size=1.4/>
 				{post.view}
 			</div>
 			<div class="line">
-				<Icon size="16" icon="thumb_up" />
+				<Icon icon="thumb_up" size=1.4/>
 				{post._like}
 			</div>
 			<div class="line">
-				<Icon size="16" icon="comment" />
+				<Icon icon="comment" size=1.4/>
 				{post.comment}
 			</div>
 			{#if post.rating > 0}
 				<div class="line">
-					<Icon size="16" icon="hotel_class" />
+					<Icon icon="hotel_class" size=1.4/>
 					{parseFloat(post.rating)}
 				</div>
 			{/if}
@@ -111,7 +111,7 @@
 	}
 
 	.date {
-		font-size: small;
+		font-size: 0.8rem;
 		transition: color var(--trans);
 		justify-content: space-between;
 		flex-wrap: wrap;

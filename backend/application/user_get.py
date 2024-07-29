@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from .tools import token_to_user, user_schema
 from math import ceil
 from .postgres import db_close, db_open
-from .admin import permissions
+from .admin import access
 
 
 bp = Blueprint("user_get", __name__)
@@ -47,7 +47,7 @@ def get():
     return jsonify({
         "status": 200,
         "user": user_schema(user),
-        "permissions": permissions
+        "access": access
     })
 
 
@@ -63,7 +63,7 @@ def get_many():
             "error": "invalid token"
         })
 
-    if "user:view" not in user["permissions"]:
+    if "user:view" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -152,7 +152,7 @@ def get_admins():
             "error": "invalid token"
         })
 
-    if "user:set_permission" not in user["permissions"]:
+    if "user:set_access" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -206,14 +206,14 @@ def get_admins():
             AND log.action = 'created'
             AND log.entity_type = 'account'
         WHERE
-            array_length("user".permissions, 1) IS NOT NULL
+            array_length("user".access, 1) IS NOT NULL
             -- AND "user".status = "confirmed"
             AND (%s = ''
                 OR CONCAT_WS(', ', "user".key, "user".name, "user".email)
                 ILIKE %s)
-            AND (%s = 'all' OR ARRAY_TO_STRING("user".permissions, ',')
+            AND (%s = 'all' OR ARRAY_TO_STRING("user".access, ',')
                 ILIKE %s)
-            AND (%s = 'all' OR ARRAY_TO_STRING("user".permissions, ',')
+            AND (%s = 'all' OR ARRAY_TO_STRING("user".access, ',')
                 ILIKE %s)
         ORDER BY {} {}
         LIMIT %s OFFSET %s;
@@ -227,20 +227,20 @@ def get_admins():
     ))
     users = cur.fetchall()
 
-    permits = {
+    _access = {
         "all": ['all']
     }
-    for x in permissions:
-        if x not in permits:
-            permits[x] = ["all"]
-            for y in permissions[x]:
-                permits[x].append(y[0])
+    for x in access:
+        if x not in _access:
+            _access[x] = ["all"]
+            for y in access[x]:
+                _access[x].append(y[0])
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
         "users": [user_schema(x) for x in users],
-        "permissions": permits,
+        "access": _access,
         "order_by": list(order_by.keys()),
         "total_page": ceil(users[0]["_count"] / page_size) if users else 0
     })

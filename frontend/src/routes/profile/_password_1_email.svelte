@@ -6,7 +6,7 @@
 	import Icon from '$lib/icon.svelte';
 	import EmailTemplate from './_password.template.svelte';
 
-	import OTP from './_password_2_otp.svelte';
+	import Code from './_password_2_code.svelte';
 
 	let form = {};
 	let error = {};
@@ -15,7 +15,7 @@
 	const submit = async () => {
 		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
-		$loading = 'Requesting OTP . . .';
+		$loading = 'Requesting Code . . .';
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/password/1`, {
 			method: 'post',
 			headers: {
@@ -29,7 +29,7 @@
 
 		if (resp.status == 200) {
 			$module = {
-				module: OTP,
+				module: Code,
 				form
 			};
 		} else {
@@ -50,7 +50,7 @@
 	<br />
 
 	<Button primary on:click={submit}>
-		Request OTP
+		Request Code
 		<Icon icon="send" />
 	</Button>
 </div>

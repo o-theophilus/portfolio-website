@@ -18,11 +18,11 @@
 	import Email from './_email_1.svelte';
 	import Delete from './_delete.svelte';
 	import Password from './_password_1_email.svelte';
-	import Permission from './permission.svelte';
+	import Access from './access.svelte';
 
 	export let data;
 	$: user = data.user;
-	let { permissions } = data;
+	let { access } = data;
 	let edit_mode = false;
 
 	const update = (data) => {
@@ -99,7 +99,7 @@
 		<br />
 
 		<div class="line">
-			<Icon icon="person" size="20" />
+			<Icon icon="person" size="1.4" />
 			<strong class="ititle">
 				{user.name}
 			</strong>
@@ -118,7 +118,7 @@
 		</div>
 
 		<div class="line">
-			<Icon icon="email" size="20" />
+			<Icon icon="email" size="1.4" />
 			{user.email}
 
 			{#if edit_mode}
@@ -135,7 +135,7 @@
 		</div>
 
 		<div class="line">
-			<Icon icon="phone" size="20" />
+			<Icon icon="call" size="1.4" />
 			{user.phone || 'None'}
 			{#if edit_mode}
 				<BRound
@@ -162,7 +162,7 @@
 						};
 					}}
 				>
-					<Icon icon="phone" size="20" />
+					<Icon icon="key" size="1.4" />
 					Change Password
 				</Button>
 
@@ -175,14 +175,14 @@
 						};
 					}}
 				>
-					<Icon icon="delete" size="20" />
+					<Icon icon="delete" size="1.4" />
 					Delete Account
 				</Button>
 			</div>
 		{/if}
 		<br /><br /><br />
 
-		{#if $me.permissions.includes('log:view')}
+		{#if $me.access.includes('log:view')}
 			<hr />
 			<div class="pad">
 				<Link href="/log?{new URLSearchParams(`search=${user.email}:all:all:`).toString()}">
@@ -191,9 +191,9 @@
 			</div>
 		{/if}
 
-		{#if user && user.key != $me.key && user.status == 'confirmed' && $me.permissions.includes('user:set_permission')}
+		{#if user && user.key != $me.key && user.status == 'confirmed' && $me.access.includes('user:set_access')}
 			<hr />
-			<Permission {user} {permissions} />
+			<Access {user} {access} />
 		{/if}
 	{/if}
 </Content>
@@ -203,11 +203,6 @@
 		display: flex;
 		gap: var(--sp2);
 		align-items: center;
-	}
-
-	.ititle {
-		color: var(--ft1);
-		font-size: x-large;
 	}
 
 	.line {
@@ -221,8 +216,6 @@
 		outline: 8px solid var(--bg2);
 		border-radius: 50%;
 		line-height: 0;
-
-		transition: outline-color var(--trans);
 	}
 
 	.pad,

@@ -65,7 +65,7 @@
 			like();
 		}}
 	>
-		<Icon icon="thumb_up" size="16" fill={entity.like.includes($user.key)} />
+		<Icon icon="thumb_up" size="1.4" fill={entity.like.includes($user.key)} />
 		{entity.like.length}
 	</button>
 
@@ -75,7 +75,7 @@
 			like(false);
 		}}
 	>
-		<Icon icon="thumb_down" size="16" fill={entity.dislike.includes($user.key)} />
+		<Icon icon="thumb_down" size="1.4" fill={entity.dislike.includes($user.key)} />
 		{entity.dislike.length}
 	</button>
 
@@ -101,7 +101,7 @@
 
 		height: var(--height);
 		padding: var(--sp0) var(--sp2);
-		font-size: small;
+		font-size: 0.8rem;
 
 		color: var(--ft2);
 		background-color: var(--bg2);

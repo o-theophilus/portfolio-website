@@ -35,7 +35,7 @@
 		transition: color var(--trans);
 	}
 	.small {
-		font-size: small;
+		font-size: 0.8rem;
 	}
 
 	:hover {

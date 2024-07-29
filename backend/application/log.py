@@ -117,7 +117,7 @@ def get_many():
     user_key = user_key.strip()
     entity_key = entity_key.strip()
 
-    if "log:view" not in user["permissions"]:
+    if "log:view" not in user["access"]:
         user_key = user["key"]
 
     cur.execute("""

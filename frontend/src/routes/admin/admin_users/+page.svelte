@@ -15,13 +15,13 @@
 	export let data;
 	$: users = data.users;
 	$: total_page = data.total_page;
-	let { permissions } = data;
+	let { access } = data;
 	let { order_by } = data;
 </script>
 
 <Log entity_type={'page'} />
 <UpdateUrl />
-<Meta title="Admin" description="Users with elevated permission" />
+<Meta title="Admin" description="Users with elevated Access" />
 
 <Content>
 	<div class="title">
@@ -34,7 +34,7 @@
 		<DropPlus name="order" list={order_by} />
 	</div>
 
-	<Search {permissions} />
+	<Search {access} />
 
 	{#each users as x (x.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>

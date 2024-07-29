@@ -44,7 +44,7 @@
 <style>
 	.dynamic {
 		color: var(--bg1);
-		font-size: xx-large;
+		font-size: 2rem;
 		font-weight: 800;
 		text-align: center;
 

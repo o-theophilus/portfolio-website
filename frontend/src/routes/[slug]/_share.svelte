@@ -3,7 +3,7 @@
 	import { module } from '$lib/store.js';
 
 	import Button from '$lib/button/button.svelte';
-	import SVG from '$lib/svg.svelte';
+	import Icon from '$lib/icon.svelte';
 
 	let text = `Check Out: ${$module.post.name}`;
 </script>
@@ -16,18 +16,18 @@
 			target="_blank"
 			tooltip="Facebook"
 		>
-			<SVG type="facebook" size="16" />
+			<Icon icon="facebook" size="1.4" />
 		</Button>
 		<Button
 			href="http://twitter.com/share?text={text}&url={$page.url.href}&hashtags=meji,shopping"
 			target="_blank"
 			tooltip="Twitter"
 		>
-			<SVG type="twitter" size="16" />
+			<Icon icon="twitter" size="1.4" />
 		</Button>
 
 		<Button href="whatsapp://send?text={text}%20{$page.url.href}" tooltip="Whatsapp">
-			<SVG type="whatsapp" size="16" />
+			<Icon icon="whatsapp" size="1.4" />
 		</Button>
 
 		<Button
@@ -35,7 +35,7 @@
 			target="_blank"
 			tooltip="Telegram"
 		>
-			<SVG type="telegram" size="16" />
+			<Icon icon="telegram" size="1.4" />
 		</Button>
 	</div>
 </section>

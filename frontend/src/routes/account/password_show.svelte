@@ -11,7 +11,7 @@
 			show_password = !show_password;
 		}}
 	>
-		<Icon icon={show_password ? 'visibility' : 'Visibility_off'} size="16" />
+		<Icon icon={show_password ? 'visibility' : 'Visibility_off'} />
 	</button>
 </form>
 

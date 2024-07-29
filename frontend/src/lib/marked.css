@@ -41,27 +41,27 @@ h6 {
 }
 
 h1 {
-	font-size: 24px
+	font-size: 1.5rem;
 }
 
 h2 {
-	font-size: 22.5px
+	font-size: 1.4rem;
 }
 
 h3 {
-	font-size: 21.2px
+	font-size: 1.34rem;
 }
 
 h4 {
-	font-size: 19.9px
+	font-size: 1.28rem;
 }
 
 h5 {
-	font-size: 18.6px
+	font-size: 1.22rem;
 }
 
 h6 {
-	font-size: 17.3px
+	font-size: 1.16rem;
 }
 
 p{
@@ -87,7 +87,7 @@ pre {
 	background-color: hsl(0, 0%, 15%);
 
 	overflow-y: auto;
-	font-size: small;
+	font-size: 0.8rem;
 }
 
 code {

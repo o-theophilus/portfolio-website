@@ -5,7 +5,7 @@
 	import Button from '$lib/button/button.svelte';
 	import IG from '$lib/input_group.svelte';
 	import Icon from '$lib/icon.svelte';
-	import OTP from '$lib/input_otp.svelte';
+	import Code from '$lib/input_code.svelte';
 
 	import Password from './_password_3_password.svelte';
 
@@ -17,10 +17,10 @@
 	const validate = () => {
 		error = {};
 
-		if (!form.otp) {
-			error.otp = 'cannot be empty';
-		} else if (form.otp.length != 6) {
-			error.otp = 'invalid OTP';
+		if (!form.code) {
+			error.code = 'cannot be empty';
+		} else if (form.code.length != 6) {
+			error.code = 'invalid code';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -61,10 +61,10 @@
 	<br />
 
 	<br />
-	<div class="message">OTP has been sent to: {$user.email}.</div>
+	<div class="message">Code has been sent to: {$user.email}.</div>
 
-	<IG name="OTP" error={error.otp}>
-		<OTP bind:value={form.otp} />
+	<IG name="Code" error={error.code}>
+		<Code bind:value={form.code} />
 	</IG>
 
 	<Button primary on:click={validate}>

@@ -40,7 +40,7 @@
 			<strong class="ititle">
 				Post{posts.length > 1 ? 's' : ''}
 			</strong>
-			{#if $user.permissions.includes('post:add')}
+			{#if $user.access.includes('post:add')}
 				<div class="line">
 					<DropPlus list={_status} name="status" />
 

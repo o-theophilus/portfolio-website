@@ -80,7 +80,7 @@
 		height: var(--size);
 
 		text-align: center;
-		font-size: x-large;
+		font-size: 1.5rem;
 		color: var(--ft1);
 		background-color: var(--input);
 		outline: 2px solid transparent;

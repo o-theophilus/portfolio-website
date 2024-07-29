@@ -51,12 +51,12 @@
 
 	.large {
 		padding: var(--sp2) var(--sp3);
-		font-size: large;
+		font-size: 1.2rem;
 	}
 	.small {
 		padding: var(--sp0);
 		gap: var(--sp0);
-		font-size: small;
+		font-size: 0.8rem;
 		min-width: 28px;
 	}
 	.wide {

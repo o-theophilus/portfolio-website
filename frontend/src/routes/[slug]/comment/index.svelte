@@ -81,7 +81,7 @@
 {#if open}
 	<div class="margin" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 		<div class="line">
-			{#if $user.permissions.includes('comment:view_deleted')}
+			{#if $user.access.includes('comment:view_deleted')}
 				<Drop
 					list={_status}
 					default_value={search.status || 'active'}

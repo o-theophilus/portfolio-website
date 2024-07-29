@@ -91,7 +91,7 @@
 	}
 
 	.small {
-		font-size: smaller;
+		font-size: 0.8rem;
 		color: var(--ft2);
 	}
 

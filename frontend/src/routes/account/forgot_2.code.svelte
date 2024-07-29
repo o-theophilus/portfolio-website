@@ -5,7 +5,7 @@
 	import IG from '$lib/input_group.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Button from '$lib/button/button.svelte';
-	import OTP from '$lib/input_otp.svelte';
+	import Code from '$lib/input_code.svelte';
 
 	import Password from './forgot_3.password.svelte';
 
@@ -17,10 +17,10 @@
 	const validate_submit = async () => {
 		error = {};
 
-		if (!form.otp) {
-			error.otp = 'cannot be empty';
-		} else if (form.otp.length != 6) {
-			error.otp = 'invalid OTP';
+		if (!form.code) {
+			error.code = 'cannot be empty';
+		} else if (form.code.length != 6) {
+			error.code = 'invalid code';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -59,8 +59,8 @@
 		</div>
 	{/if}
 
-	<IG name="OTP" error={error.otp}>
-		<OTP bind:value={form.otp} />
+	<IG name="Code" error={error.code}>
+		<Code bind:value={form.code} />
 	</IG>
 
 	<Button primary on:click={validate_submit}

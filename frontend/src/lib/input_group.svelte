@@ -30,7 +30,7 @@
 	<slot {id}>
 		<div class="input" class:left_pad={icon} class:disabled>
 			{#if icon}
-				<Icon {icon} />
+				<Icon {icon} size="1.2" />
 			{/if}
 			<Input bind:value {id} {type} {placeholder} {min} {disabled} on:blur on:input />
 			<slot name="right" />

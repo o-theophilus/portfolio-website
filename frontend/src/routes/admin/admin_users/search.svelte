@@ -8,7 +8,7 @@
 	import Button from '$lib/button/button.svelte';
 	import Drop from '$lib/dropdown.svelte';
 
-	export let permissions;
+	export let access;
 
 	let user_key = '';
 	let type = 'all';
@@ -51,7 +51,7 @@
 	<div class="row">
 		<Drop
 			wide
-			list={Object.keys(permissions)}
+			list={Object.keys(access)}
 			default_value="all"
 			bind:this={drop_1}
 			on:change={(e) => {
@@ -63,7 +63,7 @@
 
 		<Drop
 			wide
-			list={permissions[type]}
+			list={access[type]}
 			default_value="all"
 			bind:this={drop_2}
 			on:change={(e) => {
