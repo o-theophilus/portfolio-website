@@ -39,7 +39,7 @@
 
 		background-color: var(--button);
 
-		color: var(--ft2_b);
+		color: var(--ft2);
 		fill: currentColor;
 		text-decoration: none;
 		text-align: center;

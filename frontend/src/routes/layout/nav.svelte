@@ -14,8 +14,11 @@
 <nav class:home>
 	<div class="block">
 		<a href="/">
-			<Icon icon="logo" size=1.5 />
-			<span> Loup </span>
+			<Icon icon="logo" size="1.5" />
+			<div>
+				<span class="name"> Theophilus </span>
+				<span class="role"> Designer & Developer </span>
+			</div>
 		</a>
 		<div class="links">
 			<Link {home} href="/post">Post</Link>
@@ -59,7 +62,7 @@
 	a {
 		display: flex;
 		align-items: center;
-		gap: var(--sp1);
+		gap: var(--sp2);
 
 		color: var(--cl1);
 		font-size: 1.2rem;
@@ -70,8 +73,14 @@
 		transition: color var(--trans);
 	}
 
-	a span {
+	a div {
+		display: flex;
+		flex-direction: column;
 		color: var(--ft1);
+	}
+
+	.role {
+		font-size: 0.7rem;
 	}
 
 	.block,

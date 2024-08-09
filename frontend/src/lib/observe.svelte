@@ -23,7 +23,7 @@
 </script>
 
 <div bind:this={element}>
-	<slot {intersecting} />
+	<slot {intersecting}  />
 </div>
 
 <style>

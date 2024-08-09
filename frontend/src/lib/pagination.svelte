@@ -160,7 +160,7 @@
 
 		border-radius: var(--sp0);
 		background-color: var(--button);
-		color: var(--ft2_b);
+		color: var(--ft2);
 		border: none;
 		cursor: pointer;
 		font-weight: 700;

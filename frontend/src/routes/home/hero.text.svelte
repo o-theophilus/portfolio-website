@@ -31,6 +31,11 @@
 
 <Content>
 	<div class="dynamic">
+		<div class="name">Theophilus Ogbolu</div>
+		<div class="role">Designer & Developer</div>
+
+		<br />
+
 		Welcome to my
 		{#if visible}
 			<span class="highlight" transition:typewriter>
@@ -38,6 +43,8 @@
 			</span>
 		{/if}
 		Website
+
+		<div class="role">I build pixel-perfect, engaging, and accessible digital experiences.</div>
 	</div>
 </Content>
 
@@ -51,6 +58,9 @@
 		transition: color var(--trans);
 	}
 
+	.role {
+		font-size: 1.1rem;
+	}
 	.highlight {
 		color: var(--cl1);
 	}

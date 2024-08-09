@@ -21,38 +21,41 @@
 </script>
 
 <a href="/{post.slug}" data-sveltekit-preload-data on:click={click} on:mouseenter={click}>
-	<div>
-		<div class="img">
-			<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
-		</div>
-		<div class="ititle">
-			<strong>
+	<div class="img">
+		<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
+	</div>
+
+	<div class="details">
+		<div>
+			<div class="title">
 				{post.title}
-			</strong>
-		</div>
-		<div class="description">
-			{post.description}
+			</div>
+			<div class="description">
+				{post.description}
+			</div>
 		</div>
 	</div>
 
-	<div class="date line">
+	<div class="bottom line">
 		<Datetime datetime={post.date} type="ago" />
 		<div class="line info">
 			<div class="line">
-				<Icon icon="visibility" size="1.4" />
+				<Icon icon="visibility" />
 				{post.view}
 			</div>
+
 			<div class="line">
-				<Icon icon="thumb_up" size="1.4" />
+				<Icon icon="thumb_up" />
 				{post._like}
 			</div>
+
 			<div class="line">
-				<Icon icon="comment" size="1.4" />
+				<Icon icon="comment" />
 				{post.comment}
 			</div>
 			{#if post.rating > 0}
 				<div class="line">
-					<Icon icon="hotel_class" size="1.4" />
+					<Icon icon="hotel_class" />
 					{parseFloat(post.rating)}
 				</div>
 			{/if}
@@ -64,34 +67,33 @@
 	a {
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
-
-		padding: var(--sp3);
 		height: 100%;
+		overflow: hidden;
+
+		text-decoration: none;
+
+		border-radius: var(--sp0);
+		outline: 2px solid transparent;
 
 		background-color: var(--bg1);
 		color: var(--ft2);
-		text-decoration: none;
 
-		border-radius: var(--sp1);
-		border: 2px solid transparent;
-
-		transition: background-color var(--trans), border-color var(--trans);
+		transition: background-color var(--trans), outline-color var(--trans);
 	}
 	a:hover {
-		border-color: var(--ft2);
+		outline-color: var(--ft2);
 	}
 
 	.img {
-		border-radius: var(--sp1);
 		overflow: hidden;
+		flex-shrink: 0;
 	}
 	img {
 		display: block;
 
 		width: 100%;
 		object-fit: cover;
-		aspect-ratio: 1 / 1;
+		aspect-ratio: 3 / 2;
 		background-color: var(--bg2);
 
 		transition: transform var(--aTime);
@@ -100,29 +102,47 @@
 	a:hover img {
 		transform: scale(1.2) rotate(5deg);
 	}
-	.ititle {
+
+	.details {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		height: 100%;
+		padding: 0 var(--sp3);
+	}
+
+	.title {
 		color: var(--ft1);
 		margin: var(--sp2) 0;
+		line-height: 120%;
+		font-weight: 700;
 	}
 
 	.description {
 		margin: var(--sp2) 0;
 		color: var(--ft1);
 		transition: color var(--trans);
+
+		font-size: 0.8rem;
 	}
 
-	.line {
-		display: flex;
-		align-items: center;
-		gap: var(--sp0);
-	}
-
-	.date {
+	.bottom {
 		font-size: 0.8rem;
 		transition: color var(--trans);
 		justify-content: space-between;
 		flex-wrap: wrap;
 		gap: var(--sp2);
+
+		line-height: 1;
+		padding: var(--sp1) var(--sp3);
+		border-top: 1px solid var(--bg2);
+	}
+
+	.line {
+		display: flex;
+		align-items: center;
+		gap: 2px;
 	}
 
 	.info {

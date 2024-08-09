@@ -6,7 +6,7 @@
 	import { module, settings, user } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
-	import Post from './highlight.post.svelte';
+	import Post from './highlight.one.svelte';
 	import Edit from './highlight.mod.svelte';
 	import Scroller from '$lib/scroller.svelte';
 	import BRround from '$lib/button/round.svelte';

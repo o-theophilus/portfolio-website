@@ -11,7 +11,7 @@
 		max-width: var(--mobileWidth);
 		width: 100%;
 		margin: auto;
-		padding: 0 var(--sp2);
+		padding: 0 var(--sp3);
 	}
 
 	.fill {

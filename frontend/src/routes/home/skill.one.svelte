@@ -2,10 +2,11 @@
 	import IntersectionObserver from '$lib/observe.svelte';
 
 	export let one;
+	export let hov;
 </script>
 
 <IntersectionObserver let:intersecting>
-	<div class="comp">
+	<div class="comp" class:hov>
 		<div class="line">
 			<span class="name">
 				{one.name}
@@ -25,12 +26,21 @@
 	.comp {
 		margin: var(--sp2) 0;
 	}
+	.comp:hover .filler {
+		background-color: var(--cl1);
+		transition: background-color var(--trans);
+	}
+	.comp:hover .value {
+		color: var(--ft1);
+		transition: color var(--trans);
+	}
+	
 	.line {
 		display: flex;
 		gap: var(--sp2);
 		justify-content: space-between;
 	}
-
+	
 	.name,
 	.value {
 		line-height: 1;
@@ -38,6 +48,7 @@
 
 	.value {
 		font-size: 0.8rem;
+		color: var(--bg1);
 	}
 
 	.filler_area {
@@ -51,10 +62,9 @@
 		height: 2px;
 		border-radius: var(--sp0);
 
-		background-color: var(--cl1);
+		background-color: var(--ft1);
 
-		transition: width 2000ms;
-		transition-timing-function: cubic-bezier(0.47, 1.64, 0.41, 0.8);
+		transition: width 2000ms cubic-bezier(0.47, 1.64, 0.41, 0.8);
 	}
 
 	.intersecting {

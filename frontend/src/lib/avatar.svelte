@@ -11,7 +11,6 @@
 		return hash;
 	}
 	$: hue = Math.abs(hashString(name)) % 361;
-	// let hue = Math.floor(Math.random() * (360 + 1));
 </script>
 
 {#if photo}

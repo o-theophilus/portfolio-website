@@ -113,9 +113,15 @@
 		gap: var(--sp1);
 		align-items: center;
 	}
-	@media screen and (min-width: 600px) {
+	@media screen and (min-width: 550px) {
 		.items {
 			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	@media screen and (min-width: 900px) {
+		.items {
+			grid-template-columns: 1fr 1fr 1fr;
 		}
 	}
 </style>
