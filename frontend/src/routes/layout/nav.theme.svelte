@@ -78,7 +78,7 @@
 	}
 
 	button:hover {
-		color: var(--ft1_b);
+		color: var(--clb);
 		background-color: var(--cl1);
 	}
 

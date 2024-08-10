@@ -65,7 +65,7 @@
 		padding: var(--sp2);
 		border-radius: var(--sp0);
 
-		background-color: var(--cl1_l);
+		background-color: color-mix(in srgb, var(--cl1), transparent 90%);
 		color: var(--ft1);
 		font-size: 0.8rem;
 	}

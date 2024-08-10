@@ -21,110 +21,115 @@
 </script>
 
 <a href="/{post.slug}" data-sveltekit-preload-data on:click={click} on:mouseenter={click}>
-	<div class="img">
-		<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
-	</div>
+	<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
 
 	<div class="details">
-		<div>
-			<div class="title">
-				{post.title}
-			</div>
-			<div class="description">
-				{post.description}
-			</div>
+		<div class="title">
+			{post.title}
 		</div>
-	</div>
 
-	<div class="bottom line">
-		<Datetime datetime={post.date} type="ago" />
-		<div class="line info">
-			<div class="line">
-				<Icon icon="visibility" />
-				{post.view}
-			</div>
-
-			<div class="line">
-				<Icon icon="thumb_up" />
-				{post._like}
-			</div>
-
-			<div class="line">
-				<Icon icon="comment" />
-				{post.comment}
-			</div>
-			{#if post.rating > 0}
-				<div class="line">
-					<Icon icon="hotel_class" />
-					{parseFloat(post.rating)}
+		{#if post.description}
+			<div class="description">
+				<div>
+					{post.description}
 				</div>
-			{/if}
+			</div>
+		{/if}
+
+		<div class="bottom line">
+			<Datetime datetime={post.date} type="ago" />
+			<div class="line info">
+				<div class="line">
+					<Icon icon="visibility" />
+					{post.view}
+				</div>
+
+				<div class="line">
+					<Icon icon="thumb_up" />
+					{post._like}
+				</div>
+
+				<div class="line">
+					<Icon icon="comment" />
+					{post.comment}
+				</div>
+				{#if post.rating > 0}
+					<div class="line">
+						<Icon icon="hotel_class" />
+						{parseFloat(post.rating)}
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 </a>
 
 <style>
 	a {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		overflow: hidden;
-
+		display: block;
+		position: relative;
 		text-decoration: none;
 
-		border-radius: var(--sp0);
 		outline: 2px solid transparent;
+		transition: outline-color var(--trans);
 
-		background-color: var(--bg1);
-		color: var(--ft2);
-
-		transition: background-color var(--trans), outline-color var(--trans);
-	}
-	a:hover {
-		outline-color: var(--ft2);
-	}
-
-	.img {
+		border-radius: var(--sp0);
 		overflow: hidden;
-		flex-shrink: 0;
 	}
+
 	img {
 		display: block;
 
 		width: 100%;
 		object-fit: cover;
-		aspect-ratio: 3 / 2;
-		background-color: var(--bg2);
+		aspect-ratio: 3/4;
+		background-color: var(--bg1);
 
 		transition: transform var(--aTime);
 		transition-timing-function: ease-in-out;
 	}
+
+	a:hover {
+		outline-color: var(--ft2);
+	}
 	a:hover img {
 		transform: scale(1.2) rotate(5deg);
 	}
+	/* a:hover .title {
+		color: var(--cl1);
+	} */
+	a:hover .description {
+		grid-template-rows: 1fr;
+		margin: var(--sp2) 0;
+	}
 
 	.details {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
+		position: absolute;
+		bottom: 0;
 
-		height: 100%;
+		width: 100%;
 		padding: 0 var(--sp3);
+
+		color: var(--ft1);
+		background-color: color-mix(in srgb, var(--bg1), transparent 10%);
 	}
 
 	.title {
-		color: var(--ft1);
 		margin: var(--sp2) 0;
 		line-height: 120%;
 		font-weight: 700;
+		transition: color var(--trans);
 	}
 
 	.description {
-		margin: var(--sp2) 0;
-		color: var(--ft1);
-		transition: color var(--trans);
+		display: grid;
+		grid-template-rows: 0fr;
 
 		font-size: 0.8rem;
+		transition: grid-template-rows var(--trans), margin var(--trans);
+	}
+	.description div {
+		overflow-y: hidden;
 	}
 
 	.bottom {
@@ -134,9 +139,10 @@
 		flex-wrap: wrap;
 		gap: var(--sp2);
 
+		color: var(--ft2);
 		line-height: 1;
-		padding: var(--sp1) var(--sp3);
-		border-top: 1px solid var(--bg2);
+		padding: var(--sp1) 0;
+		border-top: 1px solid var(--ft2);
 	}
 
 	.line {

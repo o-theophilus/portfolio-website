@@ -9,6 +9,7 @@
 	--sp2: 16px;
 	--sp3: 24px;
 	--sp4: 64px;
+	--sp5: 80px;
 
 	--cl1: rgb(0, 0, 204);
 	--cl1_l: color-mix(in srgb, var(--cl1), transparent 80%);
@@ -23,21 +24,21 @@
 	
 	--input: hsla(230, 30%, 41%, 0.1);
 	
-	--ft1_d: black;
-	--ft1_b: white;
+	--cld: black;
+	--clb: white;
 	--ft2: hsl(0, 0%, 50%);
 }
 
 main {
 	--button: hsl(0, 0%, 10%);
-	--ft1: var(--ft1_d);
+	--ft1: var(--cld);
 	--bg2: hsl(233, 10%, 89%);
 	--bg1: white;
 }
 
 main.dark {
 	--button: hsl(0, 0%, 10%);
-	--ft1: var(--ft1_b);
+	--ft1: var(--clb);
 	--bg2: hsl(0, 0%, 10%);
 	--bg1: hsl(0, 0%, 5%);
 }

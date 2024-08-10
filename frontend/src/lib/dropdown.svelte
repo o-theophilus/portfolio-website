@@ -96,6 +96,6 @@
 	}
 
 	option {
-		color: var(--ft1_d);
+		color: var(--cld);
 	}
 </style>

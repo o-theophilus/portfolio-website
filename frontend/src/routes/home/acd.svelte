@@ -58,7 +58,7 @@
 			<div class="card">
 				<div class="pos">
 					<div class="icon one">
-						<Icon icon="architecture" size="1.5" />
+						<Icon icon="design" size="1.5" />
 					</div>
 					<div class="title">Design What You Want</div>
 
@@ -73,7 +73,7 @@
 			<div class="card">
 				<div class="pos">
 					<div class="icon two">
-						<Icon icon="code" size="1.5" />
+						<Icon icon="code2" size="1.5" />
 					</div>
 					<div class="title">Develop What You Need</div>
 
@@ -96,7 +96,7 @@
 	.block {
 		display: flex;
 		flex-direction: column;
-		gap: var(--sp2);
+		gap: var(--sp3);
 		margin: var(--sp2) 0;
 	}
 
@@ -111,22 +111,20 @@
 	}
 	.card:nth-of-type(1) {
 		--color: var(--cl5);
-
 	}
 	.card:nth-of-type(2) {
 		--color: var(--cl6);
 	}
 	.card:nth-of-type(3) {
-		--color: var(--cl1);
+		--color: var(--cl3);
 	}
 
 	.pos {
 		--trans1: 0.5s cubic-bezier(0.47, 1.64, 0.41, 0.8);
 
-		padding: var(--sp2);
+		/* padding: var(--sp2); */
 		border-radius: var(--sp0);
-		background-color: var(--bg2);
-		background-color: color-mix(in srgb, var(--color), transparent 90%);
+		/* background-color: color-mix(in srgb, var(--color), transparent 90%); */
 
 		height: 100%;
 
@@ -163,7 +161,7 @@
 
 		color: var(--color);
 
-		color: var(--ft1_b);
+		color: var(--clb);
 		background-color: var(--color);
 	}
 

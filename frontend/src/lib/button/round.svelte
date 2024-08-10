@@ -63,7 +63,7 @@
 
 	:not(:disabled):hover {
 		background-color: var(--cl1);
-		color: var(--ft1_b);
+		color: var(--clb);
 	}
 	:not(:disabled).hover_red:hover {
 		background-color: var(--cl2);

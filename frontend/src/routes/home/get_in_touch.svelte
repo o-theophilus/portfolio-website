@@ -4,8 +4,8 @@
 	import Observe from '$lib/observe.svelte';
 </script>
 
-<div class="scroll_1">
-	<Content fit>
+<Content fit>
+	<div class="scroll_2">
 		<Observe let:intersecting>
 			<div class="observe" class:intersecting>
 				<div class="h">
@@ -28,11 +28,11 @@
 				</div>
 			</div>
 		</Observe>
-	</Content>
-</div>
+	</div>
+</Content>
 
 <style>
-	.scroll_1 {
+	.scroll_2 {
 		margin: var(--sp4) 0;
 	}
 

@@ -28,7 +28,7 @@ margin: auto;
 		font-size: x-large;
 		margin-left: 10px;
 	"
-			>Loup
+			>Theophilus
 		</b>
 	</div>
 

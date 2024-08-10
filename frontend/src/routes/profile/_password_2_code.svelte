@@ -84,7 +84,7 @@
 
 	.message {
 		background-color: var(--cl1_l);
-		color: var(--ft1_b);
+		color: var(--clb);
 		padding: var(--sp1);
 		width: 100%;
 	}

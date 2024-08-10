@@ -65,7 +65,7 @@
 
 	.primary {
 		background-color: var(--cl1);
-		color: var(--ft1_b);
+		color: var(--clb);
 		box-shadow: 0 -4px 0 var(--cl1_d) inset;
 	}
 
@@ -78,7 +78,7 @@
 
 	:not(:disabled):hover {
 		background-color: var(--cl1);
-		color: var(--ft1_b);
+		color: var(--clb);
 		text-decoration: none;
 	}
 	:not(:disabled).primary:hover {

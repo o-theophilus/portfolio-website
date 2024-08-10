@@ -61,7 +61,7 @@
 	}
 
 	.active {
-		color: var(--ft1_b);
+		color: var(--clb);
 		background-color: var(--cl3);
 	}
 </style>

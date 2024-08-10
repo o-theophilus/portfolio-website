@@ -46,10 +46,10 @@
 		font-size: calc(var(--size) / 3);
 		font-weight: bold;
 
-		color: var(--ft1_b);
+		color: var(--clb);
 	}
 	.light {
-		color: var(--ft1_d);
+		color: var(--cld);
 	}
 
 	span {

@@ -119,9 +119,9 @@
 		}
 	}
 
-	@media screen and (min-width: 900px) {
+	/* @media screen and (min-width: 900px) {
 		.items {
 			grid-template-columns: 1fr 1fr 1fr;
 		}
-	}
+	} */
 </style>

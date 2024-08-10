@@ -45,7 +45,7 @@
 		border-color: transparent;
 	}
 	.invert {
-		border-color: var(--ft1_b);
+		border-color: var(--clb);
 	}
 
 	.content {
@@ -58,11 +58,11 @@
 		transition: color var(--trans);
 	}
 	button:hover .content {
-		color: var(--ft1_b);
+		color: var(--clb);
 	}
 
 	.invert .content {
-		color: var(--ft1_b);
+		color: var(--clb);
 	}
 
 	.highlight {

@@ -60,7 +60,7 @@
 
 		font-size: 1.2rem;
 		font-weight: 800;
-		color: var(--ft1_b);
+		color: var(--clb);
 		text-transform: capitalize;
 	}
 

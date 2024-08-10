@@ -1,6 +1,6 @@
 <script>
 	import Icon from '$lib/icon.svelte';
-	import One from './skill.one.svelte';
+	import One from './exp.one.svelte';
 
 	export let list = [];
 	export let name = '';
@@ -23,13 +23,6 @@
 <style>
 	.group {
 		width: 100%;
-
-		padding: var(--sp2);
-		border: 2px solid var(--bg2);
-		border-radius: var(--sp0);
-	}
-	.group:hover {
-		/* background-color: var(--bg2); */
 	}
 
 	.line {
@@ -39,21 +32,6 @@
 
 		color: var(--ft1);
 		fill: currentColor;
-	}
-
-	.icon {
-		--size: 60px;
-
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-shrink: 0;
-
-		width: var(--size);
-		height: var(--size);
-
-		background-color: var(--bg2);
-		border-radius: var(--sp0);
 	}
 
 	.title {

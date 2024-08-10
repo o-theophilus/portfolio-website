@@ -46,6 +46,6 @@
 
 	button:hover {
 		background-color: var(--cl1);
-		color: var(--ft1_b);
+		color: var(--clb);
 	}
 </style>

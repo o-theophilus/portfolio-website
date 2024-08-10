@@ -15,6 +15,12 @@
 	{/if}
 	<footer id="footer">
 		<div class="ititle"><strong> Get in touch! </strong></div>
+
+		Whether you have an idea for a project or just want to chat, feel free to shoot me an email!
+
+		<br />
+		Got a question or proposal, or just want to say hello? Go ahead.
+
 		<section>
 			<div class="form">
 				<Form />
@@ -29,7 +35,7 @@
 				<Nav />
 			</div>
 		</section>
-		<div class="copyright">&copy Loup 2023. All rights reserved.</div>
+		<div class="copyright">&copy 2024 | Designed & Built by Theophilus Ogbolu.</div>
 		<br /><br /><br />
 	</footer>
 </Content>
@@ -46,7 +52,7 @@
 		margin: var(--sp3) 0;
 	}
 	.copyright {
-		margin-top: var(--sp4) ;
+		margin-top: var(--sp4);
 	}
 	@media screen and (min-width: 600px) {
 		section {

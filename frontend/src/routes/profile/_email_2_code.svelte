@@ -51,7 +51,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off" >
+<form on:submit|preventDefault novalidate autocomplete="off">
 	<strong class="ititle"> Change Email </strong>
 
 	{#if error.error}
@@ -85,7 +85,7 @@
 
 	.message {
 		background-color: var(--cl1_l);
-		color: var(--ft1_b);
+		color: var(--clb);
 		padding: var(--sp1);
 		width: 100%;
 	}

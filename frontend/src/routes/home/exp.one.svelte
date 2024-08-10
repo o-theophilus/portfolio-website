@@ -44,10 +44,10 @@
 	.name,
 	.value {
 		line-height: 1;
+		font-size: 0.8rem;
 	}
 
 	.value {
-		font-size: 0.8rem;
 		color: var(--bg1);
 	}
 

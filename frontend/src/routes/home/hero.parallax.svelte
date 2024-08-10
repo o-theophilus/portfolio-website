@@ -1,4 +1,6 @@
 <script>
+	import Icon from '$lib/icon.svelte';
+
 	let scrollY;
 
 	let a;
@@ -24,6 +26,13 @@
 
 <section>
 	<img style:--top="{a}px" src="/parallax/parallax0.png" alt="parallax0" />
+	<div class="block" style:--top="{a}px">
+		<div class="icon">
+			<Icon icon="logo" size="6" />
+		</div>
+		<div class="name">Theophilus Ogbolu</div>
+		<div class="role">Designer & Developer</div>
+	</div>
 	<img style:--top="{b}px" src="/parallax/parallax1.png" alt="parallax1" />
 	<img style:--top="{c}px" src="/parallax/parallax2.png" alt="parallax2" />
 	<img style:--top="{d}px" src="/parallax/parallax3.png" alt="parallax3" />
@@ -41,7 +50,7 @@
 		height: calc(100vh - var(--headerHeight));
 		min-height: 800px;
 
-		background-color: #82C6FF;
+		background-color: #82c6ff;
 
 		mask-image: url('/parallax/parallax8.png');
 		mask-repeat: no-repeat;
@@ -52,12 +61,41 @@
 		-webkit-mask-size: cover;
 		-webkit-mask-position: center;
 	}
-	img {
+
+	img,
+	.block {
 		position: absolute;
 
 		height: 100%;
 		width: 100%;
 		object-fit: cover;
 		transform: translateY(var(--top));
+	}
+
+	.block {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		height: 50%;
+		padding: var(--sp2);
+
+		color: var(--bg1);
+		transition: color var(--trans);
+	}
+
+	.icon {
+		color: var(--cl1);
+	}
+
+	.name {
+		font-size: 2rem;
+		font-weight: 800;
+		text-align: center;
+	}
+
+	.role {
+		font-size: 1.1rem;
 	}
 </style>
