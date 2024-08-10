@@ -90,7 +90,7 @@
 
 <style>
 	.comp {
-		margin: var(--sp4) 0;
+		margin: var(--sp5) 0;
 	}
 
 	.block {

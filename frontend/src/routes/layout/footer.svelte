@@ -16,10 +16,7 @@
 	<footer id="footer">
 		<div class="ititle"><strong> Get in touch! </strong></div>
 
-		Whether you have an idea for a project or just want to chat, feel free to shoot me an email!
-
-		<br />
-		Got a question or proposal, or just want to say hello? Go ahead.
+		Got a question or proposal, or just want to say hello? Please go ahead.
 
 		<section>
 			<div class="form">
@@ -53,6 +50,7 @@
 	}
 	.copyright {
 		margin-top: var(--sp4);
+		font-size: 0.8rem;
 	}
 	@media screen and (min-width: 600px) {
 		section {

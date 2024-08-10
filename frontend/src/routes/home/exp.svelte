@@ -39,6 +39,24 @@
 		<br />
 		<br />
 
+		<div class="tabs">
+			{#each tabs as tab, i}
+				{#if i != 0}
+					<div class="line" />
+				{/if}
+				<div
+					class="tab2"
+					role="presentation"
+					class:active={active == i}
+					on:click={() => {
+						active = i;
+					}}
+				>
+					{tab}
+				</div>
+			{/each}
+		</div>
+
 		<div class="block">
 			<div class="left">
 				<div class="indicator">
@@ -61,7 +79,6 @@
 							{tab}
 						</div>
 					{/each}
-					<!-- <div class="tab">get Resume</div> -->
 				</div>
 			</div>
 
@@ -198,7 +215,7 @@
 
 <style>
 	.comp {
-		margin: var(--sp4) 0;
+		margin: var(--sp5) 0;
 	}
 
 	.block {
@@ -207,7 +224,7 @@
 	}
 
 	.left {
-		display: flex;
+		display: none;
 		height: fit-content;
 		flex-shrink: 0;
 	}
@@ -275,12 +292,6 @@
 		/* content: '►'; */
 	}
 
-	@media screen and (min-width: 500px) {
-		.tab {
-			font-size: 1rem;
-		}
-	}
-
 	.link {
 		display: inline-flex;
 		align-items: center;
@@ -291,5 +302,69 @@
 
 	.link:hover {
 		gap: var(--sp2);
+	}
+
+	.tabs {
+		--size: 20px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		height: 40px;
+		margin-bottom: var(--sp3);
+	}
+
+	.tabs .line {
+		background-color: var(--ft2);
+		height: 1px;
+		width: 100%;
+	}
+
+	.tabs .tab2 {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		flex-shrink: 0;
+		width: var(--size);
+		height: var(--size);
+		border-radius: 50%;
+		overflow: hidden;
+
+		font-size: 0.8rem;
+		cursor: pointer;
+		/* background-color: var(--ft2); */
+		/* background-color: var(--bg2); */
+		outline: 1px solid var(--ft2);
+		color: transparent;
+		
+		transition: width var(--trans), height var(--trans), border-radius var(--trans),
+			padding var(--trans), color var(--trans);
+	}
+	.tabs .tab2.active {
+		width: unset;
+		height: unset;
+		padding: var(--sp1) var(--sp3);
+		border-radius: var(--sp0);
+		/* background-color: var(--bg2); */
+		color: var(--ft1);
+	}
+	.tabs .tab2:hover {
+		/* background-color: color-mix(in srgb, var(--cl1), transparent 90%); */
+		/* background-color: var(--cl1); */
+	}
+	.tabs .tab2:not(.active):hover {
+		width: calc(1.2 * var(--size));
+		height: calc(1.2 * var(--size));
+	}
+
+	@media screen and (min-width: 500px) {
+		.tabs {
+			display: none;
+		}
+
+		.left {
+			display: flex;
+		}
 	}
 </style>

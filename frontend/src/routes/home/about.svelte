@@ -14,16 +14,9 @@
 			<br />
 			<br />
 
-			I've always been fascinated by crafting digital experiences that people love. From building my
-			own projects to contributing to open-source communities, I enjoy the thrill of turning ideas
-			into reality. I believe in the power of collaboration and learning from others, which has
-			shaped my approach to design and development.
-
-			<br />
-			<br />
-			When I am not designing or programming, you can find me playing music, exploring my surroundings,
-			or spending time with my family and friends. I believe that a balanced and fulfilling life is essential
-			to creative inspiration and success.
+			When I am not designing or programming, you can find me playing music, exploring my
+			surroundings, or spending time with my family and friends. I believe that a balanced and
+			fulfilling life is essential to creative inspiration and success.
 
 			<div class="cod">
 				<svg viewBox="0 0 10362.15 9963.51" height="300px">

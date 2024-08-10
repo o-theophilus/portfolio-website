@@ -60,8 +60,10 @@
 
 	.dynamic {
 		color: var(--ft1);
-		font-size: 3rem;
+		font-size: min(3rem, 8vw);
 		font-weight: 800;
+
+		/* font-size: 9vw; */
 
 		transition: color var(--trans);
 	}
