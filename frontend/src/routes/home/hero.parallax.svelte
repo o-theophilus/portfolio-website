@@ -49,8 +49,8 @@
 		height: 100%;
 		width: 100%;
 		object-fit: cover;
-		transform: translateY(calc(0.1 * var(--no) * var(--top)));
-		/* top: calc(0.1 * var(--no) * var(--top)); */
+		/* transform: translateY(calc(0.1 * var(--no) * var(--top))); */
+		top: calc(0.1 * var(--no) * var(--top));
 	}
 
 	.block {
