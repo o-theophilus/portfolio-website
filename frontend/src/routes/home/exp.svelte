@@ -7,7 +7,15 @@
 	import Icon from '$lib/icon.svelte';
 	import Group from './exp.group.svelte';
 
-	let tabs = ['Wragby', 'Astra', 'Brandlife', 'AI Multi.', 'IZA60', 'Dev Exp.', 'Design Exp.'];
+	let tabs = [
+		'Wragby',
+		'Astra',
+		'Brandlife',
+		'AI Multi.',
+		'IZA60'
+		// 'Dev Exp.',
+		// 'Design Exp.'
+	];
 	let active = 0;
 
 	let devlope = [
@@ -308,7 +316,6 @@
 		--size: 20px;
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
 
 		height: 40px;
 		margin-bottom: var(--sp3);
@@ -337,7 +344,7 @@
 		/* background-color: var(--bg2); */
 		outline: 1px solid var(--ft2);
 		color: transparent;
-		
+
 		transition: width var(--trans), height var(--trans), border-radius var(--trans),
 			padding var(--trans), color var(--trans);
 	}
@@ -349,10 +356,10 @@
 		/* background-color: var(--bg2); */
 		color: var(--ft1);
 	}
-	.tabs .tab2:hover {
-		/* background-color: color-mix(in srgb, var(--cl1), transparent 90%); */
-		/* background-color: var(--cl1); */
-	}
+	/* .tabs .tab2:hover { */
+	/* background-color: color-mix(in srgb, var(--cl1), transparent 90%); */
+	/* background-color: var(--cl1); */
+	/* } */
 	.tabs .tab2:not(.active):hover {
 		width: calc(1.2 * var(--size));
 		height: calc(1.2 * var(--size));

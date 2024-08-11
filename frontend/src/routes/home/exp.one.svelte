@@ -46,7 +46,10 @@
 		line-height: 1;
 		font-size: 0.8rem;
 	}
-
+	
+	.name {
+		color: var(--ft1);
+	}
 	.value {
 		color: var(--bg1);
 	}

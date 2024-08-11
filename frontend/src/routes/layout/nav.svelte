@@ -74,6 +74,7 @@
 
 	a span {
 		color: var(--ft1);
+		line-height: 0%;
 	}
 
 	.block,

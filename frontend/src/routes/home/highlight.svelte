@@ -1,211 +1,75 @@
 <script>
-	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
-	import { cubicInOut } from 'svelte/easing';
 	import { module, settings, user } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
 	import Post from './highlight.one.svelte';
 	import Edit from './highlight.mod.svelte';
-	import Scroller from '$lib/scroller.svelte';
 	import BRround from '$lib/button/round.svelte';
-
-	let sticky;
-	let block;
-	let section;
-	let scroller = {};
-	let pos = {};
-
-	let observe_post =
-		$settings.highlight && $settings.highlight.length > 0 ? $settings.highlight[0] : {};
-	let hover_post = {};
-	$: active_post = Object.keys(hover_post).length > 0 ? hover_post : observe_post;
-
-	const set_pos = (scroller) =>
-		(sticky.offsetTop / (section.clientHeight - sticky.clientHeight)) *
-		(scroller.clientWidth - block.clientWidth);
-
-	let intersecting = false;
-	onMount(() => {
-		if (browser && $settings.highlight && $settings.highlight.length > 0) {
-			let ob = new IntersectionObserver(
-				(entries) => {
-					intersecting = entries[0].isIntersecting;
-				},
-				{
-					threshold: 0.9
-				}
-			);
-
-			ob.observe(document.querySelector('.post-block'));
-		}
-	});
-	let width;
+	import Link from '$lib/button/link.svelte';
+	import Icon from '$lib/icon.svelte';
 </script>
 
-<svelte:window
-	bind:innerWidth={width}
-	on:scroll={(e) => {
-		if ($settings.highlight && $settings.highlight.length > 0) {
-			pos.a = set_pos(scroller.a);
-		}
-	}}
-/>
-
 {#if $settings.highlight && $settings.highlight.length > 0}
-	<br /><br />
+	<Content fit>
+		<div class="comp">
+			<div class="title">
+				<strong class="ititle">
+					Some Thing{$settings.highlight.length > 1 ? 's' : ''}
+					I've Built
+				</strong>
 
-	<section
-		bind:this={section}
-		class:intersecting
-		style:height="{(width + 64) * $settings.highlight.length + width}px"
-	>
-		<div class="sticky" bind:this={sticky}>
-			<div class="bg-area">
-				{#key active_post.key}
-					<div
-						class="bg"
-						style:--bg_img="url({active_post.photos[0]})"
-						in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}
+				{#if $user.access.includes('post:edit_photos')}
+					<BRround
+						icon="edit"
+						on:click={() => {
+							$module = {
+								module: Edit
+							};
+						}}
 					/>
-				{/key}
+				{/if}
 			</div>
-			<Content>
-				<div class="post-block" bind:this={block}>
-					<div class="title">
-						<span class="name">
-							Post{$settings.highlight.length > 1 ? 's' : ''}
-						</span>
 
-						{#if $user.access.includes('post:edit_photos')}
-							<BRround
-								icon="edit"
-								on:click={() => {
-									$module = {
-										module: Edit
-									};
-								}}
-							/>
-						{/if}
-					</div>
+			<br />
 
-					<div class="scroller" style:right="{pos.a}px" bind:this={scroller.a}>
-						{#each $settings.highlight as post (post.key)}
-							<Post
-								parent={block}
-								{post}
-								{active_post}
-								on:active={() => {
-									observe_post = post;
-								}}
-								on:mouseenter={() => {
-									hover_post = post;
-								}}
-								on:mouseleave={() => {
-									hover_post = {};
-								}}
-							/>
-						{/each}
-						<Scroller href="/post"
-							>view
-							<br />
-							more
-						</Scroller>
-					</div>
+			{#each $settings.highlight as post (post.key)}
+				<Post {post} />
+			{/each}
 
-					<div class="desc">
-						{#key hover_post.key || observe_post.key}
-							<div in:fade={{ delay: 0, duration: 1000, easing: cubicInOut }}>
-								<strong class="ititle color">
-									{hover_post.title || observe_post.title}
-								</strong>
-								<br />
-								{hover_post.description || observe_post.description}
-							</div>
-						{/key}
-					</div>
+			<br />
+			<br />
+			<Link
+				href="https://drive.google.com/file/d/17Oznj43Gm_oX_SgKbqa0U9-Hex9X3bFn/view?usp=drive_link"
+			>
+				<div class="link">
+					View more
+					<Icon icon="arrow_forward" />
 				</div>
-			</Content>
+			</Link>
 		</div>
-	</section>
+	</Content>
 {/if}
 
 <style>
-	section {
-		position: relative;
+	.comp {
+		margin: var(--sp5) 0;
 	}
 
 	.title {
 		display: flex;
 		gap: var(--sp2);
-	}
-
-	.title .name {
-		font-weight: 800;
-
-		font-size: 1.5rem;
-		color: var(--ft2);
-
-		transition: font-size var(--trans), color var(--trans);
-	}
-
-	.intersecting .title .name {
-		font-size: 2rem;
-		color: var(--ft1);
-	}
-
-	.sticky {
-		position: sticky;
-
-		top: 0;
-		overflow: hidden;
-	}
-	.bg-area {
-		opacity: 0;
-	}
-	.intersecting .bg-area {
-		opacity: 0.2;
-	}
-	.bg {
-		position: absolute;
-		inset: 0;
-		background-image: var(--bg_img);
-		background-repeat: no-repeat;
-		background-size: cover;
-		background-position: center;
-		filter: blur(6px);
-	}
-
-	.post-block {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		height: 100vh;
-	}
-
-	.scroller {
-		position: relative;
-
-		display: flex;
 		align-items: center;
-		gap: var(--sp4);
+	}
+
+	.link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--sp1);
 		width: fit-content;
-
-		padding: 0 var(--sp4);
+		transition: gap var(--trans);
 	}
 
-	.title,
-	.desc {
-		height: 30vh;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		text-align: center;
-		position: relative;
-	}
-	.color {
-		color: var(--cl1);
+	.link:hover {
+		gap: var(--sp2);
 	}
 </style>

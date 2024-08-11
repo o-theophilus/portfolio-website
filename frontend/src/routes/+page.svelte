@@ -4,12 +4,12 @@
 	import { module } from '$lib/store.js';
 
 	import Hero from './home/hero.svelte';
-	import About from './home/about.svelte';
+	import About from './home/welcome.about.svelte';
 	import Welcome from './home/welcome.svelte';
 	import ACD from './home/acd.svelte';
 	import Experience from './home/exp.svelte';
 	import AboutWebsite from './home/about_website.svelte';
-	import Contact from './home/get_in_touch.svelte';
+	import Contact from './home/contact.svelte';
 	import Highlight from './home/highlight.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Log from '$lib/log.svelte';
@@ -41,9 +41,8 @@
 
 <Hero />
 <Welcome />
-<About />
 <ACD />
-<Experience />
 <Contact />
+<Experience />
 <!-- <AboutWebsite /> -->
 <Highlight />

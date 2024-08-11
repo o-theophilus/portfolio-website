@@ -42,21 +42,6 @@
 		<div class="block">
 			<div class="card">
 				<div class="pos">
-					<div class="icon three">
-						<Icon icon="brush" size="1.5" />
-					</div>
-					<div class="title">Create What Inspires</div>
-
-					<div class="text">
-						My approach to art focuses on clear expression and effective communication. I strive to
-						create artworks that are visually engaging and evoke strong emotions. My goal is to
-						produce pieces that are not only appealing but also meaningful and thought-provoking.
-					</div>
-				</div>
-			</div>
-
-			<div class="card">
-				<div class="pos">
 					<div class="icon one">
 						<Icon icon="design" size="1.5" />
 					</div>
@@ -81,6 +66,21 @@
 						While I focus primarily on graphic design, I also have experience with web development
 						and programming. I can work with you to create a website that not only looks great, but
 						also functions seamlessly across devices.
+					</div>
+				</div>
+			</div>
+
+			<div class="card">
+				<div class="pos">
+					<div class="icon three">
+						<Icon icon="brush" size="1.5" />
+					</div>
+					<div class="title">Create What Inspires</div>
+
+					<div class="text">
+						My approach to art focuses on clear expression and effective communication. I strive to
+						create artworks that are visually engaging and evoke strong emotions. My goal is to
+						produce pieces that are not only appealing but also meaningful and thought-provoking.
 					</div>
 				</div>
 			</div>
@@ -110,13 +110,13 @@
 		width: 100%;
 	}
 	.card:nth-of-type(1) {
-		--color: var(--cl5);
-	}
-	.card:nth-of-type(2) {
 		--color: var(--cl6);
 	}
-	.card:nth-of-type(3) {
+	.card:nth-of-type(2) {
 		--color: var(--cl3);
+	}
+	.card:nth-of-type(3) {
+		--color: var(--cl5);
 	}
 
 	.pos {
@@ -171,9 +171,5 @@
 		font-weight: 800;
 		font-size: 1.1rem;
 		color: var(--color);
-	}
-
-	.text {
-		font-size: 0.8rem;
 	}
 </style>

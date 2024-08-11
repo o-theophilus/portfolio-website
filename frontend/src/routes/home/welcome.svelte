@@ -1,5 +1,7 @@
 <script>
 	import Content from '$lib/content.svelte';
+	import Dynamic from './welcome.dynamic.svelte';
+	import About from './welcome.about.svelte';
 
 	let visible = false;
 	let states = ['Portfolio', 'Design', 'Art', 'Coding', 'Blog'];
@@ -33,14 +35,12 @@
 <Content fit>
 	<div class="up">
 		<strong class="ititle">Hi There!</strong>
-		<div class="dynamic">
+		<div class="welcome">
 			Welcome to my
-			<br />
-			{#if visible}
-				<span class="highlight" transition:typewriter>
-					{states[count]}
-				</span>
-			{/if}
+			<span class="dynamic">
+				<br />
+				<Dynamic />
+			</span>
 			Website
 		</div>
 
@@ -50,6 +50,9 @@
 			all about making things look and feel amazing while also being super easy to use. My goal is to
 			create designs that feel natural and intuitive, so people can focus on what matters most.
 		</div>
+
+		<br />
+		<About />
 	</div>
 </Content>
 
@@ -58,20 +61,24 @@
 		margin-bottom: var(--sp5);
 	}
 
-	.dynamic {
+	.welcome {
 		color: var(--ft1);
-		font-size: min(3rem, 8vw);
+		font-size: 2rem;
 		font-weight: 800;
-
-		/* font-size: 9vw; */
 
 		transition: color var(--trans);
 	}
 
-	.highlight {
-		color: var(--clb);
-		background-color: var(--cl1);
-		padding: var(--sp0);
+	.dynamic {
+		display: none;
+	}
+	@media screen and (min-width: 300px) {
+		.welcome {
+			font-size: min(3rem, 9vw);
+		}
+		.dynamic {
+			display: unset;
+		}
 	}
 
 	.copy {

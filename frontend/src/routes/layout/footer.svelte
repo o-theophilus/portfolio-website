@@ -9,17 +9,20 @@
 	import Content from '$lib/content.svelte';
 </script>
 
-<Content fit>
-	{#if $page.url.pathname != '/post'}
-		<hr />
-	{/if}
-	<footer id="footer">
-		<div class="ititle"><strong> Get in touch! </strong></div>
+{#if $page.url.pathname != '/post'}
+	<hr />
+{/if}
 
-		Got a question or proposal, or just want to say hello? Please go ahead.
+<Content fit>
+	<footer id="footer">
+		<div class="ititle"><strong> Get In Touch </strong></div>
 
 		<section>
 			<div class="form">
+				Got a question or proposal, or just want to say hello? Please go ahead.
+				<br />
+				<br />
+
 				<Form />
 			</div>
 			<div>
@@ -39,7 +42,8 @@
 
 <style>
 	.ititle {
-		margin: var(--sp3) 0;
+		margin-top: var(--sp5);
+		margin-bottom: var(--sp3);
 	}
 
 	section {
@@ -49,7 +53,7 @@
 		margin: var(--sp3) 0;
 	}
 	.copyright {
-		margin-top: var(--sp4);
+		margin-top: var(--sp5);
 		font-size: 0.8rem;
 	}
 	@media screen and (min-width: 600px) {

@@ -22,12 +22,12 @@ blockquote {
 }
 
 a {
-	color: var(--cl1);
-	text-decoration: none;
+	color: var(--ft2);
+	font-weight: 800;
 }
 
 a:hover {
-	text-decoration: underline;
+	color: var(--cl1);
 }
 
 h1,
@@ -72,10 +72,6 @@ ol,
 ul {
 	padding-left: 24px;
 }
-
-/* li{ */
-	/* margin: 8px 0; */
-/* } */
 
 /* ##################################### */
 
