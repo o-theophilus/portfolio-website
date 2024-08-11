@@ -6,21 +6,10 @@
 
 <svelte:window bind:scrollY />
 
-<section>
-	<img
-		style:--scroll="{scrollY}px"
-		style:--top="{scrollY * 8 * 0.1}px"
-		style:--no="8"
-		src="/parallax/parallax0.png"
-		alt="parallax0"
-	/>
+<section style:--scroll={scrollY}>
+	<img style:--no="8" src="/parallax/parallax0.png" alt="parallax0" />
 
-	<div
-		class="block"
-		style:--scroll="{scrollY}px"
-		style:--top="{scrollY * 8 * 0.1}px"
-		style:--no="8"
-	>
+	<div class="block" style:--no="8">
 		<div class="icon">
 			<Icon icon="logo" size="6" />
 		</div>
@@ -28,55 +17,13 @@
 		<div class="role">Designer & Developer</div>
 	</div>
 
-	<img
-		style:--scroll="{scrollY}px"
-		style:--top="{scrollY * 7 * 0.1}px"
-		style:--no="7"
-		src="/parallax/parallax1.png"
-		alt="parallax1"
-	/>
-	<img
-		style:--scroll="{scrollY}px"
-		style:--top="{scrollY * 6 * 0.1}px"
-		style:--no="6"
-		src="/parallax/parallax2.png"
-		alt="parallax2"
-	/>
-	<img
-		style:--scroll="{scrollY}px"
-		style:--top="{scrollY * 5 * 0.1}px"
-		style:--no="5"
-		src="/parallax/parallax3.png"
-		alt="parallax3"
-	/>
-	<img
-		style:--scroll="{scrollY}px"
-		style:--top="{scrollY * 4 * 0.1}px"
-		style:--no="4"
-		src="/parallax/parallax4.png"
-		alt="parallax4"
-	/>
-	<img
-		style:--scroll="{scrollY}px"
-		style:--top="{scrollY * 3 * 0.1}px"
-		style:--no="3"
-		src="/parallax/parallax5.png"
-		alt="parallax5"
-	/>
-	<img
-		style:--scroll="{scrollY}px"
-		style:--top="{scrollY * 2 * 0.1}px"
-		style:--no="2"
-		src="/parallax/parallax6.png"
-		alt="parallax6"
-	/>
-	<img
-		style:--scroll="{scrollY}px"
-		style:--top="{scrollY * 1 * 0.1}px"
-		style:--no="1"
-		src="/parallax/parallax7.png"
-		alt="parallax7"
-	/>
+	<img style:--no="7" src="/parallax/parallax1.png" alt="parallax1" />
+	<img style:--no="6" src="/parallax/parallax2.png" alt="parallax2" />
+	<img style:--no="5" src="/parallax/parallax3.png" alt="parallax3" />
+	<img style:--no="4" src="/parallax/parallax4.png" alt="parallax4" />
+	<img style:--no="3" src="/parallax/parallax5.png" alt="parallax5" />
+	<img style:--no="2" src="/parallax/parallax6.png" alt="parallax6" />
+	<img style:--no="1" src="/parallax/parallax7.png" alt="parallax7" />
 </section>
 
 <style>
@@ -104,9 +51,8 @@
 		height: 100%;
 		width: 100%;
 		object-fit: cover;
+		top: calc(0.1px * var(--no) * var(--scroll));
 		/* transform: translateY(calc(0.1 * var(--no) * var(--scroll))); */
-		/* top: calc(0.1 * var(--no) * var(--scroll)); */
-		top: var(--top);
 	}
 
 	.block {
