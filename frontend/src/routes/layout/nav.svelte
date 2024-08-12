@@ -65,7 +65,7 @@
 
 		color: var(--cl1);
 		font-size: 1.2rem;
-		font-weight: 800;
+		/* font-weight: 800; */
 
 		text-decoration: none;
 

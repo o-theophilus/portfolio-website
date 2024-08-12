@@ -21,12 +21,12 @@ blockquote {
 	margin: 8px;
 }
 
-a {
+.markdown a {
 	color: var(--ft2);
 	font-weight: 800;
 }
 
-a:hover {
+.markdown a:hover {
 	color: var(--cl1);
 }
 

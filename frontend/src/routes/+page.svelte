@@ -4,7 +4,6 @@
 	import { module } from '$lib/store.js';
 
 	import Hero from './home/hero.svelte';
-	import About from './home/welcome.about.svelte';
 	import Welcome from './home/welcome.svelte';
 	import ACD from './home/acd.svelte';
 	import Experience from './home/exp.svelte';

@@ -1,44 +1,110 @@
 <script>
-	import { fly, fade } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 
 	import Content from '$lib/content.svelte';
 	import Link from '$lib/button/link.svelte';
+	import Tag from '$lib/button/tag.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Group from './exp.group.svelte';
 
-	let tabs = [
-		'Wragby',
-		'Astra',
-		'Brandlife',
-		'AI Multi.',
-		'IZA60'
-		// 'Dev Exp.',
-		// 'Design Exp.'
+	let exp = [
+		{
+			key: 'Wragby',
+			name: 'Wragby Business Solutions',
+			role: 'Creative Associate',
+			date: 'February 2022 - Present',
+			exps: [
+				'Established and maintained a consistent brand image through the design of a brand identity manual, company profile, and social media profiles.',
+				'Led the design of impactful weekly social media content, banners, email templates, and newsletters.',
+				'Produced digital and print materials for various mediums, ensuring uniform brand representation, resulting in a 27% increase in brand recognition.'
+			],
+			tags: ['UI/UX', 'Figma', 'CorelDRAW', 'Photoshop', 'Premiere Pro', 'Illustrator']
+		},
+
+		{
+			key: 'Astra',
+			name: 'Astra',
+			role: 'Visual Content Specialist',
+			date: 'September 2021 - December 2023',
+			exps: [
+				'Developed a dynamic webpage using HTML and CSS, implementing prompt engineering for generating distinctive clothing style images via OpenAI.',
+				'Utilized the Python Pillow package to create over 10,000 unique NFT images and	metadata.',
+				'Integrated Figma for efficient product prototyping, leading to a 33% reduction in design iteration time.',
+				'Conducting research and development on training a generative AI model to generate images based on preset images.',
+				'Writing scripts to automate the character generation process for Astraverse.'
+			],
+			tags: [
+				'Figma',
+				'Illustrator',
+				'HTML',
+				'CSS',
+				'JavaScript',
+				'Svelte',
+				'Python',
+				'Flask',
+				'Blender3D',
+				// 'Godot',
+				'OpenAI',
+				'Stable Diffusion',
+				'NFT',
+				'Game',
+				'Unreal Engine'
+			]
+		},
+
+		{
+			key: 'Brandlife',
+			name: 'Brandlife Limited',
+			role: 'Graphic Designer',
+			date: 'August 2019 - February 2022',
+			exps: [
+				'Collaborated with account managers to design marketing materials for HP, adhering to brand guidelines.',
+				'Designed diverse marketing collaterals and presentations for pitches, conducted event center reconnaissance, and designed event center mockups using SketchUp and Blender.',
+				'Developed responsive landing pages, resulting in a 15% reduction in campaign execution costs.'
+			],
+			tags: [
+				'CorelDRAW',
+				'Photoshop',
+				'Illustrator',
+				'Premiere Pro',
+				'HTML',
+				'CSS',
+				'JavaScript',
+				'React',
+				'Blender3D',
+				'SketchUp'
+			]
+		},
+
+		{
+			key: 'AI Multi.',
+			name: 'AI Multimedia Academy',
+			role: 'Graphic Designer',
+			date: 'November 2016 - March 2018',
+			exps: [
+				'Conducted tutoring sessions for students in 3D modeling, animations, and graphic design.',
+				'Developed diverse print materials for clients and actively contributed innovative design ideas in brainstorming sessions.'
+			],
+			tags: ['CorelDRAW', 'Photoshop', 'Illustrator', 'Premiere Pro', 'Blender3D']
+		},
+
+		{
+			key: 'IZA60',
+			name: 'IZA60 Solutions',
+			role: 'Graphic / Web Designer Intern',
+			date: 'January 2015 - November 2016',
+			exps: [
+				'Spearheaded a project integrating digital art into advertising campaigns, increasing user engagement by 21%.',
+				'Utilized CorelDRAW for crafting logos and designing banners for web advertisements.',
+				'Developed websites using HTML and CSS, optimized image sizes with Photoshop, resulting in a 60% improvement in website speed.'
+			],
+			tags: ['CorelDRAW', 'Photoshop', 'HTML', 'CSS', 'JavaScript']
+		}
 	];
+
 	let active = 0;
 
-	let devlope = [
-		{ name: 'HTML', value: 95 },
-		{ name: 'CSS', value: 90 },
-		{ name: 'JavaScript', value: 65 },
-		{ name: 'React', value: 50 },
-		{ name: 'Svelte', value: 87 },
-		{ name: 'Python', value: 90 },
-		{ name: 'Flask', value: 85 },
-		{ name: 'Postgres', value: 65 }
-	];
-
-	let design = [
-		{ name: 'Figma', value: 80 },
-		{ name: 'CorelDRAW', value: 94 },
-		{ name: 'Photoshop', value: 79 },
-		{ name: 'Premiere Pro', value: 53 },
-		{ name: 'Blender 3D', value: 80 },
-		{ name: 'Verge3D', value: 80 },
-		{ name: 'SketchUp', value: 85 },
-		{ name: 'Godot', value: 30 }
-	];
+	let devlope = [{ name: 'Verge3D', value: 80 }];
 </script>
 
 <Content fit>
@@ -48,7 +114,7 @@
 		<br />
 
 		<div class="tabs">
-			{#each tabs as tab, i}
+			{#each exp as x, i}
 				{#if i != 0}
 					<div class="line" />
 				{/if}
@@ -60,7 +126,8 @@
 						active = i;
 					}}
 				>
-					{tab}
+					<div />
+					{x.key}
 				</div>
 			{/each}
 		</div>
@@ -70,12 +137,12 @@
 				<div class="indicator">
 					<div
 						class="pos"
-						style:--height="{100 / tabs.length}%"
-						style:--active="{active * (100 / tabs.length)}%"
+						style:--height="{100 / exp.length}%"
+						style:--active="{active * (100 / exp.length)}%"
 					/>
 				</div>
 				<div>
-					{#each tabs as tab, i}
+					{#each exp as x, i}
 						<div
 							role="presentation"
 							class="tab"
@@ -84,129 +151,32 @@
 								active = i;
 							}}
 						>
-							{tab}
+							{x.key}
 						</div>
 					{/each}
 				</div>
 			</div>
 
 			<div class="right">
-				{#if active == 0}
+				{#key active}
 					<div class="details" in:fade={{ duration: 1000, easing: cubicInOut }}>
-						<div class="name">Wragby Business Solutions</div>
-						<div class="role">Creative Associate</div>
-						<div class="date">February 2022 - Present</div>
+						<div class="name">{exp[active].name}</div>
+						<div class="role">{exp[active].role}</div>
+						<div class="date">{exp[active].date}</div>
 						<div class="info">
 							<ul>
-								<li>
-									Established and maintained a consistent brand image through the design of a brand
-									identity manual, company profile, and social media profiles.
-								</li>
-								<li>
-									Led the design of impactful weekly social media content, banners, email templates,
-									and newsletters.
-								</li>
-								<li>
-									Produced digital and print materials for various mediums, ensuring uniform brand
-									representation, resulting in a 27% increase in brand recognition.
-								</li>
+								{#each exp[active].exps as x}
+									<li>{x}</li>
+								{/each}
 							</ul>
 						</div>
-					</div>
-				{:else if active == 1}
-					<div class="details" in:fade={{ duration: 1000, easing: cubicInOut }}>
-						<div class="name">Astra</div>
-						<div class="role">Visual Content Specialist</div>
-						<div class="date">September 2021 - December 2023</div>
-						<div class="info">
-							<ul>
-								<li>
-									Developed a dynamic webpage using HTML and CSS, implementing prompt engineering
-									for generating distinctive clothing style images via OpenAI.
-								</li>
-								<li>
-									Utilized the Python Pillow package to create over 10,000 unique NFT images and
-									metadata.
-								</li>
-								<li>
-									Integrated Figma for efficient product prototyping, leading to a 33% reduction in
-									design iteration time.
-								</li>
-							</ul>
+						<div class="tags">
+							{#each exp[active].tags as x}
+								<Tag no_grow>{x}</Tag>
+							{/each}
 						</div>
 					</div>
-				{:else if active == 2}
-					<div class="details" in:fade={{ duration: 1000, easing: cubicInOut }}>
-						<div class="name">Brandlife Limited</div>
-						<div class="role">Graphic Designer</div>
-						<div class="date">August 2019 - February 2022</div>
-						<div class="info">
-							<ul>
-								<li>
-									Collaborated with account managers to design marketing materials for HP, adhering
-									to brand guidelines.
-								</li>
-								<li>
-									Designed diverse marketing collaterals and presentations for pitches, conducted
-									event center reconnaissance, and designed event center mockups using SketchUp and
-									Blender.
-								</li>
-								<li>
-									Developed responsive landing pages, resulting in a 15% reduction in campaign
-									execution costs.
-								</li>
-							</ul>
-						</div>
-					</div>
-				{:else if active == 3}
-					<div class="details" in:fade={{ duration: 1000, easing: cubicInOut }}>
-						<div class="name">AI Multimedia Academy</div>
-						<div class="role">Graphic Designer</div>
-						<div class="date">November 2016 - March 2018</div>
-						<div class="info">
-							<ul>
-								<li>
-									Conducted tutoring sessions for students in 3D modeling, animations, and graphic
-									design.
-								</li>
-								<li>
-									Developed diverse print materials for clients and actively contributed innovative
-									design ideas in brainstorming sessions.
-								</li>
-							</ul>
-						</div>
-					</div>
-				{:else if active == 4}
-					<div class="details" in:fade={{ duration: 1000, easing: cubicInOut }}>
-						<div class="name">IZA60 Solutions</div>
-						<div class="role">Graphic / Web Designer Intern</div>
-						<div class="date">January 2015 - November 2016</div>
-						<div class="info">
-							<ul>
-								<li>
-									Spearheaded a project integrating digital art into advertising campaigns,
-									increasing user engagement by 21%.
-								</li>
-								<li>
-									Utilized CorelDRAW for crafting logos and designing banners for web
-									advertisements.
-								</li>
-								<li>
-									Developed websites using HTML and CSS, optimized image sizes with Photoshop,
-									resulting in a 60% improvement in website speed.
-								</li>
-							</ul>
-						</div>
-					</div>
-				{:else if active == 5}
-					<div class="details" in:fade={{ duration: 1000, easing: cubicInOut }}>
-						<Group list={devlope} name="Programming Skills" icon="code" />
-					</div>
-				{:else if active == 6}
-					<div class="details" in:fade={{ duration: 1000, easing: cubicInOut }}>
-						<Group list={design} name="Software Skills" icon="wysiwyg" />
-					</div>
-				{/if}
+				{/key}
 			</div>
 		</div>
 		<br />
@@ -295,9 +265,14 @@
 		margin: var(--sp1) 0;
 	}
 
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--sp1);
+	}
+
 	li::marker {
 		color: var(--cl1);
-		/* content: '►'; */
 	}
 
 	.link {
@@ -338,31 +313,40 @@
 		border-radius: 50%;
 		overflow: hidden;
 
-		font-size: 0.8rem;
 		cursor: pointer;
-		/* background-color: var(--ft2); */
-		/* background-color: var(--bg2); */
 		outline: 1px solid var(--ft2);
 		color: transparent;
+		font-size: 0;
 
 		transition: width var(--trans), height var(--trans), border-radius var(--trans),
 			padding var(--trans), color var(--trans);
 	}
+
+	.tabs .tab2 div {
+		border-radius: 50%;
+		width: 0;
+		height: 0;
+		background-color: transparent;
+		transition: width var(--trans), height var(--trans), background-color var(--trans);
+	}
+
 	.tabs .tab2.active {
 		width: unset;
 		height: unset;
 		padding: var(--sp1) var(--sp3);
 		border-radius: var(--sp0);
-		/* background-color: var(--bg2); */
+		font-size: 0.8rem;
 		color: var(--ft1);
 	}
-	/* .tabs .tab2:hover { */
-	/* background-color: color-mix(in srgb, var(--cl1), transparent 90%); */
-	/* background-color: var(--cl1); */
-	/* } */
+
 	.tabs .tab2:not(.active):hover {
 		width: calc(1.2 * var(--size));
 		height: calc(1.2 * var(--size));
+	}
+	.tabs .tab2:not(.active):hover div {
+		width: calc(0.5 * var(--size));
+		height: calc(0.5 * var(--size));
+		background-color: var(--ft2);
 	}
 
 	@media screen and (min-width: 500px) {

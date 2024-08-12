@@ -1,89 +1,54 @@
 <script>
 	import Content from '$lib/content.svelte';
-	import Dynamic from './welcome.dynamic.svelte';
-	import About from './welcome.about.svelte';
-
-	let visible = false;
-	let states = ['Portfolio', 'Design', 'Art', 'Coding', 'Blog'];
-
-	let typewriter = (node, { speed = 1 }) => {
-		const text = node.textContent;
-		const duration = text.length / (speed * 0.01);
-
-		return {
-			duration,
-			tick: (t) => {
-				const i = ~~(text.length * t);
-				node.textContent = text.slice(0, i);
-			}
-		};
-	};
-
-	let count = 0;
-	const call = () => {
-		count++;
-		if (count == states.length) {
-			count = 0;
-		}
-		visible = !visible;
-		setTimeout(call, 3000);
-	};
-	setTimeout(call, 3000);
+	import Observe from '$lib/observe.svelte';
+	import Cod from './welcome.cod.svelte';
 </script>
 
 <div id="scroll_1" />
 <Content fit>
-	<div class="up">
-		<strong class="ititle">Hi There!</strong>
-		<div class="welcome">
-			Welcome to my
-			<span class="dynamic">
-				<br />
-				<Dynamic />
-			</span>
-			Website
-		</div>
+	<Observe let:intersecting>
+		<div class="comp" class:intersecting>
+			<div class="headline">Creating Engaging & Accessible Digital Experiences.</div>
 
-		<div class="copy">
-			I'm <span class="bold"> Theophilus Ogbolu </span>
-			, a designer & developer focused on crafting digital experiences that people actually enjoy. I'm
-			all about making things look and feel amazing while also being super easy to use. My goal is to
-			create designs that feel natural and intuitive, so people can focus on what matters most.
-		</div>
+			<div class="about">
+				I'm <span class="bold"> Theophilus Ogbolu </span>
+				, a designer and developer passionate about creating digital products that delight users. I blend
+				design and technology to build intuitive, visually appealing experiences. With a focus on user-centric
+				design, I strive to create solutions that are both functional and aesthetically pleasing.
+			</div>
 
-		<br />
-		<About />
-	</div>
+			<Cod />
+		</div>
+	</Observe>
 </Content>
 
 <style>
-	.up {
+	.comp {
 		margin-bottom: var(--sp5);
+		
+		position: relative;
+		opacity: 0;
+		transform: translate(0, -500px) scale(0);
+	}
+	
+	.intersecting {
+		opacity: 1;
+		transform: translate(0, 0) scale(1);
 	}
 
-	.welcome {
+	.headline {
 		color: var(--ft1);
-		font-size: 2rem;
+		font-size: 2.6rem;
 		font-weight: 800;
-
+		
+		max-width: 400px;
 		transition: color var(--trans);
 	}
-
-	.dynamic {
-		display: none;
-	}
-	@media screen and (min-width: 300px) {
-		.welcome {
-			font-size: min(3rem, 9vw);
-		}
-		.dynamic {
-			display: unset;
-		}
-	}
-
-	.copy {
+	
+	.about {
+		margin-top: var(--sp3);
 		font-size: 1.4rem;
-		max-width: 500px;
+		max-width: 490px;
 	}
 
 	.bold {

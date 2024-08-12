@@ -45,12 +45,12 @@
 					<div class="icon one">
 						<Icon icon="design" size="1.5" />
 					</div>
-					<div class="title">Design What You Want</div>
+					<div class="title">Design</div>
 
 					<div class="text">
-						My design philosophy centers on simplicity and clarity. I believe in creating designs
-						that are not only aesthetically pleasing, but also easy to understand and effective in
-						communicating your message.
+						With over eight years of experience, I am a skilled visual communicator. My expertise
+						spans branding, UI/UX, web, and print design. I create stunning designs that cater to
+						your specific needs.
 					</div>
 				</div>
 			</div>
@@ -60,12 +60,12 @@
 					<div class="icon two">
 						<Icon icon="code2" size="1.5" />
 					</div>
-					<div class="title">Develop What You Need</div>
+					<div class="title">Code</div>
 
 					<div class="text">
-						While I focus primarily on graphic design, I also have experience with web development
-						and programming. I can work with you to create a website that not only looks great, but
-						also functions seamlessly across devices.
+						My technical expertise enables me to build fast, secure, responsive, and scalable web
+						applications. Proficient in both frontend and backend development, I stay updated with
+						the latest web technologies.
 					</div>
 				</div>
 			</div>
@@ -75,12 +75,12 @@
 					<div class="icon three">
 						<Icon icon="brush" size="1.5" />
 					</div>
-					<div class="title">Create What Inspires</div>
+					<div class="title">Innovate</div>
 
 					<div class="text">
-						My approach to art focuses on clear expression and effective communication. I strive to
-						create artworks that are visually engaging and evoke strong emotions. My goal is to
-						produce pieces that are not only appealing but also meaningful and thought-provoking.
+						I combine design and coding to deliver innovative solutions. From conceptualizing new
+						products to enhancing and automating existing ones through scripting, I deliver
+						impactful results.
 					</div>
 				</div>
 			</div>
@@ -110,13 +110,13 @@
 		width: 100%;
 	}
 	.card:nth-of-type(1) {
-		--color: var(--cl6);
+		--color: var(--cl5);
 	}
 	.card:nth-of-type(2) {
 		--color: var(--cl3);
 	}
 	.card:nth-of-type(3) {
-		--color: var(--cl5);
+		--color: var(--cl6);
 	}
 
 	.pos {
