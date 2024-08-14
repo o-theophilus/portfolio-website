@@ -1,7 +1,7 @@
 <script>
 	import Content from '$lib/content.svelte';
 	import Observe from '$lib/observe.svelte';
-	import Cod from './welcome.cod.svelte';
+	import Morph from './about.morph.svelte';
 </script>
 
 <div id="scroll_1" />
@@ -17,7 +17,7 @@
 				design, I strive to create solutions that are both functional and aesthetically pleasing.
 			</div>
 
-			<Cod />
+			<Morph />
 		</div>
 	</Observe>
 </Content>

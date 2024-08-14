@@ -15,7 +15,12 @@
 	<div class="block">
 		<a href="/">
 			{#if !home}
-				<Icon icon="logo" size="1.5" />
+				<div class="logo">
+					<div class="cover" />
+					<div class="icon">
+						<Icon icon="logo" size="1.5" />
+					</div>
+				</div>
 				<span> Theophilus O. </span>
 			{/if}
 		</a>
@@ -65,7 +70,7 @@
 
 		color: var(--cl1);
 		font-size: 1.2rem;
-		/* font-weight: 800; */
+		font-weight: 800;
 
 		text-decoration: none;
 
@@ -75,6 +80,28 @@
 	a span {
 		color: var(--ft1);
 		line-height: 0%;
+	}
+
+	.logo,
+	.icon {
+		position: relative;
+
+		display: flex;
+		align-items: center;
+	}
+
+	.cover {
+		position: absolute;
+
+		width: 22px;
+		height: 22px;
+		/* z-index: -1; */
+
+		top: 3px;
+		right: 3px;
+		border-radius: 50%;
+
+		background-color: var(--clb);
 	}
 
 	.block,

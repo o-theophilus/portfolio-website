@@ -4,12 +4,11 @@
 	import { module } from '$lib/store.js';
 
 	import Hero from './home/hero.svelte';
-	import Welcome from './home/welcome.svelte';
-	import ACD from './home/acd.svelte';
-	import Experience from './home/exp.svelte';
-	import AboutWebsite from './home/about_website.svelte';
-	import Contact from './home/contact.svelte';
-	import Highlight from './home/highlight.svelte';
+	import About from './home/about.svelte';
+	import Skill from './home/skill.svelte';
+	import Experience from './home/experience.svelte';
+	import Contact from './home/cta.svelte';
+	import Highlight from './home/highlight/index.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Log from '$lib/log.svelte';
 	import Dialogue from '$lib/dialogue.svelte';
@@ -39,9 +38,8 @@
 <Meta title="Home" description="Welcome to my personal portfolio website." />
 
 <Hero />
-<Welcome />
-<ACD />
+<About />
+<Skill />
 <Contact />
 <Experience />
-<!-- <AboutWebsite /> -->
 <Highlight />

@@ -42,6 +42,8 @@
 
 		text-decoration: none;
 		color: var(--ft1);
+
+		border-bottom: 1px solid var(--bg2);
 	}
 	.img {
 		display: block;
@@ -72,6 +74,7 @@
 	@media screen and (min-width: 600px) {
 		.comp {
 			flex-direction: unset;
+			border: none;
 		}
 
 		.img {
@@ -84,10 +87,12 @@
 		margin: var(--sp1) 0;
 		transition: grid-template-rows var(--trans), margin var(--trans);
 	}
-
+	
 	.tags {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--sp0);
+		margin-top: var(--sp1) ;
+		margin-bottom: var(--sp2) ;
 	}
 </style>

@@ -57,7 +57,7 @@
 	</div>
 
 	{#if open}
-		<div transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
+		<div class="area" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 			{#each posts as x, i}
 				<div class="post">
 					<a
@@ -72,7 +72,7 @@
 						<img src={x.photos[0] || '/no_photo.png'} alt={x.title} />
 					</a>
 					<div class="details">
-						<a
+						<!-- <a
 							class="link"
 							href="/{x.slug}"
 							on:click={() => {
@@ -83,16 +83,30 @@
 							}}
 						>
 							{x.title}
-						</a>
+						</a> -->
+
+						<Link
+							href="/{x.slug}"
+							on:click={() => {
+								click(x);
+							}}
+							on:mouseenter={() => {
+								click(x);
+							}}
+						>
+							<span class="link">
+								{x.title}
+							</span>
+						</Link>
 
 						<br />
 						{x.description}
 					</div>
 				</div>
-				{#if i != posts.length - 1}
+				<!-- {#if i != posts.length - 1}
 					<hr />
 					<br />
-				{/if}
+				{/if} -->
 			{/each}
 		</div>
 	{/if}
@@ -110,11 +124,17 @@
 		gap: var(--sp1);
 	}
 
+	.area {
+		display: grid;
+		gap: var(--sp3);
+		margin: var(--sp2) 0;
+	}
+
 	.post {
 		display: flex;
 		gap: var(--sp2);
 
-		margin-bottom: var(--sp3);
+		/* margin-bottom: var(--sp3); */
 	}
 
 	img {
@@ -132,14 +152,20 @@
 	}
 
 	.link {
-		text-decoration: none;
+		/* text-decoration: none; */
 		color: var(--ft1);
-		font-weight: 700;
+		/* font-weight: 700;
 
-		transition: color var(--trans);
+		transition: color var(--trans); */
 	}
 
 	.link:hover {
 		color: var(--cl1);
+	}
+
+	@media screen and (min-width: 600px) {
+		.area {
+			grid-template-columns: 1fr 1fr;
+		}
 	}
 </style>

@@ -4,7 +4,7 @@
 	import BRound from '$lib/button/round.svelte';
 	import Avatar from '$lib/avatar.svelte';
 	import Link from '$lib/button/link.svelte';
-	import Form from './author_form.svelte';
+	import Form from './_author.svelte';
 	import Loading from '$lib/loading.svelte';
 
 	export let post;
@@ -40,7 +40,9 @@
 			<Avatar {name} {photo} />
 		</Link>
 		<Link href="/profile?search={post.author_key}">
-			{name}
+			<span>
+				{name}
+			</span>
 		</Link>
 	{/if}
 	<Loading active={loading} size="40" />
@@ -70,5 +72,9 @@
 
 	hr {
 		margin: var(--sp2) 0;
+	}
+
+	span {
+		color: var(--ft1);
 	}
 </style>

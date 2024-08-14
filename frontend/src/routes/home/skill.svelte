@@ -73,7 +73,7 @@
 			<div class="card">
 				<div class="pos">
 					<div class="icon three">
-						<Icon icon="brush" size="1.5" />
+						<Icon icon="lightbulb" size="1.5" />
 					</div>
 					<div class="title">Innovate</div>
 

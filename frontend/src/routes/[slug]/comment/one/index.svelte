@@ -68,6 +68,7 @@
 						<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
 							{#if comment.user.key == $user.key}
 								<Link
+								small
 									on:click={() => {
 										$module = {
 											module: Delete,
@@ -80,6 +81,7 @@
 								</Link>
 							{:else}
 								<Link
+								small
 									on:click={() => {
 										$module = {
 											module: Report,
@@ -154,11 +156,13 @@
 	section {
 		padding: var(--sp2);
 		padding-right: 0;
-		padding-bottom: 0;
+		/* padding-bottom: 0; */
 
 		border: 2px solid var(--bg2);
 		border-right-width: 0;
-		border-bottom-width: 0;
+		/* border-bottom-width: 0; */
+
+		margin-top: var(--sp2);
 
 		border-top-left-radius: var(--sp0);
 	}
@@ -192,7 +196,8 @@
 		display: flex;
 		align-items: center;
 		gap: var(--sp1);
-		padding-bottom: var(--sp1);
+		margin-top: var(--sp2);
+		/* margin-bottom: var(--sp2); */
 	}
 
 	.right {

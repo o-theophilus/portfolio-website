@@ -2,8 +2,8 @@
 	import { module, settings, user } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
-	import One from './highlight.one.svelte';
-	import Edit from './highlight.mod.svelte';
+	import One from './one.svelte';
+	import Edit from './mod.svelte';
 	import BRround from '$lib/button/round.svelte';
 	import Link from '$lib/button/link.svelte';
 	import Icon from '$lib/icon.svelte';
