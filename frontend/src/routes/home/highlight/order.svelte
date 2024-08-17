@@ -126,10 +126,11 @@
 	.line {
 		display: flex;
 		gap: var(--sp1);
-		margin-top: var(--sp2);
+		margin-top: var(--sp1);
 	}
 
 	.post_name {
+		font-size: 0.8rem;
 		width: 100%;
 	}
 

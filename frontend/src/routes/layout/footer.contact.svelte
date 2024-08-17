@@ -13,7 +13,7 @@
 	<Link href="mailto:theophilus.ogbolu@gmail.com">
 		<span>
 			<Icon icon="email" />
-			theophilus.ogbolu@gmail.com
+			theophilus.ogbolu&#8203;@gmail.com
 		</span>
 	</Link>
 	<Link

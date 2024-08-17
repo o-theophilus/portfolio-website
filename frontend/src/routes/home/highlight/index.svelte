@@ -4,7 +4,7 @@
 	import Content from '$lib/content.svelte';
 	import One from './one.svelte';
 	import Edit from './mod.svelte';
-	import BRround from '$lib/button/round.svelte';
+	import BRound from '$lib/button/round.svelte';
 	import Link from '$lib/button/link.svelte';
 	import Icon from '$lib/icon.svelte';
 </script>
@@ -19,7 +19,7 @@
 				</strong>
 
 				{#if $user.access.includes('post:edit_photos')}
-					<BRround
+					<BRound
 						icon="edit"
 						on:click={() => {
 							$module = {
@@ -35,7 +35,7 @@
 			{/each}
 
 			<Link
-				href="https://drive.google.com/file/d/17Oznj43Gm_oX_SgKbqa0U9-Hex9X3bFn/view?usp=drive_link"
+				href="/post"
 			>
 				<div class="link">
 					View more

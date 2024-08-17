@@ -9,6 +9,7 @@
 	import Experience from './home/experience.svelte';
 	import Contact from './home/cta.svelte';
 	import Highlight from './home/highlight/index.svelte';
+	import Carousel from './home/highlight/carousel.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Log from '$lib/log.svelte';
 	import Dialogue from '$lib/dialogue.svelte';
@@ -42,4 +43,5 @@
 <Skill />
 <Contact />
 <Experience />
-<Highlight />
+<Carousel />
+<!-- <Highlight /> -->
