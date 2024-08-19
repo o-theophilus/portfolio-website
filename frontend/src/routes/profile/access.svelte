@@ -4,8 +4,7 @@
 	import { module } from '$lib/store.js';
 
 	import Button from '$lib/button/button.svelte';
-	import Link from '$lib/button/link.svelte';
-	import Tag from '$lib/button/tag.svelte';
+	import Toggle from '$lib/toggle.svelte';
 	import ButtonFold from '$lib/button/fold.svelte';
 	import Access_Ok from './access._ok.svelte';
 	import Icon from '$lib/icon.svelte';
@@ -14,41 +13,8 @@
 	export let access;
 	let mods = [...user.access];
 	let init = [...user.access];
-	let open = false;
-
-	const select_group = (_in) => {
-		let group = [];
-		for (const [name, r0les] of Object.entries(access)) {
-			for (const x of r0les) {
-				if (_in == name) {
-					group.push(`${name}:${x[0]}`);
-				} else if (_in == x[1]) {
-					group.push(`${name}:${x[0]}`);
-				} else if (!_in) {
-					group.push(`${name}:${x[0]}`);
-				}
-			}
-		}
-
-		let add_all = false;
-		for (const x of group) {
-			if (!mods.includes(x)) {
-				add_all = true;
-				break;
-			}
-		}
-
-		if (add_all) {
-			for (const x of group) {
-				if (!mods.includes(x)) {
-					mods.push(x);
-				}
-			}
-			mods = mods;
-		} else {
-			mods = mods.filter((x) => !group.includes(x));
-		}
-	};
+	let open = true;
+	let sub_open = '';
 
 	const select = (_in) => {
 		if (mods.includes(_in)) {
@@ -67,8 +33,6 @@
 	}
 </script>
 
-<!-- TODO: redesign component with toggle-->
-
 <div class="title">
 	Access
 	<ButtonFold
@@ -81,58 +45,45 @@
 
 {#if open}
 	<section transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
-		<div class="grid">
-			<span>
-				<Link
-					on:click={() => {
-						select_group();
-					}}
-				>
-					category
-				</Link>
-			</span>
+		{#each Object.entries(access) as [_type, level]}
+			<div
+				class="type"
+				role="presentation"
+				on:click={() => {
+					if (sub_open == _type) {
+						sub_open = '';
+					} else {
+						sub_open = _type;
+					}
+				}}
+			>
+				{_type}
+			</div>
+			{#if sub_open == _type}
+				<div transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
+					{#each Object.entries(level) as [lv, actions]}
+						<div class="sub_type">
+							Level {lv}
+						</div>
 
-			{#each [1, 2, 3] as x}
-				<span>
-					<Link
-						on:click={() => {
-							select_group(x);
-						}}
-					>
-						Level {x}
-					</Link>
-				</span>
-			{/each}
+						{#each actions as ac}
+							<div class="line">
+								<span>
+									{ac.split('_').join(' ')}
+								</span>
 
-			{#each Object.entries(access) as [_type, _actions]}
-				<span>
-					<Link
-						on:click={() => {
-							select_group(_type);
-						}}
-					>
-						{_type}
-					</Link>
-				</span>
-
-				{#each [1, 2, 3] as x}
-					<span>
-						{#each _actions as action}
-							{#if action[1] == x}
-								<Tag
-									active={mods.includes(`${_type}:${action[0]}`)}
+								<Toggle
+									active={mods.includes(`${_type}:${ac}`)}
 									on:click={() => {
-										select(`${_type}:${action[0]}`);
+										select(`${_type}:${ac}`);
 									}}
-								>
-									{action[0].split('_').join(' ')}
-								</Tag>
-							{/if}
+								/>
+							</div>
 						{/each}
-					</span>
-				{/each}
-			{/each}
-		</div>
+					{/each}
+				</div>
+			{/if}
+		{/each}
 
 		<br />
 
@@ -157,25 +108,34 @@
 		margin: var(--sp2) 0;
 	}
 	.title {
-		font-weight: 900;
+		font-weight: 800;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		margin: var(--sp2) 0;
 	}
 
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(4, auto);
+	.type {
+		padding: var(--sp1) 0;
+		cursor: pointer;
+		text-transform: capitalize;
+		font-weight: 900;
+
+		border-bottom: 1px solid var(--bg2);
 	}
 
-	span {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--sp0);
-		align-items: center;
+	.sub_type {
+		font-weight: 900;
+		font-size: 0.8rem;
+		margin: var(--sp1) 0;
+	}
 
-		outline: 1px solid var(--bg2);
-		padding: var(--sp0);
+	.line {
+		font-size: 0.8rem;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--sp2);
+		margin: var(--sp0) 0;
 	}
 </style>

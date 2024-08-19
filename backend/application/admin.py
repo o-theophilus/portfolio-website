@@ -12,6 +12,7 @@ from .storage import drive, storage
 bp = Blueprint("admin", __name__)
 
 
+# TODO: change user name and photo
 access = {
     "user": [
         ['view', 1],

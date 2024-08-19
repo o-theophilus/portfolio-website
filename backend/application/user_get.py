@@ -39,15 +39,23 @@ def get():
                 "status": 400,
                 "error": "user not found"
             })
-
     else:
         user = me
+
+    _access = {}
+    for x in access:
+        if x not in _access:
+            _access[x] = {}
+            for y in access[x]:
+                if y[1] not in _access[x]:
+                    _access[x][y[1]] = []
+                _access[x][y[1]].append(y[0])
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
         "user": user_schema(user),
-        "access": access
+        "access": _access
     })
 
 
