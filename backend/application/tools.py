@@ -1,14 +1,11 @@
 from flask import request, current_app
 from itsdangerous import URLSafeTimedSerializer
-import smtplib
-from email.utils import formataddr
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 import os
 from uuid import uuid4
 import random
 from datetime import datetime, timedelta
 import json
+from protonmail import ProtonMail
 
 
 reserved_words = [
@@ -122,22 +119,15 @@ def send_mail(to, subject, body):
     if current_app.config["DEBUG"]:
         print(body)
     else:
-        admin = os.environ["MAIL_USERNAME"]
-
-        msg = MIMEMultipart()
-        msg['From'] = formataddr(("Meji", admin))
-        msg['To'] = to
-        msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'html'))
-
-        server = smtplib.SMTP('smtp.office365.com', 587)
-        server.starttls()
-        server.login(
-            admin,
-            os.environ["MAIL_PASSWORD"]
+        proton = ProtonMail()
+        proton.login(os.environ["MAIL_USERNAME"], os.environ["MAIL_PASSWORD"])
+        proton.send_message(
+            proton.create_message(
+                recipients=[to],
+                subject=subject,
+                body=body,
+            )
         )
-        server.sendmail(admin, to, msg.as_bytes())
-        server.quit()
 
 
 def user_schema(user):

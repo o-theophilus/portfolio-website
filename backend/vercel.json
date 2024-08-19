@@ -3,13 +3,22 @@
     "builds": [
         {
             "src": "./index.py",
-            "use": "@vercel/python"
+            "use": "@vercel/python",
+            "config": {
+                "maxDuration": 60
+            }
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
             "dest": "/"
+        }
+    ],
+    "crons": [
+        {
+          "path": "/cron",
+          "schedule": "1 0 * * *"
         }
     ]
 }

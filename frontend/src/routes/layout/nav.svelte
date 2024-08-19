@@ -21,7 +21,11 @@
 						<Icon icon="logo" size="1.5" />
 					</div>
 				</div>
-				<span> Theophilus O. </span>
+				<span>
+					Theophilus
+					<span class="abbr">O.</span>
+					<span class="full">Ogbolu</span>
+				</span>
 			{/if}
 		</a>
 		<div class="links">
@@ -48,11 +52,12 @@
 <style>
 	.block {
 		display: flex;
-		height: var(--headerHeight);
 
 		justify-content: space-between;
 		align-items: center;
+		gap: var(--sp2);
 
+		height: var(--headerHeight);
 		max-width: var(--mobileWidth);
 		width: 100%;
 		margin: auto;
@@ -78,6 +83,7 @@
 	}
 
 	a span {
+		display: none;
 		color: var(--ft1);
 		line-height: 0%;
 	}
@@ -114,5 +120,22 @@
 	}
 	.home a span {
 		color: var(--bg1);
+	}
+
+	.full {
+		display: none;
+	}
+	@media screen and (min-width: 360px) {
+		a span {
+			display: inline;
+		}
+	}
+	@media screen and (min-width: 410px) {
+		.abbr {
+			display: none;
+		}
+		.full {
+			display: inline;
+		}
 	}
 </style>

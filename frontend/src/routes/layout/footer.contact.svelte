@@ -12,6 +12,7 @@
 	</Link>
 	<Link href="mailto:theophilus.ogbolu@gmail.com">
 		<span>
+			<!-- TODO: use protonmail -->
 			<Icon icon="email" />
 			theophilus.ogbolu@gmail.com
 			<!-- theophilus.ogbolu&#8203;@gmail.com -->

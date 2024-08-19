@@ -28,7 +28,7 @@ margin: auto;
 		font-size: x-large;
 		margin-left: 10px;
 	"
-			>Theophilus
+			>Theophilus Ogbolu
 		</b>
 	</div>
 
@@ -49,7 +49,7 @@ margin: auto;
 	font-size: x-small;
 	color: grey;"
 	>
-		&copy Loup 2023. All rights reserved.
+		&copy 2024 | Theophilus Ogbolu All rights reserved.
 		<br />
 		Design for impact
 	</div>

@@ -6,4 +6,4 @@ requests
 deta
 psycopg2-binary
 pytest
-mailjet-rest
+protonmail-api-client

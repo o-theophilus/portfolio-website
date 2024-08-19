@@ -5,7 +5,7 @@
 	export let description;
 	export let image = `${$page.url.origin}/image/hero_image.png`;
 
-	title = `${title} | Loup`;
+	title = `${title} | Theophilus`;
 	description = description ? description : title;
 </script>
 

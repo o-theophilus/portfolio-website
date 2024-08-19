@@ -31,8 +31,6 @@
 			<Button href="/admin/photo_error" size="wide">Photo Error</Button>
 		{/if}
 	</div>
-
-	<!-- TODO: use protonmail -->
 </Content>
 
 <style>

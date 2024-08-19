@@ -31,5 +31,5 @@
 	<br /><br />
 	Best regards,
 	<br /><br />
-	<b>Theophilus</b>
+	<b>Theophilus Ogbolu</b>
 </Template>

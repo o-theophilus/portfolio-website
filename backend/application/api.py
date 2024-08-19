@@ -1,5 +1,4 @@
 from flask import Blueprint, jsonify, request
-from . import db
 import re
 import os
 from .tools import send_mail
@@ -64,14 +63,6 @@ def send_email():
 @bp.get("/cron")
 def cron():
     print("cron is running")
-    data = db.data()
-
-    for row in data:
-        if (
-            row["type"] == "user"
-            and row["status"] == "anonymous"
-        ):
-            db.rem(row["key"])
 
     return jsonify({
         "status": 200

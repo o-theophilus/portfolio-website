@@ -11,7 +11,19 @@ from .admin import get_highlight
 
 bp = Blueprint("account", __name__)
 
-max_age = 3600
+
+def anon(cur):
+    key = uuid4().hex
+    cur.execute("""
+        INSERT INTO "user" (key, name, email, password)
+        VALUES (%s, %s, %s, %s)
+        RETURNING *;
+    """, (
+        key,
+        f"user_{key[-4:]}",
+        uuid4().hex,
+        generate_password_hash(uuid4().hex, method="scrypt")))
+    return cur.fetchone()
 
 
 @bp.post("/init")
@@ -22,18 +34,7 @@ def init():
     user = token_to_user(cur)
 
     if not user or user["status"] == "confirmed" and not user["login"]:
-        key = uuid4().hex
-        cur.execute("""
-                INSERT INTO "user" (key, name, email, password)
-                VALUES (%s, %s, %s, %s)
-                RETURNING *;
-            """, (
-            key,
-            f"user_{key[-4:]}",
-            uuid4().hex,
-            generate_password_hash(uuid4().hex, method="scrypt"))
-        )
-        user = cur.fetchone()
+        user = anon(cur)
 
         log(
             cur=cur,
@@ -83,6 +84,8 @@ def signup():
     if "name" not in request.json or not request.json["name"]:
         error["name"] = "cannot be empty"
 
+    _user = None
+
     if "email" not in request.json or not request.json["email"]:
         error["email"] = "cannot be empty"
     elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
@@ -90,7 +93,8 @@ def signup():
     else:
         cur.execute('SELECT * FROM "user" WHERE email = %s;', (
             request.json["email"],))
-        if cur.fetchone():
+        _user = cur.fetchone()
+        if _user and _user["status"] == "confirmed":
             error["email"] = "email taken"
 
     if "password" not in request.json or not request.json["password"]:
@@ -122,17 +126,10 @@ def signup():
             **error
         })
 
-    if user["status"] != "anonymous":
-        key = uuid4().hex
-        cur.execute("""
-            INSERT INTO "user" (key, name, email, password)
-            VALUES (%s, %s, %s, %s)
-            RETURNING *;
-        """, (
-            key,
-            f"user_{key[-4:]}",
-            uuid4().hex,
-            generate_password_hash(uuid4().hex, method="scrypt")))
+    if _user:
+        user = _user
+    elif user["status"] != "anonymous":
+        user = anon(cur)
 
     cur.execute("""
         UPDATE "user"
@@ -355,17 +352,7 @@ def logout():
         False, user["key"]
     ))
 
-    key = uuid4().hex
-    cur.execute("""
-        INSERT INTO "user" (
-            key, name, email, password, setting_theme
-        ) VALUES (%s, %s, %s, %s, %s) RETURNING *;
-    """, (
-        key, f"user_{key[-4:]}", uuid4().hex,
-        generate_password_hash(uuid4().hex, method="scrypt"),
-        user["setting_theme"]
-    ))
-    anon_user = cur.fetchone()
+    anon_user = anon(cur)
 
     log(
         cur=cur,
