@@ -67,6 +67,8 @@
 	}
 </script>
 
+<!-- TODO: redesign component with toggle-->
+
 <div class="title">
 	Access
 	<ButtonFold

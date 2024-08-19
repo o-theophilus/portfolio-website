@@ -76,7 +76,7 @@
 	}
 
 	button:hover {
-		outline-color: var(--ft2);
+		outline-color: var(--clm);
 	}
 
 	.menu {

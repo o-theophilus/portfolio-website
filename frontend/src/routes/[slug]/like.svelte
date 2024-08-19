@@ -58,6 +58,7 @@
 	};
 </script>
 
+<!-- TODO: like errors rating -->
 <div class="line">
 	<button
 		class="left"
@@ -65,7 +66,7 @@
 			like();
 		}}
 	>
-		<Icon icon="thumb_up" size="1.4" fill={entity.like.includes($user.key)} />
+		<Icon icon={entity.like.includes($user.key) ? 'thumb_up_fill' : 'thumb_up'} size="1.4" />
 		{entity.like.length}
 	</button>
 
@@ -75,7 +76,7 @@
 			like(false);
 		}}
 	>
-		<Icon icon="thumb_down" size="1.4" fill={entity.dislike.includes($user.key)} />
+		<Icon icon={entity.dislike.includes($user.key) ? 'thumb_down_fill' : 'thumb_down'} size="1.4" />
 		{entity.dislike.length}
 	</button>
 

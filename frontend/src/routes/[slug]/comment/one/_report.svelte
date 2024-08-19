@@ -110,8 +110,10 @@
 						form.tags.push(x);
 					}
 					form = form;
-				}}>{x}</Tag
+				}}
 			>
+				{x}
+			</Tag>
 		{/each}
 	</div>
 

@@ -339,8 +339,12 @@ def set_highlight():
             "error": "cannot be empty"
         })
 
-    cur.execute("""SELECT * FROM post WHERE key = %s OR slug = %s;""",
-                (request.json["key"], request.json["key"]))
+    cur.execute("""
+        SELECT * FROM post
+        WHERE LOWER(key) = LOWER(%s) OR LOWER(slug) = LOWER(%s);
+    """, (
+        request.json["key"], request.json["key"])
+    )
     post = cur.fetchone()
     if not post or post["status"] != "active":
         db_close(con, cur)

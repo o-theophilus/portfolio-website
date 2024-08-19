@@ -76,6 +76,6 @@
 	}
 
 	button:not(:disabled) .knob:hover {
-		background-color: var(--cl1_d);
+		background-color: color-mix(in srgb, var(--cl1), black 30%);
 	}
 </style>

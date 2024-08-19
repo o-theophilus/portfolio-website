@@ -172,7 +172,7 @@
 						</div>
 						<div class="tags">
 							{#each exp[active].tags as x}
-								<Tag no_grow>{x}</Tag>
+								<Tag no_grow disabled>{x}</Tag>
 							{/each}
 						</div>
 					</div>
@@ -268,7 +268,7 @@
 	.tags {
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--sp1);
+		gap: var(--sp0);
 	}
 
 	li::marker {
@@ -297,7 +297,7 @@
 	}
 
 	.tabs .line {
-		background-color: var(--ft2);
+		background-color: var(--clm);
 		height: 1px;
 		width: 100%;
 	}
@@ -314,7 +314,7 @@
 		overflow: hidden;
 
 		cursor: pointer;
-		outline: 1px solid var(--ft2);
+		outline: 1px solid var(--clm);
 		color: transparent;
 		font-size: 0;
 
@@ -346,7 +346,7 @@
 	.tabs .tab2:not(.active):hover div {
 		width: calc(0.5 * var(--size));
 		height: calc(0.5 * var(--size));
-		background-color: var(--ft2);
+		background-color: var(--clm);
 	}
 
 	@media screen and (min-width: 500px) {

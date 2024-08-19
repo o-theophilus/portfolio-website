@@ -69,10 +69,14 @@
 	}
 
 	.icon {
+		border-radius: 50%;
+		line-height: 0;
 		color: var(--cl1);
+		background-color: var(--clb);
 	}
 
 	.name {
+		margin-top: var(--sp3);
 		font-size: 2rem;
 		font-weight: 800;
 		text-align: center;

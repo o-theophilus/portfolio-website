@@ -66,7 +66,7 @@
 	.primary {
 		background-color: var(--cl1);
 		color: var(--clb);
-		box-shadow: 0 -4px 0 var(--cl1_d) inset;
+		box-shadow: 0 -4px 0 color-mix(in srgb, var(--cl1), black 30%) inset;
 	}
 
 	:disabled {
@@ -82,7 +82,7 @@
 		text-decoration: none;
 	}
 	:not(:disabled).primary:hover {
-		background-color: var(--cl1_d);
+		background-color: color-mix(in srgb, var(--cl1), black 30%);
 	}
 
 	:not(:disabled):not(.primary).hover_red:hover {

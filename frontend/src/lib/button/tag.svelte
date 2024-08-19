@@ -19,7 +19,7 @@
 
 		font-size: 0.8rem;
 		cursor: pointer;
-		background-color: var(--cl1_l);
+		background-color: color-mix(in srgb, var(--cl1), transparent 80%);
 
 		text-transform: capitalize;
 		color: var(--ft2);
@@ -31,7 +31,7 @@
 	}
 
 	:disabled {
-		background-color: var(--bg1);
+		background-color: color-mix(in srgb, var(--cl1), transparent 70%);
 		color: var(--ft2);
 		cursor: unset;
 		opacity: 0.4;
@@ -42,7 +42,7 @@
 		color: var(--clb);
 	}
 	:not(:disabled):hover {
-		background-color: var(--cl1_d);
+		background-color: color-mix(in srgb, var(--cl1), black 30%);
 		color: var(--clb);
 	}
 </style>

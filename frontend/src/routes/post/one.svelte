@@ -90,7 +90,7 @@
 	}
 
 	a:hover {
-		outline-color: var(--ft2);
+		outline-color: var(--clm);
 	}
 	a:hover img {
 		transform: scale(1.2) rotate(5deg);
@@ -142,7 +142,7 @@
 		color: var(--ft2);
 		line-height: 1;
 		padding: var(--sp1) 0;
-		border-top: 1px solid var(--ft2);
+		border-top: 1px solid var(--clm);
 	}
 
 	.line {

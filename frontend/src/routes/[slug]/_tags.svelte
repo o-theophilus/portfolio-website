@@ -113,7 +113,6 @@
 	<div class="line">
 		{#each unused_tags as tag}
 			<Tag
-				size="small"
 				on:click={() => {
 					clean_value(tag);
 				}}
