@@ -1,7 +1,7 @@
 <script>
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { loading, notification, settings } from '$lib/store.js';
+	import { loading, notification, settings, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -65,6 +65,9 @@
 
 		if (resp.status == 200) {
 			$settings.highlight = resp.posts;
+			posts = [...$settings.highlight];
+			init_order = [...$settings.highlight];
+			$module.update();
 
 			$notification = {
 				message: 'Highlight updated'
@@ -105,22 +108,22 @@
 	</div>
 {/each}
 
+{#if error.error}
+	<div class="error">
+		{error.error}
+	</div>
+{/if}
+
 <div class="line">
-	<Button class="tiny" disabled={not_changed} on:click={submit}>
+	<Button disabled={not_changed} on:click={submit}>
 		<Icon icon="save" />
 		Save
 	</Button>
-	<Button class="tiny" disabled={not_changed} on:click={reset}>
+	<Button disabled={not_changed} on:click={reset}>
 		<Icon icon="history" />
 		Reset
 	</Button>
 </div>
-
-{#if error.error}
-	<span class="error">
-		{error.error}
-	</span>
-{/if}
 
 <style>
 	.line {

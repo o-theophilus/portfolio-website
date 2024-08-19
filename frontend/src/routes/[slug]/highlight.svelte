@@ -2,7 +2,6 @@
 	import { loading, settings, notification } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
-	import Button from '$lib/button/button.svelte';
 	import Toggle from '$lib/toggle.svelte';
 
 	export let post_key;
@@ -22,12 +21,13 @@
 
 	const submit = async () => {
 		$loading = 'Adding Highlight . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight/${post_key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
-			}
+			},
+			body: JSON.stringify({ key: post_key })
 		});
 		resp = await resp.json();
 		$loading = false;

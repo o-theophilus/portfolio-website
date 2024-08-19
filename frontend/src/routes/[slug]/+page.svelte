@@ -89,6 +89,7 @@
 	let comment;
 	let similar;
 	const refresh = async () => {
+		edit_mode = false;
 		content = process_content(post.content);
 		my_rating = null;
 		author.reset();

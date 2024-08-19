@@ -40,9 +40,9 @@
 			<Avatar {name} {photo} />
 		</Link>
 		<Link href="/profile?search={post.author_key}">
-			<span>
+			<div class="name">
 				{name}
-			</span>
+			</div>
 		</Link>
 	{/if}
 	<Loading active={loading} size="40" />
@@ -74,7 +74,7 @@
 		margin: var(--sp2) 0;
 	}
 
-	span {
+	.name {
 		color: var(--ft1);
 	}
 </style>

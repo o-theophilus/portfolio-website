@@ -1,6 +1,6 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-	import { loading, settings, notification } from '$lib/store.js';
+	import { loading, settings, notification, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -23,18 +23,20 @@
 
 	const submit = async () => {
 		$loading = 'Adding Highlight . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight/${slug}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
-			}
+			},
+			body: JSON.stringify({ key: slug })
 		});
 		resp = await resp.json();
 		$loading = false;
 
 		if (resp.status == 200) {
 			$settings.highlight = resp.posts;
+			$module.update();
 
 			let is_highlight = false;
 			for (const x of $settings.highlight) {
@@ -56,15 +58,9 @@
 	};
 </script>
 
-<IG
-	name="URL Path"
-	type="text"
-	bind:value={slug}
-	error={error.error}
-	placeholder="Post url path"
-/>
+<IG name="URL Path" type="text" bind:value={slug} error={error.error} placeholder="Post url path" />
 
-<Button class="tiny" on:click={validate} disabled={!slug}>
+<Button on:click={validate} disabled={!slug}>
 	<Icon icon="add" />
 	Add
 </Button>

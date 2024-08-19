@@ -313,8 +313,8 @@ def get_highlight(cur=None):
     return posts
 
 
-@bp.post("/highlight/<key>")
-def set_highlight(key):
+@bp.post("/highlight")
+def set_highlight():
     con, cur = db_open()
 
     user = token_to_user(cur)
@@ -332,7 +332,15 @@ def set_highlight(key):
             "error":  "unauthorized access"
         })
 
-    cur.execute('SELECT * FROM post WHERE key = %s OR slug = %s;', (key, key))
+    if "key" not in request.json or not request.json["key"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "cannot be empty"
+        })
+
+    cur.execute("""SELECT * FROM post WHERE key = %s OR slug = %s;""",
+                (request.json["key"], request.json["key"]))
     post = cur.fetchone()
     if not post or post["status"] != "active":
         db_close(con, cur)
@@ -394,7 +402,6 @@ def edit_highlight():
 
     if (
         "keys" not in request.json
-        or not request.json["keys"]
         or type(request.json["keys"]) is not list
     ):
         db_close(con, cur)
