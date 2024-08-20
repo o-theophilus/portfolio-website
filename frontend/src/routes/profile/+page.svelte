@@ -18,7 +18,7 @@
 	import Email from './_email_1.svelte';
 	import Delete from './_delete.svelte';
 	import Password from './_password_1_email.svelte';
-	import Access from './access.svelte';
+	import Access from './_access.svelte';
 
 	export let data;
 	$: user = data.user;
@@ -186,14 +186,25 @@
 			<hr />
 			<div class="pad">
 				<Link href="/log?{new URLSearchParams(`search=${user.email}:all:all:`).toString()}">
-					view logs
+					View Logs
 				</Link>
 			</div>
 		{/if}
 
 		{#if user && user.key != $me.key && user.status == 'confirmed' && $me.access.includes('user:set_access')}
-			<hr />
-			<Access {user} {access} />
+			<div class="pad">
+				<Link
+					on:click={() => {
+						$module = {
+							module: Access,
+							user,
+							access
+						};
+					}}
+				>
+					Edit Access
+				</Link>
+			</div>
 		{/if}
 	{/if}
 </Content>

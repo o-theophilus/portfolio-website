@@ -4,11 +4,11 @@ from .tools import (
     token_to_user, user_schema, send_mail, token_tool,
     generate_code, check_code)
 from .log import log
-from uuid import uuid4
 import re
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from .storage import storage
+from .account import anon
 
 
 bp = Blueprint("user", __name__)
@@ -539,23 +539,24 @@ def delete():
         user["key"]
     ))
 
-    cur.execute("""
-        INSERT INTO "user" (key, version, email, password, setting_theme)
-        VALUES (%s, %s, %s, %s, %s)
-        RETURNING *;
-    """, (
-        uuid4().hex, uuid4().hex, uuid4().hex,
-        generate_password_hash(uuid4().hex, method="scrypt"),
-        user["setting_theme"]
-    ))
-    anon_user = cur.fetchone()
+    anon_user = anon(cur)
 
     log(
         cur=cur,
         user_key=user["key"],
         action="deleted_account",
-        entity_type="user",
+        entity_type="account",
         misc={"note": request.json["note"]}
+    )
+    log(
+        cur=cur,
+        user_key=anon_user["key"],
+        action="created",
+        entity_type="account",
+        misc={
+            "from": user["key"],
+            "name": user["name"]
+        }
     )
 
     db_close(con, cur)
