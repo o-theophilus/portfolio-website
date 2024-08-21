@@ -3,11 +3,12 @@
 
 	import Icon from '$lib/icon.svelte';
 	let percent = 0;
+	let scrollTop = 0;
 </script>
 
 <svelte:window
-	on:scroll={(e) => {
-		let scrollTop = window.scrollY;
+	on:scroll={() => {
+		scrollTop = window.scrollY;
 		let winHeight = window.innerHeight;
 		let docHeight = document.body.offsetHeight;
 
@@ -17,6 +18,7 @@
 
 <div
 	class="circle"
+	class:active={scrollTop > 160}
 	role="presentation"
 	on:click={() => {
 		scroll('#top_nav');
@@ -49,6 +51,7 @@
 		right: var(--sp3);
 		z-index: 0;
 
+		display: none;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -58,12 +61,19 @@
 		border-radius: 50%;
 
 		background-color: var(--bg2);
+		opacity: 0;
+		overflow: hidden;
+		pointer-events: none;
+
+		transition: opacity var(--trans);
+	}
+	.active {
 		opacity: 0.5;
 		cursor: pointer;
-		overflow: hidden;
+		pointer-events: all;
 	}
 
-	.circle:hover{
+	.active:hover {
 		opacity: 1;
 	}
 
@@ -76,8 +86,8 @@
 		justify-content: center;
 		align-items: center;
 
-		width: calc(var(--size) - (var(--size) / 5) );
-		height: calc(var(--size) - (var(--size) / 5) );
+		width: calc(var(--size) - (var(--size) / 5));
+		height: calc(var(--size) - (var(--size) / 5));
 		border-radius: 50%;
 
 		stroke-width: 4px;
