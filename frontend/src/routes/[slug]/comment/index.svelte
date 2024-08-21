@@ -61,6 +61,8 @@
 	};
 </script>
 
+<hr />
+
 <div class="title">
 	<strong class="ititle">
 		{#if comments.length > 0}
@@ -171,5 +173,9 @@
 		align-items: center;
 		gap: var(--sp1);
 		margin-bottom: var(--sp2);
+	}
+
+	hr {
+		margin: var(--sp2) 0;
 	}
 </style>

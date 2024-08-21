@@ -22,7 +22,6 @@
 
 	export let data;
 	$: user = data.user;
-	let { access } = data;
 	let edit_mode = false;
 
 	const update = (data) => {
@@ -196,9 +195,7 @@
 				<Link
 					on:click={() => {
 						$module = {
-							module: Access,
-							user,
-							access
+							module: Access
 						};
 					}}
 				>

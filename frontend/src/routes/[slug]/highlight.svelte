@@ -48,7 +48,6 @@
 </script>
 
 <Toggle
-	state_1="off"
 	state_2="highlight"
 	active={is_highlight}
 	on:click={() => {

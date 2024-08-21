@@ -2,6 +2,7 @@
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 	import { module } from '$lib/store.js';
+	import { page } from '$app/stores';
 
 	import Button from '$lib/button/button.svelte';
 	import Toggle from '$lib/toggle.svelte';
@@ -9,9 +10,12 @@
 	import Access_Ok from './_access.ok.svelte';
 	import Icon from '$lib/icon.svelte';
 
-	export let user = $module.user;
-	let init = [...$module.user.access];
-	let mods = [...$module.user.access];
+	export let user = $page.data.user;
+	let init = [...user.access];
+	let mods = [...user.access];
+	if ($module.mods) {
+		mods = [...$module.mods];
+	}
 	let sub_open = '';
 
 	const select = (_in) => {
@@ -27,7 +31,7 @@
 <section>
 	<strong class="ititle"> Edit Access </strong>
 
-	{#each Object.entries($module.access) as [_type, level]}
+	{#each Object.entries($page.data.access) as [_type, level]}
 		<div
 			class="type"
 			role="presentation"
@@ -68,14 +72,13 @@
 
 	<br />
 
-	<div class="btns">
+	<div class="line">
 		<Button
 			disabled={mods.sort().join(',') == init.sort().join(',')}
 			on:click={() => {
 				$module = {
 					module: Access_Ok,
-					key: user.key,
-					access: mods
+					mods
 				};
 			}}
 		>
@@ -85,7 +88,7 @@
 		<Button
 			disabled={mods.sort().join(',') == init.sort().join(',')}
 			on:click={() => {
-				mods = init;
+				mods = [...init];
 			}}
 		>
 			Reset
@@ -132,9 +135,9 @@
 		margin: var(--sp0) 0;
 	}
 
-	.btns {
+	.line {
 		display: flex;
 		align-items: center;
-		gap: var(--sp0);
+		gap: var(--sp1);
 	}
 </style>

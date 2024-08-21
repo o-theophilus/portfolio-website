@@ -4,7 +4,7 @@
 
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Delete from './_status.delete.svelte';
+	import Delete from './status.delete.svelte';
 
 	let _status = $module.post.status;
 

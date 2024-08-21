@@ -6,7 +6,7 @@ from uuid import uuid4
 from .postgres import db_open, db_close
 from .storage import storage
 from .log import log
-from .post_get import get_post
+from .post_get import get_post, get_all
 from datetime import datetime
 
 bp = Blueprint("post", __name__)
@@ -56,7 +56,7 @@ def add():
             RETURNING *;
         """, (
         uuid4().hex,
-        author["key"],
+        author["key"] if author else None,
         request.json["title"],
         slug,
         datetime.now()
@@ -72,10 +72,14 @@ def add():
         entity_type="post"
     )
 
+    posts = get_all(cur=cur)
+
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post
+        "post": post,
+        "posts": posts.json["posts"],
+        "total_page": posts.json["total_page"]
     })
 
 

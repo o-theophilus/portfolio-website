@@ -14,7 +14,7 @@
 	import Avatar from '$lib/avatar.svelte';
 	import Delete from './_delete.svelte';
 	import Report from './_report.svelte';
-	import Like from '../../like.svelte';
+	import Like from '../../engage.like.svelte';
 
 	export let post_key;
 	export let update;

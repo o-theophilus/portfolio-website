@@ -4,74 +4,38 @@
 	import { module, user } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
-	import Marked from '$lib/marked.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Button from '$lib/button/button.svelte';
-	import BRound from '$lib/button/round.svelte';
-	import Tags from './tags.svelte';
 	import Toggle from '$lib/toggle.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Log from '$lib/log.svelte';
-	import Datetime from '$lib/datetime.svelte';
 
-	import Title from './_title.svelte';
-	import Description from './_description.svelte';
-	import Edit_Tags from './_tags.svelte';
-	import Edit_Content from './_content.svelte';
-	import Edit_Date from './_date.svelte';
-	import Edit_Status from './_status.svelte';
-	import Manage_Photo from './_photo.svelte';
-	import Rating from './_rating.svelte';
-
-	import Share from './_share.svelte';
-	import Refresh from './refresh.svelte';
-	import Like from './like.svelte';
-
+	import Photo from './photo.svelte';
+	import Title from './title.svelte';
+	import Date from './date.svelte';
+	import Description from './description.svelte';
+	import Content_ from './content.svelte';
+	import Engage from './engage.svelte';
+	import Author from './author.svelte';
+	import Tags from './tags.svelte';
+	import Edit_Status from './status.svelte';
+	import Highlight from './highlight.svelte';
 	import Comment from './comment/index.svelte';
 	import Similar from './similar.svelte';
-	import Highlight from './highlight.svelte';
-	import Author from './author.svelte';
+
+	import Refresh from './refresh.svelte';
+	import ToTop from './to_top.svelte';
 
 	export let data;
 	$: post = data.post;
-	let tags = [];
 	let edit_mode = false;
 	let admin = false;
-	let content = '';
-
-	const process_content = (content) => {
-		if (!content) {
-			content = '';
-		}
-
-		let i = 0;
-
-		let exist = content.search(/{#photo}/) >= 0;
-		while (exist) {
-			i++;
-			content = content.replace(
-				/{#photo}/,
-				`![${post.title}](${post.photos[i] ? post.photos[i] : '/no_photo.png'})`
-			);
-			exist = content.search(/{#photo}/) >= 0;
-		}
-
-		return content;
-	};
 
 	const update = async (data) => {
 		post = data;
-		content = process_content(post.content);
-	};
-
-	let my_rating = null;
-	const update_my_rating = async (data) => {
-		my_rating = data;
 	};
 
 	onMount(async () => {
-		content = process_content(post.content);
-
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/access/post:edit`);
 		resp = await resp.json();
 		if (resp.status == 200) {
@@ -85,13 +49,13 @@
 		}
 	});
 
+	let content;
 	let author;
 	let comment;
 	let similar;
 	const refresh = async () => {
 		edit_mode = false;
-		content = process_content(post.content);
-		my_rating = null;
+		content.refresh();
 		author.reset();
 		comment.reset();
 		similar.reset();
@@ -107,11 +71,11 @@
 	<Refresh on:refresh={refresh} />
 {/key}
 
+<!-- TODO: PDF viewer -->
 <Content>
 	{#if admin}
 		<div class="toggle">
 			<Toggle
-				state_1="off"
 				state_2="edit"
 				active={edit_mode}
 				on:click={() => {
@@ -119,171 +83,6 @@
 				}}
 			/>
 		</div>
-	{/if}
-	<div class="img">
-		<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
-		<div class="line">
-			{#if $user.access.includes('post:edit_photos') && edit_mode}
-				<BRound
-					icon="image"
-					on:click={() => {
-						$module = {
-							module: Manage_Photo,
-							post,
-							update
-						};
-					}}
-				/>
-			{/if}
-		</div>
-	</div>
-
-	<div class="ititle">
-		{#if $user.access.includes('post:edit_title') && edit_mode}
-			<BRound
-				icon="edit"
-				on:click={() => {
-					$module = {
-						module: Title,
-						post,
-						update
-					};
-				}}
-			/>
-		{/if}
-		<strong>
-			{post.title}
-		</strong>
-	</div>
-
-	{#if $user.access.includes('post:edit_date') && edit_mode}
-		<hr />
-		<BRound
-			icon="edit"
-			on:click={() => {
-				$module = {
-					module: Edit_Date,
-					post,
-					update
-				};
-			}}
-		/>
-	{/if}
-	<span class="date">
-		<Datetime datetime={post.date} />
-	</span>
-
-	{#if $user.access.includes('post:edit_description') && edit_mode}
-		<hr />
-		<BRound
-			icon="edit"
-			icon_size={15}
-			on:click={() => {
-				$module = {
-					module: Description,
-					post,
-					update
-				};
-			}}
-		/>
-		<div class="margin">
-			{#if post.description}
-				{post.description}
-			{:else}
-				No description
-			{/if}
-		</div>
-	{/if}
-
-	<hr />
-
-	{#if $user.access.includes('post:edit_content') && edit_mode}
-		<BRound
-			icon="edit"
-			icon_size={15}
-			on:click={() => {
-				$module = {
-					module: Edit_Content,
-					post,
-					update,
-					process_content
-				};
-			}}
-		/>
-	{/if}
-	{#if post.content}
-		<Marked {content} />
-		<br />
-	{:else if edit_mode}
-		<div class="margin">No content</div>
-	{/if}
-
-	<div class="line">
-		<Like
-			name="post"
-			entity={post}
-			on:update={(e) => {
-				post = e.detail.post;
-			}}
-		/>
-
-		{#if $user.login}
-			<Button
-				size="small"
-				on:click={() => {
-					$module = {
-						module: Rating,
-						post_key: post.key,
-						my_rating,
-						update_my_rating,
-						update
-					};
-				}}
-			>
-				<Icon icon="hotel_class" />
-				Rate: {parseFloat(post.rating)}/{post.ratings}
-			</Button>
-		{/if}
-
-		<Button
-			size="small"
-			on:click={() => {
-				$module = {
-					module: Share,
-					post
-				};
-			}}
-		>
-			<Icon icon="share" />
-			Share
-		</Button>
-	</div>
-
-	<Author {post} bind:this={author} {edit_mode} />
-
-	{#if post.tags.length > 0 || ($user.access.includes('post:edit_tags') && edit_mode)}
-		<hr />
-	{/if}
-
-	{#if $user.access.includes('post:edit_tags') && edit_mode}
-		<BRound
-			icon="edit"
-			icon_size={15}
-			on:click={() => {
-				$module = {
-					module: Edit_Tags,
-					post,
-					tags_in: tags,
-					update
-				};
-			}}
-		/>
-	{/if}
-
-	{#if post.tags.length > 0}
-		<Tags tags={post.tags} />
-	{:else if edit_mode}
-		<div class="margin">No tag</div>
 	{/if}
 
 	{#if edit_mode && ($user.access.includes('post:edit_status') || ($user.access.includes('post:edit_highlight') && post.status == 'active'))}
@@ -300,11 +99,7 @@
 						};
 					}}
 				>
-					<Icon icon="edit" size="1.4" />
-					|
-					<span>
-						Status: <strong>{post.status}</strong>
-					</span>
+					<Icon icon="edit" size="1.4" /> <span> Edit Status: <strong>{post.status}</strong> </span>
 				</Button>
 			{/if}
 			{#if $user.access.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
@@ -313,44 +108,21 @@
 		</div>
 	{/if}
 
-	<hr />
-
+	<Photo {post} {edit_mode} {update} />
+	<Title {post} {edit_mode} {update} />
+	<Date {post} {edit_mode} {update} />
+	<Description {post} {edit_mode} {update} />
+	<Content_ {post} {edit_mode} {update} bind:this={content} />
+	<Tags {post} {edit_mode} {update} />
+	<Author {post} {edit_mode} bind:this={author} />
+	<Engage {post} {update} />
 	<Comment {post} bind:this={comment} />
 	<Similar post_key={post.key} bind:this={similar} />
+
+	<ToTop />
 </Content>
 
 <style>
-	.img {
-		position: relative;
-	}
-
-	img {
-		display: block;
-
-		width: 100%;
-		margin: var(--sp2) 0;
-		border-radius: var(--sp1);
-
-		background-color: var(--bg2);
-	}
-	.img .line {
-		position: absolute;
-		bottom: var(--sp1);
-		left: var(--sp1);
-	}
-
-	.ititle {
-		margin-top: var(--sp3);
-	}
-	.date {
-		font-size: 0.8rem;
-		margin-bottom: var(--sp3);
-	}
-
-	.margin {
-		margin: var(--sp2) 0;
-	}
-
 	hr {
 		margin: var(--sp2) 0;
 	}

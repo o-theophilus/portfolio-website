@@ -11,7 +11,7 @@
 	$: home = $page.url.pathname == '/';
 </script>
 
-<nav class:home>
+<nav id="top_nav" class:home>
 	<div class="block">
 		<a href="/">
 			{#if !home}

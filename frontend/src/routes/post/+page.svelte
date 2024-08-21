@@ -25,6 +25,11 @@
 	$: total_page = data.total_page;
 	let { order_by } = data;
 	let { _status } = data;
+
+	const update = (a, b) => {
+		posts = a;
+		total_page = b;
+	};
 </script>
 
 <Log entity_type={'page'} />
@@ -48,7 +53,8 @@
 						extra="outline"
 						on:click={() => {
 							$module = {
-								module: Add
+								module: Add,
+								update
 							};
 						}}
 					>

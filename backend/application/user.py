@@ -59,17 +59,37 @@ def theme():
     })
 
 
+# TODO: admin can edit name and photo
+# TODO: SUPER USER CANNOT BE EDITED
 @bp.put("/user/<key>")
 def edit_user(key):
     con, cur = db_open()
 
     user = token_to_user(cur)
-    if not user or user["key"] != key:
+    if not user:
         db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid token"
         })
+
+    # if user["key"] != key:
+    #     if "user:edit_name" not in user["access"]:
+    #         db_close(con, cur)
+    #         return jsonify({
+    #             "status": 400,
+    #             "error": "unauthorized access"
+    #         })
+    #     else:
+    #         cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
+    #         user = cur.fetchone()
+
+    #         if not user:
+    #             db_close(con, cur)
+    #             return jsonify({
+    #                 "status": 400,
+    #                 "error": "invalid request"
+    #             })
 
     error = {}
 

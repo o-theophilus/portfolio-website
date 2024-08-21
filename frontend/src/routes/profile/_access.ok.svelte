@@ -1,14 +1,16 @@
 <script>
 	import { module, notification, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
+	import { page } from '$app/stores';
 
 	import Icon from '$lib/icon.svelte';
 	import Button from '$lib/button/button.svelte';
 	import ShowPassword from '../account/password_show.svelte';
 	import IG from '$lib/input_group.svelte';
+	import Access from './_access.svelte';
 
 	let form = {
-		access: $module.access
+		access: $module.mods
 	};
 	let error = {};
 	let show_password = false;
@@ -26,7 +28,7 @@
 	const submit = async () => {
 		error = {};
 		$loading = 'saving . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/access/${$module.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/access/${$page.data.user.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -71,11 +73,23 @@
 		</svelte:fragment>
 	</IG>
 
-	<!-- TODO: back -->
-	<Button on:click={validate}>
-		Submit
-		<Icon icon="send" />
-	</Button>
+	<div class="line">
+		<Button on:click={validate}>
+			Submit
+			<Icon icon="send" />
+		</Button>
+		<Button
+			on:click={() => {
+				$module = {
+					module: Access,
+					mods: $module.mods
+				};
+			}}
+		>
+			Back
+			<!-- <Icon icon="send" /> -->
+		</Button>
+	</div>
 </form>
 
 <style>
@@ -89,5 +103,11 @@
 
 	.right {
 		padding-right: var(--sp2);
+	}
+
+	.line {
+		display: flex;
+		align-items: center;
+		gap: var(--sp1);
 	}
 </style>

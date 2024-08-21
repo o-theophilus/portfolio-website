@@ -68,11 +68,7 @@
 			Submit
 			<Icon icon="send" />
 		</Button>
-		<Button
-			on:click={() => {
-				submit();
-			}}
-		>
+		<Button on:click={submit}>
 			Reset
 			<Icon icon="undo" />
 		</Button>

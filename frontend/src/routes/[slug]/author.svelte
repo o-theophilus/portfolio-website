@@ -1,16 +1,16 @@
 <script>
 	import { module, user } from '$lib/store.js';
 
-	import BRound from '$lib/button/round.svelte';
+	import Button from '$lib/button/button.svelte';
+	import Icon from '$lib/icon.svelte';
 	import Avatar from '$lib/avatar.svelte';
 	import Link from '$lib/button/link.svelte';
-	import Form from './_author.svelte';
+	import Form from './author.edit.svelte';
 	import Loading from '$lib/loading.svelte';
 
 	export let post;
 	export let edit_mode;
-	let name = '';
-	let photo = '';
+	let author = {};
 	let loading = true;
 
 	const update = async (data) => {
@@ -23,35 +23,20 @@
 	};
 
 	export const refresh = async () => {
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/author/${post.author_key}`);
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/author/${post.key}`);
 		resp = await resp.json();
-		if (resp.status == 200) {
-			name = resp.author.name;
-			photo = resp.author.photo;
-		}
 		loading = false;
+		if (resp.status == 200) {
+			author = resp.user;
+		}
 	};
 </script>
 
-<hr />
-<div class="block">
-	{#if !loading}
-		<Link href="/profile?search={post.author_key}">
-			<Avatar {name} {photo} />
-		</Link>
-		<Link href="/profile?search={post.author_key}">
-			<div class="name">
-				{name}
-			</div>
-		</Link>
-	{/if}
-	<Loading active={loading} size="40" />
-	| Author
-
+{#if loading || author.key}
+	<hr />
 	{#if $user.access.includes('post:edit_author') && edit_mode}
-		<BRound
-			icon="edit"
-			icon_size={15}
+		<Button
+			size="small"
 			on:click={() => {
 				$module = {
 					module: Form,
@@ -59,12 +44,30 @@
 					update
 				};
 			}}
-		/>
+		>
+			<Icon icon="edit" size="1.4" />
+			Edit Author
+		</Button>
 	{/if}
-</div>
+
+	<div class="line">
+		{#if !loading}
+			<Link href="/profile?search={author.key}">
+				<Avatar name={author.name} photo={author.photo} />
+			</Link>
+			<Link href="/profile?search={author.key}">
+				<div class="name">
+					{author.name}
+				</div>
+			</Link>
+		{/if}
+		<Loading active={loading} size="40" />
+		| Author
+	</div>
+{/if}
 
 <style>
-	.block {
+	.line {
 		display: flex;
 		gap: var(--sp2);
 		align-items: center;

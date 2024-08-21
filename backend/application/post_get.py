@@ -77,8 +77,11 @@ def get_post(key, cur=None):
 
 
 @bp.get("/post")
-def get_all(order="latest", page_size=24):
-    con, cur = db_open()
+def get_all(order="latest", page_size=24, cur=None):
+    close_conn = not cur
+    if not cur:
+        con, cur = db_open()
+
     user = token_to_user(cur)
 
     status = "active"
@@ -223,7 +226,8 @@ def get_all(order="latest", page_size=24):
     for x in posts:
         x["photos"] = [f"{request.host_url}photo/{y}" for y in x["photos"]]
 
-    db_close(con, cur)
+    if close_conn:
+        db_close(con, cur)
     return jsonify({
         "status": 200,
         "posts": posts,
@@ -299,29 +303,37 @@ def similar_posts(key):
     })
 
 
-@bp.get("/post/author/<author_key>")
-def get_author(author_key):
+@bp.get("/post/author/<key>")
+def get_author(key):
     con, cur = db_open()
 
     cur.execute("""
-        SELECT name, photo FROM "user" WHERE key = %s;
-    """, (author_key,))
-    author = cur.fetchone()
-    if not author:
+        SELECT "user".key, "user".name, "user".photo
+        FROM post
+        LEFT JOIN "user" ON post.author_key = "user".key
+        WHERE post.key = %s;
+    """, (key,))
+    user = cur.fetchone()
+    if not user:
         cur.execute("""
             SELECT key, name, photo FROM "user" WHERE email = %s;
         """, (os.environ["MAIL_USERNAME"],))
-        author = cur.fetchone()
+        user = cur.fetchone()
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400
+        })
 
-    author["photo"] = (
-        f"{request.host_url}photo/{author['photo']}"
-        if author["photo"] else None
+    user["photo"] = (
+        f"{request.host_url}photo/{user['photo']}"
+        if user["photo"] else None
     )
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "author": author
+        "user": user
     })
 
 

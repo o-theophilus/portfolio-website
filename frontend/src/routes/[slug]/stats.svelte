@@ -35,6 +35,8 @@
 	};
 </script>
 
+<!-- TODO: what is this for? -->
+
 {#if $user.login}
 	<Button
 		size="small"

@@ -41,6 +41,7 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
+			$module.refresh();
 			$module = null;
 			$notification = {
 				message: 'Content Saved'
@@ -114,7 +115,6 @@
 		flex-direction: column;
 		gap: var(--sp2);
 
-		width: calc(100vw - var(--sp4) * 2);
 		height: calc(100vh - var(--sp4) * 5);
 	}
 	.marked,

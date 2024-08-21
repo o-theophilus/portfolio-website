@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { module, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
+	import { page } from '$app/stores';
 
 	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
@@ -22,7 +23,7 @@
 
 	const submit = async () => {
 		$loading = 'Creating Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post${$page.url.search}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -34,6 +35,9 @@
 		$loading = false;
 
 		if (resp.status == 200) {
+			console.log(resp);
+			$module.update(resp.posts, resp.total_page);
+
 			$module = {
 				module: Dialogue,
 				message: 'Post Created',

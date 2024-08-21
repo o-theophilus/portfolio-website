@@ -3,19 +3,15 @@
 
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Group from './tags.group.svelte';
-	import Edit from './tags.edit.svelte';
+	import Edit from './description.edit.svelte';
 
 	export let post;
 	export let edit_mode;
 	export let update;
 </script>
 
-{#if post.tags.length > 0 || ($user.access.includes('post:edit_tags') && edit_mode)}
+{#if $user.access.includes('post:edit_description') && edit_mode}
 	<hr />
-{/if}
-
-{#if $user.access.includes('post:edit_tags') && edit_mode}
 	<Button
 		size="small"
 		on:click={() => {
@@ -27,14 +23,15 @@
 		}}
 	>
 		<Icon icon="edit" size="1.4" />
-		Edit Tags
+		Edit Description
 	</Button>
-{/if}
-
-{#if post.tags.length > 0}
-	<Group tags={post.tags} />
-{:else if edit_mode}
-	<div class="margin">No tag</div>
+	<div class="margin">
+		{#if post.description}
+			{post.description}
+		{:else}
+			No description
+		{/if}
+	</div>
 {/if}
 
 <style>

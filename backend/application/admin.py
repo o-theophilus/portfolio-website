@@ -12,10 +12,11 @@ from .storage import drive, storage
 bp = Blueprint("admin", __name__)
 
 
-# TODO: change user name and photo
 access = {
     "user": [
         ['view', 1],
+        ['edit_name', 2],
+        ['edit_photo', 2],
         ['set_access', 3]
     ],
     "admin": [
@@ -347,11 +348,18 @@ def set_highlight():
         request.json["key"], request.json["key"])
     )
     post = cur.fetchone()
-    if not post or post["status"] != "active":
+    if not post:
         db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "not found"
+        })
+
+    if post["status"] != "active":
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "not active"
         })
 
     cur.execute("SELECT * FROM setting WHERE key = 'highlight';",)
