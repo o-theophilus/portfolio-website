@@ -8,6 +8,7 @@
 
 <section style:--scroll={scrollY}>
 	<img style:--no="8" src="/parallax/parallax0.png" alt="parallax0" />
+	<img style:--no="7" src="/parallax/parallax1.png" alt="parallax1" />
 
 	<div class="block" style:--no="8">
 		<div class="icon">
@@ -17,7 +18,6 @@
 		<div class="role">Designer & Developer</div>
 	</div>
 
-	<img style:--no="7" src="/parallax/parallax1.png" alt="parallax1" />
 	<img style:--no="6" src="/parallax/parallax2.png" alt="parallax2" />
 	<img style:--no="5" src="/parallax/parallax3.png" alt="parallax3" />
 	<img style:--no="4" src="/parallax/parallax4.png" alt="parallax4" />
@@ -30,7 +30,7 @@
 	section {
 		position: relative;
 		height: calc(100vh - var(--headerHeight));
-		min-height: 800px;
+		min-height: 500px;
 
 		background-color: #82c6ff;
 
@@ -44,23 +44,24 @@
 		-webkit-mask-position: center;
 	}
 
-	img,
-	.block {
+	img {
 		position: absolute;
 
 		height: 100%;
 		width: 100%;
 		object-fit: cover;
 		top: calc(0.1px * var(--no) * var(--scroll));
-		/* transform: translateY(calc(0.1 * var(--no) * var(--scroll))); */
 	}
 
 	.block {
+		position: fixed;
+
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 
+		width: 100%;
 		height: 50%;
 		padding: var(--sp2);
 
