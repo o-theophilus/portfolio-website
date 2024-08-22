@@ -1,9 +1,10 @@
 <script>
-	import { module, user } from '$lib/store.js';
+	import { module, user, state } from '$lib/store.js';
+	import { goto } from '$app/navigation';
 
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Group from './tags.group.svelte';
+	import Tags from '$lib/tags.svelte';
 	import Edit from './tags.edit.svelte';
 
 	export let post;
@@ -32,7 +33,19 @@
 {/if}
 
 {#if post.tags.length > 0}
-	<Group tags={post.tags} />
+	<Tags
+		style="1"
+		tags={post.tags}
+		on:click={(e) => {
+			let pn = 'post';
+			let i = $state.findIndex((x) => x.name == pn);
+			if (i != -1) {
+				$state.splice(i, 1);
+			}
+
+			goto(`post?${new URLSearchParams({ tag: e.detail }).toString()}`);
+		}}
+	/>
 {:else if edit_mode}
 	<div class="margin">No tag</div>
 {/if}

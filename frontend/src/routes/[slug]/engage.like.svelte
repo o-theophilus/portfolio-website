@@ -58,7 +58,6 @@
 	};
 </script>
 
-<!-- TODO: like errors rating -->
 <div class="line">
 	<button
 		class="left"

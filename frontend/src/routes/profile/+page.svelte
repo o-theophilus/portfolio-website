@@ -63,7 +63,7 @@
 		<div class="title">
 			<strong class="ititle">Profile </strong>
 
-			{#if user.key == $me.key}
+			{#if user.key == $me.key || $user.access.includes('post:edit_name')}
 				<Toggle
 					state_1="off"
 					state_2="edit"
@@ -81,7 +81,7 @@
 			<div class="avatar">
 				<Avatar name={user.name} photo={user.photo} size="120" />
 			</div>
-			{#if edit_mode}
+			{#if edit_mode && $me.access.includes('post:edit_photo')}
 				<BRound
 					icon="edit"
 					on:click={() => {
@@ -102,7 +102,7 @@
 			<strong class="ititle">
 				{user.name}
 			</strong>
-			{#if edit_mode}
+			{#if edit_mode && $me.access.includes('post:edit_name')}
 				<BRound
 					icon="edit"
 					on:click={() => {

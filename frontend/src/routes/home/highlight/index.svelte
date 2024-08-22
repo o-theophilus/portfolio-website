@@ -6,11 +6,11 @@
 	import { module, settings, user, state } from '$lib/store.js';
 
 	import Content from '$lib/content.svelte';
-	import Tag from '$lib/button/tag.svelte';
 	import Link from '$lib/button/link.svelte';
 	import BRound from '$lib/button/round.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Edit from './edit.svelte';
+	import Tags from '$lib/tags.svelte';
 
 	let list = [];
 	let prev = [];
@@ -191,26 +191,22 @@
 							{active.description}
 						</div>
 
-						{#if active.tags.length > 0}
-							<div class="tags">
-								{#each active.tags as tag}
-									<Tag
-										no_grow
-										on:click={() => {
-											let pn = 'post';
-											let i = $state.findIndex((x) => x.name == pn);
-											if (i != -1) {
-												$state.splice(i, 1);
-											}
+						<div class="tags">
+							<Tags
+								center
+								style="1"
+								tags={active.tags}
+								on:click={(e) => {
+									let pn = 'post';
+									let i = $state.findIndex((x) => x.name == pn);
+									if (i != -1) {
+										$state.splice(i, 1);
+									}
 
-											goto(`post?${new URLSearchParams({ tag }).toString()}`);
-										}}
-									>
-										{tag}
-									</Tag>
-								{/each}
-							</div>
-						{/if}
+									goto(`post?${new URLSearchParams({ tag: e.detail }).toString()}`);
+								}}
+							/>
+						</div>
 					</div>
 				{/key}
 
@@ -332,11 +328,7 @@
 	}
 
 	.tags {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
 		margin: var(--sp2) auto;
-		gap: var(--sp0);
 	}
 
 	.name,

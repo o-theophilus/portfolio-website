@@ -8,7 +8,7 @@ from . import post
 from . import post_get
 from . import comment
 from . import report
-from . import rating
+from . import engagement
 from . import storage
 from . import account
 from . import admin
@@ -37,7 +37,7 @@ def create_app(conf=None):
     app.register_blueprint(post_get.bp)
     app.register_blueprint(comment.bp)
     app.register_blueprint(report.bp)
-    app.register_blueprint(rating.bp)
+    app.register_blueprint(engagement.bp)
     app.register_blueprint(storage.bp)
     app.register_blueprint(account.bp)
     app.register_blueprint(admin.bp)

@@ -15,25 +15,7 @@ def get_post(key, cur=None):
         con, cur = db_open()
 
     cur.execute("""
-        WITH
-        rating AS (
-            SELECT
-                post_key AS key,
-                AVG(rating) AS rating,
-                COUNT(*) AS _count
-            FROM rating
-            GROUP BY post_key
-        )
-
-        SELECT
-            post.*,
-            COALESCE(rating.rating, 0) AS rating,
-            COALESCE(rating._count, 0) AS ratings
-        FROM post
-        LEFT JOIN rating ON post.key = rating.key
-        WHERE
-            post.slug = %s
-            OR post.key = %s;
+        SELECT * FROM post WHERE post.slug = %s OR post.key = %s;
     """, (key, key))
     post = cur.fetchone()
 
@@ -153,13 +135,14 @@ def get_all(order="latest", page_size=24, cur=None):
             FROM post
         ),
 
+        ratings AS (
+            SELECT key, (unnest(ratings) ->> 'rating')::INTEGER AS ratings
+            FROM post
+        ),
         rating AS (
-            SELECT
-                post_key AS key,
-                AVG(rating) AS rating,
-                COUNT(*) AS _count
-            FROM rating
-            GROUP BY post_key
+            SELECT key, AVG(ratings) AS rating
+            FROM ratings
+            GROUP BY key
         ),
 
         comment AS (
@@ -192,7 +175,6 @@ def get_all(order="latest", page_size=24, cur=None):
         SELECT
             post.*,
             COALESCE(rating.rating, 0) AS rating,
-            COALESCE(rating._count, 0) AS ratings,
             COALESCE(comment._count, 0) AS comment,
             COALESCE(view._count, 0) AS view,
             COALESCE(_like._count, 0) AS _like,
@@ -209,8 +191,7 @@ def get_all(order="latest", page_size=24, cur=None):
         GROUP BY
             post.key, post.status, post.title, post.slug, post.content,
             post.description, post.photos, post.tags,
-            _like._count,
-            rating.rating, rating._count, comment._count, view._count
+            _like._count, comment._count, view._count, rating.rating
         ORDER BY {} {}
         LIMIT %s OFFSET %s;
     """.format(
@@ -267,24 +248,11 @@ def similar_posts(key):
                     WHERE tn = ANY(%s)
                 ) AS likeness
             FROM post
-        ),
-
-        rating AS (
-            SELECT
-                post_key AS key,
-                AVG(rating) AS rating,
-                COUNT(*) AS _count
-            FROM rating
-            GROUP BY post_key
         )
 
-        SELECT
-            post.*,
-            COALESCE(rating.rating, 0) AS rating,
-            COALESCE(rating._count, 0) AS ratings
+        SELECT post.*
         FROM post
         LEFT JOIN likeness ON post.key = likeness.key
-        LEFT JOIN rating ON post.key = rating.key
         WHERE
             post.status = 'active'
             AND post.key != %s

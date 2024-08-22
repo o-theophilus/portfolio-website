@@ -5,7 +5,7 @@
 
 	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
-	import Tag from '$lib/button/tag.svelte';
+	import Tags from '$lib/tags.svelte';
 	import Icon from '$lib/icon.svelte';
 
 	let post = { ...$module.post };
@@ -110,19 +110,13 @@
 			clean_value();
 		}}
 	/>
-	<div class="line">
-		{#each unused_tags as tag}
-			<Tag
-				on:click={() => {
-					clean_value(tag);
-				}}
-			>
-				{tag}
-			</Tag>
-		{/each}
-	</div>
 
-	<br />
+	<Tags
+		tags={unused_tags}
+		on:click={(e) => {
+			clean_value(e.detail);
+		}}
+	/>
 
 	<Button
 		on:click={validate}
@@ -137,12 +131,6 @@
 <style>
 	form {
 		padding: var(--sp3);
-	}
-
-	.line {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--sp1);
 	}
 
 	.error {

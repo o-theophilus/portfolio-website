@@ -11,10 +11,13 @@
 	export let post;
 	export let update;
 
-	let my_rating = null;
-	const update_my_rating = async (data) => {
-		my_rating = data;
-	};
+	let rating = 0;
+	for (const x in post.ratings) {
+		rating += post.ratings[x].rating;
+	}
+	if (rating != 0) {
+		rating /= post.ratings.length;
+	}
 </script>
 
 <hr />
@@ -34,15 +37,15 @@
 			on:click={() => {
 				$module = {
 					module: Rating,
-					post_key: post.key,
-					my_rating,
-					update_my_rating,
+					post,
 					update
 				};
 			}}
 		>
 			<Icon icon="hotel_class" />
-			Rate: {parseFloat(post.rating)}/{post.ratings}
+			Rate: {parseFloat(rating)} |
+			<Icon icon="person" />
+			{post.ratings.length}
 		</Button>
 	{/if}
 

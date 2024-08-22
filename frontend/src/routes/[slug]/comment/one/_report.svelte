@@ -5,7 +5,7 @@
 	import { template, tags } from './_report__template.js';
 	import IG from '$lib/input_group.svelte';
 	import Button from '$lib/button/button.svelte';
-	import Tag from '$lib/button/tag.svelte';
+	import Tags from '$lib/tags.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Link from '$lib/button/link.svelte';
 	import Avatar from '$lib/avatar.svelte';
@@ -99,23 +99,20 @@
 	</IG>
 
 	Select applicable tags
-	<div class="tags">
-		{#each tags as x}
-			<Tag
-				active={form.tags.includes(x)}
-				on:click={() => {
-					if (form.tags.includes(x)) {
-						form.tags = form.tags.filter((i) => i != x);
-					} else {
-						form.tags.push(x);
-					}
-					form = form;
-				}}
-			>
-				{x}
-			</Tag>
-		{/each}
-	</div>
+
+	<Tags
+		style="1"
+		{tags}
+		active={form.tags}
+		on:click={(e) => {
+			if (form.tags.includes(e.detail)) {
+				form.tags = form.tags.filter((i) => i != e.detail);
+			} else {
+				form.tags.push(e.detail);
+			}
+			form = form;
+		}}
+	/>
 
 	<Button on:click={validate}>
 		Submit
@@ -143,12 +140,7 @@
 	.gap {
 		height: var(--sp1);
 	}
-	.tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--sp1);
-		margin: var(--sp2) 0;
-	}
+
 	.error {
 		margin: var(--sp2) 0;
 	}

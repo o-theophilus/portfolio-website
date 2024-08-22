@@ -4,8 +4,8 @@
 
 	import Content from '$lib/content.svelte';
 	import Link from '$lib/button/link.svelte';
-	import Tag from '$lib/button/tag.svelte';
 	import Icon from '$lib/icon.svelte';
+	import Tags from '$lib/tags.svelte';
 
 	let exp = [
 		{
@@ -104,7 +104,7 @@
 
 	let active = 0;
 
-	let devlope = [{ name: 'Verge3D', value: 80 }];
+	// let devlope = [{ name: 'Verge3D', value: 80 }];
 </script>
 
 <Content fit>
@@ -170,11 +170,8 @@
 								{/each}
 							</ul>
 						</div>
-						<div class="tags">
-							{#each exp[active].tags as x}
-								<Tag no_grow disabled>{x}</Tag>
-							{/each}
-						</div>
+
+						<Tags style="1" tags={exp[active].tags} disabled />
 					</div>
 				{/key}
 			</div>
@@ -263,12 +260,6 @@
 
 	.info {
 		margin: var(--sp1) 0;
-	}
-
-	.tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--sp0);
 	}
 
 	li::marker {

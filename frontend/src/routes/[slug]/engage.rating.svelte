@@ -4,35 +4,33 @@
 
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Loading from '$lib/loading.svelte';
-	import { onMount } from 'svelte';
 
-	let rating = $module.my_rating;
-	let post_key = $module.post_key;
+	let rating = 0;
 	let error = {};
-
-	const set_active = (val) => {
-		rating = val;
-	};
+	for (const x in $module.post.ratings) {
+		if ($module.post.ratings[x].user_key == $user.key) {
+			rating = $module.post.ratings[x].rating;
+			break;
+		}
+	}
 
 	const submit = async () => {
 		error = {};
 
 		$loading = 'Saving . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/rating/${post_key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/rating/${$module.post.key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify({ rating })
+			body: JSON.stringify({ rating: rating })
 		});
 		resp = await resp.json();
 		$loading = false;
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
-			$module.update_my_rating(rating);
 			$module = null;
 			$notification = {
 				message: 'Rating Saved'
@@ -42,74 +40,52 @@
 		}
 	};
 
-	let _loading = false;
-	onMount(async () => {
-		if (rating == null) {
-			_loading = true;
-
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/rating/${post_key}`);
-			resp = await resp.json();
-
-			if (resp.status == 200) {
-				rating = 0;
-				for (const i in resp.ratings) {
-					if (resp.ratings[i].user_key == $user.key) {
-						rating = resp.ratings[i].rating;
-						break;
-					}
-				}
-				$module.update_my_rating(rating);
-			}
-			_loading = false;
-		}
-	});
+	const set_active = (val) => {
+		rating = val;
+	};
 </script>
 
 <section>
 	<strong class="ititle"> Add Rating </strong>
+
 	{#if error.error}
 		<div class="error">
 			{error.error}
 		</div>
 	{/if}
 
-	<div>
+	<div class="label">
 		Rating ({rating})
-		<div class="block" class:disable={_loading}>
-			<div class="block red">
-				{#each Array(5) as _, i}
-					{@const j = -5 + i}
-					<button
-						class:active={j == rating}
-						on:click={() => {
-							set_active(j);
-						}}
-					/>
-				{/each}
-			</div>
-			<button
-				class:active={0 == rating}
-				class="b0"
-				on:click={() => {
-					set_active(0);
-				}}
-			/>
-			<div class="block green">
-				{#each Array(5) as _, i}
-					{@const j = 5 - i}
-					<button
-						class:active={j == rating}
-						on:click={() => {
-							set_active(j);
-						}}
-					/>
-				{/each}
-			</div>
-			{#if _loading}
-				<div class="loading">
-					<Loading size="40" />
-				</div>
-			{/if}
+	</div>
+	<div class="block">
+		<div class="block red">
+			{#each Array(5) as _, i}
+				{@const j = -5 + i}
+				<button
+					class:active={j == rating}
+					on:click={() => {
+						set_active(j);
+					}}
+				/>
+			{/each}
+		</div>
+		<button
+			class:active={0 == rating}
+			class="b0"
+			on:click={() => {
+				set_active(0);
+			}}
+		/>
+		<div class="block green">
+			{#each Array(5) as _, i}
+				{@const j = 5 - i}
+				<button
+					class:active={j == rating}
+					on:click={() => {
+						set_active(j);
+					}}
+				/>
+			{/each}
 		</div>
 	</div>
 
@@ -121,10 +97,6 @@
 
 <style>
 	section {
-		display: flex;
-		flex-direction: column;
-		gap: var(--sp2);
-
 		padding: var(--sp3);
 	}
 
@@ -134,20 +106,6 @@
 		display: flex;
 		align-items: center;
 		overflow: hidden;
-	}
-
-	.disable {
-		opacity: 0.5;
-		pointer-events: none;
-	}
-
-	.loading {
-		position: absolute;
-		inset: 0;
-
-		display: flex;
-		justify-content: center;
-		align-items: center;
 	}
 
 	.green {
@@ -201,5 +159,9 @@
 
 	.error {
 		margin: var(--sp2) 0;
+	}
+	.label {
+		margin-top: var(--sp2);
+		font-size: 0.8rem;
 	}
 </style>

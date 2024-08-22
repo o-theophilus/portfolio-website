@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { state, set_state } from '$lib/store.js';
 
-	import Link from '$lib/button/link.svelte';
+	import Tags from '$lib/tags.svelte';
 	import Loading from '$lib/loading.svelte';
 
 	let tags = [];
@@ -37,19 +37,14 @@
 	</div>
 {:else if tags.length > 0}
 	<hr />
-	<div class="line">
-		{#each tags as tag, i}
-			{#if i > 0}
-				&#8226;
-			{/if}
-			<Link
-				small
-				on:click={() => {
-					set_state('tag', tag);
-				}}>{tag}</Link
-			>
-		{/each}
-	</div>
+
+	<Tags
+		{tags}
+		style="1"
+		on:click={(e) => {
+			set_state('tag', e.detail);
+		}}
+	/>
 {/if}
 
 <style>

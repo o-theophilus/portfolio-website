@@ -5,6 +5,7 @@
 	import Icon from '$lib/icon.svelte';
 
 	export let post;
+	console.log(post);
 
 	const click = () => {
 		let sn = 'post_item';
@@ -45,15 +46,16 @@
 				</div>
 
 				<div class="line">
+					<Icon icon="comment" />
+					{post.comment}
+				</div>
+
+				<div class="line">
 					<Icon icon="thumb_up" />
 					{post._like}
 				</div>
 
-				<div class="line">
-					<Icon icon="comment" />
-					{post.comment}
-				</div>
-				{#if post.rating > 0}
+				{#if post.rating != 0}
 					<div class="line">
 						<Icon icon="hotel_class" />
 						{parseFloat(post.rating)}

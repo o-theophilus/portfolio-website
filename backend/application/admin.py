@@ -295,17 +295,7 @@ def get_highlight(cur=None):
     keys = highlight["misc"]["highlight"]
 
     cur.execute("""
-        SELECT
-            post.*,
-            COALESCE(ARRAY_AGG(rating.rating) FILTER (
-                WHERE rating.rating IS NOT NULL
-            ), ARRAY[]::int[]) AS ratings
-        FROM post
-        LEFT JOIN rating ON post.key = rating.post_key
-        WHERE
-            post.status = 'active'
-            AND post.key = ANY(%s)
-        GROUP BY post.key;
+        SELECT * FROM post WHERE status = 'active' AND key = ANY(%s);
     """, (keys,))
     posts = cur.fetchall()
     posts = sorted(posts, key=lambda d: keys.index(d['key']))

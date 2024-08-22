@@ -41,9 +41,11 @@ post_table = """CREATE TABLE IF NOT EXISTS post (
     tags TEXT[] DEFAULT ARRAY[]::TEXT[],
     "like" TEXT[] DEFAULT ARRAY[]::TEXT[],
     dislike TEXT[] DEFAULT ARRAY[]::TEXT[],
+    ratings JSONB[] DEFAULT ARRAY[]::JSONB[],
 
     FOREIGN KEY (author) REFERENCES "user"(key)
 );"""
+
 
 comment_table = """CREATE TABLE IF NOT EXISTS comment (
     key CHAR(32) PRIMARY KEY,
@@ -61,17 +63,6 @@ comment_table = """CREATE TABLE IF NOT EXISTS comment (
     FOREIGN KEY (post_key) REFERENCES post(key)
 );"""
 
-rating_table = """CREATE TABLE IF NOT EXISTS rating (
-    key CHAR(32) PRIMARY KEY,
-
-    user_key CHAR(32) NOT NULL,
-    post_key CHAR(32) NOT NULL,
-
-    rating INT DEFAULT 0,
-
-    FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE,
-    FOREIGN KEY (post_key) REFERENCES post(key)
-);"""
 
 report_table = """CREATE TABLE IF NOT EXISTS report (
     key CHAR(32) PRIMARY KEY,

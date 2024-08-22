@@ -25,7 +25,6 @@ def get_comments(key, cur=None):
         if not user or "comment:view_deleted" not in user["access"]:
             status = "active"
 
-    # TODO: sub comments count
     order_by = {
         'latest': 'log.date',
         'oldest': 'log.date',
@@ -35,6 +34,7 @@ def get_comments(key, cur=None):
         # 'more like': 'sub_2.more_like',
         # 'more dislike': 'sub_2.more_like'
         'like': 'sub_2.more_like',
+        'sub_comment': 'child._count',
     }
 
     order_dir = {
@@ -44,7 +44,8 @@ def get_comments(key, cur=None):
         'dislike': 'DESC',
         'most reaction': 'DESC',
         'more like': 'DESC',
-        'more dislike': 'ASC'
+        'more dislike': 'ASC',
+        'sub_comment': 'DESC',
     }
 
     cur.execute("""
@@ -64,6 +65,17 @@ def get_comments(key, cur=None):
                 ("like" + dislike) AS most_reaction,
                 ("like" - dislike) AS more_like
             FROM sub_1
+        ),
+
+        child AS (
+            SELECT
+                comm.key,
+                (
+                    SELECT COUNT(*)
+                    FROM comment AS sub
+                    WHERE comm.key = ANY(sub.path) AND sub.status = 'active'
+                ) AS _count
+            FROM comment AS comm
         )
 
         SELECT
@@ -82,6 +94,7 @@ def get_comments(key, cur=None):
         FROM comment
         LEFT JOIN sub_2 ON comment.key = sub_2.key
         LEFT JOIN "user" ON comment.user_key = "user".key
+        LEFT JOIN child ON comment.key = child.key
         LEFT JOIN log ON
             comment.key = log.entity_key
             AND log.action = 'created'
@@ -91,7 +104,8 @@ def get_comments(key, cur=None):
             AND comment.status = %s
         GROUP BY comment.key, log.date, "user".key,
             sub_2."like", sub_2.dislike,
-            sub_2.most_reaction, sub_2.more_like
+            sub_2.most_reaction, sub_2.more_like,
+            child._count
         ORDER BY {} {};
     """.format(
         order_by[order],

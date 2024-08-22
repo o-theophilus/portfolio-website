@@ -27,7 +27,7 @@
 		formData.append('file', file);
 
 		$loading = 'uploading . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/photo`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/photo/${user.key}`, {
 			method: 'put',
 			headers: {
 				Authorization: $token
@@ -54,7 +54,7 @@
 		error = {};
 
 		$loading = 'removing . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/photo`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/photo/${user.key}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',

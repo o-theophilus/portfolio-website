@@ -6,8 +6,7 @@ from deta import Deta
 from .postgres import db_open, db_close
 from .postgres import (
     post_table, user_table, log_table, comment_table,
-    rating_table, code_table, setting_table,
-    report_table)
+    code_table, setting_table, report_table)
 from uuid import uuid4
 from .admin import access
 
@@ -78,7 +77,6 @@ def create_tables():
         DROP TABLE IF EXISTS post CASCADE;
         DROP TABLE IF EXISTS comment CASCADE;
         DROP TABLE IF EXISTS report CASCADE;
-        DROP TABLE IF EXISTS rating CASCADE;
         DROP TABLE IF EXISTS code CASCADE;
         DROP TABLE IF EXISTS log CASCADE;
         {setting_table}
@@ -86,7 +84,6 @@ def create_tables():
         {post_table}
         {comment_table}
         {report_table}
-        {rating_table}
         {code_table}
         {log_table}
     """)
@@ -161,6 +158,7 @@ def deta_to_postgres():
     })
 
 
+@bp.get("/fix")
 def general_fix():
     con, cur = db_open()
 
@@ -187,17 +185,14 @@ def general_fix():
     #     ADD COLUMN price FLOAT DEFAULT 0 NOT NULL;
     # """)
 
-    cur.execute(f"""
-        DROP TABLE IF EXISTS otp CASCADE;
-        DROP TABLE IF EXISTS code CASCADE;
-        {code_table}
-    """)
-
+    # cur.execute("""
+    #     ALTER TABLE post
+    #     ADD COLUMN
+    #     ratings JSONB[] DEFAULT ARRAY[]::JSONB[];
+    # """)
     cur.execute("""
-        ALTER TABLE "user"
-        RENAME COLUMN permissions
-        TO access;
-    ;""")
+        DROP TABLE IF EXISTS rating;
+    """)
 
     db_close(con, cur)
     return jsonify({
@@ -205,7 +200,6 @@ def general_fix():
     })
 
 
-@bp.get("/fix")
 def fix_access():
     con, cur = db_open()
 

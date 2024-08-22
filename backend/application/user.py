@@ -59,8 +59,6 @@ def theme():
     })
 
 
-# TODO: admin can edit name and photo
-# TODO: SUPER USER CANNOT BE EDITED
 @bp.put("/user/<key>")
 def edit_user(key):
     con, cur = db_open()
@@ -73,54 +71,45 @@ def edit_user(key):
             "error": "invalid token"
         })
 
-    # if user["key"] != key:
-    #     if "user:edit_name" not in user["access"]:
-    #         db_close(con, cur)
-    #         return jsonify({
-    #             "status": 400,
-    #             "error": "unauthorized access"
-    #         })
-    #     else:
-    #         cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
-    #         user = cur.fetchone()
-
-    #         if not user:
-    #             db_close(con, cur)
-    #             return jsonify({
-    #                 "status": 400,
-    #                 "error": "invalid request"
-    #             })
+    e_user = user
+    if user["key"] != key:
+        cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
+        e_user = cur.fetchone()
+        if not e_user or e_user["email"] == os.environ["MAIL_USERNAME"]:
+            db_close(con, cur)
+            return jsonify({
+                "status": 400,
+                "error": "invalid request"
+            })
 
     error = {}
 
     if "name" in request.json:
-        if not request.json["name"]:
+        if user["key"] != key and "user:edit_name" not in user["access"]:
+            error['name'] = "unauthorized access"
+        elif not request.json["name"]:
             error['name'] = "cannot be empty"
-        elif request.json["name"] == user["name"]:
+        elif request.json["name"] == e_user["name"]:
             error['name'] = "no change"
         else:
             cur.execute("""
-                UPDATE "user"
-                SET name = %s
-                WHERE key = %s;
+                UPDATE "user" SET name = %s WHERE key = %s;
             """, (
-                request.json["name"],
-                user["key"]
+                request.json["name"], e_user["key"]
             ))
 
     if "phone" in request.json:
-        if not request.json["phone"]:
+        if user["key"] != key:
+            error['phone'] = "unauthorized access"
+        elif not request.json["phone"]:
             error['phone'] = "cannot be empty"
-        elif request.json["phone"] == user["phone"]:
+        elif request.json["phone"] == e_user["phone"]:
             error['phone'] = "no change"
         else:
             cur.execute("""
-                UPDATE "user"
-                SET phone = %s
-                WHERE key = %s;
+                UPDATE "user" SET phone = %s WHERE key = %s;
             """, (
-                request.json["phone"],
-                user["key"]
+                request.json["phone"], e_user["key"]
             ))
 
     if error != {}:
@@ -132,21 +121,22 @@ def edit_user(key):
 
     cur.execute("""
         SELECT * FROM "user" WHERE key = %s;
-    """, (user["key"],))
-    user = cur.fetchone()
+    """, (e_user["key"],))
+    e_user = cur.fetchone()
 
     log(
         cur=cur,
         user_key=user["key"],
         action="edited",
         entity_type="user",
+        entity_key=e_user["key"],
         misc=request.json
     )
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "user": user_schema(user)
+        "user": user_schema(e_user)
     })
 
 
@@ -587,8 +577,8 @@ def delete():
     })
 
 
-@bp.put("/user/photo")
-def add_photo():
+@bp.put("/user/photo/<key>")
+def add_photo(key):
     con, cur = db_open()
 
     user = token_to_user(cur)
@@ -598,6 +588,24 @@ def add_photo():
             "status": 400,
             "error": "invalid token"
         })
+
+    e_user = user
+    if user["key"] != key:
+        if "user:edit_photo" not in user["access"]:
+            db_close(con, cur)
+            return jsonify({
+                "status": 400,
+                "error":  "unauthorized access"
+            })
+        else:
+            cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
+            e_user = cur.fetchone()
+            if not e_user or e_user["email"] == os.environ["MAIL_USERNAME"]:
+                db_close(con, cur)
+                return jsonify({
+                    "status": 400,
+                    "error": "invalid request"
+                })
 
     if 'file' not in request.files:
         db_close(con, cur)
@@ -616,9 +624,9 @@ def add_photo():
         })
 
     old_photo = None
-    if user["photo"]:
-        old_photo = user["photo"]
-        storage(user["photo"], delete=True)
+    if e_user["photo"]:
+        old_photo = e_user["photo"]
+        storage(e_user["photo"], delete=True)
 
     file_name = storage(file)
 
@@ -629,15 +637,16 @@ def add_photo():
         RETURNING *;
     """, (
         file_name,
-        user["key"]
+        e_user["key"]
     ))
-    user = cur.fetchone()
+    e_user = cur.fetchone()
 
     log(
         cur=cur,
         user_key=user["key"],
         action="updated_photo",
         entity_type="user",
+        entity_key=e_user["key"],
         misc={
             "from": old_photo,
             "to": file_name
@@ -647,12 +656,12 @@ def add_photo():
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "user": user_schema(user)
+        "user": user_schema(e_user)
     })
 
 
-@bp.delete("/user/photo")
-def delete_photo():
+@bp.delete("/user/photo/<key>")
+def delete_photo(key):
     con, cur = db_open()
 
     user = token_to_user(cur)
@@ -663,20 +672,37 @@ def delete_photo():
             "error": "invalid token"
         })
 
-    if user["photo"]:
-        storage(user["photo"].split("/")[-1], delete=True)
+    e_user = user
+    if user["key"] != key:
+        if "user:edit_photo" not in user["access"]:
+            db_close(con, cur)
+            return jsonify({
+                "status": 400,
+                "error":  "unauthorized access"
+            })
+        else:
+            cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
+            e_user = cur.fetchone()
+            if not e_user or e_user["email"] == os.environ["MAIL_USERNAME"]:
+                db_close(con, cur)
+                return jsonify({
+                    "status": 400,
+                    "error": "invalid request"
+                })
+
+    if e_user["photo"]:
+        storage(e_user["photo"].split("/")[-1], delete=True)
 
         cur.execute("""
-            UPDATE "user"
-            SET photo = NULL
-            WHERE key = %s;
-        """, (user["key"],))
+            UPDATE "user" SET photo = NULL WHERE key = %s;
+        """, (e_user["key"],))
 
         log(
             cur=cur,
             user_key=user["key"],
             action="deleted_photo",
             entity_type="user",
+            entity_key=e_user["key"],
             misc={"photo": user["photo"]}
         )
 
