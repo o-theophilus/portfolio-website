@@ -62,11 +62,23 @@
 		justify-content: center;
 
 		width: 100%;
-		height: 50%;
+		/* height: 50%; */
 		padding: var(--sp2);
+		bottom: 25%;
 
 		color: var(--bg1);
 		transition: color var(--trans);
+	}
+
+	@media screen and (min-height: 300px) {
+		.block {
+			bottom: 45%;
+		}
+	}
+	@media screen and (min-height: 600px) {
+		.block {
+			bottom: 55%;
+		}
 	}
 
 	.icon {
