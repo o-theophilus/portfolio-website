@@ -6,4 +6,4 @@ requests
 deta
 psycopg2-binary
 pytest
-protonmail-api-client
+protonmail-api-client==1.6.0

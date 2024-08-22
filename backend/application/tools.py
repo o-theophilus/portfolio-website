@@ -3,7 +3,7 @@ from itsdangerous import URLSafeTimedSerializer
 import os
 from uuid import uuid4
 import random
-# from protonmail import ProtonMail
+from protonmail import ProtonMail
 from datetime import datetime, timedelta
 import json
 
@@ -118,16 +118,16 @@ def check_code(cur, key, email, n="code"):
 def send_mail(to, subject, body):
     if current_app.config["DEBUG"]:
         print(body)
-    # else:
-    #     proton = ProtonMail()
-    #     proton.login(os.environ["MAIL_USERNAME"], os.environ["MAIL_PASSWORD"])
-    #     proton.send_message(
-    #         proton.create_message(
-    #             recipients=[to],
-    #             subject=subject,
-    #             body=body,
-    #         )
-    #     )
+    else:
+        proton = ProtonMail()
+        proton.login(os.environ["MAIL_USERNAME"], os.environ["MAIL_PASSWORD"])
+        proton.send_message(
+            proton.create_message(
+                recipients=[to],
+                subject=subject,
+                body=body,
+            )
+        )
 
 
 def user_schema(user):
