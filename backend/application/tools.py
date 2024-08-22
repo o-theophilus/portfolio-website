@@ -3,9 +3,9 @@ from itsdangerous import URLSafeTimedSerializer
 import os
 from uuid import uuid4
 import random
+from protonmail import ProtonMail
 from datetime import datetime, timedelta
 import json
-from protonmail import ProtonMail
 
 
 reserved_words = [
