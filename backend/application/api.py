@@ -50,7 +50,7 @@ def send_email():
 
     send_mail(
         os.environ["MAIL_USERNAME"],
-        f"{request.json['name']} from Loup",
+        f"{request.json['name']} from Theophilus Portfolio Website",
         message
     )
 

@@ -27,7 +27,7 @@ def create_app(conf=None):
 
         return jsonify({
             "status": 200,
-            "message": "Welcome to Loup"
+            "message": "Welcome to Theophilus Portfolio Website"
         })
 
     app.register_blueprint(api.bp)
