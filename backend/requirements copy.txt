@@ -1,9 +1,0 @@
-flask
-flask-cors
-python-dotenv
-pillow
-requests
-deta
-psycopg2-binary
-pytest
-protonmail-api-client

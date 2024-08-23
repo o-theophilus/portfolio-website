@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 import re
 import os
-from .tools import send_mail
+# from .tools import send_mail
 from deta import Deta
 from .postgres import db_open, db_close
 from .postgres import (
@@ -14,49 +14,49 @@ from .admin import access
 bp = Blueprint("api", __name__)
 
 
-@bp.post("/contact")
-def send_email():
+# @bp.post("/contact")
+# def send_email():
 
-    if (
-        "email_template" not in request.json
-        or not request.json["email_template"]
-    ):
-        return jsonify({
-            "status": 400,
-            "error": "invalid request"
-        })
+#     if (
+#         "email_template" not in request.json
+#         or not request.json["email_template"]
+#     ):
+#         return jsonify({
+#             "status": 400,
+#             "error": "invalid request"
+#         })
 
-    error = {}
+#     error = {}
 
-    if "name" not in request.json or not request.json["name"]:
-        error["name"] = "cannot be empty"
-    if "email" not in request.json or not request.json["email"]:
-        error["email"] = "cannot be empty"
-    elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
-        error["email"] = "invalid email"
-    if "message" not in request.json or not request.json["message"]:
-        error["message"] = "cannot be empty"
+#     if "name" not in request.json or not request.json["name"]:
+#         error["name"] = "cannot be empty"
+#     if "email" not in request.json or not request.json["email"]:
+#         error["email"] = "cannot be empty"
+#     elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
+#         error["email"] = "invalid email"
+#     if "message" not in request.json or not request.json["message"]:
+#         error["message"] = "cannot be empty"
 
-    if error != {}:
-        return jsonify({
-            "status": 400,
-            **error
-        })
+#     if error != {}:
+#         return jsonify({
+#             "status": 400,
+#             **error
+#         })
 
-    message = request.json['email_template'].format(
-        name=request.json["name"],
-        email=request.json["email"],
-        message=request.json["message"])
+#     message = request.json['email_template'].format(
+#         name=request.json["name"],
+#         email=request.json["email"],
+#         message=request.json["message"])
 
-    send_mail(
-        os.environ["MAIL_USERNAME"],
-        f"{request.json['name']} from Loup",
-        message
-    )
+#     send_mail(
+#         os.environ["MAIL_USERNAME"],
+#         f"{request.json['name']} from Loup",
+#         message
+#     )
 
-    return jsonify({
-        "status": 200
-    })
+#     return jsonify({
+#         "status": 200
+#     })
 
 
 @bp.get("/cron")
@@ -181,18 +181,11 @@ def general_fix():
     # ALTER TABLE post
     # DROP COLUMN videos;
 
+    # DROP TABLE IF EXISTS rating;
+
     #     ALTER TABLE order_item
     #     ADD COLUMN price FLOAT DEFAULT 0 NOT NULL;
     # """)
-
-    # cur.execute("""
-    #     ALTER TABLE post
-    #     ADD COLUMN
-    #     ratings JSONB[] DEFAULT ARRAY[]::JSONB[];
-    # """)
-    cur.execute("""
-        DROP TABLE IF EXISTS rating;
-    """)
 
     db_close(con, cur)
     return jsonify({
