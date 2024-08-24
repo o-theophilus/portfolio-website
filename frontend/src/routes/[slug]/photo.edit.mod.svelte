@@ -18,6 +18,7 @@
 	let error = {};
 
 	const order = (dir = true) => {
+		error = {};
 		const old_i = photos.findIndex((x) => x == active_photo);
 
 		if (old_i == -1) {
@@ -39,12 +40,16 @@
 	};
 
 	const remove = () => {
+		error = {};
+
 		photos = photos.filter((x) => x != active_photo);
 		active_photo = photos[0] || '/no_photo.png';
 		emit('active', active_photo);
 	};
 
 	export const reset = (data) => {
+		error = {};
+
 		post.photos = [...data];
 		photos = [...data];
 		if (!photos.includes(active_photo)) {
@@ -106,7 +111,11 @@
 				class="empty"
 				animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
 				on:click={() => {
-					emit('add');
+					if (post.photos.length < count) {
+						emit('add');
+					} else {
+						error.error = 'save changes and try again';
+					}
 				}}
 				role="presentation"
 			>
