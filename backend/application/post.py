@@ -358,7 +358,7 @@ def add_photos(key):
 
 
 @ bp.put("/post/photo/<key>")
-def order_photo(key):
+def order_delete_photo(key):
     con, cur = db_open()
 
     user = token_to_user(cur)
@@ -382,8 +382,6 @@ def order_photo(key):
         not post
         or "photos" not in request.json
         or type(request.json["photos"]) is not list
-        or set(post["photos"]) != set(
-            [p.split("/")[-1] for p in request.json["photos"]])
     ):
         db_close(con, cur)
         return jsonify({
@@ -391,105 +389,54 @@ def order_photo(key):
             "error": "invalid request"
         })
 
-    in_photos = [p.split("/")[-1] for p in request.json["photos"]]
+    photos = [p.split("/")[-1] for p in request.json["photos"]]
+
+    if not all(x in post["photos"] for x in photos):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    for x in post["photos"]:
+        if x not in photos:
+            storage(x, delete=True)
+
+    draft = False
+    if post["status"] == "live" and photos == []:
+        draft = True
 
     log(
         cur=cur,
         user_key=user["key"],
-        action="arranged_photo",
+        action="edited_photo",
         entity_key=post["key"],
         entity_type="post",
         misc={
             "from": post["photos"],
-            "to": in_photos
+            "to": photos
         }
     )
 
+    if draft:
+        log(
+            cur=cur,
+            user_key=user["key"],
+            action="edited",
+            entity_key=post["key"],
+            entity_type="post",
+            misc={"status": "draft"}
+        )
+
     cur.execute("""
-            UPDATE post
-            SET photos = %s
-            WHERE key = %s;
+            UPDATE post SET photos = %s, status = %s WHERE key = %s;
         """, (
-        in_photos,
+        photos,
+        "draft" if draft else post["status"],
         post["key"]
     ))
 
     post = get_post(key, cur).json["post"]
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "post": post
-    })
-
-
-@ bp.delete("/post/photo/<key>")
-def delete_photo(key):
-    con, cur = db_open()
-
-    user = token_to_user(cur)
-    if not user:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
-
-    if "post:edit_photos" not in user["access"]:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "unauthorized access"
-        })
-
-    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
-    post = cur.fetchone()
-    if (
-        not post
-        or "active_photo" not in request.json
-        or not request.json["active_photo"]
-        or request.json["active_photo"].split("/")[-1] not in post["photos"]
-    ):
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid request"
-        })
-
-    file_name = request.json["active_photo"].split("/")[-1]
-
-    storage(file_name, delete=True)
-
-    post["photos"].remove(file_name)
-    cur.execute("""
-            UPDATE post
-            SET photos = %s
-            WHERE key = %s;
-        """, (
-        post["photos"],
-        post["key"]
-    ))
-
-    if len(post["photos"]) == 0 and post["status"] == "live":
-        cur.execute("""
-                UPDATE post
-                SET status = %s
-                WHERE key = %s;
-            """, (
-            "draft",
-            post["key"]
-        ))
-
-    post = get_post(key, cur).json["post"]
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="deleted_photo",
-        entity_key=post["key"],
-        entity_type="post",
-        misc={"photo": file_name}
-    )
 
     db_close(con, cur)
     return jsonify({

@@ -31,7 +31,7 @@
 	let edit_mode = false;
 	let admin = false;
 
-	const update = async (data) => {
+	const update = (data) => {
 		post = data;
 	};
 
@@ -49,13 +49,11 @@
 		}
 	});
 
-	let content;
 	let author;
 	let comment;
 	let similar;
 	const refresh = async () => {
 		edit_mode = false;
-		content.refresh();
 		author.reset();
 		comment.reset();
 		similar.reset();
@@ -69,58 +67,59 @@
 	<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
 	<Meta title={post.title} description={post.description} image={post.photos[0]} />
 	<Refresh on:refresh={refresh} />
-{/key}
 
-<!-- TODO: PDF viewer -->
-<Content>
-	{#if admin}
-		<div class="toggle">
-			<Toggle
-				state_2="edit"
-				active={edit_mode}
-				on:click={() => {
-					edit_mode = !edit_mode;
-				}}
-			/>
-		</div>
-	{/if}
-
-	{#if edit_mode && ($user.access.includes('post:edit_status') || ($user.access.includes('post:edit_highlight') && post.status == 'active'))}
-		<hr />
-		<div class="line">
-			{#if $user.access.includes('post:edit_status') && edit_mode}
-				<Button
-					size="small"
+	<!-- TODO: PDF viewer -->
+	<Content>
+		{#if admin}
+			<div class="toggle">
+				<Toggle
+					state_2="edit"
+					active={edit_mode}
 					on:click={() => {
-						$module = {
-							module: Edit_Status,
-							post,
-							update
-						};
+						edit_mode = !edit_mode;
 					}}
-				>
-					<Icon icon="edit" size="1.4" /> <span> Edit Status: <strong>{post.status}</strong> </span>
-				</Button>
-			{/if}
-			{#if $user.access.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
-				<Highlight post_key={post.key} />
-			{/if}
-		</div>
-	{/if}
+				/>
+			</div>
+		{/if}
 
-	<Photo {post} {edit_mode} {update} />
-	<Title {post} {edit_mode} {update} />
-	<Date {post} {edit_mode} {update} />
-	<Description {post} {edit_mode} {update} />
-	<Content_ {post} {edit_mode} {update} bind:this={content} />
-	<Tags {post} {edit_mode} {update} />
-	<Author {post} {edit_mode} bind:this={author} />
-	<Engage {post} {update} />
-	<Comment {post} bind:this={comment} />
-	<Similar post_key={post.key} bind:this={similar} />
+		{#if edit_mode && ($user.access.includes('post:edit_status') || ($user.access.includes('post:edit_highlight') && post.status == 'active'))}
+			<hr />
+			<div class="line">
+				{#if $user.access.includes('post:edit_status') && edit_mode}
+					<Button
+						size="small"
+						on:click={() => {
+							$module = {
+								module: Edit_Status,
+								post,
+								update
+							};
+						}}
+					>
+						<Icon icon="edit" size="1.4" />
+						<span> Edit Status: <strong>{post.status}</strong> </span>
+					</Button>
+				{/if}
+				{#if $user.access.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
+					<Highlight post_key={post.key} />
+				{/if}
+			</div>
+		{/if}
 
-	<ToTop />
-</Content>
+		<Photo {post} {edit_mode} {update} />
+		<Title {post} {edit_mode} {update} />
+		<Description {post} {edit_mode} {update} />
+		<Date {post} {edit_mode} {update} />
+		<Content_ {post} {edit_mode} {update} />
+		<Tags {post} {edit_mode} {update} />
+		<Author {post} {edit_mode} bind:this={author} />
+		<Engage {post} {update} />
+		<Comment {post} bind:this={comment} />
+		<Similar post_key={post.key} bind:this={similar} />
+
+		<ToTop />
+	</Content>
+{/key}
 
 <style>
 	hr {

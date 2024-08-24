@@ -12,12 +12,17 @@
 	export let update;
 
 	let rating = 0;
-	for (const x in post.ratings) {
-		rating += post.ratings[x].rating;
-	}
-	if (rating != 0) {
-		rating /= post.ratings.length;
-	}
+	const set_rating = (ratings) => {
+		rating = 0;
+		for (const x in ratings) {
+			rating += ratings[x].rating;
+		}
+		if (rating != 0) {
+			rating /= ratings.length;
+		}
+	};
+
+	set_rating(post.ratings);
 </script>
 
 <hr />
@@ -38,7 +43,8 @@
 				$module = {
 					module: Rating,
 					post,
-					update
+					update,
+					set_rating
 				};
 			}}
 		>

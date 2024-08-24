@@ -4,7 +4,7 @@
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
 	import Marked from '$lib/marked.svelte';
-	import Edit_Content from './content.edit.svelte';
+	import Edit from './content.edit.svelte';
 
 	export let post;
 	export let edit_mode;
@@ -12,31 +12,31 @@
 	let content = '';
 
 	// TODO: @[youtube](http://www.youtube.com/embed/dQw4w9WgXcQ)
-	const process_content = (content) => {
-		if (!content) {
-			content = '';
+	const process_content = (text) => {
+		if (!text) {
+			text = '';
 		}
 
 		let i = 0;
 
-		let exist = content.search(/{#photo}/) >= 0;
+		let exist = text.search(/{#photo}/) >= 0;
 		while (exist) {
 			i++;
-			content = content.replace(
+			text = text.replace(
 				/{#photo}/,
 				`![${post.title}](${post.photos[i] ? post.photos[i] : '/no_photo.png'})`
 			);
-			exist = content.search(/{#photo}/) >= 0;
+			exist = text.search(/{#photo}/) >= 0;
 		}
 
-		return content;
+		return text;
 	};
 
-	export const refresh = () => {
-		content = process_content(post.content);
+	const refresh = (text) => {
+		content = process_content(text);
 	};
 
-	refresh();
+	refresh(post.content);
 </script>
 
 <hr />
@@ -46,7 +46,7 @@
 		size="small"
 		on:click={() => {
 			$module = {
-				module: Edit_Content,
+				module: Edit,
 				post,
 				update,
 				process_content,

@@ -31,6 +31,7 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
+			$module.set_rating(resp.post.ratings);
 			$module = null;
 			$notification = {
 				message: 'Rating Saved'

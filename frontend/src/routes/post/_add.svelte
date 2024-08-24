@@ -35,7 +35,6 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			console.log(resp);
 			$module.update(resp.posts, resp.total_page);
 
 			$module = {

@@ -41,7 +41,7 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
-			$module.refresh();
+			$module.refresh(resp.post.content);
 			$module = null;
 			$notification = {
 				message: 'Content Saved'
@@ -128,9 +128,9 @@
 	}
 
 	@media screen and (min-width: 700px) {
-		.block {
-			flex-direction: unset;
-		}
+		/* .block { */
+		/* flex-direction: row-reverse; */
+		/* } */
 		.marked {
 			display: block;
 		}

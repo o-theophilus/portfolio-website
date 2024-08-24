@@ -9,8 +9,8 @@
 	export let tags = [];
 	export let active = [];
 	export let style = 0;
-	export let disabled;
-	export let center;
+	export let disabled = false;
+	export let center = false;
 </script>
 
 {#if tags}
