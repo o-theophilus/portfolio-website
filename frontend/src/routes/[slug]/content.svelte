@@ -38,6 +38,11 @@
 		content = process_content(text);
 	};
 
+	export const refresh2 = (data) => {
+		post = { ...data };
+		refresh(post.content);
+	};
+
 	refresh(post.content);
 </script>
 

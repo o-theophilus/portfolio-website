@@ -31,8 +31,10 @@
 	let edit_mode = false;
 	let admin = false;
 
+	let content;
 	const update = (data) => {
 		post = data;
+		content.refresh2(post);
 	};
 
 	onMount(async () => {
@@ -110,7 +112,7 @@
 		<Title {post} {edit_mode} {update} />
 		<Description {post} {edit_mode} {update} />
 		<Date {post} {edit_mode} {update} />
-		<Content_ {post} {edit_mode} {update} />
+		<Content_ {post} {edit_mode} {update} bind:this={content} />
 		<Tags {post} {edit_mode} {update} />
 		<Author {post} {edit_mode} bind:this={author} />
 		<Engage {post} {update} />

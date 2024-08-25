@@ -131,9 +131,9 @@ def storage(method, x, thumbnail=False, folder="post"):
 @bp.get("/file/<filename>")
 @bp.get("/file/<filename>/<thumbnail>")
 def get_photo(filename, thumbnail=False):
-    _file = storage("get", filename, thumbnail=thumbnail)
+    file = storage("get", filename, thumbnail=thumbnail)
 
     if filename[-4:] == ".jpg":
-        return send_file(_file, mimetype="image/jpg")
+        return send_file(file, mimetype="image/jpg")
     else:
-        return Response(_file, mimetype='application/pdf')
+        return Response(file, mimetype='application/pdf')

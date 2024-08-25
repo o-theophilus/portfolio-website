@@ -62,7 +62,7 @@
 		error = {};
 
 		$loading = 'Saving . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/photo/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/file/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -88,6 +88,7 @@
 	};
 </script>
 
+<!-- TODO: photo must be first -->
 <div class="line">
 	{#each files as x, i (x)}
 		<img

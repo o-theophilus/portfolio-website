@@ -231,28 +231,21 @@ def live_fix():
         os.environ["MAIL_USERNAME"]
     ))
 
-    db_close(con, cur)
-    return jsonify({
-        "status": 200
-    })
-
-
-# @bp.get("/fix")
-def videos():
-    con, cur = db_open()
-
     cur.execute("""
         SELECT *
         FROM post
-        WHERE post.content ILIKE '{#photo}'
+        WHERE content ILIKE '%{#photo}%'
     ;""")
     posts = cur.fetchall()
 
     for x in posts:
-        print(x["title"])
+        x["content"] = re.sub(r"{#photo}", "@[file]", x["content"])
 
-    # db_close(con, cur)
+        cur.execute("""
+            UPDATE post SET content = %s WHERE key = %s;
+        """, (x["content"], x["key"]))
+
+    db_close(con, cur)
     return jsonify({
-        "status": 200,
-        "posts": posts
+        "status": 200
     })
