@@ -214,7 +214,7 @@ def fix_access():
     })
 
 
-@bp.get("/live_fix")
+@bp.get("/fix")
 def live_fix():
     con, cur = db_open()
 
