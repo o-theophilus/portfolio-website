@@ -83,7 +83,7 @@ def add():
     })
 
 
-@ bp.put("/post/<key>")
+@bp.put("/post/<key>")
 def edit(key):
     con, cur = db_open()
 
@@ -266,7 +266,7 @@ def edit(key):
     })
 
 
-@ bp.post("/post/photo/<key>")
+@bp.post("/post/photo/<key>")
 def add_photos(key):
     con, cur = db_open()
 
@@ -323,7 +323,7 @@ def add_photos(key):
 
     file_names = []
     for x in files:
-        filename = storage(x)
+        filename = storage("save", x)
         file_names.append(filename)
 
     cur.execute("""
@@ -341,6 +341,99 @@ def add_photos(key):
         cur=cur,
         user_key=user["key"],
         action="added_photo",
+        entity_key=post["key"],
+        entity_type="post",
+        misc={
+            "added": ", ".join(file_names),
+            "error": error
+        }
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "post": post,
+        "error": error
+    })
+
+
+@bp.post("/post/file/<key>")
+def add_file(key):
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    if "post:edit_files" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
+    if 'files' not in request.files or not post:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    error = ""
+    files = []
+    _req = post["content"].count("{#file}") + 1 - len(post["files"])
+
+    for x in request.files.getlist("files"):
+        media, format = x.content_type.split("/")
+
+        err = ""
+        # <=========== come back ===============
+        # <=========== come back ===============
+        # <=========== come back ===============
+        # <=========== come back ===============
+        if media not in ["image"] or format in ['svg+xml', 'x-icon']:
+            err = f"{x.filename} => invalid file"
+        elif _req - len(files) < 1:
+            err = f"{x.filename} => excess file"
+
+        if err:
+            error = f"{error}, {err}" if error else err
+        else:
+            files.append(x)
+
+    if files == []:
+        if not error:
+            error = "no file"
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": error
+        })
+
+    file_names = []
+    for x in files:
+        filename = storage("save", x)
+        file_names.append(filename)
+
+    cur.execute("""
+            UPDATE post SET files = %s WHERE key = %s;
+        """, (
+        post["files"] + file_names,
+        post["key"]
+    ))
+
+    post = get_post(key, cur).json["post"]
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="added_file",
         entity_key=post["key"],
         entity_type="post",
         misc={
@@ -400,7 +493,7 @@ def order_delete_photo(key):
 
     for x in post["photos"]:
         if x not in photos:
-            storage(x, delete=True)
+            storage("delete", x)
 
     draft = False
     if post["status"] == "live" and photos == []:

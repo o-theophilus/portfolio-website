@@ -626,9 +626,9 @@ def add_photo(key):
     old_photo = None
     if e_user["photo"]:
         old_photo = e_user["photo"]
-        storage(e_user["photo"], delete=True)
+        storage("delete", e_user["photo"])
 
-    file_name = storage(file)
+    file_name = storage("save", file)
 
     cur.execute("""
         UPDATE "user"
@@ -691,7 +691,7 @@ def delete_photo(key):
                 })
 
     if e_user["photo"]:
-        storage(e_user["photo"].split("/")[-1], delete=True)
+        storage("delete", e_user["photo"])
 
         cur.execute("""
             UPDATE "user" SET photo = NULL WHERE key = %s;

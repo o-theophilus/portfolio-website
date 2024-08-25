@@ -264,7 +264,7 @@ def delete_photo():
 
     for x in request.json["photos"]:
         pass
-        storage(x.split("/")[-1], delete=True)
+        storage("delete", x.split("/")[-1])
 
     log(
         cur=cur,
