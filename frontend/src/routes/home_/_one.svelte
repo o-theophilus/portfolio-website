@@ -7,7 +7,7 @@
 
 <div class="comp">
 	<a class="img" href="/{post.slug}">
-		<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
+		<img src={post.files[0] || '/no_photo.png'} alt={post.title} />
 	</a>
 
 	<div class="details">
@@ -87,12 +87,12 @@
 		margin: var(--sp1) 0;
 		transition: grid-template-rows var(--trans), margin var(--trans);
 	}
-	
+
 	.tags {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--sp0);
-		margin-top: var(--sp1) ;
-		margin-bottom: var(--sp2) ;
+		margin-top: var(--sp1);
+		margin-bottom: var(--sp2);
 	}
 </style>

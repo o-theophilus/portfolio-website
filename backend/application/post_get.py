@@ -27,7 +27,7 @@ def get_post(key, cur=None):
             "error": "invalid request"
         })
 
-    post["photos"] = [f"{request.host_url}photo/{x}" for x in post["photos"]]
+    post["files"] = [f"{request.host_url}file/{x}" for x in post["files"]]
 
     if post["status"] != "active":
         user = token_to_user(cur)
@@ -190,7 +190,7 @@ def get_all(order="latest", page_size=24, cur=None):
             AND (%s = '' OR post.title ILIKE %s) {}
         GROUP BY
             post.key, post.status, post.title, post.slug, post.content,
-            post.description, post.photos, post.tags,
+            post.description, post.files, post.tags,
             _like._count, comment._count, view._count, rating.rating
         ORDER BY {} {}
         LIMIT %s OFFSET %s;
@@ -204,8 +204,9 @@ def get_all(order="latest", page_size=24, cur=None):
         page_size, (page_no - 1) * page_size
     ))
     posts = cur.fetchall()
+    # TODO: use post scheme
     for x in posts:
-        x["photos"] = [f"{request.host_url}photo/{y}" for y in x["photos"]]
+        x["files"] = [f"{request.host_url}file/{y}" for y in x["files"]]
 
     if close_conn:
         db_close(con, cur)
@@ -262,7 +263,7 @@ def similar_posts(key):
     """, (keywords, key))
     posts = cur.fetchall()
     for x in posts:
-        x["photos"] = [f"{request.host_url}photo/{y}" for y in x["photos"]]
+        x["files"] = [f"{request.host_url}file/{y}" for y in x["files"]]
 
     db_close(con, cur)
     return jsonify({
@@ -294,7 +295,7 @@ def get_author(key):
         })
 
     user["photo"] = (
-        f"{request.host_url}photo/{user['photo']}"
+        f"{request.host_url}file/{user['photo']}"
         if user["photo"] else None
     )
 

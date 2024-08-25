@@ -11,24 +11,26 @@
 	export let update;
 	let content = '';
 
-	// TODO: @[youtube](http://www.youtube.com/embed/dQw4w9WgXcQ)
 	const process_content = (text) => {
-		if (!text) {
-			text = '';
-		}
+		text = text ? text : '';
 
 		let i = 0;
-
-		let exist = text.search(/{#photo}/) >= 0;
+		let exist = text.search(/@\[file\]/) >= 0;
 		while (exist) {
 			i++;
-			text = text.replace(
-				/{#photo}/,
-				`![${post.title}](${post.photos[i] ? post.photos[i] : '/no_photo.png'})`
-			);
-			exist = text.search(/{#photo}/) >= 0;
-		}
 
+			let sub = `![${post.title}](/no_photo.png)`;
+			if (post.files[i]) {
+				if (post.files[i].slice(-4) == '.jpg') {
+					sub = `![${post.title}](${post.files[i]})`;
+				} else if (post.files[i].slice(-4) == '.pdf') {
+					sub = `<embed src="${post.files[1]}#toolbar=0" width="100%" height="400" type="application/pdf" />`;
+				}
+			}
+
+			text = text.replace(/@\[file\]/, sub);
+			exist = text.search(/@\[file\]/) >= 0;
+		}
 		return text;
 	};
 

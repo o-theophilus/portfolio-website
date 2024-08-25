@@ -1,6 +1,6 @@
 <script>
-	import Add from './photo.edit.add.svelte';
-	import Mod from './photo.edit.mod.svelte';
+	import Add from './file.edit.add.svelte';
+	import Mod from './file.edit.mod.svelte';
 	let mod;
 	let add;
 </script>

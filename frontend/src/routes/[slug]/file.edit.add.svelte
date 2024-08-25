@@ -6,8 +6,8 @@
 	let emit = createEventDispatcher();
 
 	let post = $module.post;
-	let count = post.content.split('{#photo}').length;
-	let active_photo = post.photos[0] || '/no_photo.png';
+	let count = post.content.split('@[file]').length;
+	let active_photo = post.files[0] || '/no_photo.png';
 	let input;
 	let dragover = false;
 	let error = {};
@@ -18,12 +18,11 @@
 		let files = [];
 		for (let i = 0; i < input.files.length; i++) {
 			let file = input.files[i];
-			let [media, type] = file.type.split('/');
 
 			let err = '';
-			if (media != 'image' || ['svg+xml', 'x-icon'].includes(type)) {
+			if (!['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
 				err = `${file.name} => invalid file`;
-			} else if (files.length + post.photos.length >= count) {
+			} else if (files.length + post.files.length >= count) {
 				err = `${file.name} => excess file`;
 			}
 
@@ -44,7 +43,7 @@
 		}
 
 		$loading = 'uploading . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/photo/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/file/${post.key}`, {
 			method: 'post',
 			headers: {
 				Authorization: $token
@@ -57,7 +56,7 @@
 		if (resp.status == 200) {
 			post = resp.post;
 			$module.update(post);
-			emit('update', post.photos);
+			emit('update', post.files);
 
 			$notification = {
 				message: 'Photo added'
@@ -78,7 +77,7 @@
 		active_photo = data;
 	};
 	export const reset = (data) => {
-		post.photos = data;
+		post.files = data;
 	};
 </script>
 
@@ -87,9 +86,9 @@
 	alt={post.title}
 	class="main"
 	class:dragover
-	class:incomplete={post.photos.length < count}
+	class:incomplete={post.files.length < count}
 	on:click={() => {
-		if (post.photos.length < count) {
+		if (post.files.length < count) {
 			input.click();
 		}
 	}}
@@ -101,7 +100,7 @@
 	}}
 	on:drop={(e) => {
 		dragover = false;
-		if (post.photos.length < count) {
+		if (post.files.length < count) {
 			e.preventDefault();
 			input.files = e.dataTransfer.files;
 			on_input();
@@ -112,7 +111,7 @@
 <input
 	style:display="none"
 	type="file"
-	accept="image/*"
+	accept="image/jpeg, image/png, application/pdf"
 	multiple
 	bind:this={input}
 	on:change={() => {

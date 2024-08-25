@@ -10,7 +10,7 @@
 	import Icon from '$lib/icon.svelte';
 	import Log from '$lib/log.svelte';
 
-	import Photo from './photo.svelte';
+	import File from './file.svelte';
 	import Title from './title.svelte';
 	import Date from './date.svelte';
 	import Description from './description.svelte';
@@ -65,7 +65,7 @@
 
 {#key post.key}
 	<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
-	<Meta title={post.title} description={post.description} image={post.photos[0]} />
+	<Meta title={post.title} description={post.description} image={post.files[0]} />
 	<Refresh on:refresh={refresh} />
 
 	<!-- TODO: PDF viewer -->
@@ -106,7 +106,7 @@
 			</div>
 		{/if}
 
-		<Photo {post} {edit_mode} {update} />
+		<File {post} {edit_mode} {update} />
 		<Title {post} {edit_mode} {update} />
 		<Description {post} {edit_mode} {update} />
 		<Date {post} {edit_mode} {update} />

@@ -227,8 +227,9 @@ def edit(key):
             error["status"] = "invalid request"
         elif request.json["status"] == post["status"]:
             error["status"] = "no change"
-        elif request.json["status"] == "active" and len(post["photos"]) == 0:
-            error["status"] = "add photo"
+        elif request.json["status"] == "active" and len(post["files"]) == 0:
+            # TODO: make sure first file is a photo
+            error["status"] = "add title photo"
         elif request.json["status"] == "active" and not post["content"]:
             error["status"] = "no content"
         else:
@@ -266,97 +267,6 @@ def edit(key):
     })
 
 
-@bp.post("/post/photo/<key>")
-def add_photos(key):
-    con, cur = db_open()
-
-    user = token_to_user(cur)
-    if not user:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
-
-    if "post:edit_photos" not in user["access"]:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "unauthorized access"
-        })
-
-    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
-    post = cur.fetchone()
-    if 'files' not in request.files or not post:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid request"
-        })
-
-    error = ""
-    files = []
-    _req = post["content"].count("{#photo}") + 1 - len(post["photos"])
-
-    for x in request.files.getlist("files"):
-        media, format = x.content_type.split("/")
-
-        err = ""
-        if media != "image" or format in ['svg+xml', 'x-icon']:
-            err = f"{x.filename} => invalid file"
-        elif _req - len(files) < 1:
-            err = f"{x.filename} => excess file"
-
-        if err:
-            error = f"{error}, {err}" if error else err
-        else:
-            files.append(x)
-
-    if files == []:
-        if not error:
-            error = "no file"
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": error
-        })
-
-    file_names = []
-    for x in files:
-        filename = storage("save", x)
-        file_names.append(filename)
-
-    cur.execute("""
-            UPDATE post
-            SET photos = %s
-            WHERE key = %s;
-        """, (
-        post["photos"] + file_names,
-        post["key"]
-    ))
-
-    post = get_post(key, cur).json["post"]
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="added_photo",
-        entity_key=post["key"],
-        entity_type="post",
-        misc={
-            "added": ", ".join(file_names),
-            "error": error
-        }
-    )
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "post": post,
-        "error": error
-    })
-
-
 @bp.post("/post/file/<key>")
 def add_file(key):
     con, cur = db_open()
@@ -387,17 +297,12 @@ def add_file(key):
 
     error = ""
     files = []
-    _req = post["content"].count("{#file}") + 1 - len(post["files"])
+    _req = post["content"].count("@[file]") + 1 - len(post["files"])
 
     for x in request.files.getlist("files"):
-        media, format = x.content_type.split("/")
-
         err = ""
-        # <=========== come back ===============
-        # <=========== come back ===============
-        # <=========== come back ===============
-        # <=========== come back ===============
-        if media not in ["image"] or format in ['svg+xml', 'x-icon']:
+        if x.content_type not in [
+                'image/jpeg', 'image/png', 'application/pdf']:
             err = f"{x.filename} => invalid file"
         elif _req - len(files) < 1:
             err = f"{x.filename} => excess file"
@@ -450,8 +355,8 @@ def add_file(key):
     })
 
 
-@ bp.put("/post/photo/<key>")
-def order_delete_photo(key):
+@ bp.put("/post/file/<key>")
+def order_delete_file(key):
     con, cur = db_open()
 
     user = token_to_user(cur)
@@ -462,7 +367,7 @@ def order_delete_photo(key):
             "error": "invalid token"
         })
 
-    if "post:edit_photos" not in user["access"]:
+    if "post:edit_files" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -473,8 +378,8 @@ def order_delete_photo(key):
     post = cur.fetchone()
     if (
         not post
-        or "photos" not in request.json
-        or type(request.json["photos"]) is not list
+        or "files" not in request.json
+        or type(request.json["files"]) is not list
     ):
         db_close(con, cur)
         return jsonify({
@@ -482,32 +387,32 @@ def order_delete_photo(key):
             "error": "invalid request"
         })
 
-    photos = [p.split("/")[-1] for p in request.json["photos"]]
+    files = [p.split("/")[-1] for p in request.json["files"]]
 
-    if not all(x in post["photos"] for x in photos):
+    if not all(x in post["files"] for x in files):
         db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid request"
         })
 
-    for x in post["photos"]:
-        if x not in photos:
+    for x in post["files"]:
+        if x not in files:
             storage("delete", x)
 
     draft = False
-    if post["status"] == "live" and photos == []:
+    if post["status"] == "live" and files == []:
         draft = True
 
     log(
         cur=cur,
         user_key=user["key"],
-        action="edited_photo",
+        action="edited_files",
         entity_key=post["key"],
         entity_type="post",
         misc={
-            "from": post["photos"],
-            "to": photos
+            "from": post["files"],
+            "to": files
         }
     )
 
@@ -522,9 +427,9 @@ def order_delete_photo(key):
         )
 
     cur.execute("""
-            UPDATE post SET photos = %s, status = %s WHERE key = %s;
+            UPDATE post SET files = %s, status = %s WHERE key = %s;
         """, (
-        photos,
+        files,
         "draft" if draft else post["status"],
         post["key"]
     ))

@@ -120,7 +120,7 @@ def get_reports():
     reports = cur.fetchall()
     for x in reports:
         x["reported"]["photo"] = (
-            f"{request.host_url}photo/{x['reported']['photo']}"
+            f"{request.host_url}file/{x['reported']['photo']}"
             if x["reported"]["photo"] else None
         )
 

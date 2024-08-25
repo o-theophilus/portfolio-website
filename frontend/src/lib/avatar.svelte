@@ -14,7 +14,7 @@
 </script>
 
 {#if photo}
-	<img src={photo || '/no_photo.png'} alt={name} style:--size="{size}px" />
+	<img src={photo} alt={name} style:--size="{size}px" />
 {:else}
 	<div class="avatar" class:light={hue > 29 && hue < 189} style:--hue={hue} style:--size="{size}px">
 		<span>

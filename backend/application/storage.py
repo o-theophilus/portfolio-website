@@ -1,4 +1,4 @@
-from flask import Blueprint, send_file, current_app
+from flask import Blueprint, send_file, current_app, Response
 from deta import Deta
 from PIL import Image, ImageOps
 from io import BytesIO
@@ -13,7 +13,7 @@ def drive():
     return Deta(os.environ["DETA_KEY"]).Drive("live")
 
 
-def save_live(x, folder, thumbnail):
+def save_live_photo(x, folder, thumbnail):
     photo = Image.open(x).convert('RGBA')
     white = Image.new('RGBA', photo.size, (255, 255, 255))
     photo = Image.alpha_composite(white, photo).convert('RGB')
@@ -30,7 +30,7 @@ def save_live(x, folder, thumbnail):
     return name
 
 
-def save_test(x, folder, thumbnail):
+def save_test_photo(x, folder, thumbnail):
     photo = Image.open(x).convert('RGBA')
     white = Image.new('RGBA', photo.size, (255, 255, 255))
     photo = Image.alpha_composite(white, photo).convert('RGB')
@@ -44,7 +44,14 @@ def save_test(x, folder, thumbnail):
     return name
 
 
-def get_live(x, folder, thumbnail):
+def save_test_file(x, folder):
+    name = f"{uuid4().hex}.pdf"
+    with open(f"{folder}/{name}", "wb") as f:
+        f.write(x.read())
+    return name
+
+
+def get_live_photo(x, folder, thumbnail):
     photo = drive().get(f"{folder}/{x}")
     photo = Image.open(BytesIO(photo.read()))
     if thumbnail:
@@ -57,7 +64,7 @@ def get_live(x, folder, thumbnail):
     return file_io
 
 
-def get_test(x, folder, thumbnail):
+def get_test_photo(x, folder, thumbnail):
     photo = Image.open(f"{folder}/{x}")
     if thumbnail:
         size = int(thumbnail)
@@ -67,6 +74,13 @@ def get_test(x, folder, thumbnail):
     file_io.seek(0)
 
     return file_io
+
+
+def get_test_file(x, folder):
+    file = None
+    with open(f"{folder}/{x}", 'rb') as f:
+        file = f.read()
+    return file
 
 
 def delete_live(x, folder):
@@ -87,22 +101,39 @@ def storage(method, x, thumbnail=False, folder="post"):
         os.makedirs(folder, exist_ok=True)
         test = True
 
-    if method == "save" and test:
-        return save_test(x, folder, thumbnail)
-    elif method == "save":
-        return save_live(x, folder, thumbnail)
-    elif method == "get" and test:
-        return get_test(x, folder, thumbnail)
+    if method == "save":
+        if x.content_type in ['image/jpeg', 'image/png']:
+            if test:
+                return save_test_photo(x, folder, thumbnail)
+            else:
+                return save_live_photo(x, folder, thumbnail)
+        else:
+            if test:
+                return save_test_file(x, folder)
+
     elif method == "get":
-        return get_live(x, folder, thumbnail)
-    elif method == "delete" and test:
-        return delete_test(x, folder)
+        if x[-4:] == ".jpg":
+            if test:
+                return get_test_photo(x, folder, thumbnail)
+            else:
+                return get_live_photo(x, folder, thumbnail)
+        else:
+            if test:
+                return get_test_file(x, folder)
+
     elif method == "delete":
-        return delete_live(x, folder)
+        if test:
+            return delete_test(x, folder)
+        else:
+            return delete_live(x, folder)
 
 
-@bp.get("/photo/<key>")
-@bp.get("/photo/<key>/<thumbnail>")
-def get_photo(key, thumbnail=False):
-    photo = storage("get", key, thumbnail=thumbnail)
-    return send_file(photo, mimetype="image/jpg")
+@bp.get("/file/<filename>")
+@bp.get("/file/<filename>/<thumbnail>")
+def get_photo(filename, thumbnail=False):
+    _file = storage("get", filename, thumbnail=thumbnail)
+
+    if filename[-4:] == ".jpg":
+        return send_file(_file, mimetype="image/jpg")
+    else:
+        return Response(_file, mimetype='application/pdf')

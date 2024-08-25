@@ -136,7 +136,7 @@
 									}
 								}}
 								role="presentation"
-								src={post.photos[0] || '/no_photo.png'}
+								src={post.files[0] || '/no_photo.png'}
 								alt={post.title}
 							/>
 						{/each}

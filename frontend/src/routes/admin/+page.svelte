@@ -27,8 +27,8 @@
 			<Button href="/admin/report" size="wide">Reports</Button>
 		{/if}
 
-		{#if $user.access.includes('admin:manage_photo')}
-			<Button href="/admin/photo_error" size="wide">Photo Error</Button>
+		{#if $user.access.includes('admin:manage_files')}
+			<Button href="/admin/file_error" size="wide">File Error</Button>
 		{/if}
 	</div>
 </Content>

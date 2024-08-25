@@ -20,30 +20,30 @@
 	let open_users = users.length > 0;
 	let open_posts = posts.length > 0;
 
-	let photos = [];
+	let files = [];
 	let error = {};
 
 	const remove = async () => {
 		error = {};
 
 		$loading = 'deleting . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/photo/error`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/file/error`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify({ photos })
+			body: JSON.stringify({ files })
 		});
 		resp = await resp.json();
 		$loading = false;
 
 		if (resp.status == 200) {
-			unused = unused.filter((x) => !photos.includes(x));
+			unused = unused.filter((x) => !files.includes(x));
 			$notification = {
-				message: `Photo${photos.length > 1 ? 's' : ''} Deleted`
+				message: `Photo${files.length > 1 ? 's' : ''} Deleted`
 			};
-			photos = [];
+			files = [];
 		} else {
 			error = resp;
 		}
@@ -51,7 +51,7 @@
 </script>
 
 <Log entity_type={'page'} />
-<Meta title="Manage Photos" description="Here you will find missing or excess images" />
+<Meta title="Manage Files" description="Here you will find missing or excess images" />
 
 <Content>
 	<div class="left">
@@ -74,15 +74,15 @@
 			<div class="unused" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 				{#each unused as x}
 					<img
-						class:selected={photos.includes(x)}
+						class:selected={files.includes(x)}
 						src={x ? `${x}/100` : '/no_photo.png'}
 						alt="missing"
 						on:click={() => {
-							if (photos.includes(x)) {
-								photos = photos.filter((y) => y != x);
+							if (files.includes(x)) {
+								files = files.filter((y) => y != x);
 							} else {
-								photos.push(x);
-								photos = photos;
+								files.push(x);
+								files = files;
 							}
 						}}
 						role="presentation"
@@ -103,22 +103,22 @@
 				<div class="row">
 					<Button
 						on:click={() => {
-							if (photos.length != unused.length) {
-								photos = unused;
+							if (files.length != unused.length) {
+								files = unused;
 							} else {
-								photos = [];
+								files = [];
 							}
 						}}
 					>
 						Select
-						{#if photos.length != unused.length}
+						{#if files.length != unused.length}
 							All
 						{:else}
 							None
 						{/if}
 					</Button>
-					<Button extra="hover_red" on:click={remove} disabled={photos.length == 0}
-						>Delete ({photos.length})</Button
+					<Button extra="hover_red" on:click={remove} disabled={files.length == 0}
+						>Delete ({files.length})</Button
 					>
 				</div>
 			{/if}

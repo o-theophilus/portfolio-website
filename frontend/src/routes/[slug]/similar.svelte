@@ -69,7 +69,7 @@
 							click(x);
 						}}
 					>
-						<img src={x.photos[0] || '/no_photo.png'} alt={x.title} />
+						<img src={x.files[0] || '/no_photo.png'} alt={x.title} />
 					</a>
 					<div class="details">
 						<!-- <a
@@ -103,10 +103,6 @@
 						{x.description}
 					</div>
 				</div>
-				<!-- {#if i != posts.length - 1}
-					<hr />
-					<br />
-				{/if} -->
 			{/each}
 		</div>
 	{/if}

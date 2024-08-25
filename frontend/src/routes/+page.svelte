@@ -38,8 +38,6 @@
 <Meta title="Home" description="Welcome to my personal portfolio website." />
 
 <Hero />
-<!-- <embed src="http://example.com/the.pdf" width="500" height="375" 
- type="application/pdf"> -->
 <About />
 <Skill />
 <Contact />

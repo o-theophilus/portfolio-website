@@ -20,11 +20,11 @@ access = {
         ['set_access', 3]
     ],
     "admin": [
-        ['manage_photo', 3]
+        ['manage_files', 3]
     ],
     "post": [
         ['add', 2],
-        ['edit_photos', 2],
+        ['edit_files', 2],
         ['edit_title', 2],
         ['edit_date', 2],
         ['edit_description', 2],
@@ -167,8 +167,8 @@ def set_access(key):
     })
 
 
-@bp.get("/photo/error")
-def photo_error():
+@bp.get("/file/error")
+def file_error():
     con, cur = db_open()
 
     user = token_to_user(cur)
@@ -179,33 +179,27 @@ def photo_error():
             "error": "invalid token"
         })
 
-    if "admin:manage_photo" not in user["access"]:
+    if "admin:manage_files" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "unauthorized access"
         })
 
-    cur.execute("""
-        SELECT photo
-        FROM "user";
-    """)
+    cur.execute("""SELECT photo FROM "user";""")
     users_photo = cur.fetchall()
     users_photo = [x["photo"] for x in users_photo if x["photo"]]
 
-    cur.execute("""
-        SELECT photos
-        FROM post;
-    """)
+    cur.execute("""SELECT files FROM post;""")
     temp = cur.fetchall()
-    posts_photos = []
+    posts_files = []
     for x in temp:
-        if x["photos"] != []:
-            posts_photos += x["photos"]
+        if x["files"] != []:
+            posts_files += x["files"]
 
-    all_used_photos = users_photo + posts_photos
+    all_used_files = users_photo + posts_files
     paths = drive().list()["names"]
-    all_stored_photos = [x.split('/')[1] for x in paths]
+    all_stored_files = [x.split('/')[1] for x in paths]
 
     cur.execute("""
         SELECT "user".key, "user".name
@@ -213,28 +207,28 @@ def photo_error():
         WHERE
             photo IS NOT NULL
             AND NOT photo = ANY(%s);
-    """, (all_stored_photos,))
+    """, (all_stored_files,))
     _users = cur.fetchall()
 
     cur.execute("""
         SELECT post.key, post.title
         FROM post
-        WHERE NOT ARRAY[%s] @> photos;
-    """, (all_stored_photos,))
+        WHERE NOT ARRAY[%s] @> files;
+    """, (all_stored_files,))
     _posts = cur.fetchall()
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "unused": [f"{request.host_url}photo/{x}"
-                   for x in all_stored_photos if x not in all_used_photos],
+        "unused": [f"{request.host_url}file/{x}"
+                   for x in all_stored_files if x not in all_used_files],
         "users": _users,
         "posts": _posts
     })
 
 
-@bp.delete("/photo/error")
-def delete_photo():
+@bp.delete("/file/error")
+def delete_file():
     con, cur = db_open()
 
     user = token_to_user(cur)
@@ -245,7 +239,7 @@ def delete_photo():
             "error": "invalid token"
         })
 
-    if "admin:manage_photo" not in user["access"]:
+    if "admin:manage_files" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -253,8 +247,8 @@ def delete_photo():
         })
 
     if (
-        "photos" not in request.json
-        or type(request.json["photos"]) is not list
+        "files" not in request.json
+        or type(request.json["files"]) is not list
     ):
         db_close(con, cur)
         return jsonify({
@@ -262,7 +256,7 @@ def delete_photo():
             "error": "invalid request"
         })
 
-    for x in request.json["photos"]:
+    for x in request.json["files"]:
         pass
         storage("delete", x.split("/")[-1])
 
@@ -270,9 +264,9 @@ def delete_photo():
         cur=cur,
         user_key=user["key"],
         action="deleted",
-        entity_type="photo",
+        entity_type="file",
         misc={
-            "photo(s)": request.json["photos"]
+            "file(s)": request.json["files"]
         }
     )
 
@@ -300,7 +294,7 @@ def get_highlight(cur=None):
     posts = cur.fetchall()
     posts = sorted(posts, key=lambda d: keys.index(d['key']))
     for x in posts:
-        x["photos"] = [f"{request.host_url}photo/{y}" for y in x["photos"]]
+        x["files"] = [f"{request.host_url}file/{y}" for y in x["files"]]
 
     return posts
 

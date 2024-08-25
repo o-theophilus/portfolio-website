@@ -3,7 +3,7 @@
 
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
-	import Edit from './photo.edit.svelte';
+	import Edit from './file.edit.svelte';
 
 	export let post;
 	export let edit_mode;
@@ -11,9 +11,9 @@
 </script>
 
 <div class="img">
-	<img src={post.photos[0] || '/no_photo.png'} alt={post.title} />
+	<img src={post.files[0] || '/no_photo.png'} alt={post.title} />
 	<div class="line">
-		{#if $user.access.includes('post:edit_photos') && edit_mode}
+		{#if $user.access.includes('post:edit_files') && edit_mode}
 			<Button
 				size="small"
 				on:click={() => {

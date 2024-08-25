@@ -36,8 +36,6 @@ def like(key):
             "error": "invalid request"
         })
 
-    post["photos"] = [f"{request.host_url}photo/{x}" for x in post["photos"]]
-
     if request.json["like"]:
         if user["key"] in post["dislike"]:
             post["dislike"].remove(user["key"])

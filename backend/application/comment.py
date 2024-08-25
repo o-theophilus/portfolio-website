@@ -117,7 +117,7 @@ def get_comments(key, cur=None):
     comments = cur.fetchall()
     for x in comments:
         x["user"]["photo"] = (
-            f"{request.host_url}photo/{x['user']['photo']}"
+            f"{request.host_url}file/{x['user']['photo']}"
             if x["user"]["photo"] else None
         )
 
@@ -255,7 +255,7 @@ def like(key):
         })
 
     comment["user"]["photo"] = (
-        f"{request.host_url}photo/{comment['user']['photo']}"
+        f"{request.host_url}file/{comment['user']['photo']}"
         if comment["user"]["photo"] else None
     )
 

@@ -18,7 +18,7 @@
 					I've Built
 				</strong>
 
-				{#if $user.access.includes('post:edit_photos')}
+				{#if $user.access.includes('post:edit_files')}
 					<BRound
 						icon="edit"
 						on:click={() => {

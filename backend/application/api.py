@@ -122,7 +122,7 @@ def deta_to_postgres():
                     slug,
                     content,
                     description,
-                    photos,
+                    files,
                     tags
                 )
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
@@ -158,7 +158,6 @@ def deta_to_postgres():
     })
 
 
-@bp.get("/fix")
 def general_fix():
     con, cur = db_open()
 
@@ -187,6 +186,12 @@ def general_fix():
     #     ADD COLUMN price FLOAT DEFAULT 0 NOT NULL;
     # """)
 
+    cur.execute("""
+        ALTER TABLE post
+        RENAME COLUMN photos
+        TO files;
+    """)
+
     db_close(con, cur)
     return jsonify({
         "status": 200
@@ -197,9 +202,7 @@ def fix_access():
     con, cur = db_open()
 
     cur.execute("""
-            UPDATE "user"
-            SET access = %s
-            WHERE email = %s;
+            UPDATE "user" SET access = %s WHERE email = %s;
         """, (
         [f"{x}:{y[0]}" for x in access for y in access[x]],
         os.environ["MAIL_USERNAME"]
@@ -211,20 +214,44 @@ def fix_access():
     })
 
 
+@bp.get("/live_fix")
+def live_fix():
+    con, cur = db_open()
+
+    cur.execute("""
+        ALTER TABLE post
+        RENAME COLUMN photos
+        TO files;
+    """)
+
+    cur.execute("""
+            UPDATE "user" SET access = %s WHERE email = %s;
+        """, (
+        [f"{x}:{y[0]}" for x in access for y in access[x]],
+        os.environ["MAIL_USERNAME"]
+    ))
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
+# @bp.get("/fix")
 def videos():
     con, cur = db_open()
 
     cur.execute("""
-        SELECT
-            post.slug,
-            post.videos
+        SELECT *
         FROM post
-        WHERE
-            post.content ILIKE '{#video}'
+        WHERE post.content ILIKE '{#photo}'
     ;""")
     posts = cur.fetchall()
 
-    db_close(con, cur)
+    for x in posts:
+        print(x["title"])
+
+    # db_close(con, cur)
     return jsonify({
         "status": 200,
         "posts": posts
