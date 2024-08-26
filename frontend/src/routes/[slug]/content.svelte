@@ -5,11 +5,18 @@
 	import Icon from '$lib/icon.svelte';
 	import Marked from '$lib/marked.svelte';
 	import Edit from './content.edit.svelte';
+	// import { onMount } from 'svelte';
 
 	export let post;
 	export let edit_mode;
 	export let update;
 	let content = '';
+
+	// onMount(() => {
+	// 	document.querySelector('.btn').addEventListener('click', () => {
+	// 		console.log('God is Great');
+	// 	});
+	// });
 
 	const process_content = (text) => {
 		text = text ? text : '';
@@ -24,7 +31,17 @@
 				if (post.files[i].slice(-4) == '.jpg') {
 					sub = `![${post.title}](${post.files[i]})`;
 				} else if (post.files[i].slice(-4) == '.pdf') {
-					sub = `<embed src="${post.files[1]}#toolbar=0" width="100%" height="400" type="application/pdf" />`;
+					sub = `
+<div class="embed">
+	<embed src="${post.files[i]}#toolbar=0" width="100%" height="400" type="application/pdf" />
+	<a href="${post.files[i]}#toolbar=0" target="_blank">
+		<svg width="1rem" height="1rem" viewBox="0 -960 960 960">
+			<path d="M120-120v-320h80v184l504-504H520v-80h320v320h-80v-184L256-200h184v80H120Z" /></svg
+		>
+	</a>
+</div>
+
+`;
 				}
 			}
 

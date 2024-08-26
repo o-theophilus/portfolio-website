@@ -30,8 +30,33 @@ blockquote {
 	color: var(--cl1);
 }
 
-.markdown embed {
+.markdown .embed {
+	position: relative;
+}
+.markdown .embed embed {
 	border-radius: var(--sp1);
+}
+.markdown .embed a {
+	--size: 40px;
+
+	position: absolute;
+	top: var(--sp2);
+	right: var(--sp2);
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	width: var(--size);
+	height: var(--size);
+	border-radius: var(--sp1);
+
+	fill: var(--ft2);
+	background-color: var(--bg2);
+	transition: background-color var(--trans);
+}
+.markdown .embed a:hover {
+	background-color: var(--cl1);
 }
 
 h1,
