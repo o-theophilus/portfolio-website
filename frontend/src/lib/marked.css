@@ -30,6 +30,10 @@ blockquote {
 	color: var(--cl1);
 }
 
+.markdown embed {
+	border-radius: var(--sp1);
+}
+
 h1,
 h2,
 h3,

@@ -70,7 +70,6 @@
 	<Meta title={post.title} description={post.description} image={post.files[0]} />
 	<Refresh on:refresh={refresh} />
 
-	<!-- TODO: PDF viewer -->
 	<Content>
 		{#if admin}
 			<div class="toggle">

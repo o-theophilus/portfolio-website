@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from .tools import token_to_user
 from .postgres import db_close, db_open
 from .log import log
-from .post_get import get_post
+from .post_get import post_schema
 import json
 
 bp = Blueprint("engagement", __name__)
@@ -53,15 +53,15 @@ def like(key):
 
     cur.execute("""
         UPDATE post
-        SET
-            "like" = %s,
-            dislike = %s
-        WHERE key = %s;
+        SET "like" = %s, dislike = %s
+        WHERE key = %s
+        RETURNING *;
     """, (
         post["like"],
         post["dislike"],
         post["key"]
     ))
+    post = cur.fetchone()
 
     log(
         cur=cur,
@@ -71,12 +71,10 @@ def like(key):
         entity_type="post"
     )
 
-    post = get_post(post["key"], cur).json["post"]
-
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post
+        "post": post_schema(post)
     })
 
 
@@ -130,11 +128,15 @@ def rating(key):
     })
 
     cur.execute("""
-        UPDATE post SET ratings = %s::JSONB[] WHERE key = %s;
+        UPDATE post
+        SET ratings = %s::JSONB[]
+        WHERE key = %s
+        RETURNING *;
     """, (
         [json.dumps(x) for x in post["ratings"]],
         post["key"]
     ))
+    post = cur.fetchone()
 
     log(
         cur=cur,
@@ -147,10 +149,8 @@ def rating(key):
         }
     )
 
-    post = get_post(post["key"], cur).json["post"]
-
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post
+        "post": post_schema(post)
     })

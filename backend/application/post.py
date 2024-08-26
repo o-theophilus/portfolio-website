@@ -6,7 +6,7 @@ from uuid import uuid4
 from .postgres import db_open, db_close
 from .storage import storage
 from .log import log
-from .post_get import get_post, get_all
+from .post_get import get_all, post_schema
 from datetime import datetime
 
 bp = Blueprint("post", __name__)
@@ -125,12 +125,14 @@ def edit(key):
             cur.execute("""
                     UPDATE post
                     SET title = %s, slug = %s
-                    WHERE key = %s;
+                    WHERE key = %s
+                    RETURNING *;
                 """, (
                 request.json["title"],
                 slug,
                 post["key"]
             ))
+            post = cur.fetchone()
 
     if "date" in request.json:
         if "post:edit_date" not in user["access"]:
@@ -147,11 +149,13 @@ def edit(key):
             cur.execute("""
                 UPDATE post
                 SET date = %s
-                WHERE key = %s;
+                WHERE key = %s
+                RETURNING *;
             """, (
                 request.json['date'],
                 post["key"]
             ))
+            post = cur.fetchone()
 
     if "description" in request.json:
         if "post:edit_description" not in user["access"]:
@@ -159,8 +163,16 @@ def edit(key):
         elif request.json["description"] == post["description"]:
             error["description"] = "no change"
         else:
-            cur.execute("UPDATE post SET description = %s WHERE key = %s;", (
-                request.json["description"], post["key"]))
+            cur.execute("""
+                UPDATE post
+                SET description = %s
+                WHERE key = %s
+                RETURNING *;
+            """, (
+                request.json["description"],
+                post["key"]
+            ))
+            post = cur.fetchone()
 
     if "content" in request.json:
         if "post:edit_content" not in user["access"]:
@@ -168,8 +180,16 @@ def edit(key):
         elif request.json["content"] == post["content"]:
             error["content"] = "no change"
         else:
-            cur.execute("UPDATE post SET content = %s WHERE key = %s;", (
-                request.json["content"], post["key"]))
+            cur.execute("""
+                UPDATE post
+                SET content = %s
+                WHERE key = %s
+                RETURNING *;
+            """, (
+                request.json["content"],
+                post["key"]
+            ))
+            post = cur.fetchone()
 
     if "tags" in request.json:
         if "post:edit_tags" not in user["access"]:
@@ -182,11 +202,13 @@ def edit(key):
             cur.execute("""
                     UPDATE post
                     SET tags = %s
-                    WHERE key = %s;
+                    WHERE key = %s
+                    RETURNING *;
                 """, (
                 request.json["tags"],
                 post["key"]
             ))
+            post = cur.fetchone()
 
     if "author_email" in request.json:
         if "post:edit_author" not in user["access"]:
@@ -212,10 +234,14 @@ def edit(key):
                 error["author_email"] = "no change"
             else:
                 cur.execute("""
-                    UPDATE post SET author_key = %s WHERE key = %s
-                ;""", (
+                    UPDATE post
+                    SET author_key = %s
+                    WHERE key = %s
+                    RETURNING *;
+                """, (
                     author["key"], post["key"]
                 ))
+                post = cur.fetchone()
 
     if "status" in request.json:
         if "post:edit_status" not in user["access"]:
@@ -234,13 +260,15 @@ def edit(key):
             error["status"] = "no content"
         else:
             cur.execute("""
-                    UPDATE post
-                    SET status = %s
-                    WHERE key = %s;
-                """, (
+                UPDATE post
+                SET status = %s
+                WHERE key = %s
+                RETURNING *;
+            """, (
                 request.json["status"],
                 post["key"]
             ))
+            post = cur.fetchone()
 
     if error != {}:
         db_close(con, cur)
@@ -248,8 +276,6 @@ def edit(key):
             "status": 400,
             **error
         })
-
-    post = get_post(key, cur).json["post"]
 
     log(
         cur=cur,
@@ -263,7 +289,7 @@ def edit(key):
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post
+        "post": post_schema(post)
     })
 
 
@@ -327,13 +353,15 @@ def add_file(key):
         file_names.append(filename)
 
     cur.execute("""
-            UPDATE post SET files = %s WHERE key = %s;
-        """, (
+        UPDATE post
+        SET files = %s
+        WHERE key = %s
+        RETURNING *;
+    """, (
         post["files"] + file_names,
         post["key"]
     ))
-
-    post = get_post(key, cur).json["post"]
+    post = cur.fetchone()
 
     log(
         cur=cur,
@@ -350,7 +378,7 @@ def add_file(key):
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post,
+        "post": post_schema(post),
         "error": error
     })
 
@@ -427,17 +455,19 @@ def order_delete_file(key):
         )
 
     cur.execute("""
-            UPDATE post SET files = %s, status = %s WHERE key = %s;
-        """, (
+        UPDATE post
+        SET files = %s, status = %s
+        WHERE key = %s
+        RETURNING *;
+    """, (
         files,
         "draft" if draft else post["status"],
         post["key"]
     ))
-
-    post = get_post(key, cur).json["post"]
+    post = cur.fetchone()
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post
+        "post": post_schema(post)
     })

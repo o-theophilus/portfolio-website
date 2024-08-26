@@ -8,6 +8,11 @@ import os
 bp = Blueprint("post_get", __name__)
 
 
+def post_schema(post):
+    post["files"] = [f"{request.host_url}file/{x}" for x in post["files"]]
+    return post
+
+
 @bp.get("/post/<key>")
 def get_post(key, cur=None):
     close_conn = not cur
@@ -26,8 +31,6 @@ def get_post(key, cur=None):
             "status": 400,
             "error": "invalid request"
         })
-
-    post["files"] = [f"{request.host_url}file/{x}" for x in post["files"]]
 
     if post["status"] != "active":
         user = token_to_user(cur)
@@ -54,7 +57,7 @@ def get_post(key, cur=None):
         db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post,
+        "post": post_schema(post)
     })
 
 
@@ -204,15 +207,12 @@ def get_all(order="latest", page_size=24, cur=None):
         page_size, (page_no - 1) * page_size
     ))
     posts = cur.fetchall()
-    # TODO: use post scheme
-    for x in posts:
-        x["files"] = [f"{request.host_url}file/{y}" for y in x["files"]]
 
     if close_conn:
         db_close(con, cur)
     return jsonify({
         "status": 200,
-        "posts": posts,
+        "posts": [post_schema(x) for x in posts],
         "order_by": list(order_by.keys()),
         "_status": ['active', 'draft', 'delete'],
         "total_page": ceil(posts[0]["_count"] / page_size) if posts else 0
@@ -262,13 +262,11 @@ def similar_posts(key):
         LIMIT 4;
     """, (keywords, key))
     posts = cur.fetchall()
-    for x in posts:
-        x["files"] = [f"{request.host_url}file/{y}" for y in x["files"]]
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "posts": posts
+        "posts": [post_schema(x) for x in posts]
     })
 
 
