@@ -13,13 +13,10 @@ def drive():
     return Deta(os.environ["DETA_KEY"]).Drive("live")
 
 
-def save_live_photo(x, folder, thumbnail):
+def save_live_photo(x, folder):
     photo = Image.open(x).convert('RGBA')
     white = Image.new('RGBA', photo.size, (255, 255, 255))
     photo = Image.alpha_composite(white, photo).convert('RGB')
-
-    if thumbnail:
-        photo.thumbnail((1024, 1024), Image.LANCZOS)
 
     file_io = BytesIO()
     photo.save(file_io, format="JPEG")
@@ -30,17 +27,20 @@ def save_live_photo(x, folder, thumbnail):
     return name
 
 
-def save_test_photo(x, folder, thumbnail):
+def save_test_photo(x, folder):
     photo = Image.open(x).convert('RGBA')
     white = Image.new('RGBA', photo.size, (255, 255, 255))
     photo = Image.alpha_composite(white, photo).convert('RGB')
 
-    if thumbnail:
-        photo.thumbnail((1024, 1024), Image.LANCZOS)
-
     name = f"{uuid4().hex}_{photo.size[0]}x{photo.size[1]}.jpg"
     photo.save(f"{folder}/{name}")
 
+    return name
+
+
+def save_live_file(x, folder):
+    name = f"{uuid4().hex}.pdf"
+    drive().put(f"{folder}/{name}", x)
     return name
 
 
@@ -76,6 +76,11 @@ def get_test_photo(x, folder, thumbnail):
     return file_io
 
 
+def get_live_file(x, folder):
+    file = drive().get(f"{folder}/{x}")
+    return BytesIO(file.read())
+
+
 def get_test_file(x, folder):
     file = None
     with open(f"{folder}/{x}", 'rb') as f:
@@ -96,20 +101,22 @@ def delete_test(x, folder):
 
 def storage(method, x, thumbnail=False, folder="post"):
     test = False
-    # if current_app.config["DEBUG"]:
-    #     folder = f"{os.getcwd()}/static/{folder}"
-    #     os.makedirs(folder, exist_ok=True)
-    #     test = True
+    if current_app.config["DEBUG"]:
+        folder = f"{os.getcwd()}/static/{folder}"
+        os.makedirs(folder, exist_ok=True)
+        test = True
 
     if method == "save":
         if x.content_type in ['image/jpeg', 'image/png']:
             if test:
-                return save_test_photo(x, folder, thumbnail)
+                return save_test_photo(x, folder)
             else:
-                return save_live_photo(x, folder, thumbnail)
+                return save_live_photo(x, folder)
         else:
             if test:
                 return save_test_file(x, folder)
+            else:
+                return save_live_file(x, folder)
 
     elif method == "get":
         if x[-4:] == ".jpg":
@@ -120,6 +127,8 @@ def storage(method, x, thumbnail=False, folder="post"):
         else:
             if test:
                 return get_test_file(x, folder)
+            else:
+                return get_live_file(x, folder)
 
     elif method == "delete":
         if test:
