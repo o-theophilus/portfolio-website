@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .log import log
 from .tools import token_to_user, user_schema
 from .storage import drive, storage
+from .post import post_schema
 
 
 bp = Blueprint("admin", __name__)
@@ -294,10 +295,8 @@ def get_highlight(cur=None):
     """, (keys,))
     posts = cur.fetchall()
     posts = sorted(posts, key=lambda d: keys.index(d['key']))
-    for x in posts:
-        x["files"] = [f"{request.host_url}file/{y}" for y in x["files"]]
 
-    return posts
+    return [post_schema(x) for x in posts]
 
 
 @bp.post("/highlight")

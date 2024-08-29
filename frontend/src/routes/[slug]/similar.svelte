@@ -69,7 +69,7 @@
 							click(x);
 						}}
 					>
-						<img src={x.files[0] || '/no_photo.png'} alt={x.title} />
+						<img src={x.photo || '/no_photo.png'} alt={x.title} />
 					</a>
 					<div class="details">
 						<!-- <a
@@ -99,8 +99,12 @@
 							</span>
 						</Link>
 
-						<br />
-						{x.description}
+						{#if x.description}
+							<br />
+							<div class="desc">
+								{x.description}
+							</div>
+						{/if}
 					</div>
 				</div>
 			{/each}
@@ -163,5 +167,9 @@
 		.area {
 			grid-template-columns: 1fr 1fr;
 		}
+	}
+
+	.desc {
+		font-size: 0.8rem;
 	}
 </style>

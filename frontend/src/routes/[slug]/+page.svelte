@@ -67,7 +67,7 @@
 
 {#key post.key}
 	<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
-	<Meta title={post.title} description={post.description} image={post.files[0]} />
+	<Meta title={post.title} description={post.description} image={post.photo} />
 	<Refresh on:refresh={refresh} />
 
 	<Content>

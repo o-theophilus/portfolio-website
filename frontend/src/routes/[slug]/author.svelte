@@ -49,7 +49,7 @@
 			Edit Author
 		</Button>
 	{/if}
-
+	
 	<div class="line">
 		{#if !loading}
 			<Link href="/profile?search={author.key}">
@@ -71,6 +71,7 @@
 		display: flex;
 		gap: var(--sp2);
 		align-items: center;
+		margin: var(--sp2) 0;
 	}
 
 	hr {
