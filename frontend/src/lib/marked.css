@@ -1,7 +1,8 @@
 .markdown img {
 	width: 100%;
-	margin: 20px auto;
+	/* margin: 20px auto; */
 	/* padding: var(--sp2); */
+	margin-top: 16px ;
 	border-radius: var(--sp1);
 	
 	background-color: var(--bg2);
@@ -32,6 +33,7 @@ blockquote {
 
 .markdown .embed {
 	position: relative;
+	line-height: 0;
 }
 .markdown .embed embed {
 	border-radius: var(--sp1);
@@ -52,11 +54,13 @@ blockquote {
 	border-radius: var(--sp1);
 
 	fill: var(--ft2);
-	background-color: var(--bg2);
-	transition: background-color var(--trans);
+	background-color: var(--button);
+	
+	transition: fill var(--trans), background-color var(--trans);
 }
 .markdown .embed a:hover {
 	background-color: var(--cl1);
+	fill: var(--clb);
 }
 
 h1,

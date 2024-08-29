@@ -9,6 +9,8 @@ bp = Blueprint("post_get", __name__)
 
 
 def post_schema(post):
+    post["photo"] = (f"{request.host_url}file/{post['photo']}"
+                     if post['photo'] else None)
     post["files"] = [f"{request.host_url}file/{x}" for x in post["files"]]
     return post
 

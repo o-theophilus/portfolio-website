@@ -24,11 +24,12 @@ access = {
     ],
     "post": [
         ['add', 2],
-        ['edit_files', 2],
+        ['edit_photo', 2],
         ['edit_title', 2],
         ['edit_date', 2],
         ['edit_description', 2],
         ['edit_content', 2],
+        ['edit_files', 2],
         ['edit_tags', 2],
         ['edit_status', 2],
         ['edit_author', 2],

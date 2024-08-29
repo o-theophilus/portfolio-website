@@ -10,7 +10,7 @@
 	import Icon from '$lib/icon.svelte';
 	import Log from '$lib/log.svelte';
 
-	import File from './file.svelte';
+	import Photo from './photo.svelte';
 	import Title from './title.svelte';
 	import Date from './date.svelte';
 	import Description from './description.svelte';
@@ -107,7 +107,7 @@
 			</div>
 		{/if}
 
-		<File {post} {edit_mode} {update} />
+		<Photo {post} {edit_mode} {update} />
 		<Title {post} {edit_mode} {update} />
 		<Description {post} {edit_mode} {update} />
 		<Date {post} {edit_mode} {update} />

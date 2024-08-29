@@ -615,8 +615,7 @@ def add_photo(key):
         })
 
     file = request.files["file"]
-    media, format = file.content_type.split("/")
-    if media != "image" or format in ['svg+xml', 'x-icon']:
+    if file.content_type not in ['image/jpeg', 'image/png']:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -690,21 +689,27 @@ def delete_photo(key):
                     "error": "invalid request"
                 })
 
-    if e_user["photo"]:
-        storage("delete", e_user["photo"])
+    if not e_user["photo"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
 
-        cur.execute("""
-            UPDATE "user" SET photo = NULL WHERE key = %s;
-        """, (e_user["key"],))
+    storage("delete", e_user["photo"])
 
-        log(
-            cur=cur,
-            user_key=user["key"],
-            action="deleted_photo",
-            entity_type="user",
-            entity_key=e_user["key"],
-            misc={"photo": user["photo"]}
-        )
+    cur.execute("""
+        UPDATE "user" SET photo = NULL WHERE key = %s;
+    """, (e_user["key"],))
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="deleted_photo",
+        entity_type="user",
+        entity_key=e_user["key"],
+        misc={"photo": user["photo"]}
+    )
 
     db_close(con, cur)
     return jsonify({

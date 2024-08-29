@@ -158,6 +158,22 @@ def deta_to_postgres():
     })
 
 
+def fix_access():
+    con, cur = db_open()
+
+    cur.execute("""
+            UPDATE "user" SET access = %s WHERE email = %s;
+        """, (
+        [f"{x}:{y[0]}" for x in access for y in access[x]],
+        os.environ["MAIL_USERNAME"]
+    ))
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
 def general_fix():
     con, cur = db_open()
 
@@ -183,67 +199,17 @@ def general_fix():
     # DROP TABLE IF EXISTS rating;
 
     #     ALTER TABLE order_item
-    #     ADD COLUMN price FLOAT DEFAULT 0 NOT NULL;
     # """)
 
-    cur.execute("""
-        ALTER TABLE post
-        RENAME COLUMN photos
-        TO files;
-    """)
-
     db_close(con, cur)
     return jsonify({
         "status": 200
     })
 
 
-def fix_access():
-    con, cur = db_open()
-
-    cur.execute("""
-            UPDATE "user" SET access = %s WHERE email = %s;
-        """, (
-        [f"{x}:{y[0]}" for x in access for y in access[x]],
-        os.environ["MAIL_USERNAME"]
-    ))
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200
-    })
-
-
-@bp.get("/fix")
+# @bp.get("/fix")
 def live_fix():
     con, cur = db_open()
-
-    cur.execute("""
-        ALTER TABLE post
-        RENAME COLUMN photos
-        TO files;
-    """)
-
-    cur.execute("""
-            UPDATE "user" SET access = %s WHERE email = %s;
-        """, (
-        [f"{x}:{y[0]}" for x in access for y in access[x]],
-        os.environ["MAIL_USERNAME"]
-    ))
-
-    cur.execute("""
-        SELECT *
-        FROM post
-        WHERE content ILIKE '%{#photo}%'
-    ;""")
-    posts = cur.fetchall()
-
-    for x in posts:
-        x["content"] = re.sub(r"{#photo}", "@[file]", x["content"])
-
-        cur.execute("""
-            UPDATE post SET content = %s WHERE key = %s;
-        """, (x["content"], x["key"]))
 
     db_close(con, cur)
     return jsonify({

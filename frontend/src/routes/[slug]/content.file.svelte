@@ -1,6 +1,6 @@
 <script>
-	import Add from './file.edit.add.svelte';
-	import Mod from './file.edit.mod.svelte';
+	import Add from './content.file.add.svelte';
+	import Mod from './content.file.mod.svelte';
 	let mod;
 	let add;
 </script>

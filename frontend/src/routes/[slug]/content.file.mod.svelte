@@ -88,7 +88,6 @@
 	};
 </script>
 
-<!-- TODO: photo must be first -->
 <div class="line">
 	{#each files as x, i (x)}
 		<img

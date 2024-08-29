@@ -254,7 +254,6 @@ def edit(key):
         elif request.json["status"] == post["status"]:
             error["status"] = "no change"
         elif request.json["status"] == "active" and len(post["files"]) == 0:
-            # TODO: make sure first file is a photo
             error["status"] = "add title photo"
         elif request.json["status"] == "active" and not post["content"]:
             error["status"] = "no content"
@@ -471,3 +470,155 @@ def order_delete_file(key):
         "status": 200,
         "post": post_schema(post)
     })
+
+
+@bp.put("/post/photo/<key>")
+def add_photo(key):
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    if "post:edit_photo" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
+    if 'file' not in request.files or not post:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    file = request.files["file"]
+    if file.content_type not in ['image/jpeg', 'image/png']:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid file"
+        })
+
+    old_photo = None
+    if post["photo"]:
+        old_photo = post["photo"]
+        storage("delete", post["photo"])
+
+    file_name = storage("save", file)
+
+    cur.execute("""
+        UPDATE post
+        SET photo = %s
+        WHERE key = %s
+        RETURNING *;
+    """, (
+        file_name,
+        post["key"]
+    ))
+    post = cur.fetchone()
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="updated_photo",
+        entity_type="post",
+        entity_key=post["key"],
+        misc={
+            "from": old_photo,
+            "to": file_name
+        }
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "post": post_schema(post)
+    })
+
+
+@bp.delete("/post/photo/<key>")
+def delete_photo(key):
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    if "post:edit_photo" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
+    if not post or not post["photo"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    storage("delete", post["photo"])
+
+    cur.execute("""
+        UPDATE post
+        SET photo = NULL
+        WHERE key = %s
+        RETURNING *;
+    """, (post["key"],))
+    post = cur.fetchone()
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="deleted_photo",
+        entity_type="post",
+        entity_key=post["key"],
+        misc={"photo": post["photo"]}
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "post": post_schema(post)
+    })
+
+
+# def extract_parts(text, id):
+#     text = text.replace("@[file]", "@@[keep]", id)
+#     text = text.replace("@[file]", "@@[split]", 1)
+#     text = text.replace("@@[keep]", "@[file]")
+#     left, right = text.split("@@[split]")
+
+#     file = None
+
+#     check = right.split("@[file]")[0]
+#     if check and check[0] == "(" and ")" in check:
+#         check = check.split("(")[1]
+#         if check and ")" in check:
+#             check = check.split(")")[0]
+#             if check:
+#                 file = check
+#                 right = right.replace(")", "@@[split]", 1)
+#                 right = right.split("@@[split]")[1]
+
+#     return {
+#         "left": left,
+#         "right": right,
+#         "file": file
+#     }

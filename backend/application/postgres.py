@@ -37,6 +37,7 @@ post_table = """CREATE TABLE IF NOT EXISTS post (
     slug VARCHAR(255) UNIQUE NOT NULL,
     content TEXT,
     description TEXT,
+    photo VARCHAR(50),
     files TEXT[] DEFAULT ARRAY[]::TEXT[],
     tags TEXT[] DEFAULT ARRAY[]::TEXT[],
     "like" TEXT[] DEFAULT ARRAY[]::TEXT[],
