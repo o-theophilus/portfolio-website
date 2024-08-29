@@ -14,6 +14,8 @@
 	};
 
 	let zero = false;
+
+	// TODO; update this
 	$: {
 		$notification;
 
