@@ -73,8 +73,15 @@
 	export const add = () => {
 		input.click();
 	};
+	let dim = [1 / 1];
 	export const active = (data) => {
 		active_photo = data;
+
+		dim = [1 / 1];
+		let match = entity.photo?.match(/_(\d+)x(\d+)\./);
+		if (match) {
+			dim = [parseInt(match[1]), parseInt(match[2])];
+		}
 	};
 	export const reset = (data) => {
 		post.files = data;
@@ -87,6 +94,7 @@
 	class="main"
 	class:dragover
 	class:incomplete={post.files.length < count}
+	style:--ar={dim[0] / dim[1]}
 	on:click={() => {
 		if (post.files.length < count) {
 			input.click();
@@ -131,6 +139,8 @@
 		border-radius: var(--sp1);
 		outline: 2px solid transparent;
 		transition: outline-color var(--trans), transform var(--trans);
+
+		aspect-ratio: var(--ar);
 	}
 
 	.incomplete:hover,

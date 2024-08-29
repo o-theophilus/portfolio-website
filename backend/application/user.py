@@ -699,8 +699,12 @@ def delete_photo(key):
     storage("delete", e_user["photo"])
 
     cur.execute("""
-        UPDATE "user" SET photo = NULL WHERE key = %s;
+        UPDATE "user"
+        SET photo = NULL
+        WHERE key = %s
+        RETURNING *;
     """, (e_user["key"],))
+    e_user = cur.fetchone()
 
     log(
         cur=cur,
@@ -713,5 +717,6 @@ def delete_photo(key):
 
     db_close(con, cur)
     return jsonify({
-        "status": 200
+        "status": 200,
+        "user": user_schema(e_user)
     })

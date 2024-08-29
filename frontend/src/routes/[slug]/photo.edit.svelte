@@ -67,6 +67,8 @@
 		$loading = false;
 
 		if (resp.status == 200) {
+			console.log(resp);
+
 			entity.photo = null;
 			$module.update(resp[entity.type]);
 			has_photo = false;

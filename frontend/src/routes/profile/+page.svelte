@@ -12,7 +12,7 @@
 	import Avatar from '$lib/avatar.svelte';
 	import Log from '$lib/log.svelte';
 
-	import Photo from './_photo.svelte';
+	import Photo from '../[slug]/photo.edit.svelte';
 	import Name from './_name.svelte';
 	import Phone from './_phone.svelte';
 	import Email from './_email_1.svelte';
@@ -26,13 +26,6 @@
 
 	const update = (data) => {
 		user = data;
-		if (user.key == $me.key) {
-			$me = user;
-		}
-	};
-
-	const update_photo = (data) => {
-		user.photo = data;
 		if (user.key == $me.key) {
 			$me = user;
 		}
@@ -63,9 +56,8 @@
 		<div class="title">
 			<strong class="ititle">Profile </strong>
 
-			{#if user.key == $me.key || $user.access.includes('post:edit_name')}
+			{#if user.key == $me.key || $me.access.includes('user:edit_name')}
 				<Toggle
-					state_1="off"
 					state_2="edit"
 					active={edit_mode}
 					on:click={() => {
@@ -81,14 +73,20 @@
 			<div class="avatar">
 				<Avatar name={user.name} photo={user.photo} size="120" />
 			</div>
-			{#if edit_mode && $me.access.includes('post:edit_photo')}
+
+			{#if edit_mode && $me.access.includes('user:edit_photo')}
 				<BRound
 					icon="edit"
 					on:click={() => {
 						$module = {
 							module: Photo,
-							user,
-							update: update_photo
+							entity: {
+								key: user.key,
+								name: user.name,
+								photo: user.photo,
+								type: 'user'
+							},
+							update
 						};
 					}}
 				/>
@@ -102,7 +100,7 @@
 			<strong class="ititle">
 				{user.name}
 			</strong>
-			{#if edit_mode && $me.access.includes('post:edit_name')}
+			{#if edit_mode && $me.access.includes('user:edit_name')}
 				<BRound
 					icon="edit"
 					on:click={() => {

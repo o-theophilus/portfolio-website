@@ -597,28 +597,3 @@ def delete_photo(key):
         "status": 200,
         "post": post_schema(post)
     })
-
-
-# def extract_parts(text, id):
-#     text = text.replace("@[file]", "@@[keep]", id)
-#     text = text.replace("@[file]", "@@[split]", 1)
-#     text = text.replace("@@[keep]", "@[file]")
-#     left, right = text.split("@@[split]")
-
-#     file = None
-
-#     check = right.split("@[file]")[0]
-#     if check and check[0] == "(" and ")" in check:
-#         check = check.split("(")[1]
-#         if check and ")" in check:
-#             check = check.split(")")[0]
-#             if check:
-#                 file = check
-#                 right = right.replace(")", "@@[split]", 1)
-#                 right = right.split("@@[split]")[1]
-
-#     return {
-#         "left": left,
-#         "right": right,
-#         "file": file
-#     }
