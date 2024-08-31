@@ -328,6 +328,8 @@
 		border-radius: var(--sp0);
 		font-size: 0.8rem;
 		color: var(--ft1);
+
+		cursor: unset;
 	}
 
 	.tabs .tab2:not(.active):hover {

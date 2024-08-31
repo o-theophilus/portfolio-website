@@ -32,6 +32,8 @@ def log(
             entity_key = request.json["entity_key"]
         if "status" in request.json and request.json["status"]:
             status = int(request.json["status"])
+        if "misc" in request.json and type(request.json["misc"]) is dict:
+            misc = request.json["misc"]
     except Exception:
         pass
 
@@ -61,6 +63,7 @@ def log(
         json.dumps(misc)
     ))
 
+    print(request.json)
     if close_conn:
         db_close(con, cur)
     return jsonify({

@@ -237,7 +237,7 @@
 		align-items: center;
 		justify-content: center;
 
-		overflow: hidden;
+		/* overflow: hidden; */
 	}
 
 	.carousel .block {

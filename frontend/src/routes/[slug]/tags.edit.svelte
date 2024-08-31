@@ -118,7 +118,6 @@
 		}}
 	/>
 
-	<!-- TODO: check this disabled`` -->
 	<Button
 		on:click={validate}
 		disabled={tags.split(', ').filter(Boolean).sort().join(', ') ==

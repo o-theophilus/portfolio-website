@@ -101,10 +101,10 @@ def delete_test(x, folder):
 
 def storage(method, x, thumbnail=False, folder="post"):
     test = False
-    if current_app.config["DEBUG"]:
-        folder = f"{os.getcwd()}/static/{folder}"
-        os.makedirs(folder, exist_ok=True)
-        test = True
+    # if current_app.config["DEBUG"]:
+    #     folder = f"{os.getcwd()}/static/{folder}"
+    #     os.makedirs(folder, exist_ok=True)
+    #     test = True
 
     if method == "save":
         if x.content_type in ['image/jpeg', 'image/png']:

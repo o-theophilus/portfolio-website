@@ -24,7 +24,7 @@
 		{#if post.tags.length > 0}
 			<div class="tags">
 				{#each post.tags as tag}
-					<Tag no_grow>
+					<Tag>
 						{tag}
 					</Tag>
 				{/each}

@@ -34,7 +34,6 @@
 				<Tag
 					{disabled}
 					active={active.includes(tag)}
-					no_grow
 					on:click={() => {
 						emit('click', tag);
 					}}

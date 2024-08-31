@@ -1,6 +1,7 @@
 <script>
 	export let href = '';
 	export let target = '';
+	export let title = '';
 	export let disabled = false;
 
 	export let primary = false;
@@ -12,6 +13,7 @@
 	this={href ? 'a' : 'button'}
 	{href}
 	{target}
+	{title}
 	on:click
 	{disabled}
 	role="presentation"
