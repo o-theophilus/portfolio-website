@@ -47,6 +47,7 @@
 	}
 
 	img {
+		outline: 2px solid #82c6ff;
 		position: absolute;
 
 		height: 100%;
@@ -58,7 +59,7 @@
 	.block {
 		position: fixed;
 		top: 100px;
-		
+
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -66,7 +67,7 @@
 
 		width: 100%;
 		padding: var(--sp2);
-		
+
 		color: var(--bg1);
 
 		transition: color var(--trans);
@@ -76,7 +77,7 @@
 		display: flex;
 		flex-direction: column;
 	}
-	
+
 	@media screen and (min-height: 600px) {
 		.block {
 			flex-direction: column;
