@@ -95,9 +95,9 @@
 			{/if}
 			{#if comments.length > 1}
 				<Drop
-					list={order_by}
 					icon="sort"
-					default_value={search.order || 'sort'}
+					list={order_by}
+					default_value={search.order || 'latest'}
 					on:change={(e) => {
 						search.order = e.target.value;
 						refresh();

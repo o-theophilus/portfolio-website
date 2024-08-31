@@ -18,6 +18,7 @@
 	}}
 >
 	<div class="highlight" />
+	<div class="outline" />
 	<div class="content">
 		<slot />
 	</div>
@@ -27,25 +28,19 @@
 	button {
 		--size: 100px;
 
+		position: relative;
+
 		display: flex;
 		justify-content: center;
 		align-items: center;
 
-		border: 2px solid var(--ft1);
-		border-radius: 50%;
 		width: var(--size);
 		height: var(--size);
+		border: none;
 
 		background-color: transparent;
-		transition: border-color var(--trans);
 
 		cursor: pointer;
-	}
-	button:hover {
-		border-color: transparent;
-	}
-	.invert {
-		border-color: var(--clb);
 	}
 
 	.content {
@@ -65,20 +60,42 @@
 		color: var(--clb);
 	}
 
+	.outline {
+		position: absolute;
+
+		width: var(--size);
+		height: var(--size);
+
+		border-radius: 50%;
+		border: 2px solid var(--ft1);
+		border-radius: 50%;
+
+		background-color: transparent;
+
+		transition: border-color var(--trans);
+	}
+	.invert .outline {
+		border-color: var(--clb);
+	}
+
 	.highlight {
 		position: absolute;
-		width: 0%;
-		height: 0%;
+		top: 0;
+		left: 0;
+
+		width: var(--size);
+		height: var(--size);
 
 		background-color: transparent;
 		border-radius: 50%;
 
-		transition: width var(--trans), height var(--trans), background-color var(--trans);
+		transition: width var(--trans), height var(--trans), background-color var(--trans),
+			top var(--trans), left var(--trans);
 	}
 
 	button:hover .highlight {
-		width: var(--size);
-		height: var(--size);
+		top: -8px;
+		left: -8px;
 		background-color: var(--cl1);
 	}
 </style>

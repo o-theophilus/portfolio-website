@@ -18,7 +18,7 @@
 				<div class="logo">
 					<div class="cover" />
 					<div class="icon">
-						<Icon icon="logo" size="1.5" />
+						<Icon icon="logo" size="1.7" />
 					</div>
 				</div>
 				<span>
@@ -98,15 +98,12 @@
 
 	.cover {
 		position: absolute;
+		top: 1px;
+		right: 1px;
+		width: 30px;
+		height: 30px;
 
-		width: 22px;
-		height: 22px;
-		/* z-index: -1; */
-
-		top: 3px;
-		right: 3px;
 		border-radius: 50%;
-
 		background-color: var(--clb);
 	}
 

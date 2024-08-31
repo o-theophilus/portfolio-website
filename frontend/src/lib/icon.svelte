@@ -175,6 +175,10 @@
 	<svg viewBox="0 -960 960 960" width="{size}em" height="{size}em">
 		<path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z" />
 	</svg>
+{:else if icon == 'keyboard_arrow_down'}
+	<svg viewBox="0 -960 960 960" width="{size}em" height="{size}em">
+		<path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
+	</svg>
 {:else if icon == 'search'}
 	<svg viewBox="0 -960 960 960" width="{size}em" height="{size}em">
 		<path

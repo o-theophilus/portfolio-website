@@ -1,6 +1,5 @@
 export let template =
 {
-	'Select Template': "",
 	'Networking': `Hi Theo,
 
 I came across your profile and I'm impressed with your experience in the industry.

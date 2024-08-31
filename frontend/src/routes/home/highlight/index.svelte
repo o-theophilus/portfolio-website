@@ -187,10 +187,12 @@
 							</Link>
 						</div>
 
-						<div class="description">
-							{active.description}
-						</div>
-
+						{#if active.description}
+							<div class="description">
+								{active.description}
+							</div>
+						{/if}
+						
 						<div class="tags">
 							<Tags
 								center

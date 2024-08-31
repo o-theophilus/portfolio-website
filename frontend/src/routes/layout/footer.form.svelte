@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/stores';
-	import { user, loading, module } from '$lib/store.js';
+	import {  loading, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import { template } from './footer.form.template.js';
@@ -15,10 +15,7 @@
 
 	let form = {};
 	let error = {};
-	// if ($user.login) {
-	// form.name = $user.name;
-	// form.email = $user.email;
-	// }
+
 
 	const clear_error = () => {
 		error = {};
@@ -123,9 +120,12 @@
 					form.message = template[e.target.value];
 					e.target.value = 'Select Template';
 				}}
-			/>
-
-			<div class="gap" />
+			>
+				<div class="label">
+					Message
+					<Icon icon="keyboard_arrow_down" />
+				</div>
+			</Drop>
 		</svelte:fragment>
 	</IG>
 
@@ -146,8 +146,14 @@
 </div>
 
 <style>
-	.gap {
-		height: var(--sp1);
+	.label {
+		display: flex;
+		align-items: center;
+		gap: var(--sp1);
+
+		font-size: 0.8rem;
+		/* line-height: 200%; */
+		margin-bottom: 4px;
 	}
 
 	.error {

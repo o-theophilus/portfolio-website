@@ -14,8 +14,10 @@
 		<div class="icon">
 			<Icon icon="logo" size="6" />
 		</div>
-		<div class="name">Theophilus Ogbolu</div>
-		<div class="role">Designer & Developer</div>
+		<div class="details">
+			<div class="name">Theophilus Ogbolu</div>
+			<div class="role">Designer & Developer</div>
+		</div>
 	</div>
 
 	<img style:--no="6" src="/parallax/parallax2.png" alt="parallax2" />
@@ -55,29 +57,33 @@
 
 	.block {
 		position: fixed;
-
+		top: 100px;
+		
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		gap: var(--sp2);
 
 		width: 100%;
-		/* height: 50%; */
 		padding: var(--sp2);
-		bottom: 25%;
-
+		
 		color: var(--bg1);
+
 		transition: color var(--trans);
 	}
 
-	@media screen and (min-height: 300px) {
-		.block {
-			bottom: 45%;
-		}
+	.details {
+		display: flex;
+		flex-direction: column;
 	}
+	
 	@media screen and (min-height: 600px) {
 		.block {
-			bottom: 55%;
+			flex-direction: column;
+			top: 140px;
+		}
+		.details {
+			align-items: center;
 		}
 	}
 
@@ -89,10 +95,10 @@
 	}
 
 	.name {
-		margin-top: var(--sp3);
+		/* margin-top: var(--sp3); */
 		font-size: 2rem;
 		font-weight: 800;
-		text-align: center;
+		/* text-align: center; */
 	}
 
 	.role {

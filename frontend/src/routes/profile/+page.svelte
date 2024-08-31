@@ -213,7 +213,7 @@
 
 	.line {
 		display: flex;
-		gap: var(--sp2);
+		gap: var(--sp1);
 		justify-content: center;
 		align-items: center;
 	}
