@@ -1,5 +1,5 @@
 <script>
-	import { user, settings } from '$lib/store.js';
+	import { user, settings, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import './layout/var.css';
@@ -9,7 +9,7 @@
 
 	import Module from './layout/_module.svelte';
 	import Loading from './layout/_loading.svelte';
-	import Notification from './layout/_notification.svelte';
+	import Notify from './layout/_notify.svelte';
 
 	export let data;
 	$user = data.locals.user;
@@ -24,7 +24,7 @@
 
 	<Module />
 	<Loading />
-	<Notification />
+	<Notify bind:this={$notify} />
 </main>
 
 <style>

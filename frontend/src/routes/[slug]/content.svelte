@@ -78,7 +78,7 @@
 			</Button>
 		{/if}
 
-		{#if $user.access.includes('post:edit_files') && post.content.includes('@[file]')}
+		{#if $user.access.includes('post:edit_files') && post.content && post.content.includes('@[file]')}
 			<Button
 				size="small"
 				on:click={() => {

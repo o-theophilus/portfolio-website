@@ -25,12 +25,17 @@
 <style>
 	.comp {
 		margin-bottom: var(--sp5);
-		
+
 		position: relative;
 		opacity: 0;
 		transform: translate(0, -500px) scale(0);
+
+
+
+		transition: opacity, transform 1000ms;
+		transition-timing-function: cubic-bezier(0.47, 1.64, 0.41, 0.8);
 	}
-	
+
 	.intersecting {
 		opacity: 1;
 		transform: translate(0, 0) scale(1);
@@ -40,11 +45,12 @@
 		color: var(--ft1);
 		font-size: 2.6rem;
 		font-weight: 800;
-		
+		line-height: 120%;
+
 		max-width: 400px;
 		transition: color var(--trans);
 	}
-	
+
 	.about {
 		margin-top: var(--sp3);
 		font-size: 1.4rem;

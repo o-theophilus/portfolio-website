@@ -1,5 +1,5 @@
 <script>
-	import { loading, settings, notification } from '$lib/store.js';
+	import { loading, settings, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Toggle from '$lib/toggle.svelte';
@@ -34,14 +34,9 @@
 
 		if (resp.status == 200) {
 			$settings.highlight = resp.posts;
-			$notification = {
-				message: `${is_highlight ? 'Added' : 'Removed'} as Highlight`
-			};
+			$notify.add(`${is_highlight ? 'Added' : 'Removed'} as Highlight`);
 		} else {
-			$notification = {
-				status: 400,
-				message: resp.error
-			};
+			$notify.add(resp.error, 400);
 		}
 		highlight();
 	};

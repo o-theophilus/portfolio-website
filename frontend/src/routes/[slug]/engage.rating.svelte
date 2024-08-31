@@ -1,5 +1,5 @@
 <script>
-	import { module, loading, notification, user } from '$lib/store.js';
+	import { module, loading, notify, user } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -33,9 +33,7 @@
 			$module.update(resp.post);
 			$module.set_rating(resp.post.ratings);
 			$module = null;
-			$notification = {
-				message: 'Rating Saved'
-			};
+			$notify.add('Rating Saved');
 		} else {
 			error = resp;
 		}

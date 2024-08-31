@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { module, loading, notification } from '$lib/store.js';
+	import { module, loading, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -24,9 +24,7 @@
 
 		if (resp.status == 200) {
 			$module = null;
-			$notification = {
-				message: 'Post Deleted'
-			};
+			$notify.add('Post Deleted');
 			goto('/post');
 		} else {
 			error = resp;

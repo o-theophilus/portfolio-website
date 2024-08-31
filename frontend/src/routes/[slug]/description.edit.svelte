@@ -1,5 +1,5 @@
 <script>
-	import { module, loading, notification } from '$lib/store.js';
+	import { module, loading, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
@@ -39,9 +39,7 @@
 		if (resp.status == 200) {
 			$module.update(resp.post);
 			$module = null;
-			$notification = {
-				message: 'Description saved'
-			};
+			$notify.add('Description saved');
 		} else {
 			error = resp;
 		}

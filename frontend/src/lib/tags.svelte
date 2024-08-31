@@ -7,7 +7,7 @@
 	let emit = createEventDispatcher();
 
 	export let tags = [];
-	export let active = [];
+	// export let active = [];
 	export let style = 0;
 	export let disabled = false;
 	export let center = false;
@@ -31,9 +31,9 @@
 					{tag}
 				</Link>
 			{:else if style == 1}
+				<!-- active={active.includes(tag)} -->
 				<Tag
 					{disabled}
-					active={active.includes(tag)}
 					on:click={() => {
 						emit('click', tag);
 					}}

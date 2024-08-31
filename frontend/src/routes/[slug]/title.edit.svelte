@@ -1,5 +1,5 @@
 <script>
-	import { module, loading, notification } from '$lib/store.js';
+	import { module, loading, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
@@ -40,9 +40,7 @@
 			window.history.replaceState(history.state, '', `/${resp.post.slug}`);
 			$module.update(resp.post);
 			$module = null;
-			$notification = {
-				message: 'Title Saved'
-			};
+			$notify.add('Title Saved');
 		} else {
 			error = resp;
 		}

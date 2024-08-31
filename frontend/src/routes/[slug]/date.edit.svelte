@@ -1,5 +1,5 @@
 <script>
-	import { module, loading, notification } from '$lib/store.js';
+	import { module, loading, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -44,9 +44,7 @@
 		if (resp.status == 200) {
 			$module.update(resp.post);
 			$module = null;
-			$notification = {
-				message: 'Date Saved'
-			};
+			$notify.add('Date Saved');
 		} else {
 			error = resp;
 		}

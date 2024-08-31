@@ -1,6 +1,6 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-	import { loading, settings, notification, module } from '$lib/store.js';
+	import { loading, settings, notify, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -46,9 +46,7 @@
 				}
 			}
 
-			$notification = {
-				message: `Highlight ${is_highlight ? 'Added' : 'Removed'}`
-			};
+			$notify.add(`Highlight ${is_highlight ? 'Added' : 'Removed'}`);
 
 			slug = null;
 			emit('ok');

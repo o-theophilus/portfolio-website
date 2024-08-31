@@ -1,5 +1,5 @@
 <script>
-	import { module, loading, notification } from '$lib/store.js';
+	import { module, loading, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -27,9 +27,7 @@
 		if (resp.status == 200) {
 			$module.update(resp.comments);
 			$module = null;
-			$notification = {
-				message: 'Comment Deleted'
-			};
+			$notify.add('Comment Deleted');
 		} else {
 			error = resp;
 		}

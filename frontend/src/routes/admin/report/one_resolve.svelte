@@ -1,5 +1,5 @@
 <script>
-	import { loading, module, notification } from '$lib/store.js';
+	import { loading, module, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
@@ -37,9 +37,7 @@
 
 		if (resp.status == 200) {
 			$module = null;
-			$notification = {
-				message: 'Resolved'
-			};
+			$notify.add('Resolved');
 		} else {
 			error = resp;
 		}

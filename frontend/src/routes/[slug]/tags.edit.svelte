@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { module, loading, state, notification } from '$lib/store.js';
+	import { module, loading, state, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
@@ -42,9 +42,7 @@
 		if (resp.status == 200) {
 			$module.update(resp.post);
 			$module = null;
-			$notification = {
-				message: `Tag${resp.post.tags.length > 1 ? 's' : ''} Saved`
-			};
+			$notify.add(`Tag${resp.post.tags.length > 1 ? 's' : ''} Saved`);
 		} else {
 			error = resp;
 		}

@@ -1,7 +1,7 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { loading, notification } from '$lib/store.js';
+	import { loading, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Content from '$lib/content.svelte';
@@ -40,9 +40,7 @@
 
 		if (resp.status == 200) {
 			unused = unused.filter((x) => !files.includes(x));
-			$notification = {
-				message: `Photo${files.length > 1 ? 's' : ''} Deleted`
-			};
+			$notify.add(`Photo${files.length > 1 ? 's' : ''} Deleted`);
 			files = [];
 		} else {
 			error = resp;

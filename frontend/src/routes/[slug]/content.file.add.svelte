@@ -1,5 +1,5 @@
 <script>
-	import { loading, notification, module } from '$lib/store.js';
+	import { loading, notify, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 	import { createEventDispatcher } from 'svelte';
 
@@ -57,10 +57,7 @@
 			post = resp.post;
 			$module.update(post);
 			emit('update', post.files);
-
-			$notification = {
-				message: 'Photo added'
-			};
+			$notify.add('Photo added');
 
 			if (resp.error) {
 				error.error = error.error ? `${error.error}, ${resp.error}` : resp.error;

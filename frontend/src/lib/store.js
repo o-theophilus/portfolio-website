@@ -7,7 +7,7 @@ export const settings = writable({});
 
 export const loading = writable(false);
 export const module = writable();
-export const notification = writable();
+export const notify = writable();
 
 // tools
 export const isMobile = writable(false);

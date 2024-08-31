@@ -1,5 +1,5 @@
 <script>
-	import { loading, module, notification } from '$lib/store.js';
+	import { loading, module, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import { template, tags } from './_report__template.js';
@@ -49,9 +49,7 @@
 
 		if (resp.status == 200) {
 			$module = null;
-			$notification = {
-				message: 'Report Submitted'
-			};
+			$notify.add('Report Submitted');
 		} else {
 			error = resp;
 		}

@@ -1,5 +1,5 @@
 <script>
-	import { module, loading, notification } from '$lib/store.js';
+	import { module, loading, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
@@ -52,9 +52,7 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			$notification = {
-				message: 'Password changed'
-			};
+			$notify.add('Password changed');
 			$module = null;
 		} else {
 			error = resp;

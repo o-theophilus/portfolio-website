@@ -1,5 +1,5 @@
 <script>
-	import { module, loading, notification } from '$lib/store.js';
+	import { module, loading, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 	import { onMount } from 'svelte';
 
@@ -43,9 +43,7 @@
 			$module.update(resp.post);
 			$module.refresh(resp.post.content);
 			$module = null;
-			$notification = {
-				message: 'Content Saved'
-			};
+			$notify.add('Content Saved');
 		} else {
 			error = resp;
 		}

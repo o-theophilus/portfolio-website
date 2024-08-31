@@ -3,18 +3,15 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { state } from '$lib/store.js';
 
-	// import Loading from '$lib/loading.svelte';
 	import Fold from '$lib/button/fold.svelte';
 	import Link from '$lib/button/link.svelte';
 
 	export let post_key;
 	let posts = [];
 	let open = true;
-	// let loading = true;
 
 	export const reset = () => {
 		posts = [];
-		// loading = true;
 	};
 
 	export const refresh = async () => {
@@ -23,7 +20,6 @@
 		if (resp.status == 200) {
 			posts = resp.posts;
 		}
-		// loading = false;
 	};
 
 	const click = (post) => {

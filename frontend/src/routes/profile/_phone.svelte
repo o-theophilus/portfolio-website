@@ -1,5 +1,5 @@
 <script>
-	import { module, notification, loading } from '$lib/store.js';
+	import { module, notify, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
@@ -38,11 +38,7 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.user);
-
-			$notification = {
-				message: 'Phone Number Changed'
-			};
-
+			$notify.add('Phone Number Changed');
 			$module = null;
 		} else {
 			error = resp;

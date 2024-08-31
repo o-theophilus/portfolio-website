@@ -1,7 +1,7 @@
 <script>
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { loading, notification, module } from '$lib/store.js';
+	import { loading, notify, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -78,10 +78,7 @@
 			$module.update(post);
 			emit('update', post.files);
 			reset(post.files);
-
-			$notification = {
-				message: 'Order Saved'
-			};
+			$notify.add('Order Saved');
 		} else {
 			error = resp;
 		}

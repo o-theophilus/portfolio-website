@@ -1,7 +1,7 @@
 <script>
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { loading, notification, settings, module } from '$lib/store.js';
+	import { loading, notify, settings, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -68,10 +68,7 @@
 			posts = [...$settings.highlight];
 			init_order = [...$settings.highlight];
 			$module.update();
-
-			$notification = {
-				message: 'Highlight updated'
-			};
+			$notify.add('Highlight updated');
 		} else {
 			error = resp;
 		}

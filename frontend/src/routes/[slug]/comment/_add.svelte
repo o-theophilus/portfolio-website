@@ -1,5 +1,5 @@
 <script>
-	import { module, loading, notification } from '$lib/store.js';
+	import { module, loading, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import IG from '$lib/input_group.svelte';
@@ -47,9 +47,7 @@
 		if (resp.status == 200) {
 			$module.update(resp.comments);
 			$module = null;
-			$notification = {
-				message: 'Comment Added'
-			};
+			$notify.add('Comment Added');
 		} else {
 			error = resp;
 		}

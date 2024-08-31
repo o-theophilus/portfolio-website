@@ -1,5 +1,5 @@
 <script>
-	import { loading, notification, module } from '$lib/store.js';
+	import { loading, notify, module } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -43,9 +43,7 @@
 			$module.update(resp[entity.type]);
 			has_photo = true;
 			get_din();
-			$notification = {
-				message: 'Photo updated'
-			};
+			$notify.add('Photo updated');
 		} else {
 			input.value = '';
 			error = resp;
@@ -67,14 +65,10 @@
 		$loading = false;
 
 		if (resp.status == 200) {
-			console.log(resp);
-
 			entity.photo = null;
 			$module.update(resp[entity.type]);
 			has_photo = false;
-			$notification = {
-				message: 'Photo removed'
-			};
+			$notify.add('Photo removed');
 		} else {
 			error = resp;
 		}

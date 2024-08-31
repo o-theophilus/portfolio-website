@@ -1,5 +1,5 @@
 <script>
-	import { module, notification, loading } from '$lib/store.js';
+	import { module, notify, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 	import { page } from '$app/stores';
 
@@ -41,9 +41,7 @@
 
 		if (resp.status == 200) {
 			$module = null;
-			$notification = {
-				message: 'Access saved'
-			};
+			$notify.add('Access saved');
 		} else {
 			error = resp;
 		}

@@ -5,8 +5,6 @@
 	import Icon from '$lib/icon.svelte';
 
 	export let post;
-	console.log(post);
-	
 
 	const click = () => {
 		let sn = 'post_item';

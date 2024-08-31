@@ -1,5 +1,5 @@
 <script>
-	import { module, notification, loading } from '$lib/store.js';
+	import { module, notify, loading } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
 	import Button from '$lib/button/button.svelte';
@@ -39,11 +39,7 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.user);
-
-			$notification = {
-				message: 'Email changed'
-			};
-
+			$notify.add('Email changed');
 			$module = null;
 		} else {
 			error = resp;
