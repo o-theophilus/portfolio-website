@@ -7,12 +7,22 @@
 
 	let rating = 0;
 	let error = {};
-	for (const x in $module.post.ratings) {
-		if ($module.post.ratings[x].user_key == $user.key) {
-			rating = $module.post.ratings[x].rating;
+	for (const x of $module.post.ratings) {
+		if (x.user_key == $user.key) {
+			rating = x.rating;
 			break;
 		}
 	}
+
+	const validate = () => {
+		error = {};
+
+		if (!rating) {
+			error.error = 'cannot rate 0';
+		}
+
+		Object.keys(error).length === 0 && submit();
+	};
 
 	const submit = async () => {
 		error = {};
@@ -24,14 +34,14 @@
 				'Content-Type': 'application/json',
 				Authorization: $token
 			},
-			body: JSON.stringify({ rating: rating })
+			body: JSON.stringify({ rating })
 		});
 		resp = await resp.json();
 		$loading = false;
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
-			$module.set_rating(resp.post.ratings);
+			$module.set_rating(resp.post);
 			$module = null;
 			$notify.add('Rating Saved');
 		} else {
@@ -88,7 +98,7 @@
 		</div>
 	</div>
 
-	<Button on:click={submit}>
+	<Button on:click={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

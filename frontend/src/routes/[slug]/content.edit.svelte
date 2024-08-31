@@ -41,7 +41,7 @@
 
 		if (resp.status == 200) {
 			$module.update(resp.post);
-			$module.refresh(resp.post.content);
+			$module.refresh(resp.post);
 			$module = null;
 			$notify.add('Content Saved');
 		} else {

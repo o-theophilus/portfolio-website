@@ -11,18 +11,19 @@
 	export let post;
 	export let update;
 
-	let rating = 0;
-	const set_rating = (ratings) => {
-		rating = 0;
-		for (const x in ratings) {
-			rating += ratings[x].rating;
-		}
-		if (rating != 0) {
-			rating /= ratings.length;
+	let my_rating = 0;
+	const set_rating = (data) => {
+		post = data;
+		my_rating = 0;
+		for (const x of post.ratings) {
+			if (x.user_key == $user.key) {
+				my_rating = x.rating;
+				break;
+			}
 		}
 	};
 
-	set_rating(post.ratings);
+	set_rating(post);
 </script>
 
 <hr />
@@ -32,13 +33,14 @@
 		name="post"
 		entity={post}
 		on:update={(e) => {
-			post = e.detail.post;
+			update(e.detail.post);
 		}}
 	/>
 
 	{#if $user.login}
 		<Button
 			size="small"
+			primary={my_rating != 0}
 			on:click={() => {
 				$module = {
 					module: Rating,
@@ -49,9 +51,7 @@
 			}}
 		>
 			<Icon icon="hotel_class" />
-			Rate: {parseFloat(rating)} |
-			<Icon icon="person" />
-			{post.ratings.length}
+			Rate{#if my_rating}: {my_rating}{/if}
 		</Button>
 	{/if}
 

@@ -44,16 +44,12 @@
 		return text;
 	};
 
-	const refresh = (text) => {
-		content = process_content(text);
-	};
-
-	export const refresh2 = (data) => {
+	export const refresh = (data) => {
 		post = { ...data };
-		refresh(post.content);
+		content = process_content(post.content);
 	};
 
-	refresh(post.content);
+	refresh(post);
 </script>
 
 <hr />

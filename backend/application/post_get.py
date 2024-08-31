@@ -44,10 +44,10 @@ def get_post(key, cur=None):
                 "error": "invalid token"
             })
 
-        if set([
-            "post:add",
-            "post:edit_status"
-        ]).isdisjoint(user["access"]):
+        if (
+            "post:add" not in user["access"]
+            and "post:edit_status" not in user["access"]
+        ):
             if close_conn:
                 db_close(con, cur)
             return jsonify({
@@ -175,6 +175,21 @@ def get_all(order="latest", page_size=24, cur=None):
                 COUNT(*) AS _count
             FROM view1
             GROUP BY entity_key
+        ),
+
+        share1 AS (
+            SELECT entity_key
+            FROM log
+            WHERE
+                entity_type = 'post'
+                AND action = 'shared'
+        ),
+        share AS (
+            SELECT
+                entity_key AS key,
+                COUNT(*) AS _count
+            FROM share1
+            GROUP BY entity_key
         )
 
         SELECT
@@ -182,6 +197,7 @@ def get_all(order="latest", page_size=24, cur=None):
             COALESCE(rating.rating, 0) AS rating,
             COALESCE(comment._count, 0) AS comment,
             COALESCE(view._count, 0) AS view,
+            COALESCE(share._count, 0) AS share,
             COALESCE(_like._count, 0) AS _like,
             COUNT(*) OVER() AS _count
         FROM post
@@ -189,6 +205,7 @@ def get_all(order="latest", page_size=24, cur=None):
         LEFT JOIN rating ON post.key = rating.key
         LEFT JOIN comment ON post.key = comment.key
         LEFT JOIN view ON post.key = view.key
+        LEFT JOIN share ON post.key = share.key
 
         WHERE
             post.status = %s
@@ -196,7 +213,8 @@ def get_all(order="latest", page_size=24, cur=None):
         GROUP BY
             post.key, post.status, post.title, post.slug, post.content,
             post.description, post.files, post.tags,
-            _like._count, comment._count, view._count, rating.rating
+            _like._count, comment._count, view._count, share._count,
+            rating.rating
         ORDER BY {} {}
         LIMIT %s OFFSET %s;
     """.format(

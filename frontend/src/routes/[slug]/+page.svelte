@@ -16,6 +16,7 @@
 	import Description from './description.svelte';
 	import Content_ from './content.svelte';
 	import Engage from './engage.svelte';
+	import Engagement from './engage.view.svelte';
 	import Author from './author.svelte';
 	import Tags from './tags.svelte';
 	import Edit_Status from './status.svelte';
@@ -34,7 +35,8 @@
 	let content;
 	const update = (data) => {
 		post = data;
-		content.refresh2(post);
+		content.refresh(post);
+		engagement.refresh();
 	};
 
 	onMount(async () => {
@@ -52,14 +54,17 @@
 	});
 
 	let author;
+	let engagement;
 	let comment;
 	let similar;
 	const refresh = async () => {
 		edit_mode = false;
 		author.reset();
+		engagement.reset();
 		comment.reset();
 		similar.reset();
 		await author.refresh();
+		await engagement.refresh();
 		await comment.refresh();
 		await similar.refresh();
 	};
@@ -110,7 +115,9 @@
 		<Photo {post} {edit_mode} {update} />
 		<Title {post} {edit_mode} {update} />
 		<Description {post} {edit_mode} {update} />
-		<Date {post} {edit_mode} {update} />
+		<Date {post} {edit_mode} {update}>
+			<Engagement post_key={post.key} bind:this={engagement} />
+		</Date>
 		<Content_ {post} {edit_mode} {update} bind:this={content} />
 		<Tags {post} {edit_mode} {update} />
 		<Author {post} {edit_mode} bind:this={author} />

@@ -28,10 +28,17 @@
 {/if}
 <span class="date">
 	<Datetime datetime={post.date} />
+	<slot />
 </span>
 
 <style>
 	.date {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--sp1);
+		flex-wrap: wrap;
+
 		font-size: 0.8rem;
 		margin-bottom: var(--sp3);
 	}
