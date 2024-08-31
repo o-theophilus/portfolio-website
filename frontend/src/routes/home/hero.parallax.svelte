@@ -47,7 +47,7 @@
 	}
 
 	img {
-		outline: 2px solid #82c6ff;
+		outline: 10px solid #82c6ff;
 		position: absolute;
 
 		height: 100%;
