@@ -13,8 +13,8 @@
 
 	let post = $module.post;
 	let files = [...post.files];
-	let active_photo = files[0] || '/no_photo.png';
-	let count = post.content.split('@[file]').length;
+	let active_photo = files[0] || '/no_file.png';
+	let count = post.content.split('@[file]').length - 1;
 	let error = {};
 
 	const order = (dir = true) => {
@@ -43,7 +43,7 @@
 		error = {};
 
 		files = files.filter((x) => x != active_photo);
-		active_photo = files[0] || '/no_photo.png';
+		active_photo = files[0] || '/no_file.png';
 		emit('active', active_photo);
 	};
 
@@ -53,7 +53,7 @@
 		post.files = [...data];
 		files = [...data];
 		if (!files.includes(active_photo)) {
-			active_photo = files[0] || '/no_photo.png';
+			active_photo = files[0] || '/no_file.png';
 			emit('active', active_photo);
 		}
 	};
@@ -87,10 +87,9 @@
 
 <div class="line">
 	{#each files as x, i (x)}
-		<img
+		<div
+			class="used"
 			animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
-			src="{x}/200"
-			alt={post.name}
 			class:excess={i > count - 1}
 			class:active={active_photo == x}
 			on:click={() => {
@@ -99,7 +98,13 @@
 				emit('active', active_photo);
 			}}
 			role="presentation"
-		/>
+		>
+			{#if x.slice(-4) == '.jpg'}
+				<img src="{x}/200" alt={post.name} />
+			{:else}
+				{x.slice(-3)}
+			{/if}
+		</div>
 	{/each}
 
 	{#if count - files.length > 0}
@@ -177,18 +182,25 @@
 		margin-top: var(--sp2);
 	}
 
-	img,
+	.used,
 	.empty {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
 		width: var(--size);
 		height: var(--size);
 		border-radius: var(--sp0);
 		cursor: pointer;
+		overflow: hidden;
+		font-size: 0.8rem;
 
+		background-color: var(--bg2);
 		outline: 2px solid transparent;
 		transition: outline-color var(--trans), transform var(--trans);
 	}
 
-	img:hover,
+	.used:hover,
 	.empty:hover {
 		outline-color: var(--cl1);
 	}
@@ -203,12 +215,8 @@
 		transform: scale(1.1);
 	}
 
-	.empty {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		background-color: var(--bg2);
+	img {
+		width: 100%;
 	}
 
 	.error {

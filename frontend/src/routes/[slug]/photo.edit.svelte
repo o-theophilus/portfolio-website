@@ -74,10 +74,10 @@
 		}
 	};
 
-	let dim = [1 / 1];
+	let dim = [1 , 1];
 
 	const get_din = () => {
-		dim = [1 / 1];
+		dim = [1 , 1];
 		let match = entity.photo?.match(/_(\d+)x(\d+)\./);
 		if (match) {
 			dim = [parseInt(match[1]), parseInt(match[2])];
@@ -92,7 +92,7 @@
 	<br />
 	<br />
 	<img
-		src={entity.photo || '/no_photo.png'}
+		src={entity.photo || '/select_photo.png'}
 		alt={entity.name}
 		class:dragover
 		class:no_photo={!has_photo}

@@ -18,14 +18,20 @@
 		let i = 0;
 
 		while (exist) {
-			let sub = `![${post.title}](/no_photo.png)`;
+			let sub = `![${post.title}](/no_file.png)`;
 			if (post.files[i]) {
 				if (post.files[i].slice(-4) == '.jpg') {
 					sub = `![${post.title}](${post.files[i]})`;
 				} else if (post.files[i].slice(-4) == '.pdf') {
+					let dim = [1, 1, 1];
+					let match = post.files[i].match(/_(\d+\.\d+)x(\d+\.\d+)x(\d+)\./);
+					if (match) {
+						dim = [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
+					}
+
 					sub = `
 <div class="embed">
-	<embed src="${post.files[i]}#toolbar=0" width="100%" height="400" type="application/pdf" />
+	<embed src="${post.files[i]}#toolbar=0" width="100%" style="aspect-ratio: ${dim[0]} / ${dim[1]};" type="application/pdf" />
 	<a href="${post.files[i]}#toolbar=0" target="_blank">
 		<svg width="1rem" height="1rem" viewBox="0 -960 960 960">
 			<path d="M120-120v-320h80v184l504-504H520v-80h320v320h-80v-184L256-200h184v80H120Z" /></svg

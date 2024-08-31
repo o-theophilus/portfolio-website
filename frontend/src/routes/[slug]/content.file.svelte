@@ -6,7 +6,7 @@
 </script>
 
 <div class="comp">
-	<strong class="ititle"> Manage Photo </strong>
+	<strong class="ititle"> Manage File </strong>
 	<br />
 	<br />
 

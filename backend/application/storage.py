@@ -4,6 +4,7 @@ from PIL import Image, ImageOps
 from io import BytesIO
 from uuid import uuid4
 import os
+import PyPDF2
 
 
 bp = Blueprint("storage", __name__)
@@ -39,15 +40,44 @@ def save_test_photo(x, folder):
 
 
 def save_live_file(x, folder):
-    name = f"{uuid4().hex}.pdf"
-    drive().put(f"{folder}/{name}", x)
+    reader = PyPDF2.PdfReader(x)
+    writer = PyPDF2.PdfWriter()
+
+    height = 0
+    width = 0
+    for i in reader.pages:
+        writer.add_page(i)
+        height += i.mediabox.height
+        if i.mediabox.width > width:
+            width = i.mediabox.width
+
+    dim = f"{width}x{height}x{len(reader.pages)}"
+    name = f"{uuid4().hex}_{dim}.pdf"
+
+    b = BytesIO()
+    writer.write(b)
+
+    drive().put(f"{folder}/{name}", b.getvalue())
     return name
 
 
 def save_test_file(x, folder):
-    name = f"{uuid4().hex}.pdf"
+    reader = PyPDF2.PdfReader(x)
+    writer = PyPDF2.PdfWriter()
+
+    height = 0
+    width = 0
+    for i in reader.pages:
+        writer.add_page(i)
+        height += i.mediabox.height
+        if i.mediabox.width > width:
+            width = i.mediabox.width
+
+    dim = f"{width}x{height}x{len(reader.pages)}"
+    name = f"{uuid4().hex}_{dim}.pdf"
+
     with open(f"{folder}/{name}", "wb") as f:
-        f.write(x.read())
+        writer.write(f)
     return name
 
 
@@ -101,10 +131,10 @@ def delete_test(x, folder):
 
 def storage(method, x, thumbnail=False, folder="post"):
     test = False
-    # if current_app.config["DEBUG"]:
-    #     folder = f"{os.getcwd()}/static/{folder}"
-    #     os.makedirs(folder, exist_ok=True)
-    #     test = True
+    if current_app.config["DEBUG"]:
+        folder = f"{os.getcwd()}/static/{folder}"
+        os.makedirs(folder, exist_ok=True)
+        test = True
 
     if method == "save":
         if x.content_type in ['image/jpeg', 'image/png']:

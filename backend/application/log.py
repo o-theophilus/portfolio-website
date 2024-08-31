@@ -63,7 +63,6 @@ def log(
         json.dumps(misc)
     ))
 
-    print(request.json)
     if close_conn:
         db_close(con, cur)
     return jsonify({
@@ -176,6 +175,7 @@ def get_many():
     ))
     logs = cur.fetchall()
 
+    # TODO: update this
     for x in logs:
         if x["entity"]["type"] == "page":
             x["action"] = "viewed"

@@ -7,7 +7,7 @@
 
 	let post = $module.post;
 	let count = post.content.split('@[file]').length;
-	let active_photo = post.files[0] || '/no_photo.png';
+	let active_photo = '';
 	let input;
 	let dragover = false;
 	let error = {};
@@ -70,19 +70,28 @@
 	export const add = () => {
 		input.click();
 	};
-	let dim = [1 / 1];
-	export const active = (data) => {
-		active_photo = data;
-
-		dim = [1 / 1];
-		let match = entity.photo?.match(/_(\d+)x(\d+)\./);
-		if (match) {
-			dim = [parseInt(match[1]), parseInt(match[2])];
-		}
-	};
 	export const reset = (data) => {
 		post.files = data;
 	};
+
+	let dim = [1, 1];
+	export const active = (data) => {
+		active_photo = data;
+		dim = [1, 1];
+
+		if (!active_photo) {
+			active_photo = '/select_file.png';
+		} else if (active_photo.slice(-4) == '.jpg') {
+			let match = active_photo.match(/_(\d+)x(\d+)\./);
+			if (match) {
+				dim = [parseInt(match[1]), parseInt(match[2])];
+			}
+		} else {
+			active_photo = '/no_preview.png';
+		}
+	};
+
+	active(post.files[0]);
 </script>
 
 <img

@@ -5,6 +5,7 @@
   // "python.pythonPath": "C:\\Users\\Theophilus\\.virtualenvs\\connekt.be-Q5iYlhiP\\Scripts\\python.exe",
   "cSpell.ignoreWords": [
     "Deta",
+    "LANCZOS",
     "MEJI",
     "TWILIO",
     "a",
@@ -48,5 +49,8 @@
     "werkzeug",
     "y"
   ],
-  "python.analysis.typeCheckingMode": "basic"
+  "python.analysis.typeCheckingMode": "basic",
+  "cSpell.words": [
+    "mediabox"
+  ]
 }

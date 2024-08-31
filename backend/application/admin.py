@@ -169,6 +169,7 @@ def set_access(key):
     })
 
 
+# TODO: update this
 @bp.get("/file/error")
 def file_error():
     con, cur = db_open()
