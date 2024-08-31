@@ -24,9 +24,13 @@
 					sub = `![${post.title}](${post.files[i]})`;
 				} else if (post.files[i].slice(-4) == '.pdf') {
 					let dim = [1, 1, 1];
-					let match = post.files[i].match(/_(\d+\.\d+)x(\d+\.\d+)x(\d+)\./);
+					let match = post.files[i].match(/_(\d+)x(\d+)x(\d+)\./);
+					if (!match) {
+						match = post.files[i].match(/_(\d+\.\d+)x(\d+\.\d+)x(\d+)\./);
+					}
+
 					if (match) {
-						dim = [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
+						dim = [match[1], match[2], match[3]];
 					}
 
 					sub = `
