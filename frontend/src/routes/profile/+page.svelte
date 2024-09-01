@@ -74,7 +74,7 @@
 				<Avatar name={user.name} photo={user.photo} size="120" />
 			</div>
 
-			{#if edit_mode && $me.access.includes('user:edit_photo')}
+			{#if edit_mode && (user.key == $me.key || $me.access.includes('user:edit_photo'))}
 				<BRound
 					icon="edit"
 					on:click={() => {
@@ -100,7 +100,7 @@
 			<strong class="ititle">
 				{user.name}
 			</strong>
-			{#if edit_mode && $me.access.includes('user:edit_name')}
+			{#if edit_mode && (user.key == $me.key || $me.access.includes('user:edit_photo'))}
 				<BRound
 					icon="edit"
 					on:click={() => {
@@ -118,7 +118,7 @@
 			<Icon icon="email" size="1.4" />
 			{user.email}
 
-			{#if edit_mode}
+			{#if edit_mode && user.key == $me.key}
 				<BRound
 					icon="edit"
 					on:click={() => {
@@ -134,7 +134,7 @@
 		<div class="line">
 			<Icon icon="call" size="1.4" />
 			{user.phone || 'None'}
-			{#if edit_mode}
+			{#if edit_mode && user.key == $me.key}
 				<BRound
 					icon="edit"
 					on:click={() => {
@@ -148,7 +148,7 @@
 			{/if}
 		</div>
 
-		{#if edit_mode}
+		{#if edit_mode && user.key == $me.key}
 			<br />
 			<div class="line">
 				<Button

@@ -1,6 +1,8 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
+	import { flip } from 'svelte/animate';
+
 	import { loading, notify } from '$lib/store.js';
 	import { token } from '$lib/cookie.js';
 
@@ -52,14 +54,14 @@
 <Meta title="Manage Files" description="Here you will find missing or excess images" />
 
 <Content>
-	<div class="left">
+	<div class="title">
 		<Back />
 		<strong class="ititle"> Photo Error </strong>
 	</div>
 
 	<div class="fold">
-		<div class="title">
-			Unused Photo{unused.length > 1 ? 's' : ''} ({unused.length})
+		<div class="group_title">
+			Unused Photo{unused.length > 1 ? 's' : ''} / Fils{unused.length > 1 ? 's' : ''} ({unused.length})
 			<ButtonFold
 				open={open_unused}
 				on:click={() => {
@@ -70,11 +72,12 @@
 
 		{#if open_unused}
 			<div class="unused" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
-				{#each unused as x}
+				{#each unused as x (x)}
 					<img
+						animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
 						class:selected={files.includes(x)}
-						src={x ? `${x}/100` : '/no_photo.png'}
-						alt="missing"
+						src={x.slice(-4) == '.jpg' ? `${x}/100` : '/no_preview.png'}
+						alt="unused file"
 						on:click={() => {
 							if (files.includes(x)) {
 								files = files.filter((y) => y != x);
@@ -98,7 +101,7 @@
 
 			{#if unused.length > 0}
 				<br />
-				<div class="row">
+				<div class="line">
 					<Button
 						on:click={() => {
 							if (files.length != unused.length) {
@@ -115,9 +118,9 @@
 							None
 						{/if}
 					</Button>
-					<Button extra="hover_red" on:click={remove} disabled={files.length == 0}
-						>Delete ({files.length})</Button
-					>
+					<Button extra="hover_red" on:click={remove} disabled={files.length == 0}>
+						Delete ({files.length})
+					</Button>
 				</div>
 			{/if}
 		{/if}
@@ -126,8 +129,8 @@
 	<hr />
 
 	<div class="fold">
-		<div class="title">
-			User{users.length > 1 ? 's' : ''} ({users.length})
+		<div class="group_title">
+			User{users.length > 1 ? 's' : ''} ({users.length}) with missing photo
 			<ButtonFold
 				open={open_users}
 				on:click={() => {
@@ -152,8 +155,8 @@
 	<hr />
 
 	<div class="fold">
-		<div class="title">
-			Post{posts.length > 1 ? 's' : ''} ({posts.length})
+		<div class="group_title">
+			Post{posts.length > 1 ? 's' : ''} ({posts.length}) with missing photo / files
 			<ButtonFold
 				open={open_posts}
 				on:click={() => {
@@ -165,7 +168,7 @@
 		{#if open_posts}
 			<div transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 				{#each posts as x}
-					<a href="/{x.key}">{x.name}</a>
+					<a href="/{x.key}">{x.title}</a>
 
 					<br />
 				{:else}
@@ -177,7 +180,7 @@
 </Content>
 
 <style>
-	.left {
+	.title {
 		display: flex;
 		align-items: center;
 		gap: var(--sp2);
@@ -186,7 +189,8 @@
 	.fold {
 		margin: var(--sp2) 0;
 	}
-	.title {
+
+	.group_title {
 		font-weight: 900;
 		display: flex;
 		justify-content: space-between;
@@ -194,22 +198,25 @@
 		margin: var(--sp2) 0;
 	}
 
-	.row {
-		display: flex;
-		gap: var(--sp1);
-	}
-
 	.unused {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--sp1);
 	}
+
 	img {
+		width: 100px;
 		border-radius: var(--sp0);
 		cursor: pointer;
+		background-color: var(--bg2);
 	}
 	img.selected {
 		outline: 2px solid var(--cl1);
+	}
+
+	.line {
+		display: flex;
+		gap: var(--sp1);
 	}
 
 	.error {

@@ -169,7 +169,6 @@ def set_access(key):
     })
 
 
-# TODO: update this
 @bp.get("/file/error")
 def file_error():
     con, cur = db_open()
@@ -193,10 +192,11 @@ def file_error():
     users_photo = cur.fetchall()
     users_photo = [x["photo"] for x in users_photo if x["photo"]]
 
-    cur.execute("""SELECT files FROM post;""")
+    cur.execute("""SELECT photo, files FROM post;""")
     temp = cur.fetchall()
     posts_files = []
     for x in temp:
+        posts_files.append(x["photo"])
         if x["files"] != []:
             posts_files += x["files"]
 

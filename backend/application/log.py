@@ -175,7 +175,6 @@ def get_many():
     ))
     logs = cur.fetchall()
 
-    # TODO: update this
     for x in logs:
         if x["entity"]["type"] == "page":
             x["action"] = "viewed"
