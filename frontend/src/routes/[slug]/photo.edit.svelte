@@ -16,11 +16,14 @@
 		error = {};
 		let file = input.files[0];
 
-		if (!['image/jpeg', 'image/png'].includes(file.type)) {
+		if (!file) {
+			return;
+		} else if (!['image/jpeg', 'image/png'].includes(file.type)) {
 			error.error = 'invalid file';
 		}
 
 		Object.keys(error).length === 0 && submit(file);
+		input.value = '';
 	};
 
 	const submit = async (file) => {
@@ -37,6 +40,7 @@
 		});
 		resp = await resp.json();
 		$loading = false;
+		input.value = '';
 
 		if (resp.status == 200) {
 			entity.photo = resp[entity.type].photo;
@@ -45,7 +49,6 @@
 			get_din();
 			$notify.add('Photo updated');
 		} else {
-			input.value = '';
 			error = resp;
 		}
 	};
@@ -74,10 +77,10 @@
 		}
 	};
 
-	let dim = [1 , 1];
+	let dim = [1, 1];
 
 	const get_din = () => {
-		dim = [1 , 1];
+		dim = [1, 1];
 		let match = entity.photo?.match(/_(\d+)x(\d+)\./);
 		if (match) {
 			dim = [parseInt(match[1]), parseInt(match[2])];

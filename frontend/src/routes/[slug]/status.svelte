@@ -11,6 +11,10 @@
 	let error = {};
 
 	const submit = async (status) => {
+		if (!$module.post.photo) {
+			error.error = 'no title photo';
+			return;
+		}
 		error = {};
 
 		$loading = 'Saving Post . . .';
@@ -36,10 +40,22 @@
 </script>
 
 <div class="content">
-	<strong class="ititle">Change Status</strong>
-	<br /><br />
+	<div class="ititle">
+		<strong>Change Status</strong>
+	</div>
+
+	{#if error.error}
+		<div class="error">
+			{error.error}
+		</div>
+	{/if}
+	{#if error.status}
+		<div class="error">
+			{error.status}
+		</div>
+	{/if}
+
 	<div>Status: <strong>{_status}</strong></div>
-	<br />
 
 	<div>Change to:</div>
 	<div class="line">
@@ -79,22 +95,15 @@
 			</Button>
 		{/if}
 	</div>
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-	{#if error.status}
-		<div class="error">
-			{error.status}
-		</div>
-	{/if}
 </div>
 
 <style>
 	.content {
 		padding: var(--sp3);
+	}
+
+	.ititle {
+		margin-bottom: var(--sp2);
 	}
 
 	.line {

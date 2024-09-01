@@ -24,23 +24,23 @@
 	<Loading active={loading} size="20" />
 {:else}
 	<div class="line info">
-		<div class="line">
+		<div class="line" title="view{post.view > 1 ? 's' : ''}">
 			<Icon icon="visibility" />
 			{post.view}
 		</div>
-		<div class="line">
+		<div class="line" title="comment{post.comment > 1 ? 's' : ''}">
 			<Icon icon="comment" />
 			{post.comment}
 		</div>
-		<div class="line">
+		<div class="line" title="like{post._like > 1 ? 's' : ''}">
 			<Icon icon="thumb_up" />
 			{post._like}
 		</div>
-		<div class="line">
+		<div class="line" title="rating{post.ratings.length > 1 ? 's' : ''}">
 			<Icon icon="hotel_class" />
 			{parseFloat(post.rating)}{#if post.ratings.length != 0}|{post.ratings.length}{/if}
 		</div>
-		<div class="line">
+		<div class="line" title="share{post.share > 1 ? 's' : ''}">
 			<Icon icon="share" />
 			{post.share}
 		</div>

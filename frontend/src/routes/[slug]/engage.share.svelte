@@ -6,7 +6,7 @@
 	import Button from '$lib/button/button.svelte';
 	import Icon from '$lib/icon.svelte';
 
-	let text = `Check Out: ${$module.post.name}`;
+	let text = `Check Out: ${$module.post.title}`;
 
 	let platforms = [
 		{
@@ -19,7 +19,7 @@
 		},
 		{
 			name: 'whatsapp',
-			href: `whatsapp://send?text=${text}%20${$page.url.href}" tooltip="Whatsapp`
+			href: `whatsapp://send?text=${text}%20${$page.url.href}`
 		},
 		{
 			name: 'telegram',

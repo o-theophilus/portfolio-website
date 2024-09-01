@@ -253,8 +253,8 @@ def edit(key):
             error["status"] = "invalid request"
         elif request.json["status"] == post["status"]:
             error["status"] = "no change"
-        elif request.json["status"] == "active" and len(post["files"]) == 0:
-            error["status"] = "add title photo"
+        elif request.json["status"] == "active" and not post["photo"]:
+            error["status"] = "no title photo"
         elif request.json["status"] == "active" and not post["content"]:
             error["status"] = "no content"
         else:
@@ -284,186 +284,6 @@ def edit(key):
         entity_type="post",
         misc=request.json
     )
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "post": post_schema(post)
-    })
-
-
-@bp.post("/post/file/<key>")
-def add_file(key):
-    con, cur = db_open()
-
-    user = token_to_user(cur)
-    if not user:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
-
-    if "post:edit_files" not in user["access"]:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "unauthorized access"
-        })
-
-    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
-    post = cur.fetchone()
-    if 'files' not in request.files or not post:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid request"
-        })
-
-    error = ""
-    files = []
-    _req = post["content"].count("@[file]") + 1 - len(post["files"])
-
-    for x in request.files.getlist("files"):
-        err = ""
-        if x.content_type not in [
-                'image/jpeg', 'image/png', 'application/pdf']:
-            err = f"{x.filename} => invalid file"
-        elif _req - len(files) < 1:
-            err = f"{x.filename} => excess file"
-
-        if err:
-            error = f"{error}, {err}" if error else err
-        else:
-            files.append(x)
-
-    if files == []:
-        if not error:
-            error = "no file"
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": error
-        })
-
-    file_names = []
-    for x in files:
-        filename = storage("save", x)
-        file_names.append(filename)
-
-    cur.execute("""
-        UPDATE post
-        SET files = %s
-        WHERE key = %s
-        RETURNING *;
-    """, (
-        post["files"] + file_names,
-        post["key"]
-    ))
-    post = cur.fetchone()
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="added_file",
-        entity_key=post["key"],
-        entity_type="post",
-        misc={
-            "added": ", ".join(file_names),
-            "error": error
-        }
-    )
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "post": post_schema(post),
-        "error": error
-    })
-
-
-@ bp.put("/post/file/<key>")
-def order_delete_file(key):
-    con, cur = db_open()
-
-    user = token_to_user(cur)
-    if not user:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
-
-    if "post:edit_files" not in user["access"]:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "unauthorized access"
-        })
-
-    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
-    post = cur.fetchone()
-    if (
-        not post
-        or "files" not in request.json
-        or type(request.json["files"]) is not list
-    ):
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid request"
-        })
-
-    files = [p.split("/")[-1] for p in request.json["files"]]
-
-    if not all(x in post["files"] for x in files):
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid request"
-        })
-
-    for x in post["files"]:
-        if x not in files:
-            storage("delete", x)
-
-    draft = False
-    if post["status"] == "live" and files == []:
-        draft = True
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="edited_files",
-        entity_key=post["key"],
-        entity_type="post",
-        misc={
-            "from": post["files"],
-            "to": files
-        }
-    )
-
-    if draft:
-        log(
-            cur=cur,
-            user_key=user["key"],
-            action="edited",
-            entity_key=post["key"],
-            entity_type="post",
-            misc={"status": "draft"}
-        )
-
-    cur.execute("""
-        UPDATE post
-        SET files = %s, status = %s
-        WHERE key = %s
-        RETURNING *;
-    """, (
-        files,
-        "draft" if draft else post["status"],
-        post["key"]
-    ))
-    post = cur.fetchone()
 
     db_close(con, cur)
     return jsonify({
@@ -575,14 +395,6 @@ def delete_photo(key):
 
     storage("delete", post["photo"])
 
-    cur.execute("""
-        UPDATE post
-        SET photo = NULL
-        WHERE key = %s
-        RETURNING *;
-    """, (post["key"],))
-    post = cur.fetchone()
-
     log(
         cur=cur,
         user_key=user["key"],
@@ -591,6 +403,192 @@ def delete_photo(key):
         entity_key=post["key"],
         misc={"photo": post["photo"]}
     )
+
+    if post["status"] == "active":
+        log(
+            cur=cur,
+            user_key=user["key"],
+            action="edited",
+            entity_key=post["key"],
+            entity_type="post",
+            misc={"status": "draft"}
+        )
+
+    cur.execute("""
+        UPDATE post
+        SET photo = NULL, status = %s
+        WHERE key = %s
+        RETURNING *;
+    """, (
+        "draft" if post["status"] == "active" else post["status"],
+        post["key"]
+    ))
+    post = cur.fetchone()
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "post": post_schema(post)
+    })
+
+
+@bp.post("/post/file/<key>")
+def add_file(key):
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    if "post:edit_files" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
+    if 'files' not in request.files or not post:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    error = ""
+    files = []
+
+    for x in request.files.getlist("files"):
+        err = ""
+        if x.content_type not in [
+                'image/jpeg', 'image/png', 'application/pdf']:
+            err = f"{x.filename} => invalid file"
+        elif len(post["files"]) + len(
+                files) >= post["content"].count("@[file]"):
+            err = f"{x.filename} => excess file"
+
+        if err:
+            error = f"{error}, {err}" if error else err
+        else:
+            files.append(x)
+
+    if files == []:
+        if not error:
+            error = "no file"
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": error
+        })
+
+    file_names = []
+    for x in files:
+        filename = storage("save", x)
+        file_names.append(filename)
+
+    cur.execute("""
+        UPDATE post
+        SET files = %s
+        WHERE key = %s
+        RETURNING *;
+    """, (
+        post["files"] + file_names,
+        post["key"]
+    ))
+    post = cur.fetchone()
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="added_file",
+        entity_key=post["key"],
+        entity_type="post",
+        misc={
+            "added": ", ".join(file_names),
+            "error": error
+        }
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "post": post_schema(post),
+        "error": error
+    })
+
+
+@ bp.put("/post/file/<key>")
+def order_delete_file(key):
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    if "post:edit_files" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
+    if (
+        not post
+        or "files" not in request.json
+        or type(request.json["files"]) is not list
+    ):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    files = [p.split("/")[-1] for p in request.json["files"]]
+
+    if not all(x in post["files"] for x in files):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    for x in post["files"]:
+        if x not in files:
+            storage("delete", x)
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="edited_files",
+        entity_key=post["key"],
+        entity_type="post",
+        misc={
+            "from": post["files"],
+            "to": files
+        }
+    )
+
+    cur.execute("""
+        UPDATE post
+        SET files = %s
+        WHERE key = %s
+        RETURNING *;
+    """, (
+        files,
+        post["key"]
+    ))
+    post = cur.fetchone()
 
     db_close(con, cur)
     return jsonify({

@@ -6,11 +6,11 @@
 	let emit = createEventDispatcher();
 
 	let post = $module.post;
-	let count = post.content.split('@[file]').length;
+	let count = post.content.split('@[file]').length - 1;
 	let active_photo = '';
 	let input;
 	let dragover = false;
-	let error = {};
+	export let error = {};
 
 	const on_input = () => {
 		error = {};
@@ -34,6 +34,7 @@
 		}
 
 		files.length > 0 && upload(files);
+		input.value = '';
 	};
 
 	const upload = async (files) => {
@@ -52,6 +53,7 @@
 		});
 		resp = await resp.json();
 		$loading = false;
+		input.value = '';
 
 		if (resp.status == 200) {
 			post = resp.post;
@@ -60,7 +62,7 @@
 			$notify.add('Photo added');
 
 			if (resp.error) {
-				error.error = error.error ? `${error.error}, ${resp.error}` : resp.error;
+				error = resp;
 			}
 		} else {
 			error = resp;
@@ -133,12 +135,6 @@
 	}}
 />
 
-{#if error.error}
-	<div class="error">
-		{error.error}
-	</div>
-{/if}
-
 <style>
 	img {
 		width: 100%;
@@ -153,9 +149,5 @@
 	.incomplete.dragover {
 		outline-color: var(--cl1);
 		cursor: pointer;
-	}
-
-	.error {
-		margin: var(--sp2) 0;
 	}
 </style>

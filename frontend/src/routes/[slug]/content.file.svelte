@@ -3,6 +3,8 @@
 	import Mod from './content.file.mod.svelte';
 	let mod;
 	let add;
+
+	let error = {};
 </script>
 
 <div class="comp">
@@ -12,12 +14,21 @@
 
 	<Add
 		bind:this={add}
+		bind:error
 		on:update={(e) => {
 			mod.reset(e.detail);
 		}}
 	/>
+
+	{#if error.error}
+		<div class="error">
+			{error.error}
+		</div>
+	{/if}
+
 	<Mod
 		bind:this={mod}
+		bind:error
 		on:add={() => {
 			add.add();
 		}}
@@ -33,5 +44,9 @@
 <style>
 	.comp {
 		padding: var(--sp3);
+	}
+
+	.error {
+		margin: var(--sp2) 0;
 	}
 </style>

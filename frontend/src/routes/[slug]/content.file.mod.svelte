@@ -13,9 +13,9 @@
 
 	let post = $module.post;
 	let files = [...post.files];
-	let active_photo = files[0] || '/no_file.png';
+	let active_photo = files[0];
 	let count = post.content.split('@[file]').length - 1;
-	let error = {};
+	export let error = {};
 
 	const order = (dir = true) => {
 		error = {};
@@ -42,8 +42,17 @@
 	const remove = () => {
 		error = {};
 
+		let i = files.findIndex((x) => x == active_photo);
 		files = files.filter((x) => x != active_photo);
-		active_photo = files[0] || '/no_file.png';
+
+		if (i < files.length) {
+			active_photo = files[i];
+		} else if (i == files.length) {
+			active_photo = files[i - 1];
+		} else {
+			active_photo = files[0];
+		}
+
 		emit('active', active_photo);
 	};
 
@@ -53,7 +62,7 @@
 		post.files = [...data];
 		files = [...data];
 		if (!files.includes(active_photo)) {
-			active_photo = files[0] || '/no_file.png';
+			active_photo = files[0];
 			emit('active', active_photo);
 		}
 	};
@@ -164,12 +173,6 @@
 	</Button>
 </div>
 
-{#if error.error}
-	<div class="error">
-		{error.error}
-	</div>
-{/if}
-
 <style>
 	.line {
 		--size: 50px;
@@ -217,9 +220,5 @@
 
 	img {
 		width: 100%;
-	}
-
-	.error {
-		margin: var(--sp2) 0;
 	}
 </style>
