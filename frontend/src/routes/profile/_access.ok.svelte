@@ -28,7 +28,7 @@
 	const submit = async () => {
 		error = {};
 		$loading = 'saving . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/access/${$page.data.user.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/user/access/${$page.data.user.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',

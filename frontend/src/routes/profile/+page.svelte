@@ -27,7 +27,7 @@
 	let edit_mode = false;
 
 	let is_admin = $me.access.some((x) =>
-		['user:reset_name', 'user:reset_photo', 'user:block'].includes(x)
+		['user:set_access', 'user:reset_name', 'user:reset_photo', 'user:block'].includes(x)
 	);
 
 	const update = (data) => {
@@ -183,6 +183,19 @@
 						Delete Account
 					</Button>
 				{:else if is_admin}
+					{#if $me.access.includes('user:set_access')}
+						<Button
+							size="small"
+							on:click={() => {
+								$module = {
+									module: Access
+								};
+							}}
+						>
+							Access
+						</Button>
+					{/if}
+
 					{#if $me.access.some((x) => ['user:reset_name', 'user:reset_photo'].includes(x))}
 						<Button
 							size="small"
@@ -226,20 +239,6 @@
 			<div class="pad">
 				<Link href="/log?{new URLSearchParams(`search=${user.email}:all:all:`).toString()}">
 					View Logs
-				</Link>
-			</div>
-		{/if}
-
-		{#if user && user.key != $me.key && user.status == 'confirmed' && $me.access.includes('user:set_access')}
-			<div class="pad">
-				<Link
-					on:click={() => {
-						$module = {
-							module: Access
-						};
-					}}
-				>
-					Edit Access
 				</Link>
 			</div>
 		{/if}

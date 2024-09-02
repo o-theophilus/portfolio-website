@@ -110,8 +110,8 @@ def get_access(search=None):
     })
 
 
-@bp.put("/admin/access/<key>")
-def set_access(key):
+@bp.put("/admin/user/access/<key>")
+def user_access(key):
     con, cur = db_open()
 
     me = token_to_user(cur)
