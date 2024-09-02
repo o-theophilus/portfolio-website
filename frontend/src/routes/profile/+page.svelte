@@ -19,10 +19,16 @@
 	import Delete from './_delete.svelte';
 	import Password from './_password_1_email.svelte';
 	import Access from './_access.svelte';
+	import Action from './_admin_action.svelte';
+	import Block from './_admin_block.svelte';
 
 	export let data;
 	$: user = data.user;
 	let edit_mode = false;
+
+	let is_admin = $me.access.some((x) =>
+		['user:reset_name', 'user:reset_photo', 'user:block'].includes(x)
+	);
 
 	const update = (data) => {
 		user = data;
@@ -56,7 +62,7 @@
 		<div class="title">
 			<strong class="ititle">Profile </strong>
 
-			{#if user.key == $me.key || $me.access.includes('user:edit_name')}
+			{#if user.key == $me.key || is_admin}
 				<Toggle
 					state_2="edit"
 					active={edit_mode}
@@ -74,7 +80,7 @@
 				<Avatar name={user.name} photo={user.photo} size="120" />
 			</div>
 
-			{#if edit_mode && (user.key == $me.key || $me.access.includes('user:edit_photo'))}
+			{#if edit_mode && user.key == $me.key}
 				<BRound
 					icon="edit"
 					on:click={() => {
@@ -100,7 +106,7 @@
 			<strong class="ititle">
 				{user.name}
 			</strong>
-			{#if edit_mode && (user.key == $me.key || $me.access.includes('user:edit_photo'))}
+			{#if edit_mode && user.key == $me.key}
 				<BRound
 					icon="edit"
 					on:click={() => {
@@ -148,33 +154,69 @@
 			{/if}
 		</div>
 
-		{#if edit_mode && user.key == $me.key}
+		{#if edit_mode}
 			<br />
 			<div class="line">
-				<Button
-					size="small"
-					on:click={() => {
-						$module = {
-							module: Password
-						};
-					}}
-				>
-					<Icon icon="key" size="1.4" />
-					Change Password
-				</Button>
+				{#if user.key == $me.key}
+					<Button
+						size="small"
+						on:click={() => {
+							$module = {
+								module: Password
+							};
+						}}
+					>
+						<Icon icon="key" size="1.4" />
+						Change Password
+					</Button>
 
-				<Button
-					size="small"
-					on:click={() => {
-						$module = {
-							module: Delete,
-							user
-						};
-					}}
-				>
-					<Icon icon="delete" size="1.4" />
-					Delete Account
-				</Button>
+					<Button
+						size="small"
+						on:click={() => {
+							$module = {
+								module: Delete,
+								user
+							};
+						}}
+					>
+						<Icon icon="delete" size="1.4" />
+						Delete Account
+					</Button>
+				{:else if is_admin}
+					{#if $me.access.some((x) => ['user:reset_name', 'user:reset_photo'].includes(x))}
+						<Button
+							size="small"
+							on:click={() => {
+								$module = {
+									module: Action,
+									user,
+									update
+								};
+							}}
+						>
+							Reset
+						</Button>
+					{/if}
+
+					{#if $me.access.includes('user:block')}
+						<Button
+							size="small"
+							on:click={() => {
+								$module = {
+									module: Block,
+									user,
+									update
+								};
+							}}
+						>
+							{#if user.status == 'blocked'}
+								Unblock
+							{:else}
+								Block
+							{/if}
+						</Button>
+					{/if}
+				{/if}
 			</div>
 		{/if}
 		<br /><br /><br />

@@ -143,7 +143,8 @@ def get_many():
         "status": 200,
         "users": [user_schema(x) for x in users],
         "order_by": list(order_by.keys()),
-        "_status": ['anonymous', 'signedup', 'confirmed', "deleted"],
+        "_status": [
+            'anonymous', 'signedup', 'confirmed', "blocked", "deleted"],
         "total_page": ceil(users[0]["_count"] / page_size) if users else 0
     })
 

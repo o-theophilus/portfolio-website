@@ -191,8 +191,6 @@ def get_many():
             if x["action"] == "viewed":
                 if x["user"]["key"] == x["entity"]["key"]:
                     x["entity"]["type"] = "profile"
-            else:
-                x["entity"]["type"] = ""
 
     sq = search_query(cur)
     db_close(con, cur)

@@ -16,8 +16,9 @@ bp = Blueprint("admin", __name__)
 access = {
     "user": [
         ['view', 1],
-        ['edit_name', 2],
-        ['edit_photo', 2],
+        ['reset_name', 2],
+        ['reset_photo', 2],
+        ['block', 2],
         ['set_access', 3]
     ],
     "admin": [
@@ -166,6 +167,156 @@ def set_access(key):
     return jsonify({
         "status": 200,
         "user": user_schema(user)
+    })
+
+
+@bp.put("/admin/user/actions/<key>")
+def user_actions(key):
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
+    e_user = cur.fetchone()
+    if (
+        not e_user or user["key"] == e_user["key"]
+        or e_user["email"] == os.environ["MAIL_USERNAME"]
+    ):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    error = {}
+    if (
+        "actions" not in request.json
+        or type(request.json["actions"]) is not list
+        or request.json["actions"] == []
+    ):
+        error["actions"] = "select action"
+    if "note" not in request.json or not request.json["note"]:
+        error["note"] = "cannot be empty"
+    if error != {}:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            **error
+        })
+
+    actions = []
+    error = None
+    if "reset_name" in request.json["actions"]:
+        if "user:reset_name" in user["access"]:
+            actions.append("name")
+        else:
+            error = "unauthorized access"
+    if "reset_photo" in request.json["actions"]:
+        if "user:reset_photo" in user["access"]:
+            actions.append("photo")
+        else:
+            error = "unauthorized access"
+
+    if actions == []:
+        error = "invalid request"
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": error
+        })
+
+    cur.execute("""
+        UPDATE "user"
+        SET name = %s, photo = %s
+        WHERE key = %s
+        RETURNING *;
+    """, (
+        f"user_{uuid4(
+        ).hex[-4:]}" if "name" in actions else e_user["name"],
+        None if "photo" in actions else e_user["photo"],
+        e_user["key"]
+    ))
+    e_user = cur.fetchone()
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="reset",
+        entity_type="user",
+        entity_key=e_user["key"],
+        misc={
+            "field(s)": ", ".join(actions),
+            "note": request.json["note"]
+        }
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "user": user_schema(e_user)
+    })
+
+
+@bp.put("/admin/user/block/<key>")
+def user_block(key):
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
+    e_user = cur.fetchone()
+    if (
+        not e_user or user["key"] == e_user["key"]
+        or e_user["email"] == os.environ["MAIL_USERNAME"]
+    ):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    if "note" not in request.json or not request.json["note"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "note": "cannot be empty"
+        })
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="unblocked" if e_user["status"] == "blocked" else "blocked",
+        entity_type="user",
+        entity_key=e_user["key"],
+        misc={"note": request.json["note"]}
+    )
+
+    cur.execute("""
+        UPDATE "user" SET status = %s WHERE key = %s
+        RETURNING *;
+    """, (
+        "signedup" if e_user["status"] == "blocked" else "blocked",
+        e_user["key"]
+    ))
+    e_user = cur.fetchone()
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "user": user_schema(e_user)
     })
 
 

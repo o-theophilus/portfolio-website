@@ -33,7 +33,11 @@ def init():
     token = request.headers["Authorization"]
     user = token_to_user(cur)
 
-    if not user or user["status"] == "confirmed" and not user["login"]:
+    if (
+        not user
+        or user["status"] == "blocked"
+        or (user["status"] == "confirmed" and not user["login"])
+    ):
         user = anon(cur)
 
         log(
@@ -266,7 +270,7 @@ def login():
 
     if (
         not in_user
-        or in_user["status"] not in ['signedup', 'confirmed']
+        or in_user["status"] not in ['signedup', 'confirmed', 'blocked']
         or not check_password_hash(
             in_user["password"], request.json["password"])
     ):
@@ -276,7 +280,14 @@ def login():
             "error": "your email or password is incorrect"
         })
 
-    if in_user["status"] != "confirmed":
+    if in_user["status"] == "blocked":
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "account blocked"
+        })
+
+    if in_user["status"] == "signedup":
         send_mail(
             in_user["email"],
             "Welcome to my portfolio website! \

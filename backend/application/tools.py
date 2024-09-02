@@ -21,6 +21,7 @@ def token_tool():
     )
 
 
+# TODO: restrict access of blocked users
 def token_to_user(cur):
     if (
         "Authorization" not in request.headers or
