@@ -144,10 +144,10 @@ def delete_live(x, path):
 
 def storage(method, x, thumbnail=False, path=""):
     test = False
-    if current_app.config["DEBUG"]:
-        folder = f"{os.getcwd()}/static/{path}"
-        os.makedirs(folder, exist_ok=True)
-        test = True
+    # if current_app.config["DEBUG"]:
+    #     folder = f"{os.getcwd()}/static/{path}"
+    #     os.makedirs(folder, exist_ok=True)
+    #     test = True
 
     if method == "save":
         if x.content_type in ['image/jpeg', 'image/png']:
