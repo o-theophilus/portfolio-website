@@ -44,7 +44,7 @@ post_table = """CREATE TABLE IF NOT EXISTS post (
     dislike TEXT[] DEFAULT ARRAY[]::TEXT[],
     ratings JSONB[] DEFAULT ARRAY[]::JSONB[],
 
-    FOREIGN KEY (author) REFERENCES "user"(key)
+    FOREIGN KEY (author_key) REFERENCES "user"(key)
 );"""
 
 

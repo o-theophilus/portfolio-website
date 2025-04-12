@@ -2,13 +2,14 @@ from flask import Blueprint, jsonify, request
 import re
 import os
 from .tools import send_mail
-from deta import Deta
 from .postgres import db_open, db_close
 from .postgres import (
     post_table, user_table, log_table, comment_table,
     code_table, setting_table, report_table)
-from uuid import uuid4
 from .admin import access
+import psycopg2
+import psycopg2.extras
+from werkzeug.security import generate_password_hash
 
 
 bp = Blueprint("api", __name__)
@@ -94,71 +95,81 @@ def create_tables():
     })
 
 
-def deta_to_postgres():
-    con, cur = db_open()
+@bp.get("/fix")
+def copy_table():
+    con1 = psycopg2.connect("postgres://admin:admin@localhost/loup")
+    cur1 = con1.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-    source = Deta(os.environ["DETA_KEY"]).Base("live")
+    cur1.execute("""SELECT * FROM post;""")
+    posts = cur1.fetchall()
 
-    res = source.fetch()
-    entities = res.items
-    while res.last:
-        res = source.fetch(last=res.last)
-        entities += res.items
+    con1.commit()
+    cur1.close()
+    con1.close()
 
-    cur.execute('SELECT * FROM "user" WHERE email = %s;',
-                (os.environ["MAIL_USERNAME"],))
-    admin = cur.fetchone()
+    con2 = psycopg2.connect(
+        "postgresql://postgres.viwdxqnhuoozxslwkbmr:qulWftcsaaIeB8bL@" +
+        "aws-0-eu-central-1.pooler.supabase.com:6543/postgres")
+    cur2 = con2.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-    for x in entities:
-        if x["type"] == "post":
+    cur2.execute("""
+            INSERT INTO "user" (key, status, name, email, password, access)
+            VALUES (%s, %s, %s, %s, %s, %s);
+        """, (
+        "c7a9b3b4b68a4cc5afbc858b1b703ab2",
+        "confirmed",
+        "Theophilus",
+        "theophilus.ogbolu@protonmail.com",
+        generate_password_hash(
+            os.environ["MAIL_PASSWORD"], method="scrypt"),
+        [f"{x}:{y[0]}" for x in access for y in access[x]]
+    ))
 
-            cur.execute("""
-                INSERT INTO post (
-                    key,
-                    status,
-                    date,
-                    author,
-                    title,
-                    slug,
-                    content,
-                    description,
-                    files,
-                    tags
-                )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-            """, (
-                x["key"],
-                "active" if x["status"] == "publish" else x["status"],
-                x["created_at"],
-                admin["key"],
-                x["title"],
-                x["slug"],
-                x["content"],
-                x["description"],
-                x["photos"],
-                x["tags"]
-            ))
+    for x in posts:
+        cur2.execute("""
+            INSERT INTO post (
+                key,
+                status,
+                date,
+                author_key,
+                title,
+                slug,
+                content,
+                description,
+                photo
+                --files,
+                --tags,
+                --"like",
+                --dislike,
+                --ratings
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+        """, (
+            x["key"],
+            x["status"],
+            x["date"],
+            x["author_key"],
+            x["title"],
+            x["slug"],
+            x["content"],
+            x["description"],
+            x["photo"],
+            # json.dumps(x["files"]),
+            # json.dumps(x["tags"]),
+            # json.dumps(x["like"]),
+            # json.dumps(x["dislike"]),
+            # json.dumps(x["ratings"]),
+        ))
 
-            cur.execute("""
-                INSERT INTO log (
-                    key, date, user_key, action, entity_key, entity_type
-                ) VALUES (%s, %s, %s, %s, %s, %s);
-            """, (
-                uuid4().hex,
-                x["created_at"],
-                admin["key"],
-                "created",
-                x["key"],
-                "post"
-            ))
+    con2.commit()
+    cur2.close()
+    con2.close()
 
-    db_close(con, cur)
     return jsonify({
         "status": 200
     })
 
 
-# @bp.get("/fix")
 def fix_access():
     con, cur = db_open()
 
@@ -201,15 +212,6 @@ def general_fix():
 
     #     ALTER TABLE order_item
     # """)
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200
-    })
-
-
-def live_fix():
-    con, cur = db_open()
 
     db_close(con, cur)
     return jsonify({

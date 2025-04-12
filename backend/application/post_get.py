@@ -244,7 +244,7 @@ def similar_posts(key):
     con, cur = db_open()
 
     cur.execute("""
-        SELECT * FROM post WHERE key = %s
+        SELECT * FROM post WHERE key = %s;
     """, (key,))
     post = cur.fetchone()
 
