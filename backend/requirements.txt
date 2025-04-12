@@ -3,7 +3,7 @@ flask-cors
 python-dotenv
 pillow
 requests
-deta
+supabase
 psycopg2-binary
 pytest
 protonmail-api-client

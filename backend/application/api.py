@@ -11,7 +11,6 @@ import psycopg2
 import psycopg2.extras
 from werkzeug.security import generate_password_hash
 
-
 bp = Blueprint("api", __name__)
 
 
@@ -95,7 +94,7 @@ def create_tables():
     })
 
 
-@bp.get("/fix")
+# @bp.get("/fix")
 def copy_table():
     con1 = psycopg2.connect("postgres://admin:admin@localhost/loup")
     cur1 = con1.cursor(cursor_factory=psycopg2.extras.RealDictCursor)

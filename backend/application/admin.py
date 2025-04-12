@@ -352,11 +352,11 @@ def file_error():
             posts_files += x["files"]
 
     all_used_files = users_photo + posts_files
-    paths = drive().list()["names"]
-    all_stored_files = [x.split('/')[1] for x in paths]
+    paths = drive().list()
+    all_stored_files = [x["name"] for x in paths]
 
     cur.execute("""
-        SELECT "user".key, "user".name
+        SELECT key, name
         FROM "user"
         WHERE
             photo IS NOT NULL
@@ -365,10 +365,13 @@ def file_error():
     _users = cur.fetchall()
 
     cur.execute("""
-        SELECT post.key, post.title
+        SELECT key, title
         FROM post
-        WHERE NOT ARRAY[%s] @> files;
-    """, (all_stored_files,))
+        WHERE
+            photo IS NOT NULL
+            AND NOT photo = ANY(%s)
+            OR NOT ARRAY[%s] @> files;
+    """, (all_stored_files, all_stored_files))
     _posts = cur.fetchall()
 
     db_close(con, cur)

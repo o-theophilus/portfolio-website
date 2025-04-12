@@ -14,7 +14,6 @@
     "bj",
     "cloudinary",
     "connekt",
-    "detabase",
     "deve",
     "emek",
     "enroute",
@@ -45,6 +44,7 @@
     "signedup",
     "sla",
     "stores",
+    "supabase",
     "unauthorised",
     "werkzeug",
     "y"
