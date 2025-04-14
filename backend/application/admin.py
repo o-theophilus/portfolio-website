@@ -503,7 +503,7 @@ def set_highlight():
 
     cur.execute("SELECT * FROM setting WHERE key = 'highlight';",)
     keys = cur.fetchone()["misc"]["highlight"]
-    _from = keys
+    _from = [*keys]
 
     if post["key"] in keys:
         keys.remove(post["key"])
@@ -519,8 +519,8 @@ def set_highlight():
         action="edited_highlight",
         entity_type="setting",
         misc={
-            "from": _from,
-            "to": keys
+            "from": ", ".join(_from),
+            "to": ", ".join(keys)
         }
     )
 
