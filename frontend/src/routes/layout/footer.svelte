@@ -35,7 +35,7 @@
 				<Nav />
 			</div>
 		</section>
-		<div class="copyright">&copy 2024 | Designed & Built by Theophilus Ogbolu.</div>
+		<div class="copyright">&copy 2025 | Designed & Built by Theophilus Ogbolu.</div>
 		<br /><br /><br />
 	</footer>
 </Content>
