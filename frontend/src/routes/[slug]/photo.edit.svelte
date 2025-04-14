@@ -96,6 +96,7 @@
 	<br />
 	<img
 		src={entity.photo || '/select_photo.png'}
+		onerror="this.src='/file_error.png';"
 		alt={entity.name}
 		class:dragover
 		class:no_photo={!has_photo}

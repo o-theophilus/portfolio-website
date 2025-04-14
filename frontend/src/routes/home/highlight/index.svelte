@@ -138,6 +138,7 @@
 								role="presentation"
 								src={post.photo || '/no_photo.png'}
 								alt={post.title}
+								onerror="this.src='/file_error.png';"
 							/>
 						{/each}
 					</div>

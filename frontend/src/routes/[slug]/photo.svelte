@@ -11,7 +11,7 @@
 </script>
 
 <div class="img">
-	<img src={post.photo || '/no_photo.png'} alt={post.title} />
+	<img src={post.photo || '/no_photo.png'} alt={post.title} onerror="this.src='/file_error.png';" />
 	<div class="line">
 		{#if $user.access.includes('post:edit_photo') && edit_mode}
 			<Button
