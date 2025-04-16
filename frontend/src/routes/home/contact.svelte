@@ -9,7 +9,7 @@
 		<Observe let:intersecting>
 			<div class="observe" class:intersecting>
 				<div>
-					<strong class="ititle"> How I Can Help </strong>
+					<strong class="ititle"> How Can I Help? </strong>
 					<br />
 					I am currently available for freelance work and collaborations. Whether you're looking to refresh
 					your branding, create a new website, or design marketing materials, I'm here to help.

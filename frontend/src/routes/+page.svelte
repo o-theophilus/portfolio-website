@@ -7,7 +7,7 @@
 	import About from './home/about.svelte';
 	import Skill from './home/skill.svelte';
 	import Experience from './home/experience.svelte';
-	import Contact from './home/cta.svelte';
+	import Contact from './home/contact.svelte';
 	import Carousel from './home/highlight/index.svelte';
 	import Meta from '$lib/meta.svelte';
 	import Log from '$lib/log.svelte';
