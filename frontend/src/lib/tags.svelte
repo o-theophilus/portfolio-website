@@ -13,7 +13,7 @@
 	export let center = false;
 </script>
 
-{#if tags}
+{#if tags.length > 0}
 	<div class="line" class:center>
 		{#each tags as tag, i}
 			{#if style == 0}

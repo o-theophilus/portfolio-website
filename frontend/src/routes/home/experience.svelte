@@ -178,7 +178,8 @@
 		</div>
 		<br />
 		<Link
-			href="https://drive.google.com/file/d/17Oznj43Gm_oX_SgKbqa0U9-Hex9X3bFn/view?usp=drive_link"
+			href="/Theophilus_Ogbolu_Resume.pdf"
+			blank
 		>
 			<div class="link">
 				View Résumé
