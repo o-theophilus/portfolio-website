@@ -24,6 +24,7 @@
 	"dependencies": {
 		"markdown-it": "^14.1.0",
 		"markdown-it-highlightjs": "^4.1.0",
+		"markdown-it-link-attributes": "^4.0.1",
 		"markdown-it-video": "^0.6.3"
 	}
 }
