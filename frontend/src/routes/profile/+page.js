@@ -4,7 +4,7 @@ import { state, loading } from "$lib/store.js"
 
 export const load = async ({ parent, fetch, url }) => {
 	let a = await parent();
-	if (!a.locals.user.login) {
+	if (!a.locals.user.login && !url.searchParams.has('search')) {
 		throw redirect(307, `/?module=login&return_url=${url.pathname}`);
 	}
 

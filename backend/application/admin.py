@@ -581,8 +581,8 @@ def edit_highlight():
         action="edited_highlight",
         entity_type="setting",
         misc={
-            "from": keys,
-            "to": request.json["keys"]
+            "from": ", ".join(keys),
+            "to": ", ".join(request.json["keys"])
         }
     )
 

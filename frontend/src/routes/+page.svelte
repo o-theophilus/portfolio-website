@@ -12,6 +12,7 @@
 	import Meta from '$lib/meta.svelte';
 	import Log from '$lib/log.svelte';
 	import Dialogue from '$lib/dialogue.svelte';
+	import Login from './account/login.svelte';
 
 	onMount(() => {
 		if ($page.url.searchParams.has('module')) {
@@ -20,9 +21,12 @@
 				case 'dialogue':
 					_module.module = Dialogue;
 					break;
+				case 'login':
+					_module.module = Login;
+					break;
 			}
 
-			for (const x of ['title', 'status', 'message']) {
+			for (const x of ['title', 'status', 'message', 'return_url']) {
 				if ($page.url.searchParams.has(x)) {
 					_module[x] = $page.url.searchParams.get(x);
 				}
