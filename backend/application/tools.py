@@ -3,9 +3,11 @@ from itsdangerous import URLSafeTimedSerializer
 import os
 from uuid import uuid4
 import random
-from protonmail import ProtonMail
 from datetime import datetime, timedelta
 import json
+import smtplib
+import ssl
+from email.mime.text import MIMEText
 
 
 reserved_words = [
@@ -117,18 +119,29 @@ def check_code(cur, key, email, n="code"):
 
 
 def send_mail(to, subject, body):
+    print(f"Sending email to {to} with subject '{subject}'")
+
     if current_app.config["DEBUG"]:
         print(body)
     else:
-        proton = ProtonMail()
-        proton.login(os.environ["MAIL_USERNAME"], os.environ["MAIL_PASSWORD"])
-        proton.send_message(
-            proton.create_message(
-                recipients=[to],
-                subject=subject,
-                body=body,
-            )
-        )
+        msg = MIMEText(body, "html")
+        msg['Subject'] = subject
+        msg['From'] = os.environ["MAIL_USERNAME"]
+        msg['To'] = to
+
+        context = ssl.create_default_context()
+
+        try:
+            with smtplib.SMTP("workplace.truehost.cloud", 587) as server:
+                server.starttls(context=context)
+                server.login(os.environ["MAIL_USERNAME"],
+                             os.environ["MAIL_PASSWORD"])
+                server.sendmail(os.environ["MAIL_USERNAME"], [
+                                to], msg.as_string())
+
+            print("Email sent successfully")
+        except Exception as e:
+            print(f"Error sending email: {e}")
 
 
 def user_schema(user):

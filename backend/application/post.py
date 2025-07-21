@@ -522,7 +522,7 @@ def add_file(key):
     })
 
 
-@ bp.put("/post/file/<key>")
+@bp.put("/post/file/<key>")
 def order_delete_file(key):
     con, cur = db_open()
 
