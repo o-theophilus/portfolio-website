@@ -10,11 +10,11 @@
 
 	let { search_query } = $props();
 
-	let user_key = '';
-	let entity_type = 'all';
-	let action = 'all';
-	let entity_key = '';
-	let search = `${user_key}:${entity_type}:${action}:${entity_key}`;
+	let user_key = $state('');
+	let entity_type = $state('all');
+	let action = $state('all');
+	let entity_key = $state('');
+	let search = $derived(`${user_key}:${entity_type}:${action}:${entity_key}`);
 	let drop_1;
 	let drop_2;
 

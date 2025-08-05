@@ -92,7 +92,7 @@
 		}
 	};
 
-	active(post.files[0]);
+	// active(post.files[0]);
 </script>
 
 <img
