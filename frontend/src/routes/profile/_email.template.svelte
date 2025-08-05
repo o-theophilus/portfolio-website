@@ -1,8 +1,8 @@
 <script>
-	import Template from '$lib/email_template.svelte';
+	import { EmailTemplate } from '$lib/layout';
 </script>
 
-<Template>
+<EmailTemplate>
 	<b> Dear {'{'}name{'}'}, </b>
 	<br />
 	<br />
@@ -36,4 +36,4 @@
 	<br />
 	<br />
 	<b> Theophilus Ogbolu</b>
-</Template>
+</EmailTemplate>

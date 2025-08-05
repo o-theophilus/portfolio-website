@@ -3,46 +3,42 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { flip } from 'svelte/animate';
 
-	import { loading, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { loading, notify, app } from '$lib/store.svelte.js';
 
-	import Content from '$lib/content.svelte';
-	import Meta from '$lib/meta.svelte';
-	import ButtonFold from '$lib/button/fold.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Back from '$lib/button/back.svelte';
-	import Log from '$lib/log.svelte';
+	import { Content } from '$lib/layout';
+	import { FoldButton, Button, BackButton } from '$lib/button';
+	import { Meta, Log } from '$lib/macro';
 
-	export let data;
-	let { unused } = data;
+	let { data } = $props();
+	let unused = $state(data.unused);
 	let { users } = data;
 	let { posts } = data;
 
-	let open_unused = unused.length > 0;
-	let open_users = users.length > 0;
-	let open_posts = posts.length > 0;
+	let open_unused = $derived(unused.length > 0);
+	let open_users = $state(users.length > 0);
+	let open_posts = $state(posts.length > 0);
 
-	let files = [];
-	let error = {};
+	let files = $state([]);
+	let error = $state({});
 
 	const remove = async () => {
 		error = {};
 
-		$loading = 'deleting . . .';
+		loading.open('deleting . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/file/error`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify({ files })
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
 			unused = unused.filter((x) => !files.includes(x));
-			$notify.add(`Photo${files.length > 1 ? 's' : ''} Deleted`);
+			notify.open(`Photo${files.length > 1 ? 's' : ''} Deleted`);
 			files = [];
 		} else {
 			error = resp;
@@ -55,16 +51,16 @@
 
 <Content>
 	<div class="title">
-		<Back />
+		<BackButton />
 		<strong class="ititle"> Photo Error </strong>
 	</div>
 
 	<div class="fold">
 		<div class="group_title">
 			Unused Photo{unused.length > 1 ? 's' : ''} / Fils{unused.length > 1 ? 's' : ''} ({unused.length})
-			<ButtonFold
+			<FoldButton
 				open={open_unused}
-				on:click={() => {
+				onclick={() => {
 					open_unused = !open_unused;
 				}}
 			/>
@@ -78,7 +74,7 @@
 						class:selected={files.includes(x)}
 						src={x.slice(-4) == '.jpg' ? `${x}/100` : '/no_preview.png'}
 						alt="unused file"
-						on:click={() => {
+						onclick={() => {
 							if (files.includes(x)) {
 								files = files.filter((y) => y != x);
 							} else {
@@ -103,7 +99,7 @@
 				<br />
 				<div class="line">
 					<Button
-						on:click={() => {
+						onclick={() => {
 							if (files.length != unused.length) {
 								files = unused;
 							} else {
@@ -118,7 +114,7 @@
 							None
 						{/if}
 					</Button>
-					<Button extra="hover_red" on:click={remove} disabled={files.length == 0}>
+					<Button extra="hover_red" onclick={remove} disabled={files.length == 0}>
 						Delete ({files.length})
 					</Button>
 				</div>
@@ -131,9 +127,9 @@
 	<div class="fold">
 		<div class="group_title">
 			User{users.length > 1 ? 's' : ''} ({users.length}) with missing photo
-			<ButtonFold
+			<FoldButton
 				open={open_users}
-				on:click={() => {
+				onclick={() => {
 					open_users = !open_users;
 				}}
 			/>
@@ -157,9 +153,9 @@
 	<div class="fold">
 		<div class="group_title">
 			Post{posts.length > 1 ? 's' : ''} ({posts.length}) with missing photo / files
-			<ButtonFold
+			<FoldButton
 				open={open_posts}
-				on:click={() => {
+				onclick={() => {
 					open_posts = !open_posts;
 				}}
 			/>

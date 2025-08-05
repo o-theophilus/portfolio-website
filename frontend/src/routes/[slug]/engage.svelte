@@ -1,22 +1,21 @@
 <script>
-	import { module, user } from '$lib/store.js';
+	import { module, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 
 	import Like from './engage.like.svelte';
 	import Rating from './engage.rating.svelte';
 	import Share from './engage.share.svelte';
 
-	export let post;
-	export let update;
+	let { post, update } = $props();
 
-	let my_rating = 0;
+	let my_rating = $state(0);
 	const set_rating = (data) => {
 		post = data;
 		my_rating = 0;
 		for (const x of post.ratings) {
-			if (x.user_key == $user.key) {
+			if (x.user_key == app.user.key) {
 				my_rating = x.rating;
 				break;
 			}
@@ -37,33 +36,18 @@
 		}}
 	/>
 
-	{#if $user.login}
+	{#if app.user.login}
 		<Button
 			size="small"
 			primary={my_rating != 0}
-			on:click={() => {
-				$module = {
-					module: Rating,
-					post,
-					update,
-					set_rating
-				};
-			}}
+			onclick={() => module.open(Rating, { post, update, set_rating })}
 		>
 			<Icon icon="hotel_class" />
 			Rate{#if my_rating}: {my_rating}{/if}
 		</Button>
 	{/if}
 
-	<Button
-		size="small"
-		on:click={() => {
-			$module = {
-				module: Share,
-				post
-			};
-		}}
-	>
+	<Button size="small" onclick={() => module.open(Share, post)}>
 		<Icon icon="share" />
 		Share
 	</Button>

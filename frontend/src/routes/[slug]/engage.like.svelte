@@ -1,36 +1,33 @@
 <script>
-	import { user } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { app } from '$lib/store.svelte.js';
 
-	import Icon from '$lib/icon.svelte';
+	import { Icon } from '$lib/macro';
 	import { createEventDispatcher } from 'svelte';
 
-	export let name;
-	export let entity = {};
-	export let search = {};
-	let error = {};
+	let { name, entity = {}, search = {} } = $props();
+	let error = $state({});
 	let emit = createEventDispatcher();
 
 	const like = async (x = true) => {
 		error = {};
 
 		if (x) {
-			if (entity.dislike.includes($user.key)) {
-				entity.dislike = entity.dislike.filter((e) => e != $user.key);
+			if (entity.dislike.includes(app.user.key)) {
+				entity.dislike = entity.dislike.filter((e) => e != app.user.key);
 			}
-			if (entity.like.includes($user.key)) {
-				entity.like = entity.like.filter((e) => e != $user.key);
+			if (entity.like.includes(app.user.key)) {
+				entity.like = entity.like.filter((e) => e != app.user.key);
 			} else {
-				entity.like.push($user.key);
+				entity.like.push(app.user.key);
 			}
 		} else {
-			if (entity.like.includes($user.key)) {
-				entity.like = entity.like.filter((e) => e != $user.key);
+			if (entity.like.includes(app.user.key)) {
+				entity.like = entity.like.filter((e) => e != app.user.key);
 			}
-			if (entity.dislike.includes($user.key)) {
-				entity.dislike = entity.dislike.filter((e) => e != $user.key);
+			if (entity.dislike.includes(app.user.key)) {
+				entity.dislike = entity.dislike.filter((e) => e != app.user.key);
 			} else {
-				entity.dislike.push($user.key);
+				entity.dislike.push(app.user.key);
 			}
 		}
 		entity = entity;
@@ -44,7 +41,7 @@
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify({ like: x })
 		});
@@ -61,21 +58,24 @@
 <div class="line">
 	<button
 		class="left"
-		on:click={() => {
+		onclick={() => {
 			like();
 		}}
 	>
-		<Icon icon={entity.like.includes($user.key) ? 'thumb_up_fill' : 'thumb_up'} size="1.4" />
+		<Icon icon={entity.like.includes(app.user.key) ? 'thumb_up_fill' : 'thumb_up'} size="1.4" />
 		{entity.like.length}
 	</button>
 
 	<button
 		class="right"
-		on:click={() => {
+		onclick={() => {
 			like(false);
 		}}
 	>
-		<Icon icon={entity.dislike.includes($user.key) ? 'thumb_down_fill' : 'thumb_down'} size="1.4" />
+		<Icon
+			icon={entity.dislike.includes(app.user.key) ? 'thumb_down_fill' : 'thumb_down'}
+			size="1.4"
+		/>
 		{entity.dislike.length}
 	</button>
 
@@ -108,7 +108,9 @@
 		border: none;
 		cursor: pointer;
 
-		transition: background-color var(--trans), color var(--trans);
+		transition:
+			background-color var(--trans),
+			color var(--trans);
 	}
 	.left {
 		border-radius: var(--height) 0 0 var(--height);

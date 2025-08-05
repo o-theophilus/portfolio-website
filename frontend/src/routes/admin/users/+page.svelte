@@ -2,19 +2,15 @@
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
 
-	import UpdateUrl from '$lib/update_url.svelte';
-	import Content from '$lib/content.svelte';
-	import Back from '$lib/button/back.svelte';
-	import Meta from '$lib/meta.svelte';
-	import Pagination from '$lib/pagination.svelte';
-	import DropPlus from '$lib/dropdown_plus.svelte';
+	import { Content } from '$lib/layout';
+	import { BackButton } from '$lib/button';
+	import { UpdateUrl, Meta, Pagination, Dropdown, Log } from '$lib/macro';
 	import Search from '$lib/search.svelte';
-	import Log from '$lib/log.svelte';
 	import User from './user.svelte';
 
-	export let data;
-	$: users = data.users;
-	$: total_page = data.total_page;
+let { data } = $props();
+	users = data.users;
+	total_page = data.total_page;
 	let { order_by } = data;
 	let { _status } = data;
 </script>
@@ -26,18 +22,18 @@
 <Content>
 	<div class="title">
 		<div class="left">
-			<Back />
+			<BackButton />
 			<strong class="ititle">
 				User{users.length > 1 ? 's' : ''}
 			</strong>
 		</div>
 
-		<DropPlus name="status" list={['all', ..._status]} default_value="all" />
+		<Dropdown name="status" list={['all', ..._status]} default_value="all" />
 	</div>
 
 	<div class="search_bar">
 		<Search />
-		<DropPlus name="order" list={order_by} icon="sort" />
+		<Dropdown name="order" list={order_by} icon="sort" />
 	</div>
 
 	{#each users as x (x.key)}

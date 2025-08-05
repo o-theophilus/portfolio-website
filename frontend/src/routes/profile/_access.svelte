@@ -1,22 +1,20 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { module } from '$lib/store.js';
-	import { page } from '$app/stores';
+	import { module } from '$lib/store.svelte.js';
+	import { page } from '$app/state';
 
-	import Button from '$lib/button/button.svelte';
-	import Toggle from '$lib/toggle.svelte';
-	import ButtonFold from '$lib/button/fold.svelte';
+	import { Button, ButtonFold, Toggle } from '$lib/button';
 	import Access_Ok from './_access.ok.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Icon } from '$lib/macro';
 
-	export let user = $page.data.user;
+	let { user = page.data.user } = $props();
 	let init = [...user.access];
-	let mods = [...user.access];
-	if ($module.mods) {
-		mods = [...$module.mods];
+	let mods = $state([...user.access]);
+	if (module.value.mods) {
+		mods = [...module.value.mods];
 	}
-	let sub_open = '';
+	let sub_open = $state('');
 
 	const select = (_in) => {
 		if (mods.includes(_in)) {
@@ -31,11 +29,11 @@
 <section>
 	<strong class="ititle"> Edit Access </strong>
 
-	{#each Object.entries($page.data.access) as [_type, level]}
+	{#each Object.entries(page.data.access) as [_type, level]}
 		<div
 			class="type"
 			role="presentation"
-			on:click={() => {
+			onclick={() => {
 				if (sub_open == _type) {
 					sub_open = '';
 				} else {
@@ -59,7 +57,7 @@
 								state_1=""
 								state_2={ac.split('_').join(' ')}
 								active={mods.includes(`${_type}:${ac}`)}
-								on:click={() => {
+								onclick={() => {
 									select(`${_type}:${ac}`);
 								}}
 							/>
@@ -75,19 +73,14 @@
 	<div class="line">
 		<Button
 			disabled={mods.sort().join(',') == init.sort().join(',')}
-			on:click={() => {
-				$module = {
-					module: Access_Ok,
-					mods
-				};
-			}}
+			onclick={() => module.open(Access_Ok, { mods })}
 		>
 			Submit
 			<Icon icon="send" />
 		</Button>
 		<Button
 			disabled={mods.sort().join(',') == init.sort().join(',')}
-			on:click={() => {
+			onclick={() => {
 				mods = [...init];
 			}}
 		>

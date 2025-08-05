@@ -1,34 +1,22 @@
 <script>
-	import { module, user } from '$lib/store.js';
+	import { module, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Datetime from '$lib/datetime.svelte';
+	import { Button } from '$lib/button';
+	import { Icon, Datetime } from '$lib/macro';
 	import Edit from './date.edit.svelte';
 
-	export let post;
-	export let edit_mode;
-	export let update;
+	let { post, edit_mode, update, children } = $props();
 </script>
 
-{#if $user.access.includes('post:edit_date') && edit_mode}
-	<Button
-		size="small"
-		on:click={() => {
-			$module = {
-				module: Edit,
-				post,
-				update
-			};
-		}}
-	>
+{#if app.user.access.includes('post:edit_date') && edit_mode}
+	<Button size="small" onclick={() => module.open(Edit, { post, update })}>
 		<Icon icon="edit" size="1.4" />
 		Edit Date
 	</Button>
 {/if}
 <span class="date">
 	<Datetime datetime={post.date} />
-	<slot />
+	{@render children()}
 </span>
 
 <style>

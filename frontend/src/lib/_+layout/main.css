@@ -1,0 +1,56 @@
+:root,
+textarea,
+select,
+input,
+button {
+	font-family: "Figtree", sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+@media (min-width: 600px) {
+	:root,
+	textarea,
+	select,
+	input,
+	button {
+		font-size: 16px;
+	}
+}
+
+* {
+	line-height: 150%;
+	margin: 0;
+	padding: 0;
+	
+	box-sizing: border-box;
+	outline: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	transition: background-color 9999s;
+	-webkit-text-fill-color: var(--ft1);
+}
+
+select,
+button{
+	cursor: pointer;
+}
+
+
+hr {
+	border: none;
+	border-top: 2px solid var(--input);
+}
+
+.page_title {
+	font-size: 1.5rem;
+	font-weight: 800;
+	/* color: var(--ft1);	 */
+}
+
+

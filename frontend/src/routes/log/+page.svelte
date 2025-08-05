@@ -2,16 +2,14 @@
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
 
-	import Content from '$lib/content.svelte';
-	import Meta from '$lib/meta.svelte';
-	import Pagination from '$lib/pagination.svelte';
+	import { Content } from '$lib/layout';
+	import { Meta, Pagination, UpdateUrl } from '$lib/macro';
 	import Search from './search.svelte';
 	import Log from './log.svelte';
-	import UpdateUrl from '$lib/update_url.svelte';
 
-	export let data;
-	$: logs = data.logs;
-	$: total_page = data.total_page;
+	let { data } = $props();
+	logs = data.logs;
+	total_page = data.total_page;
 	let { search_query } = data;
 
 	let search;

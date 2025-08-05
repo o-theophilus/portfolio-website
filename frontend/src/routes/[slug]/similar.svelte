@@ -1,14 +1,13 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { state } from '$lib/store.js';
+	import { memory } from '$lib/store.svelte.js';
 
-	import Fold from '$lib/button/fold.svelte';
-	import Link from '$lib/button/link.svelte';
+	import { FoldButton, Link } from '$lib/button';
 
-	export let post_key;
-	let posts = [];
-	let open = true;
+	let { post_key } = $props();
+	let posts = $state([]);
+	let open = $state(true);
 
 	export const reset = () => {
 		posts = [];
@@ -24,14 +23,14 @@
 
 	const click = (post) => {
 		let sn = 'post_item';
-		let i = $state.findIndex((x) => x.name == sn);
+		let i = $memory.findIndex((x) => x.name == sn);
 		if (i == -1) {
-			$state.push({
+			$memory.push({
 				name: sn,
 				data: post
 			});
 		} else {
-			$state[i].data = post;
+			$memory[i].data = post;
 		}
 	};
 </script>
@@ -44,9 +43,9 @@
 			<!-- <Loading active={loading} size="20" /> -->
 		</strong>
 
-		<Fold
+		<FoldButton
 			{open}
-			on:click={() => {
+			onclick={() => {
 				open = !open;
 			}}
 		/>
@@ -56,22 +55,14 @@
 		<div class="area" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 			{#each posts as x, i}
 				<div class="post">
-					<a
-						href="/{x.slug}"
-						on:click={() => {
-							click(x);
-						}}
-						on:mouseenter={() => {
-							click(x);
-						}}
-					>
+					<a href="/{x.slug}" onclick={() => click(x)} onmouseenter={() => click(x)}>
 						<img src={x.photo || '/no_photo.png'} alt={x.title} />
 					</a>
 					<div class="details">
 						<!-- <a
 							class="link"
 							href="/{x.slug}"
-							on:click={() => {
+							onclick={() => {
 								click(x);
 							}}
 							on:mouseenter={() => {
@@ -83,7 +74,7 @@
 
 						<Link
 							href="/{x.slug}"
-							on:click={() => {
+							onclick={() => {
 								click(x);
 							}}
 							on:mouseenter={() => {

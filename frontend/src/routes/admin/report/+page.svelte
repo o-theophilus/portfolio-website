@@ -2,19 +2,15 @@
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
 
-	import UpdateUrl from '$lib/update_url.svelte';
-	import Content from '$lib/content.svelte';
-	import Back from '$lib/button/back.svelte';
-	import Meta from '$lib/meta.svelte';
-	import Pagination from '$lib/pagination.svelte';
-	import DropPlus from '$lib/dropdown_plus.svelte';
+	import { Content } from '$lib/layout';
+	import { BackButton } from '$lib/button';
+	import { UpdateUrl, Meta, Pagination, Dropdown, Log } from '$lib/macro';
 	import Search from '$lib/search.svelte';
-	import Log from '$lib/log.svelte';
 	import One from './one.svelte';
 
-	export let data;
-	$: reports = data.reports;
-	$: total_page = data.total_page;
+	let { data } = $props();
+	reports = data.reports;
+	total_page = data.total_page;
 	let { order_by } = data;
 	let { _status } = data;
 	let { _type } = data;
@@ -26,19 +22,19 @@
 
 <Content>
 	<div class="title">
-		<Back />
+		<BackButton />
 		<strong class="ititle">
 			Report{reports.length > 1 ? 's' : ''}
 		</strong>
 	</div>
 
 	<div class="line">
-		<DropPlus name="status" list={_status} default_value={_status[0]} wide />
-		<DropPlus name="type" list={['all', ..._type]} default_value="all" wide />
+		<Dropdown name="status" list={_status} default_value={_status[0]} wide />
+		<Dropdown name="type" list={['all', ..._type]} default_value="all" wide />
 	</div>
 	<div class="line">
 		<Search />
-		<DropPlus name="order" list={order_by} icon="sort" />
+		<Dropdown name="order" list={order_by} icon="sort" />
 	</div>
 
 	{#each reports as x (x.key)}

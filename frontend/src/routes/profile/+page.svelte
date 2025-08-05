@@ -1,16 +1,10 @@
 <script>
-	import { page } from '$app/stores';
-	import { user as me, module } from '$lib/store.js';
+	import { page } from '$app/state';
+	import { app, module } from '$lib/store.svelte.js';
 
-	import Content from '$lib/content.svelte';
-	import Meta from '$lib/meta.svelte';
-	import Toggle from '$lib/toggle.svelte';
-	import Icon from '$lib/icon.svelte';
-	import BRound from '$lib/button/round.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Link from '$lib/button/link.svelte';
-	import Avatar from '$lib/avatar.svelte';
-	import Log from '$lib/log.svelte';
+	import { Content } from '$lib/layout';
+	import { Meta, Icon, Avatar, Log } from '$lib/macro';
+	import { RoundButton, Button, Link, Toggle } from '$lib/button';
 
 	import Photo from '../[slug]/photo.edit.svelte';
 	import Name from './_name.svelte';
@@ -22,9 +16,10 @@
 	import Action from './_admin_action.svelte';
 	import Block from './_admin_block.svelte';
 
-	export let data;
-	$: user = data.user;
-	let edit_mode = false;
+	let me = app.user;
+	let { data } = $props();
+	user = data.user;
+	let edit_mode = $state(false);
 
 	let is_admin = $me.access.some((x) =>
 		['user:set_access', 'user:reset_name', 'user:reset_photo', 'user:block'].includes(x)
@@ -38,7 +33,7 @@
 	};
 </script>
 
-{#key `${$page.url.pathname}${$page.url.search}`}
+{#key `${page.url.pathname}${page.url.search}`}
 	<Meta title={user?.name || data.error} />
 
 	{#if user}
@@ -46,7 +41,7 @@
 	{:else if data.error}
 		<Log
 			action={'viewed'}
-			entity_key={$page.url.searchParams.get('search')}
+			entity_key={page.url.searchParams.get('search')}
 			entity_type={'user'}
 			status={data.status}
 		/>
@@ -66,7 +61,7 @@
 				<Toggle
 					state_2="edit"
 					active={edit_mode}
-					on:click={() => {
+					onclick={() => {
 						edit_mode = !edit_mode;
 					}}
 				/>
@@ -81,19 +76,16 @@
 			</div>
 
 			{#if edit_mode && user.key == $me.key}
-				<BRound
+				<RoundButton
 					icon="edit"
-					on:click={() => {
-						$module = {
-							module: Photo,
-							entity: {
-								key: user.key,
-								name: user.name,
-								photo: user.photo,
-								type: 'user'
-							},
+					onclick={() => {
+						module.open(Photo, {
+							key: user.key,
+							name: user.name,
+							photo: user.photo,
+							type: 'user',
 							update
-						};
+						});
 					}}
 				/>
 			{/if}
@@ -107,14 +99,10 @@
 				{user.name}
 			</strong>
 			{#if edit_mode && user.key == $me.key}
-				<BRound
+				<RoundButton
 					icon="edit"
-					on:click={() => {
-						$module = {
-							module: Name,
-							user,
-							update
-						};
+					onclick={() => {
+						module.open(Name, { user, update });
 					}}
 				/>
 			{/if}
@@ -125,15 +113,7 @@
 			{user.email}
 
 			{#if edit_mode && user.key == $me.key}
-				<BRound
-					icon="edit"
-					on:click={() => {
-						$module = {
-							module: Email,
-							update
-						};
-					}}
-				/>
+				<RoundButton icon="edit" onclick={() => module.open(Email, { update })} />
 			{/if}
 		</div>
 
@@ -141,16 +121,7 @@
 			<Icon icon="call" size="1.4" />
 			{user.phone || 'None'}
 			{#if edit_mode && user.key == $me.key}
-				<BRound
-					icon="edit"
-					on:click={() => {
-						$module = {
-							module: Phone,
-							user,
-							update
-						};
-					}}
-				/>
+				<RoundButton icon="edit" onclick={() => module.open(Phone, { ...user, update })} />
 			{/if}
 		</div>
 
@@ -158,53 +129,25 @@
 			<br />
 			<div class="line">
 				{#if user.key == $me.key}
-					<Button
-						size="small"
-						on:click={() => {
-							$module = {
-								module: Password
-							};
-						}}
-					>
+					<Button size="small" onclick={() => module.open(Password)}>
 						<Icon icon="key" size="1.4" />
 						Change Password
 					</Button>
 
-					<Button
-						size="small"
-						on:click={() => {
-							$module = {
-								module: Delete,
-								user
-							};
-						}}
-					>
+					<Button size="small" onclick="{() => module.open(Delete, user)}}">
 						<Icon icon="delete" size="1.4" />
 						Delete Account
 					</Button>
 				{:else if is_admin}
 					{#if $me.access.includes('user:set_access')}
-						<Button
-							size="small"
-							on:click={() => {
-								$module = {
-									module: Access
-								};
-							}}
-						>
-							Access
-						</Button>
+						<Button size="small" onclick="{() => module.open(Access)}}">Access</Button>
 					{/if}
 
 					{#if $me.access.some((x) => ['user:reset_name', 'user:reset_photo'].includes(x))}
 						<Button
 							size="small"
-							on:click={() => {
-								$module = {
-									module: Action,
-									user,
-									update
-								};
+							onclick={() => {
+								module.open(Action, { ...user, update });
 							}}
 						>
 							Reset
@@ -212,16 +155,7 @@
 					{/if}
 
 					{#if $me.access.includes('user:block')}
-						<Button
-							size="small"
-							on:click={() => {
-								$module = {
-									module: Block,
-									user,
-									update
-								};
-							}}
-						>
+						<Button size="small" onclick={() => (module, open(Block, { ...user, update }))}>
 							{#if user.status == 'blocked'}
 								Unblock
 							{:else}

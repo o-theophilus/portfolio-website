@@ -2,19 +2,15 @@
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
 
-	import Content from '$lib/content.svelte';
-	import Back from '$lib/button/back.svelte';
-	import Meta from '$lib/meta.svelte';
+	import { Content } from '$lib/layout';
+	import { BackButton } from '$lib/button';
 	import User from '../users/user.svelte';
-	import Pagination from '$lib/pagination.svelte';
 	import Search from './search.svelte';
-	import DropPlus from '$lib/dropdown_plus.svelte';
-	import UpdateUrl from '$lib/update_url.svelte';
-	import Log from '$lib/log.svelte';
+	import { Meta, Pagination, Dropdown, UpdateUrl, Log } from '$lib/macro';
 
-	export let data;
-	$: users = data.users;
-	$: total_page = data.total_page;
+	let { data } = $props();
+	users = data.users;
+	total_page = data.total_page;
 	let { access } = data;
 	let { order_by } = data;
 </script>
@@ -26,12 +22,12 @@
 <Content>
 	<div class="title">
 		<div class="left">
-			<Back />
+			<BackButton />
 			<strong class="ititle">
 				Admin{users.length > 1 ? 's' : ''}
 			</strong>
 		</div>
-		<DropPlus name="order" list={order_by} />
+		<Dropdown name="order" list={order_by} />
 	</div>
 
 	<Search {access} />

@@ -1,106 +1,87 @@
 <script>
-	export let href = '';
-	export let target = '';
-	export let title = '';
-	export let disabled = false;
-
-	export let primary = false;
-	export let size = ''; // small, large, wide
-	export let extra = ''; // hover_red, outline
+	let {
+		children,
+		outline = false,
+		capitalize = false,
+		disabled = false,
+		tooltip,
+		onclick,
+		onmouseenter,
+		href = null
+	} = $props();
 </script>
 
-<svelte:element
-	this={href ? 'a' : 'button'}
-	{href}
-	{target}
-	{title}
-	on:click
-	{disabled}
-	role="presentation"
-	class:primary
-	class:small={size == 'small'}
-	class:large={size == 'large'}
-	class:wide={size == 'wide'}
-	class={extra}
->
-	<slot />
-</svelte:element>
+{#if href}
+	<a {href} class:outline class:capitalize {onmouseenter} title={tooltip}>
+		{@render children()}
+	</a>
+{:else if onclick}
+	<button {onclick} class:outline class:capitalize {disabled} {onmouseenter} title={tooltip}>
+		{@render children()}
+	</button>
+{:else}
+	<div class="tag" class:outline class:capitalize title={tooltip}>
+		{@render children()}
+	</div>
+{/if}
 
 <style>
-	button,
-	a {
-		display: flex;
-		justify-content: center;
+	a,
+	.tag,
+	button {
+		position: relative;
+
+		display: inline-flex;
 		align-items: center;
-		gap: var(--sp1);
+		justify-content: center;
+		gap: 8px;
 
-		padding: calc(var(--sp2) - 2px) var(--sp2);
-		border: none;
-		border-radius: var(--sp0);
-		width: fit-content;
+		width: var(--button-width, unset);
+		height: var(--button-height, 40px);
+		border-radius: var(--button-border-radius, 4px);
+		padding: 0 var(--button-padding-x, 16px);
 
-		background-color: var(--button);
-
-		color: var(--ft2);
+		font-size: var(--button-font-size, 1rem);
+		font-weight: var(--button-font-weight, 700);
+		background-color: var(--button-background-color, hsl(0, 0%, 90%));
+		color: var(--button-color, hsl(0, 0%, 0%));
 		fill: currentColor;
-		text-decoration: none;
-		text-align: center;
-		font-weight: 700;
-		cursor: pointer;
-
-		transition: background-color var(--trans), color var(--trans), opacity var(--trans);
 	}
 
-	.large {
-		padding: var(--sp2) var(--sp3);
-		font-size: 1.2rem;
+	a,
+	button {
+		transition:
+			color 0.2s ease-in-out,
+			background-color 0.2s ease-in-out;
 	}
-	.small {
-		padding: var(--sp0);
-		gap: var(--sp0);
-		font-size: 0.8rem;
-		min-width: 28px;
-	}
-	.wide {
-		width: 100%;
-	}
-
-	.primary {
-		background-color: var(--cl1);
-		color: var(--clb);
-		box-shadow: 0 -4px 0 color-mix(in srgb, var(--cl1), black 30%) inset;
-	}
-
-	:disabled {
-		box-shadow: unset;
-
-		cursor: unset;
-		opacity: 0.2;
-	}
-
-	:not(:disabled):hover {
-		background-color: var(--cl1);
-		color: var(--clb);
+	a {
 		text-decoration: none;
 	}
-	:not(:disabled).primary:hover {
-		background-color: color-mix(in srgb, var(--cl1), black 30%);
+
+	button {
+		border: none;
 	}
 
-	:not(:disabled):not(.primary).hover_red:hover {
-		background-color: var(--cl2);
+	a:hover,
+	button:hover {
+		background-color: var(--button-background-color-hover, hsl(0, 0%, 85%));
+		color: var(--button-color-hover, hsl(0, 0%, 0%));
 	}
 
-	:not(:disabled):not(.primary).outline {
-		outline: 2px solid var(--overlay);
-		outline-offset: -2px;
-		transition: outline-color var(--trans);
+	button:disabled {
+		opacity: 0.4;
+		pointer-events: none;
 	}
-	:not(:disabled):not(.primary):not(:hover).outline {
-		background-color: transparent;
-		transition: background-color var(--trans);
+
+	.outline {
+		outline: 2px solid var(--button-outline-color, hsl(0, 0%, 85%));
+		transition: outline-color 0.2s ease-in-out;
 	}
-	:not(:disabled):not(.primary).outline:hover {
-		outline-color: transparent;
+	a.outline:hover,
+	button.outline:hover {
+		outline-color: var(--button-outline-color-hover, hsl(0, 0%, 75%));
+	}
+	.capitalize {
+		text-transform: capitalize;
 	}
 </style>

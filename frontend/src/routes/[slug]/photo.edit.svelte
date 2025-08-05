@@ -1,11 +1,10 @@
 <script>
-	import { loading, notify, module } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { loading, notify, module, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 
-	let entity = { ...$module.entity };
+	let entity = { ...module.value.entity };
 
 	let has_photo = entity.photo ? true : false;
 	let error = {};
@@ -30,24 +29,24 @@
 		let formData = new FormData();
 		formData.append('file', file);
 
-		$loading = 'uploading . . .';
+		loading.open('uploading . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/${entity.type}/photo/${entity.key}`, {
 			method: 'put',
 			headers: {
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: formData
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 		input.value = '';
 
 		if (resp.status == 200) {
 			entity.photo = resp[entity.type].photo;
-			$module.update(resp[entity.type]);
+			module.value.update(resp[entity.type]);
 			has_photo = true;
 			get_din();
-			$notify.add('Photo updated');
+			notify.open('Photo updated');
 		} else {
 			error = resp;
 		}
@@ -56,22 +55,22 @@
 	const remove = async () => {
 		error = {};
 
-		$loading = 'removing . . .';
+		loading.open('removing . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/${entity.type}/photo/${entity.key}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			}
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
 			entity.photo = null;
-			$module.update(resp[entity.type]);
+			module.value.update(resp[entity.type]);
 			has_photo = false;
-			$notify.add('Photo removed');
+			notify.open('Photo removed');
 		} else {
 			error = resp;
 		}
@@ -94,26 +93,28 @@
 	<strong class="ititle"> {entity.type} Photo </strong>
 	<br />
 	<br />
+	<!-- onerror="this.src='/file_error.png';" -->
 	<img
 		src={entity.photo || '/select_photo.png'}
-		onerror="this.src='/file_error.png';"
 		alt={entity.name}
 		class:dragover
 		class:no_photo={!has_photo}
 		style:--ar={dim[0] / dim[1]}
-		on:click={() => {
+		onclick={() => {
 			if (!has_photo) {
 				input.click();
 			}
 		}}
-		on:dragover|preventDefault={() => {
+		ondragover={(e) => {
+			e.preventDefault();
 			dragover = true;
 		}}
-		on:dragenter
-		on:dragleave|preventDefault={() => {
+		ondragenter={() => {}}
+		ondragleave={(e) => {
+			e.preventDefault();
 			dragover = false;
 		}}
-		on:drop={(e) => {
+		ondrop={(e) => {
 			dragover = false;
 			if (!has_photo) {
 				e.preventDefault();
@@ -128,7 +129,7 @@
 		type="file"
 		accept="image/jpeg, image/png"
 		bind:this={input}
-		on:change={(e) => {
+		onchange={(e) => {
 			validate();
 		}}
 	/>
@@ -142,7 +143,7 @@
 	<div class="line">
 		<Button
 			primary
-			on:click={() => {
+			onclick={() => {
 				input.click();
 			}}
 		>
@@ -157,7 +158,7 @@
 
 		{#if has_photo}
 			<Button
-				on:click={() => {
+				onclick={() => {
 					remove('delete');
 				}}
 			>
@@ -185,7 +186,9 @@
 		width: 100%;
 		border-radius: var(--sp1);
 		outline: 2px solid transparent;
-		transition: outline-color var(--trans), transform var(--trans);
+		transition:
+			outline-color var(--trans),
+			transform var(--trans);
 	}
 	img.no_photo:hover,
 	.dragover.no_photo {

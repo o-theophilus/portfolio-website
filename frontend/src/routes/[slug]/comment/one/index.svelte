@@ -1,43 +1,36 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { module, user } from '$lib/store.js';
+	import { module, app } from '$lib/store.svelte.js';
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	import Datetime from '$lib/datetime.svelte';
-	import Link from '$lib/button/link.svelte';
-	import BRound from '$lib/button/round.svelte';
+	import { Datetime, Marked, Avatar } from '$lib/macro';
+	import { Link, RoundButton } from '$lib/button';
 	import Add from '../_add.svelte';
 	import One from './index.svelte';
-	import Marked from '$lib/marked.svelte';
-	import Avatar from '$lib/avatar.svelte';
 	import Delete from './_delete.svelte';
 	import Report from './_report.svelte';
 	import Like from '../../engage.like.svelte';
 
-	export let post_key;
-	export let update;
-	export let search;
-	export let comment = {};
-	export let comments = [];
+	let { post_key, update, search, comment = {}, comments = [] } = $props();
 	let error = {};
 	let path = [...comment.path];
 	path.push(comment.key);
 
-	let open_menu = false;
+	let open_menu = $state(false);
 	let self = false;
 
 	let _this;
 	onMount(() => {
-		if (`#${comment.key}` == $page.url.hash) {
+		if (`#${comment.key}` == page.url.hash) {
 			_this.scrollIntoView({ behavior: 'smooth' });
 		}
 	});
 </script>
 
 <svelte:window
-	on:click={() => {
+	onclick={() => {
 		if (open_menu && !self) {
 			open_menu = false;
 		}
@@ -56,9 +49,9 @@
 				</div>
 
 				<div class="right">
-					<BRound
+					<RoundButton
 						icon="more_horiz"
-						on:click={() => {
+						onclick={() => {
 							open_menu = !open_menu;
 							self = true;
 						}}
@@ -66,25 +59,13 @@
 
 					{#if open_menu}
 						<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
-							{#if comment.user.key == $user.key}
-								<Link
-								small
-									on:click={() => {
-										$module = {
-											module: Delete,
-											comment,
-											update
-										};
-									}}
-								>
-									Delete
-								</Link>
+							{#if comment.user.key == app.user.key}
+								<Link small onclick={() => module.open(Delete, { comment, update })}>Delete</Link>
 							{:else}
 								<Link
-								small
-									on:click={() => {
-										$module = {
-											module: Report,
+									small
+									onclick={() => {
+										module.open(Report, {
 											reported: {
 												key: comment.user.key,
 												name: comment.user.name,
@@ -95,7 +76,7 @@
 												key: comment.key,
 												extra: comment.comment
 											}
-										};
+										});
 									}}
 								>
 									Report
@@ -116,20 +97,12 @@
 				</div>
 			{/if}
 
-			{#if $user.login}
+			{#if app.user.login}
 				<div class="line">
-					<BRound
+					<RoundButton
 						icon="reply"
-						on:click={() => {
-							$module = {
-								module: Add,
-								post_key,
-								path,
-								comment: comment.comment,
-								update,
-								search
-							};
-						}}
+						onclick={() =>
+							module.open(Add, { post_key, path, comment: comment.comment, update, search })}
 					/>
 
 					<Like

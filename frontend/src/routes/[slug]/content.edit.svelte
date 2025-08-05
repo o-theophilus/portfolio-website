@@ -1,12 +1,10 @@
 <script>
-	import { module, loading, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 	import { onMount } from 'svelte';
 
-	import IG from '$lib/input_group.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Marked from '$lib/marked.svelte';
+	import { IG } from '$lib/input';
+	import { Button } from '$lib/button';
+	import { Icon, Marked } from '$lib/macro';
 
 	let textarea;
 	let content = '';
@@ -17,7 +15,7 @@
 
 		if (!textarea.value) {
 			error.content = 'cannot be empty';
-		} else if (textarea.value == $module.post.content) {
+		} else if (textarea.value == module.value.post.content) {
 			error.content = 'no change';
 		}
 
@@ -25,37 +23,37 @@
 	};
 
 	const submit = async () => {
-		$loading = 'Saving Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${$module.post.key}`, {
+		loading.open('Saving Post . . .');
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify({
 				content: textarea.value
 			})
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module.update(resp.post);
-			$module.refresh(resp.post);
-			$module = null;
-			$notify.add('Content Saved');
+			module.value.update(resp.post);
+			module.value.refresh(resp.post);
+			module.close();
+			notify.open('Content Saved');
 		} else {
 			error = resp;
 		}
 	};
 
 	onMount(() => {
-		textarea.value = $module.post.content;
-		content = $module.process_content($module.post.content);
+		textarea.value = module.value.post.content;
+		content = module.value.process_content(module.value.post.content);
 	});
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
+<form onsubmit={e.preventDefault} novalidate autocomplete="off">
 	<strong class="ititle"> Edit Content </strong>
 
 	<IG>
@@ -66,7 +64,7 @@
 			<textarea
 				placeholder="Content here"
 				bind:this={textarea}
-				on:keydown={(e) => {
+				onkeydown={(e) => {
 					if (e.key === 'Tab') {
 						e.preventDefault();
 						const start = e.target.selectionStart;
@@ -78,10 +76,10 @@
 						e.target.selectionStart = e.target.selectionEnd = start + 1;
 					}
 				}}
-				on:keyup={() => {
-					content = $module.process_content(textarea.value);
+				onkeyup={() => {
+					content = module.value.process_content(textarea.value);
 				}}
-			/>
+			></textarea>
 		</div>
 	</IG>
 
@@ -97,7 +95,7 @@
 		</div>
 	{/if}
 
-	<Button on:click={validate}>
+	<Button onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

@@ -1,30 +1,24 @@
 <script>
-	import { user, settings, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { app } from '$lib/store.svelte.js';
 
-	import './layout/var.css';
-	import './layout/main.css';
-	import Nav from './layout/nav.svelte';
-	import Footer from './layout/footer.svelte';
+	import { Nav, Footer, Module, Loading, Notify } from '$lib/+layout';
+	import '$lib/+layout/var.css';
+	import '$lib/+layout/main.css';
 
-	import Module from './layout/_module.svelte';
-	import Loading from './layout/_loading.svelte';
-	import Notify from './layout/_notify.svelte';
-
-	export let data;
-	$user = data.locals.user;
-	$token = data.locals.token;
-	$settings.highlight = data.locals.posts;
+	let { data, children } = $props();
+	app.user = data.locals.user;
+	app.token = data.locals.token;
+	app.settings.highlight = data.locals.posts;
 </script>
 
-<main class:dark={$user && $user.setting_theme == 'dark'}>
+<main class:dark={app.user.setting_theme == 'dark'}>
 	<Nav />
-	<slot />
+	{@render children()}
 	<Footer />
 
 	<Module />
 	<Loading />
-	<Notify bind:this={$notify} />
+	<Notify />
 </main>
 
 <style>
@@ -33,6 +27,8 @@
 
 		background-color: var(--bg1);
 		color: var(--ft2);
-		transition: background-color var(--trans), color var(--trans);
+		transition:
+			background-color var(--trans),
+			color var(--trans);
 	}
 </style>

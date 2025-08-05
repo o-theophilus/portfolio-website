@@ -1,11 +1,9 @@
 <script>
-	import { loading } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { loading, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import IG from '$lib/input_group.svelte';
-	import Icon from '$lib/icon.svelte';
-	import ShowPassword from '../account/password_show.svelte';
+	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
+	import { Icon } from '$lib/macro';
 
 	let form = {};
 	let error = {};
@@ -26,20 +24,20 @@
 	};
 
 	const submit = async () => {
-		$loading = 'deleting . . .';
+		loading.open('deleting . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$token = resp.data.token;
+			app.token = resp.data.token;
 			document.location = '/';
 		} else {
 			error = resp;
@@ -73,13 +71,9 @@
 		bind:value={form.password}
 		type={show_password ? 'text' : 'password'}
 		placeholder="Password here"
-	>
-		<svelte:fragment slot="right">
-			<ShowPassword bind:show_password />
-		</svelte:fragment>
-	</IG>
+	></IG>
 
-	<Button on:click={validate}>
+	<Button onclick={validate}>
 		<Icon icon="delete" />
 		Delete
 	</Button>

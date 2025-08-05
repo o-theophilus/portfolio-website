@@ -2,24 +2,21 @@
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { module, user } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Fold from '$lib/button/fold.svelte';
-	import Login from '../../account/login.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Loading from '$lib/loading.svelte';
+	import { Button, FoldButton } from '$lib/button';
+	import { Login } from '$lib/auth';
+	import { Icon, Spinner } from '$lib/macro';
 	import One from './one/index.svelte';
 	import Add from './_add.svelte';
-	import Drop from '$lib/dropdown.svelte';
+	import { Dropdown } from '$lib/input';
 
-	export let post;
-	let comments = [];
-	let order_by = [];
-	let _status = [];
-	let open = true;
-	let loading = true;
+	let { post } = $props();
+	let comments = $state([]);
+	let order_by = $state([]);
+	let _status = $state([]);
+	let open = $state(true);
+	let loading = $state(true);
 	let search = {};
 
 	const update = (data) => {
@@ -46,7 +43,7 @@
 				method: 'get',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: $token
+					Authorization: app.token
 				}
 			}
 		);
@@ -69,12 +66,12 @@
 			{comments.length}
 		{/if}
 		Comment{#if comments.length > 1}s{/if}
-		<Loading active={loading} size="20" />
+		<Spinner active={loading} size="20" />
 	</strong>
 
-	<Fold
+	<FoldButton
 		{open}
-		on:click={() => {
+		onclick={() => {
 			open = !open;
 		}}
 	/>
@@ -83,8 +80,8 @@
 {#if open}
 	<div class="margin" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 		<div class="line">
-			{#if $user.access.includes('comment:view_deleted')}
-				<Drop
+			{#if app.user.access.includes('comment:view_deleted')}
+				<Dropdown
 					list={_status}
 					default_value={search.status || 'active'}
 					on:change={(e) => {
@@ -94,7 +91,7 @@
 				/>
 			{/if}
 			{#if comments.length > 1}
-				<Drop
+				<Dropdown
 					icon="sort"
 					list={order_by}
 					default_value={search.order || 'latest'}
@@ -118,32 +115,13 @@
 	</div>
 {/if}
 
-{#if $user.login}
-	<Button
-		on:click={() => {
-			$module = {
-				module: Add,
-				post_key: post.key,
-				path: [],
-				update,
-				search
-			};
-		}}
-	>
+{#if app.user.login}
+	<Button onclick={() => module.open(Add, { post_key: post.key, path: [], update, search })}>
 		<Icon icon="add_comment" />
 		Add comment
 	</Button>
 {:else}
-	<Button
-		size="small"
-		on:click={() => {
-			$module = {
-				module: Login
-			};
-		}}
-	>
-		Login to add comment
-	</Button>
+	<Button size="small" onclick={() => module.open(Login)}>Login to add comment</Button>
 {/if}
 
 <br />

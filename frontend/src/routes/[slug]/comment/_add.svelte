@@ -1,18 +1,16 @@
 <script>
-	import { module, loading, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
-	import IG from '$lib/input_group.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Marked from '$lib/marked.svelte';
+	import { IG } from '$lib/input';
+	import { Button } from '$lib/button';
+	import { Icon, Marked } from '$lib/macro';
 
 	let form = {
-		path: $module.path
+		path: module.value.path
 	};
 	let comment = '';
-	if ($module.comment) {
-		comment = $module.comment;
+	if (module.value.comment) {
+		comment = module.value.comment;
 	}
 	let error = {};
 
@@ -27,27 +25,27 @@
 	};
 
 	const submit = async () => {
-		$loading = 'Adding Comment . . .';
+		loading.open('Adding Comment . . .');
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/comment/${$module.post_key}?${new URLSearchParams(
-				$module.search
+			`${import.meta.env.VITE_BACKEND}/comment/${module.value.post_key}?${new URLSearchParams(
+				module.value.search
 			).toString()}`,
 			{
 				method: 'post',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: $token
+					Authorization: app.token
 				},
 				body: JSON.stringify(form)
 			}
 		);
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module.update(resp.comments);
-			$module = null;
-			$notify.add('Comment Added');
+			module.value.update(resp.comments);
+			module.close();
+			notify.open('Comment Added');
 		} else {
 			error = resp;
 		}
@@ -84,7 +82,7 @@
 		on:keypress
 	/>
 
-	<Button on:click={validate}>
+	<Button onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

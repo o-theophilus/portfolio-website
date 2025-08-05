@@ -1,10 +1,10 @@
 import { get } from 'svelte/store';
-import { state, loading } from "$lib/store.js"
+import { memory, loading } from "$lib/store.svelte.js"
 
 export const load = async ({ fetch, url, parent }) => {
 
 	let page_name = "logs"
-	let _state = get(state)
+	let _state = get(memory)
 	let i = _state.findIndex(x => x.name == page_name);
 
 	if (i == -1) {
@@ -12,7 +12,7 @@ export const load = async ({ fetch, url, parent }) => {
 			name: page_name,
 			search: url.search
 		})
-		state.set(_state)
+		memory.set(_state)
 		i = _state.findIndex(x => x.name == page_name);
 	}
 
@@ -27,7 +27,7 @@ export const load = async ({ fetch, url, parent }) => {
 		}
 	});
 	resp = await resp.json();
-	loading.set(false)
+	loading.close()
 
 	if (resp.status == 200) {
 		resp.page_name = page_name

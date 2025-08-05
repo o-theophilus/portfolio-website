@@ -1,6 +1,6 @@
 <script>
-	import Avatar from '$lib/avatar.svelte';
-	export let user;
+	import { Avatar } from '$lib/macro';
+	let { user } = $props();
 </script>
 
 <a href="/profile?search={user.key}">

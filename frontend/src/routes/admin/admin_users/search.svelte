@@ -1,25 +1,26 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { set_state } from '$lib/store.js';
+
+	import { page_state } from '$lib/store.svelte.js';
 
 	import Search from '$lib/search.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Drop from '$lib/dropdown.svelte';
+	import { Icon } from '$lib/macro';
+	import { Button } from '$lib/button';
+	import { Dropdown } from '$lib/input';
 
-	export let access;
+	let { access } = $props();
 
-	let user_key = '';
-	let type = 'all';
-	let action = 'all';
-	let search = `${user_key}:${type}:${action}`;
+	let user_key = $state('');
+	let type = $state('all');
+	let action = $state('all');
+	let search = $derived(`${user_key}:${type}:${action}`);
 	let drop_1;
 	let drop_2;
 
 	onMount(() => {
-		if ($page.url.searchParams.has('search')) {
-			let temp = $page.url.searchParams.get('search');
+		if (page.url.searchParams.has('search')) {
+			let temp = page.url.searchParams.get('search');
 			temp = temp.split(':');
 			if (temp.length == 3) {
 				user_key = temp[0];
@@ -42,14 +43,14 @@
 		let check = `${search}`;
 		search = `${user_key}:${type || 'all'}:${action || 'all'}`;
 		if (search != check) {
-			set_state('search', search != ':all:all' ? search : '');
+			page_state.set('search', search != ':all:all' ? search : '');
 		}
 	};
 </script>
 
 <section>
 	<div class="row">
-		<Drop
+		<Dropdown
 			wide
 			list={Object.keys(access)}
 			default_value="all"
@@ -61,7 +62,7 @@
 			}}
 		/>
 
-		<Drop
+		<Dropdown
 			wide
 			list={access[type]}
 			default_value="all"
@@ -82,7 +83,7 @@
 	>
 		<Button
 			disabled={`${user_key}:${type}:${action}` == search}
-			on:click={() => {
+			onclick={() => {
 				submit();
 			}}
 		>
@@ -91,7 +92,7 @@
 		<Button
 			extra="hover_red"
 			disabled={`${user_key}:${type}:${action}` == ':all:all'}
-			on:click={() => {
+			onclick={() => {
 				submit(true);
 			}}
 		>

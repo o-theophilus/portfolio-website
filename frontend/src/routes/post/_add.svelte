@@ -1,13 +1,12 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { module, loading } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
-	import { page } from '$app/stores';
+	import { module, loading, app } from '$lib/store.svelte.js';
+	import { page } from '$app/state';
 
-	import IG from '$lib/input_group.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { IG } from '$lib/input';
+	import { Button } from '$lib/button';
+	import { Dialogue } from '$lib/layout';
+	import { Icon } from '$lib/macro';
 
 	let form = {};
 	let error = {};
@@ -22,23 +21,21 @@
 	};
 
 	const submit = async () => {
-		$loading = 'Creating Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post${$page.url.search}`, {
+		loading.open('Creating Post . . .');
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post${page.url.search}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module.update(resp.posts, resp.total_page);
-
-			$module = {
-				module: Dialogue,
+			module.value.update(resp.posts, resp.total_page);
+			module.open(Dialogue, {
 				message: 'Post Created',
 				buttons: [
 					{
@@ -46,11 +43,11 @@
 						icon: 'check',
 						fn: () => {
 							goto(`/${resp.post.slug}?edit=true`);
-							$module = null;
+							module.close();
 						}
 					}
 				]
-			};
+			});
 		} else {
 			error = resp;
 		}
@@ -73,7 +70,7 @@
 		bind:value={form.title}
 	/>
 
-	<Button on:click={validate}>
+	<Button onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

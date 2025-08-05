@@ -1,14 +1,14 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { user, set_state } from '$lib/store.js';
+	import { app, page_state } from '$lib/store.svelte.js';
 
 	import Search from '$lib/search.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Drop from '$lib/dropdown.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Button } from '$lib/button';
+	import { Dropdown } from '$lib/input';
+	import { Icon } from '$lib/macro';
 
-	export let search_query;
+	let { search_query } = $props();
 
 	let user_key = '';
 	let entity_type = 'all';
@@ -24,8 +24,8 @@
 	};
 
 	onMount(() => {
-		if ($page.url.searchParams.has('search')) {
-			let temp = $page.url.searchParams.get('search');
+		if (page.url.searchParams.has('search')) {
+			let temp = page.url.searchParams.get('search');
 			temp = temp.split(':');
 			if (temp.length == 4) {
 				user_key = temp[0];
@@ -50,13 +50,13 @@
 		let check = `${search}`;
 		search = `${user_key}:${entity_type || 'all'}:${action || 'all'}:${entity_key}`;
 		if (search != check) {
-			set_state('search', search != ':all:all:' ? search : '');
+			page_state('search', search != ':all:all:' ? search : '');
 		}
 	};
 </script>
 
 <section>
-	{#if $user.access.includes('log:view')}
+	{#if app.user.access.includes('log:view')}
 		<Search
 			non_default
 			placeholder="Search for User"
@@ -66,8 +66,8 @@
 			}}
 		>
 			<Button
-				on:click={() => {
-					set_value({ u: $user.key });
+				onclick={() => {
+					set_value({ u: app.user.key });
 				}}
 			>
 				Me
@@ -76,7 +76,7 @@
 	{/if}
 
 	<div class="line">
-		<Drop
+		<Dropdown
 			wide
 			list={Object.keys(search_query)}
 			default_value="all"
@@ -87,7 +87,7 @@
 				drop_2.set(action);
 			}}
 		/>
-		<Drop
+		<Dropdown
 			wide
 			list={search_query[entity_type]}
 			default_value="all"
@@ -108,7 +108,7 @@
 		>
 			<Button
 				disabled={`${user_key}:${entity_type}:${action}:${entity_key}` == search}
-				on:click={() => {
+				onclick={() => {
 					submit();
 				}}
 			>
@@ -117,7 +117,7 @@
 			<Button
 				extra="hover_red"
 				disabled={`${user_key}:${entity_type}:${action}:${entity_key}` == ':all:all:'}
-				on:click={() => {
+				onclick={() => {
 					submit(true);
 				}}
 			>

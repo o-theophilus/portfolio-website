@@ -1,20 +1,19 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { set_state } from '$lib/store.js';
+	import { page_state } from '$lib/store.svelte.js';
 
-	import BRound from '$lib/button/round.svelte';
-	import Button from '$lib/button/button.svelte';
-	import IG from '$lib/input_group.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { RoundButton, Button } from '$lib/button';
+	import { IG } from '$lib/input';
+	import { Icon } from '$lib/macro';
 
 	let emit = createEventDispatcher();
 
 	export let search = '';
-	let _search = `${search}`;
 	export let placeholder = 'Search';
 	export let non_default = false;
+	let _search = `${search}`;
 
 	let set = (url) => {
 		if (!non_default) {
@@ -33,16 +32,16 @@
 
 		if (!non_default) {
 			if (_search != search) {
-				set_state('search', search);
+				page_state.set('search', search);
 			}
-			set($page.url);
+			set(page.url);
 		}
 	};
 
 	onMount(() => {
-		set($page.url);
+		set(page.url);
 	});
-	$: set($page.url);
+	$: set(page.url);
 </script>
 
 <IG type="text" {placeholder} bind:value={search} no_pad>
@@ -50,10 +49,10 @@
 		<div class="right">
 			{#if search}
 				<div class="close">
-					<BRound
+					<RoundButton
 						icon="close"
 						extra="hover_red"
-						on:click={() => {
+						onclick={() => {
 							submit('clear');
 						}}
 					/>
@@ -63,7 +62,7 @@
 			<slot>
 				{#if !non_default}
 					<Button
-						on:click={() => {
+						onclick={() => {
 							submit('ok');
 						}}
 						disabled={search == _search}

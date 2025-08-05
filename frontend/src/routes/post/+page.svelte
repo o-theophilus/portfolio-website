@@ -1,28 +1,23 @@
 <script>
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { module, user } from '$lib/store.js';
+	import { module, app } from '$lib/store.svelte.js';
 
-	import Content from '$lib/content.svelte';
+	import { Content } from '$lib/layout';
 	import One from './one.svelte';
-	import Meta from '$lib/meta.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Log from '$lib/log.svelte';
+	import { Button } from '$lib/button';
+	import { Meta, Icon, Log, Dropdown, Pagination, UpdateUrl } from '$lib/macro';
 
 	import Add from './_add.svelte';
+
 	import Tags from './tags.svelte';
 	import Note from './filter_note.svelte';
 
-	import DropPlus from '$lib/dropdown_plus.svelte';
-	import Pagination from '$lib/pagination.svelte';
 	import Search from '$lib/search.svelte';
 
-	import UpdateUrl from '$lib/update_url.svelte';
-
-	export let data;
-	$: posts = data.posts;
-	$: total_page = data.total_page;
+	let { data } = $props();
+	posts = data.posts;
+	total_page = data.total_page;
 	let { order_by } = data;
 	let { _status } = data;
 
@@ -45,19 +40,11 @@
 			<strong class="ititle">
 				Post{posts.length > 1 ? 's' : ''}
 			</strong>
-			{#if $user.access.includes('post:add')}
+			{#if app.user.access.includes('post:add')}
 				<div class="line">
-					<DropPlus list={_status} name="status" />
+					<Dropdown list={_status} name="status" />
 
-					<Button
-						extra="outline"
-						on:click={() => {
-							$module = {
-								module: Add,
-								update
-							};
-						}}
-					>
+					<Button extra="outline" onclick={() => module.open(Add, { update })}>
 						<Icon icon="add" />
 						Add
 					</Button>
@@ -67,7 +54,7 @@
 
 		<div class="search_bar">
 			<Search />
-			<DropPlus list={order_by} name="order" icon="sort" />
+			<Dropdown list={order_by} name="order" icon="sort" />
 		</div>
 
 		<Note />

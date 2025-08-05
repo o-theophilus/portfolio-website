@@ -1,29 +1,28 @@
 <script>
-	import { page } from '$app/stores';
-	import { module } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { page } from '$app/state';
+	import { module, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 
-	let text = `Check Out: ${$module.post.title}`;
+	let text = `Check Out: ${module.value.post.title}`;
 
 	let platforms = [
 		{
 			name: 'facebook',
-			href: `https://www.facebook.com/sharer.php?u=${$page.url.href}`
+			href: `https://www.facebook.com/sharer.php?u=${page.url.href}`
 		},
 		{
 			name: 'twitter',
-			href: `http://twitter.com/share?text=${text}&url=${$page.url.href}&hashtags=portfolio,website`
+			href: `http://twitter.com/share?text=${text}&url=${page.url.href}&hashtags=portfolio,website`
 		},
 		{
 			name: 'whatsapp',
-			href: `whatsapp://send?text=${text}%20${$page.url.href}`
+			href: `whatsapp://send?text=${text}%20${page.url.href}`
 		},
 		{
 			name: 'telegram',
-			href: `https://telegram.me/share/url?url=${$page.url.href}&text=${text}`
+			href: `https://telegram.me/share/url?url=${page.url.href}&text=${text}`
 		}
 	];
 
@@ -32,12 +31,12 @@
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify({
 				action: 'shared',
 				entity_type: 'post',
-				entity_key: $module.post.key,
+				entity_key: module.value.post.key,
 				misc: { on }
 			})
 		});
@@ -51,7 +50,7 @@
 			<Button
 				target="_blank"
 				title={x.name}
-				on:click={() => {
+				onclick={() => {
 					click(x.name);
 				}}
 				href={x.href}

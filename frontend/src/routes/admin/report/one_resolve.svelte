@@ -1,12 +1,11 @@
 <script>
-	import { loading, module, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { loading, module, notify, app } from '$lib/store.svelte.js';
 
-	import IG from '$lib/input_group.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { IG } from '$lib/input';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 
-	let report_key = $module.report_key;
+	let report_key = module.value.report_key;
 	let form = {};
 	let error = {};
 
@@ -23,21 +22,21 @@
 	const submit = async (status) => {
 		form.status = status;
 
-		$loading = `Sending . . .`;
+		loading.open(`Sending . . .`);
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/report/status/${report_key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module = null;
-			$notify.add('Resolved');
+			module.close();
+			notify.open('Resolved');
 		} else {
 			error = resp;
 		}
@@ -61,7 +60,7 @@
 	<IG name="Note" error={error.note} type="textarea" placeholder="Note" bind:value={form.note} />
 
 	<Button
-		on:click={() => {
+		onclick={() => {
 			validate('resolved');
 		}}
 	>

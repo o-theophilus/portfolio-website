@@ -1,16 +1,15 @@
 <script>
-	import { module, user, loading } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, app, loading } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import IG from '$lib/input_group.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
+	import { Icon } from '$lib/macro';
 	import EmailTemplate from './_email.template.svelte';
 
 	import Code from './_email_4_code.svelte';
 
 	let form = {
-		...$module.form
+		...module.value.form
 	};
 	let error = {};
 	let email_template;
@@ -22,7 +21,7 @@
 			error.email = 'cannot be empty';
 		} else if (!/\S+@\S+\.\S+/.test(form.email)) {
 			error.email = 'Please enter a valid email';
-		} else if (form.email == $user.email) {
+		} else if (form.email == app.user.email) {
 			error.email = 'please use a different email form your current email';
 		}
 
@@ -30,24 +29,20 @@
 	};
 
 	const submit = async () => {
-		$loading = 'Requesting Code . . .';
+		loading.open('Requesting Code . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/email/3`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module = {
-				module: Code,
-				form,
-				update: $module.update
-			};
+			module.open(Code, { ...form, update: module.value.update });
 		} else {
 			error = resp;
 		}
@@ -72,7 +67,7 @@
 		placeholder="Email here"
 	/>
 
-	<Button primary on:click={validate}>
+	<Button primary onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

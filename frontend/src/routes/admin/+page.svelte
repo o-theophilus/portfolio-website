@@ -1,11 +1,9 @@
 <script>
-	import { user } from '$lib/store.js';
+	import { app } from '$lib/store.svelte.js';
 
-	import Meta from '$lib/meta.svelte';
-	import Content from '$lib/content.svelte';
-	import Button from '$lib/button/button.svelte';
-
-	import Log from '$lib/log.svelte';
+	import { Meta, Log } from '$lib/macro';
+	import { Content } from '$lib/layout';
+	import { Button } from '$lib/button';
 </script>
 
 <Log entity_type={'page'} />
@@ -15,19 +13,19 @@
 	<strong class="ititle"> Admin Dashboard</strong>
 
 	<div class="btns">
-		{#if $user.access.includes('user:set_access')}
+		{#if app.user.access.includes('user:set_access')}
 			<Button href="/admin/admin_users" size="wide">Admins</Button>
 		{/if}
 
-		{#if $user.access.includes('user:view')}
+		{#if app.user.access.includes('user:view')}
 			<Button href="/admin/users" size="wide">Users</Button>
 		{/if}
 
-		{#if $user.access.includes('report:view')}
+		{#if app.user.access.includes('report:view')}
 			<Button href="/admin/report" size="wide">Reports</Button>
 		{/if}
 
-		{#if $user.access.includes('admin:manage_files')}
+		{#if app.user.access.includes('admin:manage_files')}
 			<Button href="/admin/file_error" size="wide">File Error</Button>
 		{/if}
 	</div>

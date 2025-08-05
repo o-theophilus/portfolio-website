@@ -1,17 +1,13 @@
 <script>
-	import { module, user } from '$lib/store.js';
+	import { module, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Avatar from '$lib/avatar.svelte';
-	import Link from '$lib/button/link.svelte';
+	import { Button, Link } from '$lib/button';
+	import { Icon, Avatar, Spinner } from '$lib/macro';
 	import Form from './author.edit.svelte';
-	import Loading from '$lib/loading.svelte';
 
-	export let post;
-	export let edit_mode;
-	let author = {};
-	let loading = true;
+	let { post, edit_mode } = $state();
+	let author = $state({});
+	let loading = $state(true);
 
 	const update = async (data) => {
 		post = data;
@@ -34,22 +30,13 @@
 
 {#if loading || author.key}
 	<hr />
-	{#if $user.access.includes('post:edit_author') && edit_mode}
-		<Button
-			size="small"
-			on:click={() => {
-				$module = {
-					module: Form,
-					post_key: post.key,
-					update
-				};
-			}}
-		>
+	{#if app.user.access.includes('post:edit_author') && edit_mode}
+		<Button size="small" onclick={() => module.open(Form, { post_key: post.key, update })}>
 			<Icon icon="edit" size="1.4" />
 			Edit Author
 		</Button>
 	{/if}
-	
+
 	<div class="line">
 		{#if !loading}
 			<Link href="/profile?search={author.key}">
@@ -61,7 +48,7 @@
 				</div>
 			</Link>
 		{/if}
-		<Loading active={loading} size="40" />
+		<Spinner active={loading} size="40" />
 		| Author
 	</div>
 {/if}

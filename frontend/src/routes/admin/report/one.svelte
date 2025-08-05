@@ -1,12 +1,11 @@
 <script>
-	import { module } from '$lib/store.js';
+	import { module } from '$lib/store.svelte.js';
 
-	export let one;
+	let { one } = $props();
 
-	import Datetime from '$lib/datetime.svelte';
-	import Link from '$lib/button/link.svelte';
+	import { Datetime, Avatar } from '$lib/macro';
+	import { Link } from '$lib/button';
 	import Resolve from './one_resolve.svelte';
-	import Avatar from '$lib/avatar.svelte';
 </script>
 
 <div class="item">
@@ -35,24 +34,14 @@
 		<Link href="/profile?search={one.reported.key}" blank>
 			{one.reported.name}
 		</Link>
-		<div />
+		<div></div>
 		<Link href="/{one.entity.extra_2}#{one.entity.key}" blank>
 			{one.entity.extra_1}
 		</Link>
 	</div>
 
 	{#if one.status != 'resolved'}
-		<Link
-			small
-			on:click={() => {
-				$module = {
-					module: Resolve,
-					report_key: one.key
-				};
-			}}
-		>
-			Resolve
-		</Link>
+		<Link small onclick={() => module.open(Resolve, { report_key: one.key })}>Resolve</Link>
 	{:else if one.status == 'resolved'}
 		<div class="small">
 			{one.resolve}

@@ -1,30 +1,29 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { module, loading, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 
 	let error = {};
 
 	const submit = async () => {
 		error = {};
 
-		$loading = 'Deleting Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${$module.post.key}`, {
+		loading.open('Deleting Post . . .');
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.post.key}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			}
 		});
-		$loading = false;
+		loading.close();
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			$module = null;
-			$notify.add('Post Deleted');
+			module.close();
+			notify.open('Post Deleted');
 			goto('/post');
 		} else {
 			error = resp;
@@ -43,13 +42,13 @@
 
 	<br />
 	<div class="line">
-		<Button extra="hover_red" on:click={submit}>
+		<Button extra="hover_red" onclick={submit}>
 			<Icon icon="delete" />
 			Yes
 		</Button>
 		<Button
-			on:click={() => {
-				$module = null;
+			onclick={() => {
+				module.close();
 			}}
 		>
 			<Icon icon="close" />

@@ -1,38 +1,37 @@
 <script>
-	import { module, loading, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 	import Delete from './status.delete.svelte';
 
-	let _status = $module.post.status;
+	let _status = module.value.post.status;
 
 	let error = {};
 
 	const submit = async (status) => {
-		if (!$module.post.photo) {
+		if (!module.value.post.photo) {
 			error.error = 'no title photo';
 			return;
 		}
 		error = {};
 
-		$loading = 'Saving Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${$module.post.key}`, {
+		loading.open('Saving Post . . .');
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify({ status })
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module.update(resp.post);
-			$module = null;
-			$notify.add('Status Changed');
+			module.value.update(resp.post);
+			module.close();
+			notify.open('Status Changed');
 		} else {
 			error = resp;
 		}
@@ -61,7 +60,7 @@
 	<div class="line">
 		{#if _status != 'active'}
 			<Button
-				on:click={() => {
+				onclick={() => {
 					submit('active');
 				}}
 			>
@@ -72,7 +71,7 @@
 
 		{#if _status != 'draft'}
 			<Button
-				on:click={() => {
+				onclick={() => {
 					submit('draft');
 				}}
 			>
@@ -82,14 +81,7 @@
 		{/if}
 
 		{#if _status != 'delete'}
-			<Button
-				on:click={() => {
-					$module = {
-						module: Delete,
-						post: $module.post
-					};
-				}}
-			>
+			<Button onclick={() => module.open(Delete, { post: module.value.post })}>
 				<Icon icon="delete" />
 				Delete
 			</Button>

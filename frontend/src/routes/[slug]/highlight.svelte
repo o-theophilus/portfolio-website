@@ -1,15 +1,14 @@
 <script>
-	import { loading, settings, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { loading, app, notify } from '$lib/store.svelte.js';
 
-	import Toggle from '$lib/toggle.svelte';
+	import { Toggle } from '$lib/button';
 
-	export let post_key;
-	let is_highlight = false;
+	let { post_key } = $props();
+	let is_highlight = $state(false);
 
 	const highlight = () => {
 		is_highlight = false;
-		for (const x of $settings.highlight) {
+		for (const x of app.settings.highlight) {
 			if (x.key == post_key) {
 				is_highlight = true;
 				break;
@@ -20,23 +19,23 @@
 	highlight();
 
 	const submit = async () => {
-		$loading = 'Adding Highlight . . .';
+		loading.open('Adding Highlight . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify({ key: post_key })
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$settings.highlight = resp.posts;
-			$notify.add(`${is_highlight ? 'Added' : 'Removed'} as Highlight`);
+			app.settings.highlight = resp.posts;
+			notify.open(`${is_highlight ? 'Added' : 'Removed'} as Highlight`);
 		} else {
-			$notify.add(resp.error, 400);
+			notify.open(resp.error, 400);
 		}
 		highlight();
 	};
@@ -45,7 +44,7 @@
 <Toggle
 	state_2="highlight"
 	active={is_highlight}
-	on:click={() => {
+	onclick={() => {
 		is_highlight = !is_highlight;
 		submit();
 	}}

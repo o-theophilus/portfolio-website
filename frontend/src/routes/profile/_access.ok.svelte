@@ -1,16 +1,14 @@
 <script>
-	import { module, notify, loading } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
-	import { page } from '$app/stores';
+	import { module, notify, loading, app } from '$lib/store.svelte.js';
+	import { page } from '$app/state';
 
-	import Icon from '$lib/icon.svelte';
-	import Button from '$lib/button/button.svelte';
-	import ShowPassword from '../account/password_show.svelte';
-	import IG from '$lib/input_group.svelte';
+	import { Icon } from '$lib/macro';
+	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
 	import Access from './_access.svelte';
 
 	let form = {
-		access: $module.mods
+		access: module.value.mods
 	};
 	let error = {};
 	let show_password = false;
@@ -27,21 +25,24 @@
 
 	const submit = async () => {
 		error = {};
-		$loading = 'saving . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/user/access/${$page.data.user.key}`, {
-			method: 'put',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: $token
-			},
-			body: JSON.stringify(form)
-		});
+		loading.open('saving . . .');
+		let resp = await fetch(
+			`${import.meta.env.VITE_BACKEND}/admin/user/access/${page.data.user.key}`,
+			{
+				method: 'put',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: app.token
+				},
+				body: JSON.stringify(form)
+			}
+		);
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module = null;
-			$notify.add('Access saved');
+			module.close();
+			notify.open('Access saved');
 		} else {
 			error = resp;
 		}
@@ -63,27 +64,14 @@
 		bind:value={form.password}
 		type={show_password ? 'text' : 'password'}
 		placeholder="Password here"
-	>
-		<svelte:fragment slot="right">
-			<div class="right">
-				<ShowPassword bind:show_password />
-			</div>
-		</svelte:fragment>
-	</IG>
+	></IG>
 
 	<div class="line">
-		<Button on:click={validate}>
+		<Button onclick={validate}>
 			Submit
 			<Icon icon="send" />
 		</Button>
-		<Button
-			on:click={() => {
-				$module = {
-					module: Access,
-					mods: $module.mods
-				};
-			}}
-		>
+		<Button onclick={() => module.open(Access, { mods: module.value.mods })}>
 			Back
 			<!-- <Icon icon="send" /> -->
 		</Button>
@@ -97,10 +85,6 @@
 
 	.error {
 		margin: var(--sp2) 0;
-	}
-
-	.right {
-		padding-right: var(--sp2);
 	}
 
 	.line {

@@ -1,16 +1,13 @@
 <script>
-	import { module, user } from '$lib/store.js';
+	import { module, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Marked from '$lib/marked.svelte';
+	import { Button } from '$lib/button';
+	import { Icon, Marked } from '$lib/macro';
 	import Edit from './content.edit.svelte';
 	import File from './content.file.svelte';
 
-	export let post;
-	export let edit_mode;
-	export let update;
-	let content = '';
+	let { post, edit_mode, update } = $props();
+	let content = $state('');
 
 	const process_content = (text) => {
 		text = text ? text : '';
@@ -66,35 +63,18 @@
 
 {#if edit_mode}
 	<div class="line">
-		{#if $user.access.includes('post:edit_content')}
+		{#if app.user.access.includes('post:edit_content')}
 			<Button
 				size="small"
-				on:click={() => {
-					$module = {
-						module: Edit,
-						post,
-						update,
-						process_content,
-						refresh
-					};
-				}}
+				onclick={() => module.open(Edit, { post, update, process_content, refresh })}
 			>
 				<Icon icon="edit" size="1.4" />
 				Edit Content
 			</Button>
 		{/if}
 
-		{#if $user.access.includes('post:edit_files') && post.content && post.content.includes('@[file]')}
-			<Button
-				size="small"
-				on:click={() => {
-					$module = {
-						module: File,
-						post,
-						update
-					};
-				}}
-			>
+		{#if app.user.access.includes('post:edit_files') && post.content && post.content.includes('@[file]')}
+			<Button size="small" onclick={() => module.open(File, { post, update })}>
 				<Icon icon="image" size="1.4" />
 				Manage Files
 			</Button>

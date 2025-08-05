@@ -1,13 +1,12 @@
 <script>
-	import { module, notify, loading } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, notify, loading, app } from '$lib/store.svelte.js';
 
-	import IG from '$lib/input_group.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { IG } from '$lib/input';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 
 	let form = {
-		name: $module.user.name
+		name: module.value.user.name
 	};
 
 	let error = {};
@@ -16,7 +15,7 @@
 		error = {};
 		if (!form.name) {
 			error.name = 'cannot be empty';
-		} else if (form.name == $module.user.name) {
+		} else if (form.name == module.value.user.name) {
 			error.name = 'no change';
 		}
 
@@ -24,22 +23,22 @@
 	};
 
 	const submit = async () => {
-		$loading = 'Saving Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/${$module.user.key}`, {
+		loading.open('Saving Post . . .');
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/${module.value.user.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module.update(resp.user);
-			$notify.add('Name Changed');
-			$module = null;
+			module.value.update(resp.user);
+			notify.open('Name Changed');
+			module.close();
 		} else {
 			error = resp;
 		}
@@ -63,7 +62,7 @@
 		bind:value={form.name}
 	/>
 
-	<Button on:click={validate}>
+	<Button onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

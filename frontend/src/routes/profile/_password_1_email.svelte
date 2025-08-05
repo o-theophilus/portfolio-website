@@ -1,9 +1,8 @@
 <script>
-	import { module, loading } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 	import EmailTemplate from './_password.template.svelte';
 
 	import Code from './_password_2_code.svelte';
@@ -15,23 +14,20 @@
 	const submit = async () => {
 		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
-		$loading = 'Requesting Code . . .';
+		loading.open('Requesting Code . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/password/1`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module = {
-				module: Code,
-				form
-			};
+			module.open(Code, form);
 		} else {
 			error = resp;
 		}
@@ -49,7 +45,7 @@
 	<br />
 	<br />
 
-	<Button primary on:click={submit}>
+	<Button primary onclick={submit}>
 		Request Code
 		<Icon icon="send" />
 	</Button>

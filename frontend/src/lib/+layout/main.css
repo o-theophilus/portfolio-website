@@ -1,0 +1,41 @@
+:root,
+textarea,
+select,
+input,
+button {
+	font-family: "Josefin Sans", sans-serif;
+	font-size: 1em;
+
+}
+
+* {
+	line-height: 150%;
+	margin: 0;
+	padding: 0;
+	
+	box-sizing: border-box;
+	outline: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	transition: background-color 9999s;
+	-webkit-text-fill-color: var(--ft1);
+}
+
+.error {
+	color: var(--cl2);
+}
+
+hr {
+	border: none;
+	border-top: 2px solid var(--input);
+}
+
+.ititle {
+	color: var(--ft1);
+	font-size: 1.5rem;
+}

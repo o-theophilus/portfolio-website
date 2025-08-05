@@ -1,45 +1,43 @@
 <script>
-	export let href = '';
-	export let blank = false;
-	export let disabled = false;
+	let {
+		href = '',
+		blank = false,
+		onmouseenter,
 
-	export let small = false;
+		onclick,
+		children
+	} = $props();
 </script>
 
-<svelte:element
-	this={href ? 'a' : 'button'}
-	{href}
-	target={blank ? '_blank' : ''}
-	on:click
-	on:mouseenter
-	{disabled}
-	role="presentation"
-	class:small
->
-	<slot />
-</svelte:element>
+{#if onclick}
+	<button {onclick} {onmouseenter}>
+		{@render children()}
+	</button>
+{:else}
+	<a {href} target={blank ? '_blank' : ''} {onmouseenter}>
+		{@render children()}
+	</a>
+{/if}
 
 <style>
-	button,
-	a {
-		color: var(--ft2);
-		font-weight: 700;
-		text-decoration: none;
-		text-align: left;
-		border: none;
-		background: none;
-		cursor: pointer;
-
+	a,
+	button {
+		color: var(--link-color, hsl(239, 42%, 47%));
+		font-weight: var(--link-font-weight, 800);
+		font-size: var(--link-font-size, 1rem);
 		fill: currentColor;
 
-		transition: color var(--trans);
+		transition: color 0.2s ease-in-out;
 	}
-	.small {
-		font-size: 0.8rem;
+	a {
+		text-decoration: none;
+	}
+	button {
+		background-color: transparent;
+		border: none;
 	}
 
 	:hover {
-		color: var(--cl1);
-		text-decoration: none;
+		color: var(--link-color-hover, hsl(0, 0%, 0%));
 	}
 </style>

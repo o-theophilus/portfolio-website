@@ -1,18 +1,14 @@
 <script>
-	import { loading, module, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { loading, module, notify, app } from '$lib/store.svelte.js';
 
+	import { Button, Link } from '$lib/button';
+	import { Tags } from '$lib/layout';
 	import { template, tags } from './_report__template.js';
-	import IG from '$lib/input_group.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Tags from '$lib/tags.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Link from '$lib/button/link.svelte';
-	import Avatar from '$lib/avatar.svelte';
-	import Drop from '$lib/dropdown.svelte';
+	import { IG, Dropdown } from '$lib/input';
+	import { Icon, Avatar } from '$lib/macro';
 
-	let reported = $module.reported;
-	let entity = $module.entity;
+	let reported = module.value.reported;
+	let entity = module.value.entity;
 
 	let form = {
 		reported_key: reported.key,
@@ -35,21 +31,21 @@
 	};
 
 	const submit = async () => {
-		$loading = 'Sending Report . . .';
+		loading.open('Sending Report . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/report`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module = null;
-			$notify.add('Report Submitted');
+			module.close();
+			notify.open('Report Submitted');
 		} else {
 			error = resp;
 		}
@@ -64,7 +60,7 @@
 		<Link href="/profile?search={reported.key}" blank>
 			{reported.name}
 		</Link>
-		<div />
+		<div></div>
 		{entity.extra}
 	</div>
 
@@ -83,7 +79,7 @@
 		placeholder="Reason for reporting"
 	>
 		<svelte:fragment slot="label">
-			<Drop
+			<Dropdown
 				wide
 				list={Object.keys(template)}
 				on:change={(e) => {
@@ -92,7 +88,7 @@
 				}}
 			/>
 
-			<div class="gap" />
+			<div class="gap"></div>
 		</svelte:fragment>
 	</IG>
 
@@ -102,7 +98,7 @@
 		style="1"
 		{tags}
 		active={form.tags}
-		on:click={(e) => {
+		onclick={(e) => {
 			if (form.tags.includes(e.detail)) {
 				form.tags = form.tags.filter((i) => i != e.detail);
 			} else {
@@ -112,7 +108,7 @@
 		}}
 	/>
 
-	<Button on:click={validate}>
+	<Button onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

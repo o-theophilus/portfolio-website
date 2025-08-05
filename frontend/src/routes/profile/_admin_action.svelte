@@ -1,10 +1,9 @@
 <script>
-	import { module, loading, notify, user } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
-	import IG from '$lib/input_group.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { IG } from '$lib/input';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 
 	let form = {
 		actions: []
@@ -28,25 +27,25 @@
 	const submit = async () => {
 		error = {};
 
-		$loading = `Taking action${form.actions.length > 1 ? 's' : ''} . . .`;
+		loading.open(`Taking action${form.actions.length > 1 ? 's' : ''} . . .`);
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/admin/user/actions/${$module.user.key}`,
+			`${import.meta.env.VITE_BACKEND}/admin/user/actions/${module.value.user.key}`,
 			{
 				method: 'put',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: $token
+					Authorization: app.token
 				},
 				body: JSON.stringify(form)
 			}
 		);
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module.update(resp.user);
-			$module = null;
-			$notify.add('Done');
+			module.value.update(resp.user);
+			module.close();
+			notify.open('Done');
 		} else {
 			error = resp;
 		}
@@ -62,13 +61,13 @@
 	{/if}
 
 	<div class="actions">
-		{#if $user.access.includes('user:reset_name')}
+		{#if app.user.access.includes('user:reset_name')}
 			<label>
 				<input type="checkbox" bind:group={form.actions} value="reset_name" />
 				Reset Name
 			</label>
 		{/if}
-		{#if $user.access.includes('user:reset_photo')}
+		{#if app.user.access.includes('user:reset_photo')}
 			<label>
 				<input type="checkbox" bind:group={form.actions} value="reset_photo" />
 				Reset Photo
@@ -89,7 +88,7 @@
 		bind:value={form.note}
 	/>
 
-	<Button on:click={validate}>
+	<Button onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

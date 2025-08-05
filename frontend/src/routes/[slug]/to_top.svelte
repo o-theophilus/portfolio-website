@@ -1,7 +1,8 @@
 <script>
-	import { scroll } from '$lib/store.js';
+	import { scroll } from '$lib/store.svelte.js';
 
-	import Icon from '$lib/icon.svelte';
+	import { Icon } from '$lib/macro';
+
 	let percent = 0;
 	let scrollTop = 0;
 </script>
@@ -20,24 +21,24 @@
 	class="circle"
 	class:active={scrollTop > 160}
 	role="presentation"
-	on:click={() => {
+	onclick={() => {
 		scroll('#top_nav');
 	}}
 >
-	<div class="sector s1" style:--rot="{percent * 3.6}deg" />
+	<div class="sector s1" style:--rot="{percent * 3.6}deg"></div>
 	{#if percent >= 25}
-		<div class="sector s2" />
+		<div class="sector s2"></div>
 	{/if}
 	{#if percent >= 50}
-		<div class="sector s3" />
+		<div class="sector s3"></div>
 	{/if}
 	{#if percent >= 75}
-		<div class="sector s4" />
+		<div class="sector s4"></div>
 	{:else}
-		<div class="sector hide" />
+		<div class="sector hide"></div>
 	{/if}
 	<div class="center">
-		<Icon icon="arrow_upward" />
+		<Icon icon="arrow_upward"></Icon>
 		<!-- {percent} -->
 	</div>
 </div>

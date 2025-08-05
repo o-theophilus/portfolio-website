@@ -1,29 +1,29 @@
 <script>
 	import { onMount } from 'svelte';
-	import { state, set_state } from '$lib/store.js';
+	import { memory, page_state } from '$lib/store.svelte.js';
 
-	import Tags from '$lib/tags.svelte';
-	import Loading from '$lib/loading.svelte';
+	import { Tags } from '$lib/layout';
+	import { Spinner } from '$lib/macro';
 
 	let tags = [];
 
 	let loading = true;
 	onMount(async () => {
 		let pn = 'tags';
-		let i = $state.findIndex((x) => x.name == pn);
+		let i = $memory.findIndex((x) => x.name == pn);
 		if (i == -1) {
 			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tag`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {
 				tags = resp.tags;
-				$state.push({
+				$memory.push({
 					name: pn,
 					data: resp.tags
 				});
 			}
 		} else {
-			tags = $state[i].data;
+			tags = $memory[i].data;
 		}
 		loading = false;
 	});
@@ -32,7 +32,7 @@
 {#if loading}
 	<hr />
 	<div class="line">
-		<Loading active={loading} size="20" />
+		<Spinner active={loading} size="20" />
 		Loading tags . . .
 	</div>
 {:else if tags.length > 0}
@@ -41,8 +41,8 @@
 	<Tags
 		{tags}
 		style="1"
-		on:click={(e) => {
-			set_state('tag', e.detail);
+		onclick={(e) => {
+			page_state('tag', e.detail);
 		}}
 	/>
 {/if}

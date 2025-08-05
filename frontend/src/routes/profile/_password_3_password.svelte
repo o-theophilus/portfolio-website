@@ -1,14 +1,11 @@
 <script>
-	import { module, loading, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
-	import IG from '$lib/input_group.svelte';
-	import Password from '../account/password_checker.svelte';
-	import Button from '$lib/button/button.svelte';
-	import ShowPassword from '../account/password_show.svelte';
+	import { IG } from '$lib/input';
+	import { Button } from '$lib/button';
 
 	let form = {
-		...$module.form
+		...module.value.form
 	};
 	let error = {};
 	let show_password = false;
@@ -39,21 +36,21 @@
 	};
 
 	const submit = async () => {
-		$loading = 'loading . . .';
+		loading.open('loading . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/password/3`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$notify.add('Password changed');
-			$module = null;
+			notify.open('Password changed');
+			module.close();
 		} else {
 			error = resp;
 		}
@@ -76,16 +73,7 @@
 		bind:value={form.password}
 		type={show_password ? 'text' : 'password'}
 		placeholder="Password here"
-	>
-		<svelte:fragment slot="right">
-			<div class="right">
-				<ShowPassword bind:show_password />
-			</div>
-		</svelte:fragment>
-		<svelte:fragment slot="down">
-			<Password password={form.password} />
-		</svelte:fragment>
-	</IG>
+	></IG>
 
 	<IG
 		name="Confirm Password"
@@ -96,7 +84,7 @@
 		placeholder="Password here"
 	/>
 
-	<Button primary on:click={validate}>Reset</Button>
+	<Button primary onclick={validate}>Reset</Button>
 </form>
 
 <style>
@@ -105,9 +93,5 @@
 	}
 	.error {
 		margin: var(--sp2) 0;
-	}
-
-	.right {
-		padding-right: var(--sp2);
 	}
 </style>

@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { get } from 'svelte/store';
-import { state, loading } from "$lib/store.js"
+import { memory, loading } from "$lib/store.svelte.js"
 
 export const load = async ({ parent, fetch, url }) => {
 	let a = await parent();
@@ -9,21 +9,21 @@ export const load = async ({ parent, fetch, url }) => {
 	}
 
 	let page_name = "profile"
-	let _state = get(state)
+	let _state = get(memory)
 	let i = _state.findIndex(x => x.name == page_name);
 
 	if (i == -1) {
 		_state.push({
 			name: page_name
 		})
-		state.set(_state)
+		memory.set(_state)
 	}
 
 	let backend = new URL(`${import.meta.env.VITE_BACKEND}/user`)
 	if (url.search) {
 		backend.search = url.search
 	} else {
-		loading.set(false)
+		loading.close()
 		return {
 			page_name,
 			user: a.locals.user
@@ -38,7 +38,7 @@ export const load = async ({ parent, fetch, url }) => {
 		}
 	});
 	resp = await resp.json();
-	loading.set(false)
+	loading.close()
 	resp.page_name = page_name
 	return resp
 }

@@ -1,12 +1,11 @@
 <script>
-	import { module, loading, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, notify,app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
-	import IG from '$lib/input_group.svelte';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
+	import { IG } from '$lib/input';
 
-	let date = new Date($module.post.date);
+	let date = new Date(module.value.post.date);
 	var year = date.getFullYear();
 	var month = (date.getMonth() + 1).toString().padStart(2, '0');
 	var day = date.getDate().toString().padStart(2, '0');
@@ -29,22 +28,22 @@
 	};
 
 	const submit = async () => {
-		$loading = 'Saving Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${$module.post.key}`, {
+		loading.open('Saving Post . . .');
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module.update(resp.post);
-			$module = null;
-			$notify.add('Date Saved');
+			module.value.update(resp.post);
+			module.close();
+			notify.open('Date Saved');
 		} else {
 			error = resp;
 		}
@@ -61,7 +60,7 @@
 		placeholder="Date here"
 	/>
 
-	<Button on:click={validate}>
+	<Button onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

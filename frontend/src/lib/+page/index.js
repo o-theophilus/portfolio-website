@@ -1,0 +1,6 @@
+export { default as Hero } from './hero.svelte';
+export { default as About } from './about.svelte';
+export { default as Skill } from './skill.svelte';
+export { default as Experience } from './experience.svelte';
+export { default as Contact } from './contact.svelte';
+export { default as Carousel } from './highlight.svelte';

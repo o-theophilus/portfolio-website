@@ -1,38 +1,36 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { module } from '$lib/store.js';
+	import { module } from '$lib/store.svelte.js';
 
-	import Hero from './home/hero.svelte';
-	import About from './home/about.svelte';
-	import Skill from './home/skill.svelte';
-	import Experience from './home/experience.svelte';
-	import Contact from './home/contact.svelte';
-	import Carousel from './home/highlight/index.svelte';
-	import Meta from '$lib/meta.svelte';
-	import Log from '$lib/log.svelte';
-	import Dialogue from '$lib/dialogue.svelte';
-	import Login from './account/login.svelte';
+	import { Hero, About, Skill, Experience, Contact, Carousel } from '$lib/+page';
+	import { Meta, Log } from '$lib/macro';
+	import { Dialogue } from '$lib/layout';
+	import { Login } from '$lib/auth';
+
+	const get_module = (x) => {
+		if (x == 'login') {
+			return Login;
+		} else if (x == 'dialogue') {
+			return Dialogue;
+		}
+		return null;
+	};
 
 	onMount(() => {
-		if ($page.url.searchParams.has('module')) {
-			let _module = {};
-			switch ($page.url.searchParams.get('module')) {
-				case 'dialogue':
-					_module.module = Dialogue;
-					break;
-				case 'login':
-					_module.module = Login;
-					break;
-			}
+		let _module = null;
+		let value = {};
 
-			for (const x of ['title', 'status', 'message', 'return_url']) {
-				if ($page.url.searchParams.has(x)) {
-					_module[x] = $page.url.searchParams.get(x);
-				}
+		for (const [key, val] of page.url.searchParams.entries()) {
+			if (key == 'module') {
+				_module = get_module(val);
+			} else {
+				value[key] = val;
 			}
+		}
 
-			$module = _module;
+		if (_module) {
+			module.open(_module, value);
 			window.history.replaceState(history.state, '', '/');
 		}
 	});

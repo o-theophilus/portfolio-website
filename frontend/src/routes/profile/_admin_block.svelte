@@ -1,12 +1,11 @@
 <script>
-	import { module, loading, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
-	import IG from '$lib/input_group.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { IG } from '$lib/input';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 
-	let user = { ...$module.user };
+	let user = { ...module.value.user };
 	let form = {};
 	let error = {};
 
@@ -23,22 +22,22 @@
 	const submit = async () => {
 		error = {};
 
-		$loading = `${user.status == 'blocked' ? 'Unblocking User' : 'Blocking User'} . . .`;
+		loading.open(`${user.status == 'blocked' ? 'Unblocking User' : 'Blocking User'} . . .`);
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/user/block/${user.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module.update(resp.user);
-			$module = null;
-			$notify.add(resp.user.status == 'blocked' ? 'User Blocked' : 'User Unblocked');
+			module.value.update(resp.user);
+			module.close();
+			notify.open(resp.user.status == 'blocked' ? 'User Blocked' : 'User Unblocked');
 		} else {
 			error = resp;
 		}
@@ -68,7 +67,7 @@
 		bind:value={form.note}
 	/>
 
-	<Button on:click={validate}>
+	<Button onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

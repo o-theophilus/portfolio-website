@@ -1,21 +1,19 @@
 <script>
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { loading, notify, module } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { loading, notify, module, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import BRound from '$lib/button/round.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Button, RoundButton } from '$lib/button';
+	import { Icon } from '$lib/macro';
 	import { createEventDispatcher } from 'svelte';
 
 	let emit = createEventDispatcher();
 
-	let post = $module.post;
-	let files = [...post.files];
-	let active_photo = files[0];
-	let count = post.content.split('@[file]').length - 1;
-	export let error = {};
+	let post = $state(module.value.post);
+	let files = $derived([...post.files]);
+	let active_photo = $derived(files[0]);
+	let count = $derived(post.content.split('@[file]').length - 1);
+	let { error = {} } = $props();
 
 	const order = (dir = true) => {
 		error = {};
@@ -70,24 +68,24 @@
 	const submit = async () => {
 		error = {};
 
-		$loading = 'Saving . . .';
+		loading.open('Saving . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/file/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify({ files })
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
 			post = resp.post;
-			$module.update(post);
+			module.value.update(post);
 			emit('update', post.files);
 			reset(post.files);
-			$notify.add('Order Saved');
+			notify.open('Order Saved');
 		} else {
 			error = resp;
 		}
@@ -101,7 +99,7 @@
 			animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
 			class:excess={i > count - 1}
 			class:active={active_photo == x}
-			on:click={() => {
+			onclick={() => {
 				error = {};
 				active_photo = x;
 				emit('active', active_photo);
@@ -121,7 +119,7 @@
 			<div
 				class="empty"
 				animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
-				on:click={() => {
+				onclick={() => {
 					if (post.files.length < count) {
 						emit('add');
 					} else {
@@ -137,33 +135,33 @@
 </div>
 
 <div class="line">
-	<BRound
+	<RoundButton
 		icon="arrow_back"
 		disabled={files.length <= 1 || files[0] == active_photo}
-		on:click={() => {
+		onclick={() => {
 			order(false);
 		}}
 	/>
 
-	<BRound
+	<RoundButton
 		icon="arrow_forward"
 		disabled={files.length <= 1 || files[files.length - 1] == active_photo}
-		on:click={order}
+		onclick={order}
 	/>
 
-	<BRound icon="delete" disabled={files.length == 0} on:click={remove} />
+	<RoundButton icon="delete" disabled={files.length == 0} onclick={remove} />
 </div>
 
 <br />
 
 <div class="line">
-	<Button disabled={JSON.stringify(post.files) == JSON.stringify(files)} on:click={submit}>
+	<Button disabled={JSON.stringify(post.files) == JSON.stringify(files)} onclick={submit}>
 		<Icon icon="save" />
 		Save
 	</Button>
 
 	<Button
-		on:click={() => {
+		onclick={() => {
 			reset(post.files);
 		}}
 		disabled={JSON.stringify(post.files) == JSON.stringify(files)}
@@ -200,7 +198,9 @@
 
 		background-color: var(--bg2);
 		outline: 2px solid transparent;
-		transition: outline-color var(--trans), transform var(--trans);
+		transition:
+			outline-color var(--trans),
+			transform var(--trans);
 	}
 
 	.used:hover,

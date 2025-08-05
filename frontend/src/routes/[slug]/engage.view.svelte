@@ -1,10 +1,9 @@
 <script>
-	import Icon from '$lib/icon.svelte';
-	import Loading from '$lib/loading.svelte';
+	import { Icon, Spinner } from '$lib/macro';
 
-	export let post_key;
-	let post;
-	let loading = true;
+	let { post_key } = $props();
+	let post = $state();
+	let loading = $state(true);
 
 	export const reset = () => {
 		loading = true;
@@ -21,7 +20,7 @@
 </script>
 
 {#if loading}
-	<Loading active={loading} size="20" />
+	<Spinner active={loading} size="20" />
 {:else}
 	<div class="line info">
 		<div class="line" title="view{post.view > 1 ? 's' : ''}">

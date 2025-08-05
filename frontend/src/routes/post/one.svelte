@@ -1,27 +1,27 @@
 <script>
-	import { state } from '$lib/store.js';
+	import { memory } from '$lib/store.svelte.js';
 
-	import Datetime from '$lib/datetime.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Datetime, Icon } from '$lib/macro';
 
-	export let post;
+	let { post } = $props();
 
 	const click = () => {
 		let sn = 'post_item';
-		let i = $state.findIndex((x) => x.name == sn);
+		let i = $memory.findIndex((x) => x.name == sn);
 		if (i == -1) {
-			$state.push({
+			$memory.push({
 				name: sn,
 				data: post
 			});
 		} else {
-			$state[i].data = post;
+			$memory[i].data = post;
 		}
 	};
 </script>
 
-<a href="/{post.slug}" data-sveltekit-preload-data on:click={click} on:mouseenter={click}>
-	<img src={post.photo || '/no_photo.png'} alt={post.title} onerror="this.src='/file_error.png';" />
+<a href="/{post.slug}" data-sveltekit-preload-data onclick={click} onmouseenter={click}>
+	<img src={post.photo || '/no_photo.png'} alt={post.title} />
+	<!-- onerror="this.src='/file_error.png';" -->
 
 	<div class="details">
 		<div class="title">
@@ -127,7 +127,9 @@
 		grid-template-rows: 0fr;
 
 		font-size: 0.8rem;
-		transition: grid-template-rows var(--trans), margin var(--trans);
+		transition:
+			grid-template-rows var(--trans),
+			margin var(--trans);
 	}
 	.description div {
 		overflow-y: hidden;

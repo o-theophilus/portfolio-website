@@ -1,14 +1,13 @@
 <script>
-	import { module, loading, notify, user } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 
 	let rating = 0;
 	let error = {};
-	for (const x of $module.post.ratings) {
-		if (x.user_key == $user.key) {
+	for (const x of module.value.post.ratings) {
+		if (x.user_key == app.user.key) {
 			rating = x.rating;
 			break;
 		}
@@ -27,23 +26,23 @@
 	const submit = async () => {
 		error = {};
 
-		$loading = 'Saving . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/rating/${$module.post.key}`, {
+		loading.open('Saving . . .');
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/rating/${module.value.post.key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify({ rating })
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module.update(resp.post);
-			$module.set_rating(resp.post);
-			$module = null;
-			$notify.add('Rating Saved');
+			module.value.update(resp.post);
+			module.value.set_rating(resp.post);
+			module.close();
+			notify.open('Rating Saved');
 		} else {
 			error = resp;
 		}
@@ -70,35 +69,19 @@
 		<div class="block red">
 			{#each Array(5) as _, i}
 				{@const j = -5 + i}
-				<button
-					class:active={j == rating}
-					on:click={() => {
-						set_active(j);
-					}}
-				/>
+				<button class:active={j == rating} onclick={() => set_active(j)}>ooooo</button>
 			{/each}
 		</div>
-		<button
-			class:active={0 == rating}
-			class="b0"
-			on:click={() => {
-				set_active(0);
-			}}
-		/>
+		<button class:active={0 == rating} class="b0" onclick={() => set_active(0)}>ooooo</button>
 		<div class="block green">
 			{#each Array(5) as _, i}
 				{@const j = 5 - i}
-				<button
-					class:active={j == rating}
-					on:click={() => {
-						set_active(j);
-					}}
-				/>
+				<button class:active={j == rating} onclick={() => set_active(j)}>ooooo</button>
 			{/each}
 		</div>
 	</div>
 
-	<Button on:click={validate}>
+	<Button onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

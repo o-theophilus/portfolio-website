@@ -1,16 +1,15 @@
 <script>
-	import { loading, notify, module } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { loading, notify, module, app } from '$lib/store.svelte.js';
 	import { createEventDispatcher } from 'svelte';
 
 	let emit = createEventDispatcher();
 
-	let post = $module.post;
-	let count = post.content.split('@[file]').length - 1;
-	let active_photo = '';
+	let post = $state(module.value.post);
+	let count = $derived(post.content.split('@[file]').length - 1);
+	let active_photo = $state('');
 	let input;
-	let dragover = false;
-	export let error = {};
+	let dragover = $state(false);
+	let { error = {} } = $props();
 
 	const on_input = () => {
 		error = {};
@@ -43,23 +42,23 @@
 			formData.append('files', files[i]);
 		}
 
-		$loading = 'uploading . . .';
+		loading.open('uploading . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/file/${post.key}`, {
 			method: 'post',
 			headers: {
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: formData
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 		input.value = '';
 
 		if (resp.status == 200) {
 			post = resp.post;
-			$module.update(post);
+			module.value.update(post);
 			emit('update', post.files);
-			$notify.add('Photo added');
+			notify.open('Photo added');
 
 			if (resp.error) {
 				error = resp;
@@ -76,7 +75,7 @@
 		post.files = data;
 	};
 
-	let dim = [1, 1];
+	let dim = $state([1, 1]);
 	export const active = (data) => {
 		active_photo = data;
 		dim = [1, 1];
@@ -103,18 +102,20 @@
 	class:dragover
 	class:incomplete={post.files.length < count}
 	style:--ar={dim[0] / dim[1]}
-	on:click={() => {
+	onclick={() => {
 		if (post.files.length < count) {
 			input.click();
 		}
 	}}
-	on:dragover|preventDefault={() => {
+	ondragover={(e) => {
+		e.preventDefault();
 		dragover = true;
 	}}
-	on:dragleave|preventDefault={() => {
+	ondragleave={(e) => {
+		e.preventDefault();
 		dragover = false;
 	}}
-	on:drop={(e) => {
+	ondrop={(e) => {
 		dragover = false;
 		if (post.files.length < count) {
 			e.preventDefault();
@@ -130,9 +131,7 @@
 	accept="image/jpeg, image/png, application/pdf"
 	multiple
 	bind:this={input}
-	on:change={() => {
-		on_input();
-	}}
+	onchange={on_input}
 />
 
 <style>
@@ -140,7 +139,9 @@
 		width: 100%;
 		border-radius: var(--sp1);
 		outline: 2px solid transparent;
-		transition: outline-color var(--trans), transform var(--trans);
+		transition:
+			outline-color var(--trans),
+			transform var(--trans);
 
 		aspect-ratio: var(--ar);
 	}

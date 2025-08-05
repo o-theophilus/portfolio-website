@@ -1,11 +1,10 @@
 <script>
-	import { page } from '$app/stores';
-	import Content from '$lib/content.svelte';
-	import Meta from '$lib/meta.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Button from '$lib/button/button.svelte';
+	import { page } from '$app/state';
+	import { Content } from '$lib/layout';
+	import { Meta, Icon } from '$lib/macro';
+	import { Button } from '$lib/button';
 
-	let error = $page.error.message;
+	let error = page.error.message;
 	export const data = '';
 	export const form = '';
 </script>
@@ -17,7 +16,7 @@
 	<br />
 	<section>
 		<div>
-			<strong class="ititle">{$page.status}</strong>
+			<strong class="ititle">{page.status}</strong>
 			<br />
 			{error}
 		</div>

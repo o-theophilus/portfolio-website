@@ -1,14 +1,13 @@
 <script>
-	import { user } from '$lib/store.js';
 	import { createEventDispatcher } from 'svelte';
-	import { state } from '$lib/store.js';
+	import { app, memory } from '$lib/store.svelte.js';
 
-	import Datetime from '$lib/datetime.svelte';
+	import { Datetime } from '$lib/macro';
 
 	let emit = createEventDispatcher();
-	export let log;
+	let { log } = $props();
 
-	let href = '';
+	let href = $state('');
 	if (log.entity.type == 'post') {
 		href = `/${log.entity.key}`;
 	} else if (log.entity.type == 'report') {
@@ -28,7 +27,7 @@
 		class:good={log.status == 200}
 		class:caution={![200, 400].includes(log.status)}
 		class:error={log.status == 400}
-	/>
+	></div>
 
 	<span class="date">
 		<Datetime datetime={log.date} type="date" />
@@ -40,9 +39,9 @@
 		{log.user.name}
 	</a>
 
-	{#if log.user.key && $user.access.includes('log:view')}
+	{#if log.user.key && app.user.access.includes('log:view')}
 		<button
-			on:click={() => {
+			onclick={() => {
 				emit('search', { u: log.user.key });
 			}}
 		>
@@ -57,12 +56,12 @@
 		<a
 			{href}
 			data-sveltekit-preload-data="off"
-			on:click={() => {
+			onclick={() => {
 				if (log.entity.type == 'report') {
 					let pn = 'reports';
-					let i = $state.findIndex((x) => x.name == pn);
+					let i = $memory.findIndex((x) => x.name == pn);
 					if (i != -1) {
-						$state.splice(i, 1);
+						$memory.splice(i, 1);
 					}
 				}
 			}}
@@ -71,7 +70,7 @@
 		</a>
 
 		<button
-			on:click={() => {
+			onclick={() => {
 				emit('search', { e: log.entity.key });
 			}}
 		>

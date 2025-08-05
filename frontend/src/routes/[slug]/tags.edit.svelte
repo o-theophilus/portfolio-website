@@ -1,14 +1,13 @@
 <script>
 	import { onMount } from 'svelte';
-	import { module, loading, state, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, notify, memory, app } from '$lib/store.svelte.js';
 
-	import IG from '$lib/input_group.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Tags from '$lib/tags.svelte';
-	import Icon from '$lib/icon.svelte';
+	import { IG } from '$lib/input';
+	import { Button } from '$lib/button';
+	import { Tags } from '$lib/layout';
+	import { Icon } from '$lib/macro';
 
-	let post = { ...$module.post };
+	let post = { ...module.value.post };
 	let tags = post.tags.join(', ');
 	let all_tags = [];
 	let unused_tags = [];
@@ -27,22 +26,22 @@
 	const submit = async () => {
 		error = {};
 
-		$loading = 'Saving Post . . .';
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${$module.post.key}`, {
+		loading.open('Saving Post . . .');
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify({ tags: tags.split(', ').filter(Boolean) })
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module.update(resp.post);
-			$module = null;
-			$notify.add(`Tag${resp.post.tags.length > 1 ? 's' : ''} Saved`);
+			module.value.update(resp.post);
+			module.close();
+			notify.open(`Tag${resp.post.tags.length > 1 ? 's' : ''} Saved`);
 		} else {
 			error = resp;
 		}
@@ -69,20 +68,20 @@
 		}
 
 		let pn = 'tags';
-		let i = $state.findIndex((x) => x.name == pn);
+		let i = $memory.findIndex((x) => x.name == pn);
 		if (i == -1) {
 			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tag`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {
 				all_tags = resp.tags;
-				$state.push({
+				$memory.push({
 					name: pn,
 					data: resp.tags
 				});
 			}
 		} else {
-			all_tags = $state[i].data;
+			all_tags = $memory[i].data;
 		}
 		loading_tags = false;
 
@@ -111,13 +110,13 @@
 
 	<Tags
 		tags={unused_tags}
-		on:click={(e) => {
+		onclick={(e) => {
 			clean_value(e.detail);
 		}}
 	/>
 
 	<Button
-		on:click={validate}
+		onclick={validate}
 		disabled={tags.split(', ').filter(Boolean).sort().join(', ') ==
 			post.tags.slice().sort().join(', ')}
 	>

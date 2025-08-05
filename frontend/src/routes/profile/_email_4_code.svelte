@@ -1,14 +1,12 @@
 <script>
-	import { module, notify, loading } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, notify, loading, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import IG from '$lib/input_group.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Code from '$lib/input_code.svelte';
+	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
+	import { Icon } from '$lib/macro';
 
 	let form = {
-		...$module.form
+		...module.value.form
 	};
 	let error = {};
 
@@ -25,22 +23,22 @@
 	};
 
 	const submit = async () => {
-		$loading = 'loading . . .';
+		loading.open('loading . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/email/4`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});
 		resp = await resp.json();
-		$loading = false;
+		loading.close();
 
 		if (resp.status == 200) {
-			$module.update(resp.user);
-			$notify.add('Email changed');
-			$module = null;
+			module.value.update(resp.user);
+			notify.open('Email changed');
+			module.close();
 		} else {
 			error = resp;
 		}
@@ -58,11 +56,9 @@
 
 	<div class="message">Code has been sent to: {form.email}.</div>
 
-	<IG name="Code" error={error.code_2}>
-		<Code bind:value={form.code_2} />
-	</IG>
+	<IG name="Code" error={error.code_2} bind:value={form.code_2} type="code"></IG>
 
-	<Button primary on:click={validate}>
+	<Button primary onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>

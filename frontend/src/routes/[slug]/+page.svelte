@@ -1,14 +1,11 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { module, user } from '$lib/store.js';
+	import { module, app } from '$lib/store.svelte.js';
 
-	import Content from '$lib/content.svelte';
-	import Meta from '$lib/meta.svelte';
-	import Button from '$lib/button/button.svelte';
-	import Toggle from '$lib/toggle.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Log from '$lib/log.svelte';
+	import { Content } from '$lib/layout';
+	import { Button, Toggle } from '$lib/button';
+	import { Meta, Icon, Log } from '$lib/macro';
 
 	import Photo from './photo.svelte';
 	import Title from './title.svelte';
@@ -27,12 +24,12 @@
 	import Refresh from './refresh.svelte';
 	import ToTop from './to_top.svelte';
 
-	export let data;
-	$: post = data.post;
-	let edit_mode = false;
-	let admin = false;
+	let { data } = $props();
+	post = data.post;
+	let edit_mode = $state(false);
+	let admin = $state(false);
 
-	let content;
+	let content = $state();
 	const update = (data) => {
 		post = data;
 		content.refresh(post);
@@ -43,20 +40,20 @@
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/access/post:edit`);
 		resp = await resp.json();
 		if (resp.status == 200) {
-			admin = $user.access.some((x) => resp.access.includes(x));
+			admin = app.user.access.some((x) => resp.access.includes(x));
 		}
 
-		if ($page.url.searchParams.has('edit') && admin) {
-			$page.url.searchParams.delete('edit');
+		if (page.url.searchParams.has('edit') && admin) {
+			page.url.searchParams.delete('edit');
 			edit_mode = true;
-			window.history.replaceState(history.state, '', $page.url.href);
+			window.history.replaceState(history.state, '', page.url.href);
 		}
 	});
 
-	let author;
-	let engagement;
-	let comment;
-	let similar;
+	let author = $state();
+	let engagement = $state();
+	let comment = $state();
+	let similar = $state();
 	const refresh = async () => {
 		edit_mode = false;
 		author.reset();
@@ -81,32 +78,23 @@
 				<Toggle
 					state_2="edit"
 					active={edit_mode}
-					on:click={() => {
+					onclick={() => {
 						edit_mode = !edit_mode;
 					}}
 				/>
 			</div>
 		{/if}
 
-		{#if edit_mode && ($user.access.includes('post:edit_status') || ($user.access.includes('post:edit_highlight') && post.status == 'active'))}
+		{#if edit_mode && (app.user.access.includes('post:edit_status') || (app.user.access.includes('post:edit_highlight') && post.status == 'active'))}
 			<hr />
 			<div class="line">
-				{#if $user.access.includes('post:edit_status') && edit_mode}
-					<Button
-						size="small"
-						on:click={() => {
-							$module = {
-								module: Edit_Status,
-								post,
-								update
-							};
-						}}
-					>
+				{#if app.user.access.includes('post:edit_status') && edit_mode}
+					<Button size="small" onclick={() => module.open(Edit_Status, { post, update })}>
 						<Icon icon="edit" size="1.4" />
 						<span> Edit Status: <strong>{post.status}</strong> </span>
 					</Button>
 				{/if}
-				{#if $user.access.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
+				{#if app.user.access.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
 					<Highlight post_key={post.key} />
 				{/if}
 			</div>

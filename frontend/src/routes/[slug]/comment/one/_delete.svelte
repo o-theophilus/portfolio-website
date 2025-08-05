@@ -1,33 +1,31 @@
 <script>
-	import { module, loading, notify } from '$lib/store.js';
-	import { token } from '$lib/cookie.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
-	import Button from '$lib/button/button.svelte';
-	import Icon from '$lib/icon.svelte';
-	import Marked from '$lib/marked.svelte';
+	import { Button } from '$lib/button';
+	import { Icon, Marked } from '$lib/macro';
 
-	let comment = { ...$module.comment };
+	let comment = { ...module.value.comment };
 	let error = {};
 
 	const submit = async () => {
 		error = {};
 
-		$loading = `Deleting comment . . .`;
+		loading.open(`Deleting comment . . .`);
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comment/${comment.key}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: $token
+				Authorization: app.token
 			}
 		});
-		$loading = false;
+		loading.close();
 
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			$module.update(resp.comments);
-			$module = null;
-			$notify.add('Comment Deleted');
+			module.value.update(resp.comments);
+			module.close();
+			notify.open('Comment Deleted');
 		} else {
 			error = resp;
 		}
@@ -56,13 +54,13 @@
 	<br />
 
 	<div class="line">
-		<Button extra="hover_red" on:click={submit}>
+		<Button extra="hover_red" onclick={submit}>
 			<Icon icon="delete" />
 			Yes
 		</Button>
 		<Button
-			on:click={() => {
-				$module = null;
+			onclick={() => {
+				module.close();
 			}}
 		>
 			<Icon icon="close" />

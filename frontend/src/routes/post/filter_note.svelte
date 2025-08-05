@@ -1,10 +1,10 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { set_state } from '$lib/store.js';
+	import { page_state } from '$lib/store.svelte.js';
 
-	import BRound from '$lib/button/round.svelte';
-	import Content from '$lib/content.svelte';
+	import { RoundButton } from '$lib/button';
+	import { Content } from '$lib/layout';
 
 	let text = '';
 	let set = (url) => {
@@ -31,9 +31,9 @@
 	};
 
 	onMount(() => {
-		set($page.url);
+		set(page.url);
 	});
-	$: set($page.url);
+	$: set(page.url);
 </script>
 
 {#if text}
@@ -42,12 +42,12 @@
 			{text}
 		</span>
 
-		<BRound
+		<RoundButton
 			icon="close"
 			extra="hover_red"
-			on:click={() => {
-				set_state('search', '');
-				set_state('tag', '');
+			onclick={() => {
+				page_state('search', '');
+				page_state('tag', '');
 			}}
 		/>
 	</div>
