@@ -2,12 +2,12 @@
 	let { children } = $props();
 </script>
 
-<div class="empty">
+<div class="note">
 	{@render children()}
 </div>
 
 <style>
-	.empty {
+	.note {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -18,7 +18,6 @@
 		border-radius: var(--sp0);
 		padding: var(--sp2);
 
-		background-color: var(--bg2);
 		color: var(--ft2);
 		text-align: center;
 	}

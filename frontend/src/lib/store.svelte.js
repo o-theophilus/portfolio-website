@@ -1,9 +1,12 @@
 import { browser } from '$app/environment';
-import { goto } from '$app/navigation';
+import { goto, invalidate, replaceState } from '$app/navigation';
+import { page } from '$app/state';
 
-export const app = {
+export const app = $state({
+
 	user: {},
 	settings: {},
+	memory: {},
 
 	token_name: 'token',
 	get token() {
@@ -24,7 +27,7 @@ export const app = {
 			document.cookie = `${this.token_name}=${v};expires=${date.toUTCString()};path=/`;
 		}
 	}
-};
+});
 
 
 export let module = $state({
@@ -77,32 +80,31 @@ export let notify = $state({
 
 export let memory = $state([]);
 
-
-
 export const page_state = $state({
-	searchParams: {},
-
-	set(key, val) {
-		this.searchParams[key] = val
-		if (!val) {
-			delete this.searchParams[key];
-		}
-		if (key != "page_no") {
-			delete this.searchParams["page_no"];
+	state: {},
+	set(obj) {
+		for (const [key, val] of Object.entries(obj)) {
+			this.state[page.data.page_name].searchParams[key] = val
+			if (!val) delete this.state[page.data.page_name].searchParams[key]
+			if (key != "page_no") delete this.state[page.data.page_name].searchParams["page_no"]
+			this.state[page.data.page_name].loaded = false
 		}
 
-		let ss = new URLSearchParams(this.searchParams);
-		ss = ss.toString()
-		ss = ss ? `?${ss}` : "?"
-		window.scrollTo({ top: 0, behavior: 'smooth' });
-
+		let ss = new URLSearchParams(this.state[page.data.page_name].searchParams);
+		page.url.search = ss.toString()
+		window.history.replaceState(history.state, '', page.url.href);
 		loading.open()
-		goto(ss, { replaceState: true })
-	}
+		invalidate(true)
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	},
+	get searchParams() { return this.state[page.data.page_name].searchParams }
+
+
 })
 
 
 
+export let isMobile = $state(false)
 export const scroll = (query) => {
 	let e = document.querySelector(query);
 
@@ -123,8 +125,5 @@ export const scroll = (query) => {
 		});
 	};
 
-	const unsubscribe = isMobile.subscribe((value) => {
-		value ? scrollMobile() : scrollDesktop();
-	});
-	return unsubscribe;
+	isMobile ? scrollMobile() : scrollDesktop();
 };

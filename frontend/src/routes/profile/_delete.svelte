@@ -4,6 +4,7 @@
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
 	import { Icon } from '$lib/macro';
+	import { Form } from '$lib/layout';
 
 	let form = {};
 	let error = {};
@@ -45,16 +46,9 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Delete Account </strong>
+<Form title="Delete Account" error={error.error}>
 	<br />
 	Are you sure you want to delete account?
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
 
 	<IG
 		name="Please give reason"
@@ -77,13 +71,7 @@
 		<Icon icon="delete" />
 		Delete
 	</Button>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-	.error {
-		margin: var(--sp2) 0;
-	}
 </style>

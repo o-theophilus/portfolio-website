@@ -50,7 +50,7 @@
 		padding: 0;
 	}
 	.state:nth-child(2) {
-		color: var(--clb);
+		color: white;
 	}
 	.state:last-of-type {
 		color: var(--ft2);
@@ -83,6 +83,6 @@
 		color: var(--ft2);
 	}
 	.active .state:last-of-type {
-		color: var(--clb);
+		color: white;
 	}
 </style>

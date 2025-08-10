@@ -2,8 +2,9 @@
 	import { module, loading, app } from '$lib/store.svelte.js';
 
 	import { IG } from '$lib/input';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 	import { Button } from '$lib/button';
+	import { Form } from '$lib/layout';
 
 	import Password from './forgot_3.password.svelte';
 
@@ -45,29 +46,10 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Forgot Password </strong>
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Forgot Password" error={error.error}>
 	<IG name="Code" error={error.code} bind:value={form.code} type="code"></IG>
-
 	<Button primary onclick={validate_submit}
 		>Submit
-		<Icon icon="send" />
+		<Icon2 icon="send" />
 	</Button>
-</form>
-
-<style>
-	form {
-		padding: var(--sp3);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
-</style>
+</Form>

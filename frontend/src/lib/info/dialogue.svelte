@@ -1,7 +1,7 @@
 <script>
 	import { module } from '$lib/store.svelte.js';
 
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 	import { Button } from '$lib/button';
 	import { Row } from '$lib/layout';
 
@@ -18,11 +18,11 @@
 	class:warning={status == 201}
 >
 	{#if status == 200}
-		<Icon icon="check_circle" size="2" />
+		<Icon2 icon="200" size="24" />
 	{:else if status == 400}
-		<Icon icon="cancel" size="2" />
+		<Icon2 icon="400" size="24" />
 	{:else if status == 201}
-		<Icon icon="error" size="2" />
+		<Icon2 icon="201" size="24" /> 
 	{/if}
 	{title}
 </div>
@@ -40,7 +40,7 @@
 				}}
 			>
 				{#if x.icon}
-					<Icon icon={x.icon} />
+					<Icon2 icon={x.icon} />
 				{/if}
 				{x.name}
 			</Button>
@@ -57,17 +57,17 @@
 		padding: var(--sp2);
 		padding-right: var(--sp4);
 
-		color: var(--ft1_b);
+		color: white;
 		fill: currentColor;
 		font-weight: 700;
 		text-transform: capitalize;
 	}
 
 	.good {
-		background-color: var(--green);
+		background-color: green;
 	}
 	.bad {
-		background-color: var(--red);
+		background-color: red;
 	}
 	.warning {
 		background-color: var(--yellow);

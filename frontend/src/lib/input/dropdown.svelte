@@ -1,12 +1,12 @@
 <script>
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 	import { onMount } from 'svelte';
 
 	let {
+		label = null,
 		icon = null,
-		wide = false,
 		caps = false,
-		button = false,
+		novalue = false,
 		id = null,
 		disabled = false,
 
@@ -36,17 +36,16 @@
 	});
 </script>
 
-<button class={button ? 'button' : 'select'} class:wide {disabled}>
+<button class:caps {disabled}>
 	{#if icon}
 		<div class="icon">
-			<Icon {icon} size="1.2" />
+			<Icon2 {icon} />
 		</div>
 	{/if}
 	<select
+		class:caps
 		{id}
 		bind:value
-		class:caps
-		class:has_icon={icon}
 		onchange={() => {
 			onchange?.(value);
 		}}
@@ -57,77 +56,89 @@
 			</option>
 		{/each}
 	</select>
+	{#if !novalue}
+		<div class="value" class:no_icon={!icon}>
+			{#if label}
+				{label}
+			{:else}
+				{value}
+			{/if}
+		</div>
+	{/if}
 </button>
 
 <style>
 	button {
 		position: relative;
-		display: block;
-		border: none;
-		background-color: unset;
 
-		width: fit-content;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		/* flex-shrink: 0; */
+
+		width: var(--select-width, unset);
+		min-width: var(--select-height, 48px);
+		height: var(--select-height, 48px);
+		border-radius: var(--select-border-radics, 4px);
+
+		border: none;
+		font-size: var(--select-font-size, 1rem);
+		font-weight: var(--select-font-weight, 400);
+		background-color: var(--select-background-color, hsl(0, 0%, 90%));
+		color: var(--select-color, hsl(0, 0%, 0%));
+		outline: 2px solid var(--select-outline-color, transparent);
+		outline-offset: -2px;
+
+		transition:
+			color 0.2s ease-in-out,
+			background-color 0.2s ease-in-out,
+			outline-color 0.2s ease-in-out;
 	}
-	button.wide {
-		width: 100%;
+	button:hover {
+		background-color: var(--select-background-color-hover, hsl(0, 0%, 85%));
+		color: var(--select-color-hover, hsl(0, 0%, 0%));
+		outline-color: var(--select-outline-color-hover, transparent);
 	}
 	:disabled {
 		pointer-events: none;
-		opacity: 0.5;
+		opacity: 0.4;
 	}
 
-	/* ********************** */
-	.select .has_icon {
-		padding-left: 48px;
+	button:disabled {
+		opacity: 0.4;
+		pointer-events: none;
 	}
 
-	.button {
-		--size: 50px;
-		width: var(--size);
-		height: var(--size);
+	.caps {
+		text-transform: capitalize;
 	}
-	.button select {
-		background-color: var(--input);
-		color: transparent;
-	}
-	/* ********************** */
 
 	select {
-		padding: var(--sp2);
-		border-radius: var(--sp0);
-		outline: 2px solid var(--input);
-
-		width: 100%;
-		height: 100%;
-
-		border: none;
+		position: absolute;
+		inset: 0;
+		opacity: 0;
+		cursor: pointer;
+	}
+	option {
+		background-color: var(--bg1);
 		color: var(--ft2);
-
-		transition: outline-color var(--trans);
-	}
-	select:hover {
-		color: var(--ft1);
-		outline-color: var(--cl1);
-	}
-	select.caps {
-		text-transform: capitalize;
 	}
 
 	.icon {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		pointer-events: none;
 
-		color: var(--ft2);
-
-		position: absolute;
 		height: 100%;
 		aspect-ratio: 1;
+		pointer-events: none;
 	}
 
-	option {
-		background-color: var(--bg1);
-		color: var(--ft1_d);
+	.value {
+		flex-shrink: 0;
+		padding-right: 16px;
+	}
+	.value.no_icon {
+		padding-left: 16px;
 	}
 </style>

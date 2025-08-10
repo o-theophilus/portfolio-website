@@ -2,9 +2,11 @@
 	import { module, app, loading } from '$lib/store.svelte.js';
 
 	import { IG } from '$lib/input';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
+	import { Br, Row, Form } from '$lib/layout';
 	import { Button, Link } from '$lib/button';
 
+	import Signup from './signup.svelte';
 	import Login from './login.svelte';
 	import Code from './forgot_2.code.svelte';
 	import EmailTemplate from './forgot.template.svelte';
@@ -50,15 +52,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Forgot Password </strong>
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Forgot Password" error={error.error}>
 	<IG
 		name="Email"
 		icon="email"
@@ -70,30 +64,25 @@
 
 	<Button primary onclick={validate}
 		>Submit
-		<Icon icon="send" />
+		<Icon2 icon="send" />
 	</Button>
 
-	<br />
+	<Br></Br>
 
-	<Link
-		onclick={() => {
-			module.open(Login, { email: form.email });
-		}}
-	>
-		Login
-	</Link>
-</form>
+	<Row>
+		<Link onclick={() => module.open(Login, { email: form.email })} --link-font-size="0.8rem"
+			>Login</Link
+		>
+		<span class="divider"> | </span>
+		<Link onclick={() => module.open(Signup, { email: form.email })} --link-font-size="0.8rem"
+			>Signup</Link
+		>
+	</Row>
+</Form>
 
 <div bind:this={email_template} style="display: none;">
 	<EmailTemplate />
 </div>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
 </style>

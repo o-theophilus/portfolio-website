@@ -60,7 +60,7 @@ blockquote {
 }
 .markdown .embed a:hover {
 	background-color: var(--cl1);
-	fill: var(--clb);
+	fill: white;
 }
 
 h1,
@@ -120,7 +120,7 @@ pre {
 }
 
 code {
-	color: var(--cl3);
+	color: green;
 }
 
 pre code {

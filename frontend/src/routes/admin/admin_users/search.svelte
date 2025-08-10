@@ -4,10 +4,9 @@
 
 	import { page_state } from '$lib/store.svelte.js';
 
-	import Search from '$lib/search.svelte';
 	import { Icon } from '$lib/macro';
 	import { Button } from '$lib/button';
-	import { Dropdown } from '$lib/input';
+	import { Dropdown, Search } from '$lib/input';
 
 	let { access } = $props();
 

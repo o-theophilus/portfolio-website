@@ -1,7 +1,7 @@
 <script>
 	import Parallax from './hero.parallax.svelte';
 	import Scroller from './scroller.svelte';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 </script>
 
 <section>
@@ -9,7 +9,7 @@
 
 	<div class="scroller">
 		<Scroller query="#scroll_1" invert>
-			<Icon icon="arrow_downward" />
+			<Icon2 icon="arrow_down" />
 		</Scroller>
 	</div>
 </section>

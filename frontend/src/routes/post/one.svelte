@@ -1,27 +1,27 @@
 <script>
-	import { memory } from '$lib/store.svelte.js';
+	// import { memory } from '$lib/store.svelte.js';
 
 	import { Datetime, Icon } from '$lib/macro';
 
 	let { post } = $props();
 
 	const click = () => {
-		let sn = 'post_item';
-		let i = $memory.findIndex((x) => x.name == sn);
-		if (i == -1) {
-			$memory.push({
-				name: sn,
-				data: post
-			});
-		} else {
-			$memory[i].data = post;
-		}
+		// let sn = 'post_item';
+		// let i = $memory.findIndex((x) => x.name == sn);
+		// if (i == -1) {
+		// 	$memory.push({
+		// 		name: sn,
+		// 		data: post
+		// 	});
+		// } else {
+		// 	$memory[i].data = post;
+		// }
 	};
+	let src = $state(post.photo || '/no_photo.png');
 </script>
 
 <a href="/{post.slug}" data-sveltekit-preload-data onclick={click} onmouseenter={click}>
-	<img src={post.photo || '/no_photo.png'} alt={post.title} />
-	<!-- onerror="this.src='/file_error.png';" -->
+	<img {src} alt={post.title} onerror={() => (src = '/file_error.png')} />
 
 	<div class="details">
 		<div class="title">
@@ -89,16 +89,15 @@
 		transition: transform var(--aTime);
 		transition-timing-function: ease-in-out;
 	}
-
+	
 	a:hover {
-		outline-color: var(--clm);
+		outline-color: var(--ft1);
 	}
 	a:hover img {
+		transition-duration: 5s;
 		transform: scale(1.2) rotate(5deg);
 	}
-	/* a:hover .title {
-		color: var(--cl1);
-	} */
+
 	a:hover .description {
 		grid-template-rows: 1fr;
 		margin: var(--sp2) 0;
@@ -126,6 +125,7 @@
 		display: grid;
 		grid-template-rows: 0fr;
 
+		color: var(--ft2);
 		font-size: 0.8rem;
 		transition:
 			grid-template-rows var(--trans),
@@ -145,7 +145,7 @@
 		color: var(--ft2);
 		line-height: 1;
 		padding: var(--sp1) 0;
-		border-top: 1px solid var(--clm);
+		border-top: 1px solid gray;
 	}
 
 	.line {

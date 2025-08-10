@@ -30,15 +30,6 @@ def theme():
     if user["setting_theme"] == "light":
         theme = "dark"
 
-    cur.execute("""
-        UPDATE "user"
-        SET setting_theme = %s
-        WHERE key = %s;
-    """, (
-        theme,
-        user["key"]
-    ))
-
     log(
         cur=cur,
         user_key=user["key"],
@@ -50,12 +41,21 @@ def theme():
         }
     )
 
-    user["setting_theme"] = theme
+    cur.execute("""
+        UPDATE "user"
+        SET setting_theme = %s
+        WHERE key = %s
+        RETURNING *
+    ;""", (
+        theme,
+        user["key"]
+    ))
+    user = cur.fetchone()
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "user": user
+        "user": user_schema(user)
     })
 
 
@@ -490,7 +490,7 @@ def password_3_password():
     })
 
 
-@ bp.delete("/user")
+@bp.delete("/user")
 def delete():
     con, cur = db_open()
 

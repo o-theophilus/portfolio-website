@@ -3,6 +3,7 @@
 
 	import { Button } from '$lib/button';
 	import { Icon, Marked } from '$lib/macro';
+	import { Form } from '$lib/layout';
 
 	let comment = { ...module.value.comment };
 	let error = {};
@@ -32,9 +33,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle">Delete Comment</strong>
-
+<Form title="Delete Comment" error={error.error}>
 	<br />
 	<br />
 
@@ -45,11 +44,6 @@
 	<br />
 
 	<div class="error">Are you sure you want to delete this comment</div>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
 
 	<br />
 
@@ -67,13 +61,9 @@
 			No
 		</Button>
 	</div>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-
 	.comment {
 		padding: 1px var(--sp2);
 		border-radius: var(--sp0);

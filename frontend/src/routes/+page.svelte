@@ -5,7 +5,7 @@
 
 	import { Hero, About, Skill, Experience, Contact, Carousel } from '$lib/+page';
 	import { Meta, Log } from '$lib/macro';
-	import { Dialogue } from '$lib/layout';
+	import { Dialogue } from '$lib/info';
 	import { Login } from '$lib/auth';
 
 	const get_module = (x) => {

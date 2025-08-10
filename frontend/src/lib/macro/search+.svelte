@@ -6,7 +6,7 @@
 	let { value = $bindable(), ondone } = $props();
 	let search = $state();
 
-	onMount(() => {
+	$effect(() => {
 		search.set(page_state.searchParams.search);
 	});
 </script>
@@ -15,7 +15,7 @@
 	bind:this={search}
 	bind:value
 	ondone={(x) => {
-		page_state.set('search', x);
+		page_state.set({ search: x });
 		ondone?.(x);
 	}}
 ></Search>

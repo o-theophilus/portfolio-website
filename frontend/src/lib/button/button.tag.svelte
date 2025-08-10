@@ -9,7 +9,10 @@
 	--button-height="24px"
 	--button-border-radius="20px"
 	--button-font-size="0.8rem"
-	outline
+	--button-font-weight="500"
+	--button-background-color="var(--tag-background-color, var(--input))"
+	--button-color="var(--tag-color)"
+	--button-outline-color="var(--tag-outline-color, var(--input))"
 >
 	{@render children()}
 </Button>

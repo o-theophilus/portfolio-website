@@ -12,31 +12,44 @@
 	--sp5: 80px;
 
 	--cl1: rgb(0, 0, 204);
-	--cl2: red;
-	--cl3: green;
-	--cl4: rgb(255, 162, 0);
-	--cl5: #EF5A6F;
-	--cl6: hsl(25, 32%, 40%);
-	
+	--yellow: rgb(255, 162, 0);
 	--overlay: rgba(128, 128, 128, 0.5);
 	--input: hsla(230, 30%, 41%, 0.1);
-	
-	--cld: black;
-	--clm: gray;
-	--clb: white;
 }
 
 main {
-	--button: hsl(0, 0%, 10%);
-	--ft1: var(--cld);
+	--ft1: black;
 	--ft2: hsl(0, 0%, 40%);
 	--bg2: hsl(233, 10%, 89%);
 	--bg1: white;
 }
 main.dark {
-	--button: hsl(0, 0%, 10%);
-	--ft1: var(--clb);
+	--ft1: white;
 	--ft2: hsl(0, 0%, 60%);
 	--bg2: hsl(0, 0%, 10%);
 	--bg1: hsl(0, 0%, 5%);
+
+	--button-outline-color:hsl(0, 0%, 20%);
+	--select-outline-color:hsl(0, 0%, 20%);
+}
+
+
+
+
+main{
+	--input-color:var(--ft1);
+	--group-background-color:var(--input);
+	
+	--button-background-color:hsl(0, 0%, 5%);
+	--button-color:hsl(0, 0%, 40%);
+	--button-background-color-hover:var(--cl1);
+	--button-color-hover:white;
+
+	--select-background-color:hsl(0, 0%, 5%);
+	--select-color:hsl(0, 0%, 40%);
+	--select-background-color-hover:var(--cl1);
+	--select-color-hover:white;
+
+	--link-color:var(--ft2);
+	--link-color-hover:var(--cl1);
 }

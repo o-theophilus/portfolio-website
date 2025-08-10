@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 	import { page_state } from '$lib/store.svelte.js';
-
 	import { Radio } from '$lib/button';
 
 	let { default_value, value = $bindable(), list = [], onclick } = $props();
@@ -25,7 +24,7 @@
 		{list}
 		onclick={() => {
 			let x = value != default_value ? value : '';
-			page_state.set('status', x);
+			page_state.set({ status: x });
 			onclick?.(x);
 		}}
 	></Radio>

@@ -5,10 +5,10 @@
 	import { Content } from '$lib/layout';
 	import { BackButton } from '$lib/button';
 	import { UpdateUrl, Meta, Pagination, Dropdown, Log } from '$lib/macro';
-	import Search from '$lib/search.svelte';
+	import { Search } from '$lib/input';
 	import User from './user.svelte';
 
-let { data } = $props();
+	let { data } = $props();
 	users = data.users;
 	total_page = data.total_page;
 	let { order_by } = data;

@@ -2,10 +2,10 @@
 	import { loading, module, notify, app } from '$lib/store.svelte.js';
 
 	import { Button, Link } from '$lib/button';
-	import { Tags } from '$lib/layout';
-	import { template, tags } from './_report__template.js';
+	import { Tags, Form } from '$lib/layout';
 	import { IG, Dropdown } from '$lib/input';
 	import { Icon, Avatar } from '$lib/macro';
+	import { template, tags } from './_report__template.js';
 
 	let reported = module.value.reported;
 	let entity = module.value.entity;
@@ -52,9 +52,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Report </strong>
-
+<Form title="Report" error={error.error}>
 	<div class="highlight">
 		<Avatar name={reported.name} photo={reported.photo} />
 		<Link href="/profile?search={reported.key}" blank>
@@ -65,12 +63,6 @@
 	</div>
 
 	<hr />
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
 
 	<IG
 		bind:value={form.report}
@@ -112,13 +104,9 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-
 	.highlight {
 		display: grid;
 		grid-template-columns: 1fr 100%;
@@ -133,9 +121,5 @@
 
 	.gap {
 		height: var(--sp1);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
 	}
 </style>

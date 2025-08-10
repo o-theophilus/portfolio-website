@@ -1,9 +1,10 @@
 <script>
-	import { module, loading, notify,app } from '$lib/store.svelte.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
 	import { Icon } from '$lib/macro';
 	import { IG } from '$lib/input';
+	import { Form } from '$lib/layout';
 
 	let date = new Date(module.value.post.date);
 	var year = date.getFullYear();
@@ -50,8 +51,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Edit Date & Time </strong>
+<Form title="Edit Date & Time" error={error.error}>
 	<IG
 		name="Date"
 		error={error.date}
@@ -64,10 +64,7 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
 </style>

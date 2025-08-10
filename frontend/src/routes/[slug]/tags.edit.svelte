@@ -4,7 +4,7 @@
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Tags } from '$lib/layout';
+	import { Tags, Form } from '$lib/layout';
 	import { Icon } from '$lib/macro';
 
 	let post = { ...module.value.post };
@@ -89,14 +89,7 @@
 	});
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Edit tags </strong>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Edit Tags" error={error.error}>
 	<IG
 		name="Tags"
 		bind:value={tags}
@@ -123,14 +116,4 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
-</form>
-
-<style>
-	form {
-		padding: var(--sp3);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
-</style>
+</Form>

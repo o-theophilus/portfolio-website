@@ -13,13 +13,12 @@
 		<div class="block" transition:scale|local={{ delay: 0, duration: 200, easing: backInOut }}>
 			<div class="close">
 				<RoundButton
-					large
-					icon="close"
-					extra="hover_red"
+					icon="x"
+					--button-background-color-hover="red"
 					onclick={() => {
 						module.close();
 					}}
-				/>
+				></RoundButton>
 			</div>
 			<div class="content">
 				<svelte:component this={module.module} />
@@ -42,7 +41,6 @@
 		padding: var(--sp4) var(--sp3);
 		overflow-y: auto;
 
-		color: var(--ft1);
 		background-color: var(--overlay);
 	}
 

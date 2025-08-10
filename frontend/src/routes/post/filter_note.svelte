@@ -1,39 +1,25 @@
 <script>
-	import { page } from '$app/state';
-	import { onMount } from 'svelte';
 	import { page_state } from '$lib/store.svelte.js';
 
 	import { RoundButton } from '$lib/button';
 	import { Content } from '$lib/layout';
 
-	let text = '';
-	let set = (url) => {
-		let _s = '';
-		let _t = '';
-		let multiply = false;
-		if (url.searchParams.has('search')) {
-			_s = url.searchParams.get('search');
-			_s = ` for [${_s}]`;
-		}
-		if (url.searchParams.has('tag')) {
-			_t = url.searchParams.get('tag');
-			multiply = _t.substring(_t.length - 2, _t.length) == ':x';
-			if (multiply) {
-				_t = _t.substring(0, _t.length - 2);
-			}
-			_t = _t.split(',');
-			_t = ` with ${_t.length > 1 ? (multiply ? 'all' : 'any') : ''} tag${
-				_t.length > 1 && multiply ? 's' : ''
-			} [${_t.join(', ')}]`;
+	let text = $derived.by(() => {
+		let text = '';
+		const sp = page_state.searchParams;
+
+		if (sp.search || (sp.tag && sp.tag.length)) text = 'Showing result';
+		if (sp.search) text += ` for [${sp.search}]`;
+		if (sp.tag && sp.tag.length) {
+			text += ' with';
+			if (sp.tag.length > 1 && sp.tag_ops) text += sp.tag_ops == 'and' ? ' all' : ' any';
+			text += ' tag';
+			if (sp.tag.length > 1 && sp.tag_ops && sp.tag_ops == 'and') text += 's';
+			text += ` [${sp.tag.join(', ')}]`;
 		}
 
-		text = `${_s || _t ? 'Showing result' : ''}${_s}${_t}`;
-	};
-
-	onMount(() => {
-		set(page.url);
+		return text;
 	});
-	$: set(page.url);
 </script>
 
 {#if text}
@@ -43,13 +29,12 @@
 		</span>
 
 		<RoundButton
-			icon="close"
-			extra="hover_red"
+			icon="x"
+			--button-background-color-hover="red"
 			onclick={() => {
-				page_state('search', '');
-				page_state('tag', '');
+				page_state.set({ search: '', tag: '' });
 			}}
-		/>
+		></RoundButton>
 	</div>
 {/if}
 

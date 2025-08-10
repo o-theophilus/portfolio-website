@@ -1,27 +1,27 @@
 <script>
-	import { app, module } from '$lib/store.svelte.js';
 	import { page } from '$app/state';
+	import { app, module } from '$lib/store.svelte.js';
 
+	import { Icon } from '$lib/macro';
+	import { Login } from '$lib/auth';
 	import Link from './nav.btn.svelte';
 	import Theme from './nav.theme.svelte';
 	import User from './nav.user.svelte';
-	import { Icon } from '$lib/macro';
-	import { Login } from '$lib/auth';
 
-	$: home = page.url.pathname == '/';
+	let is_home = $derived(page.url.pathname == '/');
 </script>
 
-<nav id="top_nav" class:home>
+<nav id="top_nav" class:is_home>
 	<div class="block">
 		<a href="/">
-			{#if !home}
+			{#if !is_home}
 				<div class="logo">
 					<div class="cover"></div>
 					<div class="icon">
 						<Icon icon="logo" size="1.7" />
 					</div>
 				</div>
-				<span>
+				<span class="name">
 					Theophilus
 					<span class="abbr">O.</span>
 					<span class="full">Ogbolu</span>
@@ -29,11 +29,11 @@
 			{/if}
 		</a>
 		<div class="links">
-			<Link {home} href="/post">Post</Link>
+			<Link home={is_home} href="/post">Post</Link>
 			{#if app.user.login}
 				<User />
 			{:else}
-				<Link {home} onclick={() => module.open(Login)}>Login</Link>
+				<Link home={is_home} onclick={() => module.open(Login)}>Login</Link>
 			{/if}
 			<Theme />
 		</div>
@@ -43,7 +43,6 @@
 <style>
 	.block {
 		display: flex;
-
 		justify-content: space-between;
 		align-items: center;
 		gap: var(--sp2);
@@ -55,10 +54,11 @@
 		padding: 0 var(--sp2);
 	}
 
+	.block,
 	.links {
-		display: flex;
-		gap: var(--sp2);
+		flex-wrap: wrap;
 	}
+
 	a {
 		display: flex;
 		align-items: center;
@@ -67,16 +67,9 @@
 		color: var(--cl1);
 		font-size: 1.2rem;
 		font-weight: 800;
-
 		text-decoration: none;
 
 		transition: color var(--trans);
-	}
-
-	a span {
-		display: none;
-		color: var(--ft1);
-		line-height: 0%;
 	}
 
 	.logo,
@@ -95,35 +88,40 @@
 		height: 30px;
 
 		border-radius: 50%;
-		background-color: var(--clb);
+		background-color: white;
 	}
 
-	.block,
-	.links {
-		flex-wrap: wrap;
+	.name {
+		display: none;
+		color: var(--ft1);
+		line-height: 0%;
 	}
-
-	.home {
-		background-color: #82c6ff;
-	}
-	.home a span {
-		color: var(--bg1);
-	}
-
 	.full {
 		display: none;
 	}
-	@media screen and (min-width: 360px) {
-		a span {
+	@media screen and (min-width: 390px) {
+		.name {
 			display: inline;
 		}
 	}
-	@media screen and (min-width: 410px) {
+	@media screen and (min-width: 450px) {
 		.abbr {
 			display: none;
 		}
 		.full {
 			display: inline;
 		}
+	}
+
+	.links {
+		display: flex;
+		gap: var(--sp2);
+	}
+
+	.is_home {
+		background-color: #82c6ff;
+	}
+	.is_home .name {
+		color: var(--bg1);
 	}
 </style>

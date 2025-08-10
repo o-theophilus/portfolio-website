@@ -37,7 +37,6 @@
 
 	let color = get_color(name);
 	let dim = get_size();
-	console.log(empty);
 
 	let src = $state(empty);
 	if (photo) src = photo;

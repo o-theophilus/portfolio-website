@@ -1,13 +1,10 @@
 <script>
 	import { RoundButton } from '.';
-	import { Icon } from '$lib/macro';
 	let { open, ...props } = $props();
 </script>
 
 <div class="fold" class:open>
-	<RoundButton {...props}>
-		<Icon icon="keyboard_arrow_up"></Icon>
-	</RoundButton>
+	<RoundButton icon="chevron-up" {...props}></RoundButton>
 </div>
 
 <style>

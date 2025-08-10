@@ -5,7 +5,7 @@
 	import { Content } from '$lib/layout';
 	import { BackButton } from '$lib/button';
 	import { UpdateUrl, Meta, Pagination, Dropdown, Log } from '$lib/macro';
-	import Search from '$lib/search.svelte';
+	import { Search } from '$lib/input';
 	import One from './one.svelte';
 
 	let { data } = $props();

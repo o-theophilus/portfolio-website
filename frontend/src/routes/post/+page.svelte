@@ -6,29 +6,33 @@
 	import { Content } from '$lib/layout';
 	import One from './one.svelte';
 	import { Button } from '$lib/button';
-	import { Meta, Icon, Log, Dropdown, Pagination, UpdateUrl } from '$lib/macro';
+	import { Meta, Icon2, Log, Dropdown, Pagination, Search, UpdateUrl } from '$lib/macro';
 
 	import Add from './_add.svelte';
 
 	import Tags from './tags.svelte';
-	import Note from './filter_note.svelte';
+	import FilterNote from './filter_note.svelte';
 
-	import Search from '$lib/search.svelte';
+	import { PageNote } from '$lib/info';
 
 	let { data } = $props();
-	posts = data.posts;
-	total_page = data.total_page;
-	let { order_by } = data;
-	let { _status } = data;
+	let posts = $derived(data.posts);
+	let total_page = $derived(data.total_page);
+	let order_by = $derived(data.order_by);
+	let _status = $derived(data._status);
 
 	const update = (a, b) => {
 		posts = a;
 		total_page = b;
 	};
+
+	let man = '';
+
+	import { page } from '$app/state';
 </script>
 
 <Log entity_type={'page'} />
-<UpdateUrl />
+<!-- <UpdateUrl /> -->
 <Meta
 	title="Posts"
 	description="This page showcases a collection of interesting blogs and projects that I have worked on"
@@ -45,7 +49,7 @@
 					<Dropdown list={_status} name="status" />
 
 					<Button extra="outline" onclick={() => module.open(Add, { update })}>
-						<Icon icon="add" />
+						<Icon2 icon="add" />
 						Add
 					</Button>
 				</div>
@@ -54,20 +58,25 @@
 
 		<div class="search_bar">
 			<Search />
-			<Dropdown list={order_by} name="order" icon="sort" />
+			<Dropdown list={order_by} name="order" icon="sort" novalue />
 		</div>
 
-		<Note />
+		<FilterNote />
 
-		<section class="items">
-			{#each posts as post (post.key)}
-				<div animate:flip={{ delay: 0, duration: 500, easing: cubicInOut }}>
-					<One {post} />
-				</div>
-			{:else}
+		{#if posts.length}
+			<section class="items">
+				{#each posts as post (post.key)}
+					<div animate:flip={{ delay: 0, duration: 500, easing: cubicInOut }}>
+						<One {post} />
+					</div>
+				{/each}
+			</section>
+		{:else}
+			<PageNote>
+				<Icon2 icon="search" size="50" />
 				No post found
-			{/each}
-		</section>
+			</PageNote>
+		{/if}
 
 		<Pagination {total_page} />
 		<Tags />

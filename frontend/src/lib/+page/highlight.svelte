@@ -6,7 +6,7 @@
 
 	import { Content, Tags } from '$lib/layout';
 	import { Link, RoundButton } from '$lib/button';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 	import Edit from './highlight.edit.svelte';
 
 	let index = 0;
@@ -43,10 +43,10 @@
 			</div>
 
 			{#if app.settings.highlight.length > 0}
-				<Link href="/post">
+				<Link href="/post" --link-font-size="0.8rem">
 					<div class="view_more">
 						View more
-						<Icon icon="arrow_forward" />
+						<Icon2 icon="arrow_right" />
 					</div>
 				</Link>
 
@@ -82,7 +82,7 @@
 									set(-1);
 								}}
 							>
-								<Icon icon="arrow_back" />
+								<Icon2 icon="arrow_left" />
 							</button>
 
 							<button
@@ -90,7 +90,7 @@
 									set(1);
 								}}
 							>
-								<Icon icon="arrow_forward" />
+								<Icon2 icon="arrow_right" />
 							</button>
 						</div>
 
@@ -101,8 +101,8 @@
 									class:active={i == index}
 									onclick={() => {
 										index = i;
-									}}
-								>oooooo</button>
+									}}>oooooo</button
+								>
 							{/each}
 						</div>
 					{/if}
@@ -211,8 +211,8 @@
 		aspect-ratio: 1/2;
 		border-radius: var(--sp0);
 
-		background-color: var(--cld);
-		color: var(--clb);
+		background-color: black;
+		color: white;
 		cursor: pointer;
 		pointer-events: all;
 
@@ -234,7 +234,7 @@
 		gap: var(--gap);
 		justify-content: center;
 
-		background-color: var(--cld);
+		background-color: black;
 		padding: var(--gap);
 		margin: var(--sp1);
 		border-radius: calc((var(--size) + var(--size) * 2) / 2);
@@ -245,7 +245,7 @@
 		width: var(--size);
 		height: var(--size);
 
-		background-color: var(--clm);
+		background-color: gray;
 		border-radius: calc(var(--size) / 2);
 		border: none;
 		cursor: pointer;
@@ -257,7 +257,7 @@
 
 	.indicator button.active {
 		width: calc(var(--size) * 2);
-		background-color: var(--clb);
+		background-color: white;
 	}
 	.indicator button:hover {
 		background-color: var(--cl1);

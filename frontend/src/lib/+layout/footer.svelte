@@ -25,7 +25,7 @@
 
 				<Form />
 			</div>
-			<div>
+			<div class="contact">
 				<Contact />
 				<br /><br />
 				<Socials />
@@ -62,7 +62,8 @@
 		}
 	}
 
-	.form {
+	.form,
+	.contact {
 		width: 100%;
 	}
 	.copyright {

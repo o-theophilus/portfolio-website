@@ -115,7 +115,7 @@
 	}
 	.red button.active,
 	.red button:hover {
-		background-color: var(--cl2) !important;
+		background-color: red !important;
 	}
 
 	.green button.active ~ button,
@@ -124,7 +124,7 @@
 	}
 	.green button.active,
 	.green button:hover {
-		background-color: var(--cl3) !important;
+		background-color: green !important;
 	}
 
 	.b0 {

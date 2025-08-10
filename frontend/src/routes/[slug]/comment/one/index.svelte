@@ -49,6 +49,7 @@
 				</div>
 
 				<div class="right">
+					<!-- TODO: update icon -->
 					<RoundButton
 						icon="more_horiz"
 						onclick={() => {
@@ -99,6 +100,7 @@
 
 			{#if app.user.login}
 				<div class="line">
+					<!-- TODO: update icon -->
 					<RoundButton
 						icon="reply"
 						onclick={() =>

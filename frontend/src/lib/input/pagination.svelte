@@ -1,5 +1,5 @@
 <script>
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 
 	let { value = $bindable(), total_page = 1, ondone } = $props();
 	let _value = $state(value);
@@ -37,7 +37,7 @@
 					submit(value - 1);
 				}}
 			>
-				<Icon icon="arrow_back" size="1.5" />
+				<Icon2 icon="chevron-left" />
 			</button>
 		{/if}
 
@@ -75,7 +75,7 @@
 					submit(_value);
 				}}
 			>
-				<Icon icon="keyboard_double_arrow_right" size="1.5" />
+				<Icon2 icon="chevrons-right" />
 			</button>
 		{/if}
 
@@ -85,7 +85,7 @@
 					submit(value + 1);
 				}}
 			>
-				<Icon icon="arrow_forward" size="1.5" />
+				<Icon2 icon="chevron-right" />
 			</button>
 		{/if}
 	</section>
@@ -94,16 +94,16 @@
 <style>
 	section {
 		--size: var(--sp3);
-		--height: 48px;
 
 		display: flex;
-		gap: var(--sp0);
+		align-items: center;
+		padding: 0 4px;
 
 		width: fit-content;
-		border-radius: var(--sp0);
-
-		outline: 2px solid transparent;
+		border-radius: 4px;
 		background-color: var(--input);
+		outline: 2px solid transparent;
+		outline-offset: -2px;
 
 		transition: outline-color var(--trans);
 	}
@@ -120,17 +120,18 @@
 	}
 	input {
 		padding: var(--size);
-		height: var(--height);
+		height: 48px;
 		border: none;
 
 		color: var(--ft1);
 		background-color: transparent;
 	}
-
+	
 	.total {
 		position: absolute;
 		right: var(--size);
 		pointer-events: none;
+		color: var(--ft2);
 	}
 
 	.width_helper {
@@ -145,12 +146,12 @@
 		justify-content: center;
 		align-items: center;
 
-		height: var(--height);
+		height: 40px;
 		aspect-ratio: 1/1;
 
 		border-radius: var(--sp0);
 		background-color: var(--button);
-		fill: var(--ft2_b);
+		color: var(--ft2);
 		border: none;
 		font-weight: 700;
 
@@ -161,6 +162,6 @@
 
 	button:hover {
 		background-color: var(--cl1);
-		fill: var(--ft1_b);
+		color: white;
 	}
 </style>

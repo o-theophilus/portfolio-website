@@ -92,7 +92,7 @@
 		border-radius: 50%;
 		line-height: 0;
 		color: var(--cl1);
-		background-color: var(--clb);
+		background-color: white;
 	}
 
 	.name {

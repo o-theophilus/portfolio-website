@@ -3,18 +3,18 @@
 
 	import { IG } from '$lib/input';
 	import { Button, Link } from '$lib/button';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
+	import { Br, Form } from '$lib/layout';
 	import Login from './login.svelte';
 	import EmailTemplate from './confirm.template.svelte';
 	import Confirm from './confirm.svelte';
 
-	let email_template;
-	let show_password = false;
-
 	let form = {
 		email: module.value.email
 	};
-	let error = {};
+	let email_template;
+	let show_password = $state(false);
+	let error = $state({});
 
 	const validate = () => {
 		error = {};
@@ -72,13 +72,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Signup </strong>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
+<Form title="Signup" error={error.error}>
 	<IG
 		name="Name"
 		icon="person"
@@ -98,39 +92,39 @@
 	<IG
 		name="Password"
 		icon="key"
+		bind:value={form.password}
 		error={error.password}
 		placeholder="Password here"
-		type={show_password ? 'text' : 'password'}
-		bind:value={form.password}
+		type="password++"
+		bind:show_password
 	></IG>
 	<IG
 		name="Confirm Password"
 		icon="key"
+		bind:value={form.confirm_password}
 		error={error.confirm_password}
 		placeholder="Password here"
-		type={show_password ? 'text' : 'password'}
-		bind:value={form.confirm_password}
+		type="password"
+		bind:show_password
 	/>
 
 	<Button onclick={validate}>
 		Submit
-		<Icon icon="send" />
+		<Icon2 icon="send" />
 	</Button>
 
 	<br />
 
-	<Link onclick={() => module.open(Login, { email: form.email })}>Login</Link>
-</form>
+	<Br></Br>
+
+	<Link onclick={() => module.open(Login, { email: form.email })} --link-font-size="0.8rem"
+		>Login</Link
+	>
+</Form>
 
 <div bind:this={email_template} style="display: none;">
 	<EmailTemplate />
 </div>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-	.error {
-		margin: var(--sp2) 0;
-	}
 </style>

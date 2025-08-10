@@ -4,7 +4,7 @@
 	import { loading, notify, module, app } from '$lib/store.svelte.js';
 
 	import { Button, RoundButton } from '$lib/button';
-	import { Icon } from '$lib/macro';
+	import {  Icon2 } from '$lib/macro';
 	import { createEventDispatcher } from 'svelte';
 
 	let emit = createEventDispatcher();
@@ -128,7 +128,7 @@
 				}}
 				role="presentation"
 			>
-				<Icon icon="add" />
+				<Icon2 icon="add" />
 			</div>
 		{/each}
 	{/if}
@@ -136,7 +136,7 @@
 
 <div class="line">
 	<RoundButton
-		icon="arrow_back"
+		icon="arrow_left"
 		disabled={files.length <= 1 || files[0] == active_photo}
 		onclick={() => {
 			order(false);
@@ -144,7 +144,7 @@
 	/>
 
 	<RoundButton
-		icon="arrow_forward"
+		icon="arrow_right"
 		disabled={files.length <= 1 || files[files.length - 1] == active_photo}
 		onclick={order}
 	/>
@@ -156,7 +156,7 @@
 
 <div class="line">
 	<Button disabled={JSON.stringify(post.files) == JSON.stringify(files)} onclick={submit}>
-		<Icon icon="save" />
+		<Icon2 icon="save" />
 		Save
 	</Button>
 
@@ -166,7 +166,7 @@
 		}}
 		disabled={JSON.stringify(post.files) == JSON.stringify(files)}
 	>
-		<Icon icon="history" />
+		<Icon2 icon="history" />
 		Reset
 	</Button>
 </div>
@@ -209,7 +209,7 @@
 	}
 
 	.excess {
-		outline-color: var(--cl2);
+		outline-color: red;
 		opacity: 0.5;
 	}
 

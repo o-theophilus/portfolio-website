@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/state';
-	let { href = '', home = false, children } = $props();
+	let { href = '', home = false, onclick, children } = $props();
 </script>
 
 {#if href}
@@ -13,8 +13,7 @@
 		{@render children()}
 	</a>
 {:else}
-	<!-- onclick|stopPropagation -->
-	<button class:home> {@render children()}</button>
+	<button class:home onclick={() => onclick?.()}> {@render children()}</button>
 {/if}
 
 <style>
@@ -32,6 +31,8 @@
 		border-bottom: 2px solid transparent;
 
 		color: var(--ft2);
+		font-size: 0.8rem;
+		font-weight: 600;
 		text-decoration: none;
 
 		transition:

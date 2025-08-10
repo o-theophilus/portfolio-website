@@ -3,7 +3,7 @@
 	import { Icon } from '$lib/macro';
 	import Check from './password.checker.svelte';
 	import Show from './password.show.svelte';
-	import Error from '../layout/error.svelte';
+	import { slide } from 'svelte/transition';
 
 	let {
 		value = $bindable(),
@@ -19,6 +19,7 @@
 		label,
 		input,
 
+		right,
 		type: props_type,
 		...props
 	} = $props();
@@ -41,6 +42,9 @@
 		}
 		return temp;
 	});
+
+	let _value = $state();
+	let show_check = $state(false);
 </script>
 
 <div class="inputGroup" class:no_pad>
@@ -51,13 +55,17 @@
 			<label for={id}>
 				{name}
 				{#if required}
-					<span class="error">*</span>
+					<span class="required">*</span>
 				{/if}
 			</label>
 		</div>
 	{/if}
 
-	<Error {error}></Error>
+	{#if error}
+		<div class="error" transition:slide>
+			{error}
+		</div>
+	{/if}
 
 	{#if input}
 		{@render input(id)}
@@ -66,15 +74,38 @@
 			{#if icon}
 				<Icon {icon} size={icon_size} />
 			{/if}
-			<Input bind:value {type} {id} {...props} />
+			<Input
+				bind:value
+				{type}
+				{id}
+				{...props}
+				oninput={(e) => {
+					if (props_type.startsWith('password++')) {
+						_value = e.target.value;
+					}
+				}}
+				onfocus={(e) => {
+					if (props_type.startsWith('password++')) {
+						show_check = true;
+					}
+				}}
+				onblur={(e) => {
+					if (props_type.startsWith('password++')) {
+						show_check = false;
+					}
+				}}
+			/>
 			{#if props_type?.startsWith('password+') && !props.disabled}
 				<div class="show_password">
 					<Show bind:show_password></Show>
 				</div>
 			{/if}
+			{@render right?.()}
 		</div>
-		{#if props_type == 'password++' && !props.disabled}
-			<Check {value}></Check>
+		{#if props_type == 'password++' && show_check && !props.disabled}
+			<div class="password" transition:slide>
+				<Check value={_value}></Check>
+			</div>
 		{/if}
 	{/if}
 </div>
@@ -99,9 +130,11 @@
 		margin: var(--sp1) 0;
 
 		outline: 2px solid var(--input);
+		outline-offset: -2px;
 		color: var(--ft2);
 		fill: currentColor;
 
+		background-color: var(--group-background-color, transparent);
 		transition: outline-color var(--trans);
 	}
 
@@ -111,22 +144,36 @@
 
 	.input:hover:not(.disabled),
 	:global(.input:has(:focus)) {
-		outline-color: var(--cl1);
+		outline-color: var(--ft1);
+		color: var(--ft1);
+	}
+
+	.label {
+		font-size: 0.8rem;
+		transition: color var(--trans);
+	}
+	:global(.inputGroup:has(.input:hover:not(.disabled))),
+	:global(.inputGroup:has(:focus) .label) {
+		color: var(--ft1);
+	}
+
+	.required {
+		color: red;
+		font-weight: 1000;
+	}
+
+	.error {
+		color: red;
+		font-size: 0.8rem;
+		margin-top: var(--error-margin-top, 0);
+		margin-bottom: var(--error-margin-bottom, 0);
 	}
 
 	.left_pad {
 		padding-left: var(--sp2);
 	}
 
-	.label {
-		font-size: 0.8rem;
-	}
-
 	.show_password {
-		padding-right: var(--sp2);
-	}
-	.error {
-		color: red;
-		font-weight: 1000;
+		padding-right: 8px;
 	}
 </style>

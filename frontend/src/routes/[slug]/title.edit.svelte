@@ -1,9 +1,10 @@
 <script>
-	import { module, loading, notify,app } from '$lib/store.svelte.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
 	import { Icon } from '$lib/macro';
+	import { Form } from '$lib/layout';
 
 	let form = {
 		title: module.value.post.title
@@ -46,14 +47,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Edit title </strong>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Edit Title" error={error.error}>
 	<IG
 		name="Title"
 		icon="edit"
@@ -67,14 +61,7 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
 </style>

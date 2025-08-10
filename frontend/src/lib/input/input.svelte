@@ -10,14 +10,14 @@
 {:else if props.type == 'code'}
 	<Code bind:value {...props}></Code>
 {:else}
-	<input bind:value {...props} />
+	<input bind:value {...props}  />
 {/if}
 
 <style>
 	input,
 	textarea {
 		width: var(--input-width, 100%);
-		height: var(--input-height, 56px);
+		height: var(--input-height, 48px);
 		border: none;
 
 		font-size: var(--input-font-size, 1rem);

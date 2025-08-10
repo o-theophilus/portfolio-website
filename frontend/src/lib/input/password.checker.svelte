@@ -2,7 +2,7 @@
 	let { value } = $props();
 </script>
 
-<div class="block main">
+<div class="main">
 	<div class="block">
 		<div class="one" class:active={value && /[a-z]/.test(value)}>
 			lowercase{#if value && /[a-z]/.test(value)}&nbsp;&#10003;{/if}
@@ -23,24 +23,21 @@
 </div>
 
 <style>
+	.main,
 	.block {
 		display: flex;
 		gap: 2px;
 		width: 100%;
 	}
 
-	.block .block {
+	.block {
 		flex-wrap: wrap;
 	}
 
 	@media screen and (min-width: 380px) {
-		.block .block {
+		.block {
 			flex-wrap: nowrap;
 		}
-	}
-
-	.main {
-		margin-top: 4px;
 	}
 
 	.one {
@@ -63,7 +60,7 @@
 	}
 
 	.active {
-		color: var(--ft1_b);
-		background-color: var(--green);
+		color: white;
+		background-color: green;
 	}
 </style>

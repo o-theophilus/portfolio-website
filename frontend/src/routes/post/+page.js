@@ -1,29 +1,26 @@
-import { get } from 'svelte/store';
-import { memory, loading } from "$lib/store.svelte.js"
-
+import { loading, page_state } from "$lib/store.svelte.js"
 
 export const load = async ({ fetch, url, parent, depends }) => {
-	let page_name = "post"
-	let _state = get(memory)
-	let i = _state.findIndex(x => x.name == page_name);
+	depends(true)
 
-	if (i == -1) {
-		_state.push({
-			name: page_name,
-			search: url.search,
+	let page_name = "post"
+	if (!page_state.state[page_name]) {
+		let sp = {}
+		for (let [key, value] of url.searchParams) {
+			if (key == "tag") value = value.split(",")
+			sp[key] = value
+		}
+		page_state.state[page_name] = {
+			searchParams: sp,
 			data: [],
 			loaded: false
-		})
-		memory.set(_state)
-		i = _state.findIndex(x => x.name == page_name);
-	} else if (_state[i].loaded) {
-		depends(_state[i].search)
-		return _state[i].data
+		}
+	} else if (page_state.state[page_name].loaded) {
+		return page_state.state[page_name].data
 	}
 
-	// loading.set(true)
 	let backend = new URL(`${import.meta.env.VITE_BACKEND}/post`)
-	backend.search = _state[i].search
+	backend.search = new URLSearchParams(page_state.state[page_name].searchParams);
 	let a = await parent();
 	let resp = await fetch(backend.href, {
 		method: 'get',
@@ -37,10 +34,8 @@ export const load = async ({ fetch, url, parent, depends }) => {
 
 	if (resp.status == 200) {
 		resp.page_name = page_name
-
-		_state[i].data = resp
-		_state[i].loaded = true
-		memory.set(_state)
+		page_state.state[page_name].data = resp
+		page_state.state[page_name].loaded = true
 
 		return resp
 	}

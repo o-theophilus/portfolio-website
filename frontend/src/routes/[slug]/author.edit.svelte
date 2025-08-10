@@ -4,6 +4,7 @@
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
 	import { Icon } from '$lib/macro';
+	import { Form } from '$lib/layout';
 
 	let form = {};
 	let error = {};
@@ -43,14 +44,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Edit Author </strong>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Edit Author" error={error.error}>
 	<IG
 		name="Author Email"
 		icon="email"
@@ -70,16 +64,9 @@
 			<Icon icon="undo" />
 		</Button>
 	</div>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-	.error {
-		margin: var(--sp2) 0;
-	}
-
 	.line {
 		display: flex;
 		gap: var(--sp1);

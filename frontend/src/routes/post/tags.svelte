@@ -1,60 +1,54 @@
 <script>
 	import { onMount } from 'svelte';
-	import { memory, page_state } from '$lib/store.svelte.js';
+	import { app, page_state } from '$lib/store.svelte.js';
 
-	import { Tags } from '$lib/layout';
+	import { Row, Br } from '$lib/layout';
 	import { Spinner } from '$lib/macro';
+	import { Tag } from '$lib/button';
 
-	let tags = [];
-
-	let loading = true;
+	let loading = $state(true);
 	onMount(async () => {
-		let pn = 'tags';
-		let i = $memory.findIndex((x) => x.name == pn);
-		if (i == -1) {
+		if (!app.memory.tags) {
 			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tag`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {
-				tags = resp.tags;
-				$memory.push({
-					name: pn,
-					data: resp.tags
-				});
+				app.memory.tags = resp.tags;
+				app.memory.tags = resp.tags;
 			}
-		} else {
-			tags = $memory[i].data;
 		}
 		loading = false;
 	});
+
+	let tag = $derived(page_state.searchParams.tag || []);
 </script>
 
 {#if loading}
 	<hr />
-	<div class="line">
+	<Row>
 		<Spinner active={loading} size="20" />
 		Loading tags . . .
-	</div>
-{:else if tags.length > 0}
+	</Row>
+	<Br />
+{:else if app.memory.tags.length > 0}
 	<hr />
-
-	<Tags
-		{tags}
-		style="1"
-		onclick={(e) => {
-			page_state('tag', e.detail);
-		}}
-	/>
+	<Row --row-gap="4px">
+		{#each app.memory.tags as x}
+			<Tag
+				--tag-background-color={tag.includes(x) ? 'var(--cl1)' : 'unset'}
+				--tag-color={tag.includes(x) ? 'white' : 'unset'}
+				--tag-outline-color={tag.includes(x) ? 'transparent' : 'unset'}
+				onclick={() => {
+					page_state.set({ tag: [x] });
+				}}>{x}</Tag
+			>
+		{/each}
+	</Row>
+	<Br />
 {/if}
 
 <style>
 	hr {
 		margin: var(--sp2) 0;
-	}
-	.line {
-		margin: var(--sp2) 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--sp0);
 	}
 </style>

@@ -3,6 +3,7 @@
 	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
+	import { Form } from '$lib/layout';
 	import { Icon } from '$lib/macro';
 
 	let error = {};
@@ -31,14 +32,8 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle">Delete</strong>
+<Form title="Delete" error={error.error}>
 	<div class="error">Are you sure you want to delete this post</div>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
 
 	<br />
 	<div class="line">
@@ -55,13 +50,9 @@
 			No
 		</Button>
 	</div>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-
 	.line {
 		display: flex;
 		gap: var(--sp1);

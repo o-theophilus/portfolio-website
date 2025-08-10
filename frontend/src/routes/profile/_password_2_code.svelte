@@ -4,6 +4,7 @@
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
 	import { Icon } from '$lib/macro';
+	import { Form } from '$lib/layout';
 
 	import Password from './_password_3_password.svelte';
 
@@ -45,16 +46,8 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Change Password </strong>
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
+<Form title="Change Password" error={error.error}>
 	<br />
-
 	<br />
 	<div class="message">Code has been sent to: {app.user.email}.</div>
 
@@ -64,20 +57,12 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
-
 	.message {
 		background-color: color-mix(in srgb, var(--cl1), transparent 80%);
-		color: var(--clb);
+		color: white;
 		padding: var(--sp1);
 		width: 100%;
 	}

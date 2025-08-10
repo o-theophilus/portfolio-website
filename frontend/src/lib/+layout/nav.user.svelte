@@ -76,7 +76,7 @@
 	}
 
 	button:hover {
-		outline-color: var(--clm);
+		outline-color: gray;
 	}
 
 	.menu {

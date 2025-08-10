@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { app } from '$lib/store.svelte.js';
 
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 
 	const submit = async () => {
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/theme`, {
@@ -15,18 +15,16 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			app.user.setting_theme = resp.user.setting_theme;
+			app.user = resp.user;
 		} else {
 			throw new Error('invalid request');
 		}
 	};
-
-	let is_home = page.url.pathname == '/';
 </script>
 
-{#if app.user.setting_theme}
+{#if app.user}
 	<button
-		class:is_home
+		class:is_home={page.url.pathname == '/'}
 		onclick={() => {
 			submit();
 			app.user.setting_theme = app.user.setting_theme == 'dark' ? 'light' : 'dark';
@@ -34,10 +32,10 @@
 	>
 		<div class="switch" class:dark={app.user.setting_theme == 'dark'}>
 			<div class="state">
-				<Icon icon="light_mode" />
+				<Icon2 icon="light_mode" />
 			</div>
 			<div class="state">
-				<Icon icon="dark_mode" />
+				<Icon2 icon="dark_mode" />
 			</div>
 		</div>
 	</button>
@@ -78,7 +76,7 @@
 	}
 
 	button:hover {
-		color: var(--clb);
+		color: white;
 		background-color: var(--cl1);
 	}
 

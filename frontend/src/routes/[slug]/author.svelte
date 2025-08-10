@@ -39,10 +39,10 @@
 
 	<div class="line">
 		{#if !loading}
-			<Link href="/profile?search={author.key}">
+			<Link href="/profile?search={author.key}" >
 				<Avatar name={author.name} photo={author.photo} />
 			</Link>
-			<Link href="/profile?search={author.key}">
+			<Link href="/profile?search={author.key}" --link-font-size="0.8rem">
 				<div class="name">
 					{author.name}
 				</div>

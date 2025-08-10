@@ -3,8 +3,6 @@
 
 	import { Tag, Link } from '$lib/button';
 
-	let emit = createEventDispatcher();
-
 	// export-let active = [];
 	let { tags = [], style = 0, disabled = false, center = false } = $props();
 </script>

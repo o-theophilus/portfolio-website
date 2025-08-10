@@ -1,20 +1,19 @@
 <script>
 	import { Link } from '$lib/button';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 </script>
 
 <div class="block">
 	<Link href="tel:+2348067397793">
 		<span>
-			<Icon icon="call" />
+			<Icon2 icon="call" />
 			+234 806 739 7793
 		</span>
 	</Link>
 	<Link href="mailto:theophilus.ogbolu@gmail.com">
 		<span>
-			<Icon icon="email" />
-			theophilus.ogbolu@protonmail.com
-			<!-- theophilus.ogbolu&#8203;@gmail.com -->
+			<Icon2 icon="email" />
+			theophilus.ogbolu&#8203;@gmail.com
 		</span>
 	</Link>
 	<Link
@@ -22,7 +21,7 @@
 		blank
 	>
 		<span>
-			<Icon icon="location_on" />
+			<Icon2 icon="location" />
 			Lagos, Nigeria.
 		</span>
 	</Link>

@@ -44,7 +44,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
+<form onsubmit={(e) => e.preventDefault()} novalidate autocomplete="off">
 	<strong class="ititle">
 		{#if user.status == 'blocked'}
 			Unblock

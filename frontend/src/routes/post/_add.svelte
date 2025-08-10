@@ -5,8 +5,9 @@
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Dialogue } from '$lib/layout';
+	import { Dialogue } from '$lib/info';
 	import { Icon } from '$lib/macro';
+	import { Form } from '$lib/layout';
 
 	let form = {};
 	let error = {};
@@ -54,13 +55,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Add Post </strong>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
+<Form title="Add Post" error={error.error}>
 	<IG
 		name="Title"
 		icon="edit"
@@ -74,14 +69,7 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
 </style>

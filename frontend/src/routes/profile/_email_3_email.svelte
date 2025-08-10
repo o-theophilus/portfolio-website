@@ -4,6 +4,7 @@
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
 	import { Icon } from '$lib/macro';
+	import { Layout } from '$lib/macro';
 	import EmailTemplate from './_email.template.svelte';
 
 	import Code from './_email_4_code.svelte';
@@ -49,15 +50,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Change Email </strong>
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Change Email" error={error.error}>
 	<IG
 		name="New Email"
 		icon="email"
@@ -71,18 +64,11 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
-</form>
+</Form>
 
 <div bind:this={email_template} style="display: none;">
 	<EmailTemplate />
 </div>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
 </style>

@@ -1,11 +1,8 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
 	import { app, memory } from '$lib/store.svelte.js';
+	import { Datetime, Icon2 } from '$lib/macro';
 
-	import { Datetime } from '$lib/macro';
-
-	let emit = createEventDispatcher();
-	let { log } = $props();
+	let { log, search = $bindable() } = $props();
 
 	let href = $state('');
 	if (log.entity.type == 'post') {
@@ -30,22 +27,18 @@
 	></div>
 
 	<span class="date">
-		<Datetime datetime={log.date} type="date" />
-		<Datetime datetime={log.date} type="time" />
+		<Datetime datetime={log.date} type="date_numeric" />
+		<Datetime datetime={log.date} type="time_12h" />
 	</span>
 	<br />
 
-	<a href="/profile?search={log.user.key}">
+	<a href="/profile?search={log.user.key}" class="break">
 		{log.user.name}
 	</a>
 
 	{#if log.user.key && app.user.access.includes('log:view')}
-		<button
-			onclick={() => {
-				emit('search', { u: log.user.key });
-			}}
-		>
-			&#9679;
+		<button onclick={() => (search.user_key = log.user.key)}>
+			<Icon2 icon="square-chevron-up"></Icon2>
 		</button>
 	{/if}
 
@@ -54,6 +47,7 @@
 
 	{#if href}
 		<a
+			class="break"
 			{href}
 			data-sveltekit-preload-data="off"
 			onclick={() => {
@@ -71,25 +65,24 @@
 
 		<button
 			onclick={() => {
-				emit('search', { e: log.entity.key });
+				search.entity_key = log.entity.key;
 			}}
 		>
-			&#9679;
+			<Icon2 icon="square-chevron-up"></Icon2>
 		</button>
 	{/if}
 
 	{#if log.misc}
-		<br />
-		{#each Object.entries(log.misc) as [key, value]}
+		{#each Object.entries(log.misc) as [key, val]}
+			,
 			{key}:
 			{#if log.entity.type == 'voucher' && key == 'validity'}
-				<Datetime datetime={value} type="date" />
+				<Datetime datetime={val} type="date" />
 			{:else}
 				<span class="break">
-					{value}
+					{val}
 				</span>
 			{/if}
-			<br />
 		{/each}
 	{/if}
 </section>
@@ -99,6 +92,8 @@
 		margin: var(--sp2) 0;
 		padding-top: var(--sp2);
 		border-top: 2px solid var(--bg2);
+
+		font-size: 0.8rem;
 	}
 
 	.status {
@@ -109,17 +104,17 @@
 
 		border-radius: 50%;
 
-		background-color: var(--cl5);
+		background-color: #ef5a6f;
 		color: var(--ac6_);
 	}
 	.good {
-		background-color: var(--cl3);
+		background-color: green;
 	}
 	.caution {
-		background-color: var(--cl4);
+		background-color: var(--yellow);
 	}
 	.error {
-		background-color: var(--cl2);
+		background-color: red;
 	}
 
 	.date {

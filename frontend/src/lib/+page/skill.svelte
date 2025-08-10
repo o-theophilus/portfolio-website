@@ -109,13 +109,13 @@
 		width: 100%;
 	}
 	.card:nth-of-type(1) {
-		--color: var(--cl5);
+		--color: #EF5A6F;
 	}
 	.card:nth-of-type(2) {
-		--color: var(--cl3);
+		--color: green;
 	}
 	.card:nth-of-type(3) {
-		--color: var(--cl6);
+		--color: #876145;
 	}
 
 	.pos {
@@ -166,7 +166,7 @@
 
 		color: var(--color);
 
-		color: var(--clb);
+		color: white;
 		background-color: var(--color);
 	}
 

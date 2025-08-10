@@ -3,11 +3,11 @@
 </script>
 
 <div class="block">
-	<Link href="/">Home</Link>
+	<Link --link-font-size="0.8rem" href="/">Home</Link>
 	&#8226;
-	<Link href="/#about">About</Link>
+	<Link --link-font-size="0.8rem" href="/#about">About</Link>
 	&#8226;
-	<Link href="/post">Post</Link>
+	<Link --link-font-size="0.8rem" href="/post">Post</Link>
 </div>
 
 <style>

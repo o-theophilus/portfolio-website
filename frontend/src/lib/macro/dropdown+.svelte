@@ -4,7 +4,7 @@
 
 	import { Dropdown } from '$lib/input';
 
-	let { default_value, value = $bindable(), list = [], onchange, ...props } = $props();
+	let { default_value, value = $bindable(), name, list = [], onchange, ...props } = $props();
 
 	onMount(() => {
 		let _list = list;
@@ -16,8 +16,8 @@
 			default_value = _list[0];
 		}
 
-		if (page_state.searchParams.order) {
-			value = page_state.searchParams.order;
+		if (page_state.searchParams[name]) {
+			value = page_state.searchParams[name];
 		} else {
 			value = default_value;
 		}
@@ -30,7 +30,7 @@
 		{list}
 		onchange={() => {
 			let x = value != default_value ? value : '';
-			page_state.set('order', x);
+			page_state.set({ name: x });
 			onchange?.(x);
 		}}
 		{...props}

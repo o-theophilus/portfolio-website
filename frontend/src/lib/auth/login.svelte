@@ -5,14 +5,14 @@
 
 	import { IG } from '$lib/input';
 	import { Button, Link } from '$lib/button';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
+	import { Br, Row, Form } from '$lib/layout';
 	import Signup from './signup.svelte';
 	import Forgot from './forgot_1.email.svelte';
 	import EmailTemplate from './confirm.template.svelte';
 	import Confirm from './confirm.svelte';
 
 	let email_template;
-	let show_password = false;
 
 	let form = {
 		email: module.value.email
@@ -33,7 +33,6 @@
 		if (!form.password) {
 			error.password = 'cannot be empty';
 		}
-
 		Object.keys(error).length === 0 && submit();
 	};
 
@@ -66,14 +65,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Login </strong>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Login" error={error.error}>
 	<IG
 		name="Email"
 		icon="email"
@@ -88,32 +80,31 @@
 		icon="key"
 		error={error.password}
 		placeholder="Password here"
-		type={show_password ? 'text' : 'password'}
+		type="password+"
 		bind:value={form.password}
 	></IG>
 
 	<Button onclick={validate}>
 		Submit
-		<Icon icon="send" />
+		<Icon2 icon="send" />
 	</Button>
 
-	<br />
-	<div>
-		<Link onclick={() => module.open(Signup, { email: form.email })}>Signup</Link>
+	<Br></Br>
+
+	<Row>
+		<Link onclick={() => module.open(Signup, { email: form.email })} --link-font-size="0.8rem">
+			Signup
+		</Link>
 		<span class="divider"> | </span>
-		<Link onclick={() => module.open(Forgot, { email: form.email })}>Forgot Password</Link>
-	</div>
-</form>
+		<Link onclick={() => module.open(Forgot, { email: form.email })} --link-font-size="0.8rem">
+			Forgot Password
+		</Link>
+	</Row>
+</Form>
 
 <div bind:this={email_template} style="display: none;">
 	<EmailTemplate />
 </div>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-	.error {
-		margin: var(--sp2) 0;
-	}
 </style>

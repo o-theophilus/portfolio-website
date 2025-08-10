@@ -3,6 +3,7 @@
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
+	import { Form } from '$lib/Layout';
 
 	let form = {
 		...module.value.form
@@ -57,15 +58,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Change Password </strong>
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Change Password" error={error.error}>
 	<IG
 		name="Password"
 		icon="key"
@@ -85,13 +78,5 @@
 	/>
 
 	<Button primary onclick={validate}>Reset</Button>
-</form>
+</Form>
 
-<style>
-	form {
-		padding: var(--sp3);
-	}
-	.error {
-		margin: var(--sp2) 0;
-	}
-</style>

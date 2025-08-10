@@ -20,7 +20,7 @@
 		{total_page}
 		ondone={() => {
 			let x = value != 1 ? value : '';
-			page_state.set('page_no', x);
+			page_state.set({ page_no: x });
 			ondone?.(x);
 		}}
 	></Pagination>

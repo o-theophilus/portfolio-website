@@ -1,7 +1,8 @@
 <script>
 	import { Button } from '.';
+	import { Icon2 } from '$lib/macro';
 
-	let { children, ...props } = $props();
+	let { icon, ...props } = $props();
 </script>
 
 <Button
@@ -12,6 +13,6 @@
 	--button-border-radius="50%"
 	--button-color="var(--ft1)"
 	--button-background-color="var(--bg2)"
-	>
-	{@render children()}
+>
+	<Icon2 {icon}></Icon2>
 </Button>

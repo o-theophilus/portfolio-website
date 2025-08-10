@@ -1,9 +1,9 @@
 <script>
-	import { app } from '$lib/store.svelte.js';
-
-	import { Nav, Footer, Module, Loading, Notify } from '$lib/+layout';
 	import '$lib/+layout/var.css';
 	import '$lib/+layout/main.css';
+	import { app } from '$lib/store.svelte.js';
+	import { Nav, Footer, Module, Loading,  } from '$lib/+layout';
+	import { Notify } from '$lib/info';
 
 	let { data, children } = $props();
 	app.user = data.locals.user;

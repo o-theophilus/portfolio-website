@@ -9,4 +9,7 @@
   "cSpell.ignoreWords": [
     "linkify"
   ],
+  "workbench.colorCustomizations": {
+    "editorUnnecessaryCode.border": "#dd7aab"
+  },
 }

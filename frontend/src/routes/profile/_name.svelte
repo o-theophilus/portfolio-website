@@ -4,6 +4,7 @@
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
 	import { Icon } from '$lib/macro';
+	import { Form } from '$lib/layout';
 
 	let form = {
 		name: module.value.user.name
@@ -45,14 +46,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Edit Name </strong>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Edit Name" error={error.error}>
 	<IG
 		name="Name"
 		icon="person"
@@ -66,13 +60,5 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
-</form>
+</Form>
 
-<style>
-	form {
-		padding: var(--sp3);
-	}
-	.error {
-		margin: var(--sp2) 0;
-	}
-</style>

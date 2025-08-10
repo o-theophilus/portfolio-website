@@ -51,11 +51,11 @@
 		transition: color var(--trans);
 	}
 	button:hover .content {
-		color: var(--clb);
+		color: white;
 	}
 
 	.invert .content {
-		color: var(--clb);
+		color: white;
 	}
 
 	.outline {
@@ -73,7 +73,7 @@
 		transition: border-color var(--trans);
 	}
 	.invert .outline {
-		border-color: var(--clb);
+		border-color: white;
 	}
 
 	.highlight {

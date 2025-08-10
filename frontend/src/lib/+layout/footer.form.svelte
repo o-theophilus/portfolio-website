@@ -4,9 +4,10 @@
 
 	import { template } from './footer.form.template.js';
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
-	import { Dialogue, EmailTemplate } from '$lib/layout';
-	import { Dropdown, IG } from '$lib/input';
+	import { Icon2 } from '$lib/macro';
+	import { EmailTemplate, Form } from '$lib/layout';
+	import { Dialogue } from '$lib/info';
+	import { IG } from '$lib/input';
 
 	let email_template;
 
@@ -77,13 +78,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form error={error.error} --form-padding="0">
 	<IG
 		name="Full name"
 		icon="person"
@@ -107,28 +102,31 @@
 		type="textarea"
 		placeholder="Message here"
 	>
-		<svelte:fragment slot="label">
-			<Dropdown
-				wide
-				list={Object.keys(template)}
-				on:change={(e) => {
-					form.message = template[e.target.value];
-					e.target.value = 'Select Template';
-				}}
-			>
-				<div class="label">
-					Message
-					<Icon icon="keyboard_arrow_down" />
-				</div>
-			</Dropdown>
-		</svelte:fragment>
+		{#snippet label()}
+			<button class="label">
+				Message
+				<Icon2 icon="chevron-down" />
+				<select
+					onchange={(e) => {
+						form.message = e.target.value;
+						e.target.value = 'Select Template';
+					}}
+				>
+					{#each Object.entries(template) as [key, val]}
+						<option value={val}>
+							{key}
+						</option>
+					{/each}
+				</select>
+			</button>
+		{/snippet}
 	</IG>
 
-	<Button size="wide" onclick={validate}>
+	<Button onclick={validate}>
 		Send
-		<Icon icon="send" />
+		<Icon2 icon="send" />
 	</Button>
-</form>
+</Form>
 
 <div bind:this={email_template} style="display: none;">
 	<EmailTemplate>
@@ -142,16 +140,28 @@
 
 <style>
 	.label {
+		position: relative;
+
 		display: flex;
 		align-items: center;
-		gap: var(--sp1);
+		gap: 8px;
 
 		font-size: 0.8rem;
-		/* line-height: 200%; */
-		margin-bottom: 4px;
+		background-color: unset;
+		color: var(--ft2);
+		border: none;
+		padding: 0;
 	}
 
-	.error {
-		margin: var(--sp2) 0;
+	select {
+		position: absolute;
+		width: 74px;
+		opacity: 0;
+	}
+
+	option {
+		background-color: var(--bg1);
+		color: var(--ft2);
+		font-size: 1rem;
 	}
 </style>

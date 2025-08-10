@@ -1,13 +1,16 @@
 <script>
-	import { onMount } from 'svelte';
+	import { SvelteDate } from 'svelte/reactivity';
 
-	let { datetime, type = 'date', style = '' } = $props();
+	let { datetime, type = 'date_medium' } = $props();
 
-	// $: if (datetime) {
-	// 	datetime = new Date(datetime);
-	// }
+	// Reactive date handling
+	let dateObj = datetime ? new SvelteDate(datetime) : null;
 
-	export const days = [
+	// Time ago calculation
+	let timeAgo = dateObj ? calculateTimeAgo(dateObj) : '';
+
+	// Date formatting constants
+	export const DAYS_FULL = [
 		'Sunday',
 		'Monday',
 		'Tuesday',
@@ -16,8 +19,7 @@
 		'Friday',
 		'Saturday'
 	];
-	export const days_short = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-	export const months = [
+	export const MONTHS_FULL = [
 		'January',
 		'February',
 		'March',
@@ -31,105 +33,104 @@
 		'November',
 		'December'
 	];
-	export const ordinal_suffix_of = (i) => {
-		var j = i % 10,
+	export const DAYS_SHORT = DAYS_FULL.map((m) => m.slice(0, 3));
+	export const MONTHS_SHORT = MONTHS_FULL.map((m) => m.slice(0, 3));
+
+	const ordinalSuffix = (i) => {
+		const j = i % 10,
 			k = i % 100;
-		if (j == 1 && k != 11) {
-			return i + 'st';
-		}
-		if (j == 2 && k != 12) {
-			return i + 'nd';
-		}
-		if (j == 3 && k != 13) {
-			return i + 'rd';
-		}
+		if (j === 1 && k !== 11) return i + 'st';
+		if (j === 2 && k !== 12) return i + 'nd';
+		if (j === 3 && k !== 13) return i + 'rd';
 		return i + 'th';
 	};
 
-	const timeAgo = (_date) => {
-		let date = new Date(_date);
-		const now = Date.now();
+	function calculateTimeAgo(date) {
+		const now = new SvelteDate();
 		const diff = now - date;
 
-		if (diff < 60000) {
-			return 'just now';
-		} else if (diff < 3600000) {
+		if (diff < 60000) return 'just now';
+		if (diff < 3600000) {
 			const minutes = Math.floor(diff / 60000);
 			return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-		} else if (diff < 86400000) {
+		}
+		if (diff < 86400000) {
 			const hours = Math.floor(diff / 3600000);
 			return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-		} else if (diff < 2592000000) {
+		}
+		if (diff < 2592000000) {
 			const days = Math.floor(diff / 86400000);
 			return `${days} day${days > 1 ? 's' : ''} ago`;
-		} else {
-			const year = date.getFullYear();
-			const month = (date.getMonth() + 1).toString().padStart(2, '0');
-			const day = date.getDate().toString().padStart(2, '0');
-			return `${day}/${month}/${year}`;
 		}
-	};
 
-	let time = $state(timeAgo(datetime));
-	onMount(() => {
-		const intervalId = setInterval(() => {
-			time = timeAgo(datetime);
-		}, 1000);
+		// Fallback to numeric date
+		return formatDate(date, 'date_numeric');
+	}
 
-		return () => clearInterval(intervalId);
-	});
+	// Centralized formatting function
+	function formatDate(date, formatType) {
+		switch (formatType) {
+			// Day formats
+			case 'day_short':
+				return DAYS_SHORT[date.getDay()];
+			case 'day_full':
+				return DAYS_FULL[date.getDay()];
+
+			// Month formats
+			case 'month_short':
+				return MONTHS_SHORT[date.getMonth()];
+			case 'month_full':
+				return MONTHS_FULL[date.getMonth()];
+
+			// Date formats
+			case 'date_ordinal':
+				return `${ordinalSuffix(date.getDate())} of ${MONTHS_FULL[date.getMonth()]} ${date.getFullYear()}`;
+			case 'date_numeric':
+				return [
+					date.getDate().toString().padStart(2, '0'),
+					(date.getMonth() + 1).toString().padStart(2, '0'),
+					date.getFullYear()
+				].join('/');
+			case 'date_medium':
+				return [
+					date.getDate().toString().padStart(2, '0'),
+					MONTHS_FULL[date.getMonth()],
+					date.getFullYear()
+				].join(' ');
+			case 'date_named':
+				return [
+					date.getDate().toString().padStart(2, '0'),
+					MONTHS_SHORT[date.getMonth()],
+					date.getFullYear()
+				].join('-');
+
+			// Time formats
+			case 'time_period':
+				if (date.getHours() < 12) return 'Morning';
+				if (date.getHours() < 16) return 'Afternoon';
+				return 'Evening';
+			case 'time_12h':
+				return (
+					[
+						(date.getHours() % 12 || 12).toString().padStart(2, '0'),
+						date.getMinutes().toString().padStart(2, '0')
+					].join(':') + (date.getHours() < 12 ? 'am' : 'pm')
+				);
+
+			// Year format
+			case 'year':
+				return date.getFullYear();
+
+			default:
+				return date.toString();
+		}
+	}
 </script>
 
-{#if datetime}
-	{#if type == 'day'}
-		{#if style == '1'}
-			{days_short[datetime.getDay()]}
-		{:else}
-			{days[datetime.getDay()]}
-		{/if}
-	{/if}
-
-	{#if type == 'date'}
-		{#if style == '1'}
-			{ordinal_suffix_of(datetime.getDate())} of
-			{months[datetime.getMonth()]}
-			{datetime.getFullYear()}
-		{:else if style == '2'}
-			{datetime.getDate().toString().padStart(2, '0')}/{datetime
-				.getMonth()
-				.toString()
-				.padStart(2, '0')}/{datetime.getFullYear()}
-		{:else if style == '3'}
-			{datetime.getDate().toString().padStart(2, '0')}-{months[
-				datetime.getMonth()
-			]}-{datetime.getFullYear()}
-		{:else}
-			{datetime.getDate().toString().padStart(2, '0')}
-			{months[datetime.getMonth()]}
-			{datetime.getFullYear()}
-		{/if}
-	{/if}
-
-	{#if type == 'time'}
-		{#if style == '1'}
-			{#if datetime.getHours() < 12}
-				Morning
-			{:else if datetime.getHours() < 16}
-				Afternoon
-			{:else}
-				Evening
-			{/if}
-		{:else}
-			{#if datetime.getHours() % 12}
-				{(datetime.getHours() % 12).toString().padStart(2, '0')}{:else}12{/if}:{datetime
-				.getMinutes()
-				.toString()
-				.padStart(2, '0')}{#if datetime.getHours() < 12}am{:else}pm
-			{/if}
-		{/if}
-	{/if}
-
-	{#if type == 'ago'}
-		{time}
+{#if dateObj}
+	{#if type === 'ago'}
+		{timeAgo}
+	{:else}
+		{formatDate(dateObj, type)}
 	{/if}
 {/if}

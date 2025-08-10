@@ -5,6 +5,7 @@
 	import { Icon } from '$lib/macro';
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
+	import { Form } from '$lib/layout';
 	import Access from './_access.svelte';
 
 	let form = {
@@ -49,14 +50,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Accept Access </strong>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Accept Access" error={error.error}>
 	<IG
 		name="Password"
 		icon="key"
@@ -76,17 +70,9 @@
 			<!-- <Icon icon="send" /> -->
 		</Button>
 	</div>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
-
 	.line {
 		display: flex;
 		align-items: center;

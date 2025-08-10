@@ -171,7 +171,10 @@
 		{#if $me.access.includes('log:view')}
 			<hr />
 			<div class="pad">
-				<Link href="/log?{new URLSearchParams(`search=${user.email}:all:all:`).toString()}">
+				<Link
+					href="/log?{new URLSearchParams(`search=${user.email}:all:all:`).toString()}"
+					--link-font-size="0.8rem"
+				>
 					View Logs
 				</Link>
 			</div>

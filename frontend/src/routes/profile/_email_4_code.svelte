@@ -4,6 +4,7 @@
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
 	import { Icon } from '$lib/macro';
+	import { Form } from '$lib/layout';
 
 	let form = {
 		...module.value.form
@@ -45,15 +46,7 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Change Email </strong>
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Change Email" error={error.error}>
 	<div class="message">Code has been sent to: {form.email}.</div>
 
 	<IG name="Code" error={error.code_2} bind:value={form.code_2} type="code"></IG>
@@ -62,21 +55,16 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-
-	.error,
 	.message {
 		margin: var(--sp2) 0;
 	}
 
 	.message {
 		background-color: color-mix(in srgb, var(--cl1), transparent 80%);
-		color: var(--clb);
+		color: white;
 		padding: var(--sp1);
 		width: 100%;
 	}

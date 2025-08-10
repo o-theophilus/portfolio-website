@@ -2,10 +2,10 @@
 	import { module, loading } from '$lib/store.svelte.js';
 
 	import { IG } from '$lib/input';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 	import { Button } from '$lib/button';
-
-	import { Dialogue } from '$lib/layout';
+	import { Form } from '$lib/layout';
+	import { Dialogue } from '$lib/info';
 	import Login from './login.svelte';
 
 	let form = {
@@ -57,31 +57,17 @@
 	};
 </script>
 
-<form on:submit|preventDefault novalidate autocomplete="off">
-	<strong class="ititle"> Confirm Email </strong>
+<Form title="Confirm Email" error={error.error}>
 	<br />
 	Code has been sent to your email
 	<br />
 
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
 	<IG name="Code" error={error.code} bind:value={form.code} type="code"></IG>
 
 	<Button primary onclick={validate}>
-		Submit <Icon icon="send" />
+		Submit <Icon2 icon="send" />
 	</Button>
-</form>
+</Form>
 
 <style>
-	form {
-		padding: var(--sp3);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
 </style>

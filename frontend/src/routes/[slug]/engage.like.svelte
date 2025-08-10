@@ -121,7 +121,7 @@
 
 	button:hover {
 		background-color: var(--cl1);
-		color: var(--clb);
+		color: white;
 	}
 
 	.error {

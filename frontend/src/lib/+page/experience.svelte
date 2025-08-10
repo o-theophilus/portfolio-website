@@ -2,9 +2,9 @@
 	import { fade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 
-	import { Content, Tags } from '$lib/layout';
-	import { Link } from '$lib/button';
-	import { Icon } from '$lib/macro';
+	import { Content, Row } from '$lib/layout';
+	import { Link, Tag } from '$lib/button';
+	import { Icon2 } from '$lib/macro';
 
 	let exp = [
 		{
@@ -101,7 +101,7 @@
 		}
 	];
 
-	let active = 0;
+	let active = $state(0);
 
 	// let devlope = [{ name: 'Verge3D', value: 80 }];
 </script>
@@ -170,16 +170,20 @@
 							</ul>
 						</div>
 
-						<Tags style="1" tags={exp[active].tags} disabled />
+						<Row --row-gap="4px">
+							{#each exp[active].tags as x}
+								<Tag --tag-color="var(--ft2)">{x}</Tag>
+							{/each}
+						</Row>
 					</div>
 				{/key}
 			</div>
 		</div>
 		<br />
-		<Link href="/Theophilus_Ogbolu_Resume.pdf" blank>
+		<Link href="/Theophilus_Ogbolu_Resume.pdf" blank --link-font-size="0.8rem">
 			<div class="link">
 				View Résumé
-				<Icon icon="arrow_forward" />
+				<Icon2 icon="arrow_right" />
 			</div>
 		</Link>
 	</div>
@@ -287,7 +291,7 @@
 	}
 
 	.tabs .line {
-		background-color: var(--clm);
+		background-color: gray;
 		height: 1px;
 		width: 100%;
 	}
@@ -304,7 +308,7 @@
 		overflow: hidden;
 
 		cursor: pointer;
-		outline: 1px solid var(--clm);
+		outline: 1px solid gray;
 		color: transparent;
 		font-size: 0;
 
@@ -345,7 +349,7 @@
 	.tabs .tab2:not(.active):hover div {
 		width: calc(0.5 * var(--size));
 		height: calc(0.5 * var(--size));
-		background-color: var(--clm);
+		background-color: gray;
 	}
 
 	@media screen and (min-width: 500px) {

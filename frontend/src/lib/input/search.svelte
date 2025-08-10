@@ -1,9 +1,15 @@
 <script>
 	import { Button, RoundButton } from '$lib/button';
 	import { IG } from '$lib/input';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 
-	let { value = $bindable(), placeholder = 'Search', non_default = false, ondone } = $props();
+	let {
+		value = $bindable(),
+		placeholder = 'Search',
+		non_default = false,
+
+		ondone
+	} = $props();
 	let value_submitted = $state();
 
 	const submit = (val) => {
@@ -35,6 +41,8 @@
 			{#if value || value_submitted}
 				<div class="close">
 					<RoundButton
+						--button-background-color-hover="red"
+						icon="x"
 						onclick={() => {
 							if (!value_submitted) {
 								value = '';
@@ -42,22 +50,20 @@
 							}
 							submit('');
 						}}
-					>
-						<Icon icon="close" size="1.2" />
-					</RoundButton>
+					></RoundButton>
 				</div>
 			{/if}
 
 			{#if !non_default}
 				<Button
-					--button-width="50px"
-					--button-height="50px"
+					--button-width="40px"
+					--button-height="40px"
 					onclick={() => {
 						submit(value);
 					}}
 					disabled={value == value_submitted}
 				>
-					<Icon icon="search" size="1.5" />
+					<Icon2 icon="search" />
 				</Button>
 			{/if}
 		</div>
@@ -68,7 +74,7 @@
 	.right {
 		display: flex;
 		align-items: center;
-		margin-right: 2px;
+		margin-right: 4px;
 		gap: 2px;
 	}
 	.close {
