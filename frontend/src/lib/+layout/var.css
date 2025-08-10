@@ -41,15 +41,17 @@ main{
 	--group-background-color:var(--input);
 	
 	--button-background-color:hsl(0, 0%, 5%);
-	--button-color:hsl(0, 0%, 40%);
+	--button-color:hsl(0, 0%, 60%);
 	--button-background-color-hover:var(--cl1);
 	--button-color-hover:white;
 
 	--select-background-color:hsl(0, 0%, 5%);
-	--select-color:hsl(0, 0%, 40%);
+	--select-color:hsl(0, 0%, 60%);
 	--select-background-color-hover:var(--cl1);
 	--select-color-hover:white;
 
 	--link-color:var(--ft2);
 	--link-color-hover:var(--cl1);
+
+	/* TODO: pagination */
 }

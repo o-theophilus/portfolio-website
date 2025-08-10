@@ -6,11 +6,11 @@
 	import Edit from './photo.edit.svelte';
 
 	let { post, edit_mode, update } = $props();
+	let src = $state(post.photo || '/no_photo.png');
 </script>
 
 <div class="img">
-	<img src={post.photo || '/no_photo.png'} alt={post.title} />
-	<!-- onerror="this.src='/file_error.png';"  -->
+	<img {src} alt={post.title} onerror={() => (src = '/file_error.png')} />
 	<div class="line">
 		{#if app.user.access.includes('post:edit_photo') && edit_mode}
 			<Button

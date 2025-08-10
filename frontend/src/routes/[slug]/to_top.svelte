@@ -3,40 +3,37 @@
 
 	import { Icon } from '$lib/macro';
 
-	let percent = 0;
-	let scrollTop = 0;
+	let percent = $state(0);
+	let scrollTop = $state(0);
+	const radius = 50;
+	const circumference = 2 * Math.PI * radius;
 </script>
 
 <svelte:window
-	on:scroll={() => {
+	onscroll={() => {
 		scrollTop = window.scrollY;
-		let winHeight = window.innerHeight;
-		let docHeight = document.body.offsetHeight;
-
-		percent = Math.round((scrollTop / (docHeight - winHeight)) * 100);
+		percent = Math.round((scrollTop / (document.body.offsetHeight - window.innerHeight)) * 100);
 	}}
 />
 
 <div
 	class="circle"
-	class:active={scrollTop > 160}
+	class:show={scrollTop > 160}
 	role="presentation"
 	onclick={() => {
 		scroll('#top_nav');
 	}}
 >
-	<div class="sector s1" style:--rot="{percent * 3.6}deg"></div>
-	{#if percent >= 25}
-		<div class="sector s2"></div>
-	{/if}
-	{#if percent >= 50}
-		<div class="sector s3"></div>
-	{/if}
-	{#if percent >= 75}
-		<div class="sector s4"></div>
-	{:else}
-		<div class="sector hide"></div>
-	{/if}
+	<svg viewBox="0 0 120 120">
+		<circle
+			cx="60"
+			cy="60"
+			r={radius}
+			stroke-dasharray={circumference}
+			stroke-dashoffset={circumference - circumference * percent * 0.01}
+		/>
+	</svg>
+
 	<div class="center">
 		<Icon icon="arrow_upward"></Icon>
 		<!-- {percent} -->
@@ -46,13 +43,13 @@
 <style>
 	.circle {
 		--size: 40px;
+		--stroke_width: 10px;
 
 		position: fixed;
 		bottom: var(--sp3);
 		right: var(--sp3);
-		z-index: 0;
+		z-index: 1;
 
-		display: none;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -63,74 +60,43 @@
 
 		background-color: var(--bg2);
 		opacity: 0;
-		overflow: hidden;
 		pointer-events: none;
 
 		transition: opacity var(--trans);
 	}
-	.active {
+	.show {
 		opacity: 0.5;
 		cursor: pointer;
 		pointer-events: all;
 	}
-
-	.active:hover {
+	.show:hover {
 		opacity: 1;
 	}
 
-	.center {
-		background-color: var(--bg1);
-		z-index: 1;
+	svg {
+		position: absolute;
+		width: calc(var(--size) + var(--stroke_width) / 2);
+		height: calc(var(--size) + var(--stroke_width) / 2);
+	}
 
-		font-size: 0.8rem;
+	circle {
+		fill: none;
+		stroke: var(--cl1);
+		stroke-width: var(--stroke_width);
+		stroke-linecap: round;
+		transform: rotate(-90deg);
+		transform-origin: 60px 60px;
+	}
+
+	.center {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 
-		width: calc(var(--size) - (var(--size) / 5));
-		height: calc(var(--size) - (var(--size) / 5));
+		width: calc(var(--size) - (var(--stroke_width) / 2));
+		height: calc(var(--size) - (var(--stroke_width) / 2));
+
 		border-radius: 50%;
-
-		stroke-width: 4px;
-	}
-
-	.sector {
-		position: absolute;
-
-		width: var(--size);
-		height: var(--size);
-
-		background-color: var(--cl1);
-	}
-
-	.hide,
-	.s1 {
-		bottom: 50%;
-		right: 50%;
-		transform-origin: bottom right;
-	}
-
-	.hide {
-		background-color: var(--bg2);
-	}
-
-	.s1 {
-		transform: rotate(calc(var(--rot) / 1));
-	}
-
-	.s2 {
-		bottom: 50%;
-		left: 50%;
-		transform-origin: bottom left;
-	}
-	.s3 {
-		top: 50%;
-		left: 50%;
-		transform-origin: top left;
-	}
-	.s4 {
-		top: 50%;
-		right: 50%;
-		transform-origin: top right;
+		background-color: var(--bg1);
 	}
 </style>

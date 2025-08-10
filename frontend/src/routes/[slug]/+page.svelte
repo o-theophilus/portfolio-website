@@ -25,9 +25,10 @@
 	import ToTop from './to_top.svelte';
 
 	let { data } = $props();
-	post = data.post;
+	let post = $derived(data.post);
 	let edit_mode = $state(false);
-	let admin = $state(false);
+	let is_admin = $state(false);
+	let ready = $state(false);
 
 	let content = $state();
 	const update = (data) => {
@@ -40,14 +41,16 @@
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/access/post:edit`);
 		resp = await resp.json();
 		if (resp.status == 200) {
-			admin = app.user.access.some((x) => resp.access.includes(x));
+			is_admin = app.user.access.some((x) => resp.access.includes(x));
 		}
 
-		if (page.url.searchParams.has('edit') && admin) {
+		if (page.url.searchParams.has('edit') && is_admin) {
 			page.url.searchParams.delete('edit');
 			edit_mode = true;
 			window.history.replaceState(history.state, '', page.url.href);
 		}
+
+		ready = true;
 	});
 
 	let author = $state();
@@ -70,10 +73,13 @@
 {#key post.key}
 	<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
 	<Meta title={post.title} description={post.description} image={post.photo} />
-	<Refresh on:refresh={refresh} />
+
+	{#if ready}
+		<Refresh {refresh} />
+	{/if}
 
 	<Content>
-		{#if admin}
+		{#if is_admin}
 			<div class="toggle">
 				<Toggle
 					state_2="edit"

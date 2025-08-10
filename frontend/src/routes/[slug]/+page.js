@@ -1,13 +1,12 @@
-import { get } from 'svelte/store';
 import { error } from '@sveltejs/kit';
-// import { memory } from "$lib/store.svelte.js"
+import { app } from "$lib/store.svelte.js"
 
 export const load = async ({ fetch, params, parent }) => {
-    // let _state = get(memory)
-    // let i = _state.findIndex(x => x.name == "post_item");
-    // if (i != -1 && _state[i].data.slug == params.slug) {
-        // return { post: _state[i].data }
-    // }
+
+    const pn = "post_item"
+    if (app.memory[pn] && app.memory[pn].slug == params.slug) {
+        return { post: app.memory[pn] }
+    }
 
     let a = await parent();
     let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${params.slug}`, {
@@ -20,7 +19,7 @@ export const load = async ({ fetch, params, parent }) => {
     resp = await resp.json();
 
     if (resp.status == 200) {
-        return { ...resp }
+        return resp
     } else {
         throw error(404, "page not found")
     }

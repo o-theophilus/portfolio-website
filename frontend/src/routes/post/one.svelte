@@ -1,26 +1,17 @@
 <script>
-	// import { memory } from '$lib/store.svelte.js';
+	import { app } from '$lib/store.svelte.js';
 
 	import { Datetime, Icon } from '$lib/macro';
 
 	let { post } = $props();
 
 	const click = () => {
-		// let sn = 'post_item';
-		// let i = $memory.findIndex((x) => x.name == sn);
-		// if (i == -1) {
-		// 	$memory.push({
-		// 		name: sn,
-		// 		data: post
-		// 	});
-		// } else {
-		// 	$memory[i].data = post;
-		// }
+		app.memory['post_item'] = post;
 	};
 	let src = $state(post.photo || '/no_photo.png');
 </script>
 
-<a href="/{post.slug}" data-sveltekit-preload-data onclick={click} onmouseenter={click}>
+<a href="/{post.slug}" onclick={click} onmouseenter={click}>
 	<img {src} alt={post.title} onerror={() => (src = '/file_error.png')} />
 
 	<div class="details">
@@ -89,7 +80,7 @@
 		transition: transform var(--aTime);
 		transition-timing-function: ease-in-out;
 	}
-	
+
 	a:hover {
 		outline-color: var(--ft1);
 	}

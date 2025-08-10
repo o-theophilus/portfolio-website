@@ -49,6 +49,3 @@
 		submit();
 	}}
 />
-
-<style>
-</style>

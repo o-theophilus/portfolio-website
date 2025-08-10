@@ -7,9 +7,10 @@
 	import { Button, FoldButton } from '$lib/button';
 	import { Login } from '$lib/auth';
 	import { Icon, Spinner } from '$lib/macro';
+	import { Dropdown } from '$lib/input';
+	import { PageNote } from '$lib/info';
 	import One from './one/index.svelte';
 	import Add from './_add.svelte';
-	import { Dropdown } from '$lib/input';
 
 	let { post } = $props();
 	let comments = $state([]);
@@ -53,6 +54,7 @@
 			comments = resp.comments;
 			order_by = resp.order_by;
 			_status = resp._status;
+			if (!comments.length) open = false;
 		}
 		loading = false;
 	};
@@ -110,7 +112,7 @@
 				{/if}
 			</div>
 		{:else}
-			<div class="margin">No comment</div>
+			<PageNote>No comment</PageNote>
 		{/each}
 	</div>
 {/if}

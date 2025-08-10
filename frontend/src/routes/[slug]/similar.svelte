@@ -4,10 +4,13 @@
 	import { memory } from '$lib/store.svelte.js';
 
 	import { FoldButton, Link } from '$lib/button';
+	import { Spinner } from '$lib/macro';
 
 	let { post_key } = $props();
 	let posts = $state([]);
 	let open = $state(true);
+	let loading = $state(true);
+
 
 	export const reset = () => {
 		posts = [];
@@ -16,6 +19,7 @@
 	export const refresh = async () => {
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/similar/${post_key}`);
 		resp = await resp.json();
+		loading = false;
 		if (resp.status == 200) {
 			posts = resp.posts;
 		}
@@ -35,6 +39,7 @@
 	};
 </script>
 
+<Spinner active={loading} size="20" />
 {#if posts.length > 0}
 	<hr />
 	<div class="title line">

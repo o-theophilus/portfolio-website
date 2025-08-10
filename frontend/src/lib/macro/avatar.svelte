@@ -1,4 +1,6 @@
 <script>
+	import { onMount } from 'svelte';
+
 	let {
 		size = 40,
 		name,
@@ -41,10 +43,20 @@
 	let src = $state(empty);
 	if (photo) src = photo;
 	if (crop) src += `${size}`;
+
+	// TODO: use this
+	let w = $state();
+	let h = $state();
+	onMount(() => {
+		// console.log(w);
+		// console.log(h);
+	});
 </script>
 
 {#if src}
 	<img
+		bind:naturalWidth={w}
+		bind:naturalHeight={h}
 		{src}
 		alt={name}
 		style:aspect-ratio={dim[0]}

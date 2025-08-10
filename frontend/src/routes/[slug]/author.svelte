@@ -3,9 +3,10 @@
 
 	import { Button, Link } from '$lib/button';
 	import { Icon, Avatar, Spinner } from '$lib/macro';
+	import { Row } from '$lib/layout';
 	import Form from './author.edit.svelte';
 
-	let { post, edit_mode } = $state();
+	let { post, edit_mode } = $props();
 	let author = $state({});
 	let loading = $state(true);
 
@@ -37,10 +38,10 @@
 		</Button>
 	{/if}
 
-	<div class="line">
+	<Row>
 		{#if !loading}
-			<Link href="/profile?search={author.key}" >
-				<Avatar name={author.name} photo={author.photo} />
+			<Link href="/profile?search={author.key}">
+				<Avatar name={author.name} photo={author.photo} --avatar-border-radius="100%" />
 			</Link>
 			<Link href="/profile?search={author.key}" --link-font-size="0.8rem">
 				<div class="name">
@@ -48,24 +49,19 @@
 				</div>
 			</Link>
 		{/if}
-		<Spinner active={loading} size="40" />
-		| Author
-	</div>
+		<Spinner active={loading} size="20" />
+
+		<span class="author"> | </span>
+		<span class="author"> Author </span>
+	</Row>
 {/if}
 
 <style>
-	.line {
-		display: flex;
-		gap: var(--sp2);
-		align-items: center;
-		margin: var(--sp2) 0;
-	}
-
 	hr {
 		margin: var(--sp2) 0;
 	}
 
-	.name {
-		color: var(--ft1);
+	.author {
+		font-size: 0.8rem;
 	}
 </style>

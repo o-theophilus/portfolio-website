@@ -1,9 +1,7 @@
 <script>
-	import { createEventDispatcher, onMount } from 'svelte';
-
-	let emit = createEventDispatcher();
-
+	import { onMount } from 'svelte';
+	let { refresh } = $props();
 	onMount(() => {
-		emit('refresh');
+		refresh();
 	});
 </script>

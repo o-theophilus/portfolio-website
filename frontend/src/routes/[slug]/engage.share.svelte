@@ -4,8 +4,11 @@
 
 	import { Button } from '$lib/button';
 	import { Icon } from '$lib/macro';
+	import { Form, Row, Br } from '$lib/layout';
 
-	let text = `Check Out: ${module.value.post.title}`;
+	console.log(module);
+
+	let text = `Check Out: ${module.value.title}`;
 
 	let platforms = [
 		{
@@ -36,16 +39,16 @@
 			body: JSON.stringify({
 				action: 'shared',
 				entity_type: 'post',
-				entity_key: module.value.post.key,
+				entity_key: module.post.key,
 				misc: { on }
 			})
 		});
 	};
 </script>
 
-<section class="content">
-	<strong class="ititle"> Share </strong>
-	<div class="line">
+<Form title="Share">
+	<Br />
+	<Row>
 		{#each platforms as x}
 			<Button
 				target="_blank"
@@ -58,20 +61,5 @@
 				<Icon icon={x.name} size="1.4" />
 			</Button>
 		{/each}
-	</div>
-</section>
-
-<style>
-	.content {
-		display: flex;
-		flex-direction: column;
-		gap: var(--sp2);
-
-		padding: var(--sp3);
-	}
-
-	.line {
-		display: flex;
-		gap: var(--sp1);
-	}
-</style>
+	</Row>
+</Form>

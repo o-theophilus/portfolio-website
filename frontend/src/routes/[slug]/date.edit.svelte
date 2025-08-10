@@ -65,6 +65,3 @@
 		<Icon icon="send" />
 	</Button>
 </Form>
-
-<style>
-</style>
