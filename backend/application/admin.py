@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from uuid import uuid4
 import os
-import json
+from psycopg2.extras import Json
 from .postgres import db_open, db_close
 from werkzeug.security import generate_password_hash, check_password_hash
 from .log import log
@@ -441,7 +441,7 @@ def get_highlight(cur=None):
             INSERT INTO setting (key, misc)
             VALUES ('highlight', %s)
             RETURNING *;
-        """, (json.dumps({"highlight": []}),))
+        """, (Json({"highlight": []}),))
         highlight = cur.fetchone()
     keys = highlight["misc"]["highlight"]
 
@@ -511,7 +511,7 @@ def set_highlight():
         keys.append(post["key"])
 
     cur.execute("UPDATE setting SET misc = %s WHERE key = 'highlight';",
-                (json.dumps({"highlight": keys}),))
+                (Json({"highlight": keys}),))
 
     log(
         cur=cur,
@@ -573,7 +573,7 @@ def edit_highlight():
         })
 
     cur.execute("UPDATE setting SET misc = %s WHERE key = 'highlight';",
-                (json.dumps({"highlight": request.json["keys"]}),))
+                (Json({"highlight": request.json["keys"]}),))
 
     log(
         cur=cur,

@@ -4,7 +4,7 @@
 	import { module } from '$lib/store.svelte.js';
 	import { page } from '$app/state';
 
-	import { Button, ButtonFold, Toggle } from '$lib/button';
+	import { Button, FoldButton, Toggle } from '$lib/button';
 	import Access_Ok from './_access.ok.svelte';
 	import { Icon } from '$lib/macro';
 
@@ -42,7 +42,7 @@
 			}}
 		>
 			{_type}
-			<ButtonFold open={sub_open == _type} />
+			<FoldButton open={sub_open == _type} />
 		</div>
 		{#if sub_open == _type}
 			<div class="content" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>

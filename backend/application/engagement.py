@@ -3,7 +3,7 @@ from .tools import token_to_user
 from .postgres import db_close, db_open
 from .log import log
 from .post_get import post_schema
-import json
+from psycopg2.extras import Json
 
 bp = Blueprint("engagement", __name__)
 
@@ -117,7 +117,7 @@ def get_engagements(key):
     })
 
 
-@ bp.post("/post/like/<key>")
+@bp.post("/post/like/<key>")
 def like(key):
     con, cur = db_open()
 
@@ -245,7 +245,7 @@ def rating(key):
         WHERE key = %s
         RETURNING *;
     """, (
-        [json.dumps(x) for x in post["ratings"]],
+        [Json(x) for x in post["ratings"]],
         post["key"]
     ))
     post = cur.fetchone()

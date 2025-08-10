@@ -32,7 +32,7 @@
 	</span>
 	<br />
 
-	<a href="/profile?search={log.user.key}" class="break">
+	<a href="/@{log.user.key}" class="break">
 		{log.user.name}
 	</a>
 

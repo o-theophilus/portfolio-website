@@ -4,7 +4,7 @@ from math import ceil
 from .postgres import db_close, db_open
 from uuid import uuid4
 from datetime import datetime
-import json
+from psycopg2.extras import Json
 
 bp = Blueprint("log", __name__)
 
@@ -60,7 +60,7 @@ def log(
         entity_key,
         entity_type,
         status,
-        json.dumps(misc)
+        Json(misc)
     ))
 
     if close_conn:

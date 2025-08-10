@@ -153,11 +153,11 @@ def copy_table():
             x["content"],
             x["description"],
             x["photo"],
-            # json.dumps(x["files"]),
-            # json.dumps(x["tags"]),
-            # json.dumps(x["like"]),
-            # json.dumps(x["dislike"]),
-            # json.dumps(x["ratings"]),
+            # Json(x["files"]),
+            # Json(x["tags"]),
+            # Json(x["like"]),
+            # Json(x["dislike"]),
+            # Json(x["ratings"]),
         ))
 
     con2.commit()

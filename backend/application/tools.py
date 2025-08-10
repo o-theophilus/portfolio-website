@@ -4,7 +4,7 @@ import os
 from uuid import uuid4
 import random
 from datetime import datetime, timedelta
-import json
+from psycopg2.extras import Json
 import smtplib
 import ssl
 from email.mime.text import MIMEText
@@ -73,10 +73,7 @@ def generate_code(cur, key, email, _from, clear=True):
         code_key,
         "code",
         200,
-        json.dumps({
-            "from": _from,
-            "to": email
-        })
+        Json({"from": _from, "to": email})
     ))
 
     return code

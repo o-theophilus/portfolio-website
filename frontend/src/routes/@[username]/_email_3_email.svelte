@@ -4,7 +4,6 @@
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
 	import { Icon } from '$lib/macro';
-	import { Layout } from '$lib/macro';
 	import EmailTemplate from './_email.template.svelte';
 
 	import Code from './_email_4_code.svelte';

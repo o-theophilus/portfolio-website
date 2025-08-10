@@ -8,7 +8,7 @@
 	onMount(() => {
 		if (entity_type == 'page') {
 			action = page.url.pathname;
-			entity_key = { url: `${page.url.pathname}${page.url.search}` };
+			entity_key = `${page.url.pathname}${page.url.search}`;
 		}
 
 		fetch(`${import.meta.env.VITE_BACKEND}/log`, {

@@ -8,39 +8,36 @@ from .admin import access
 bp = Blueprint("user_get", __name__)
 
 
-@bp.get("/user")
-def get():
+@bp.get("/user/<key>")
+def get(key):
     con, cur = db_open()
 
     me = token_to_user(cur)
     if not me:
+        print("here2")
         db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid token"
         })
 
-    user = None
-    if "search" in request.args:
-        if request.args["search"]:
-            cur.execute("""
-                SELECT *
-                FROM "user"
-                WHERE key = %s OR email = %s;
-            """, (
-                request.args["search"],
-                request.args["search"]
-            ))
-            user = cur.fetchone()
+    # user = None
+    # if "search" in request.args:
+    #     if request.args["search"]:
+    cur.execute("""
+        SELECT * FROM "user" WHERE key = %s OR email = %s;
+    """, (key, key))
+    user = cur.fetchone()
 
-        if not user:
-            db_close(con, cur)
-            return jsonify({
-                "status": 400,
-                "error": "user not found"
-            })
-    else:
-        user = me
+    if not user:
+        # print("here")
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "user not found"
+        })
+    # else:
+        # user = me
 
     _access = {}
     for x in access:

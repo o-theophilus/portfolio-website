@@ -6,7 +6,7 @@
 	import { PageNote } from '$lib/info';
 	import { Meta, Pagination, UpdateUrl, Icon2 } from '$lib/macro';
 	import Search from './search.svelte';
-	import Log from './log.svelte';
+	import One from './one.svelte';
 
 	let { data } = $props();
 	let logs = $derived(data.logs);
@@ -24,7 +24,7 @@
 
 	{#each logs as log (log.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<Log {log} bind:search />
+			<One {log} bind:search />
 		</div>
 	{:else}
 		<PageNote>

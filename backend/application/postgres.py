@@ -11,6 +11,7 @@ setting_table = """CREATE TABLE IF NOT EXISTS setting (
     misc JSONB DEFAULT '{}'::JSONB
 );"""
 
+# TODO: add username
 user_table = """CREATE TABLE IF NOT EXISTS "user" (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'anonymous' NOT NULL,
