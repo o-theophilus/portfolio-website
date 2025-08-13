@@ -76,6 +76,7 @@
 	.details {
 		display: flex;
 		flex-direction: column;
+		text-align: center;
 	}
 
 	@media screen and (min-height: 600px) {

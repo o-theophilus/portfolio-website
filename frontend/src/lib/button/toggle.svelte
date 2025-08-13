@@ -7,19 +7,19 @@
 
 <button {onclick} class:active {disabled}>
 	<div class="knob" style:--width_1="{width_1}px" style:--width_2="{width_2}px"></div>
-	<div class="state" class:sq={!state_1} bind:clientWidth={width_1}>{state_1}</div>
-	<div class="state" class:sq={!state_2} bind:clientWidth={width_2}>{state_2}</div>
+	<div class="state state_1" class:empty={!state_1} bind:clientWidth={width_1}>{state_1}</div>
+	<div class="state state_2" class:empty={!state_2} bind:clientWidth={width_2}>{state_2}</div>
 </button>
 
 <style>
 	button {
 		--size: 24px;
 
+		position: relative;
+
 		display: flex;
 		align-items: center;
 		flex-shrink: 0;
-
-		position: relative;
 
 		height: var(--size);
 		border: none;
@@ -39,21 +39,22 @@
 	}
 
 	.state {
+		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		padding: 0 var(--sp1);
 		transition: color var(--trans);
 	}
-	.sq {
-		width: var(--size);
-		padding: 0;
-	}
-	.state:nth-child(2) {
+	.state_1 {
 		color: white;
 	}
-	.state:last-of-type {
+	.state_2 {
 		color: var(--ft2);
+	}
+	.empty {
+		width: var(--size);
+		padding: 0;
 	}
 
 	.knob {
@@ -79,10 +80,10 @@
 		width: calc(var(--width_2) - 4px);
 		left: calc(100% - var(--width_2) + 2px);
 	}
-	.active .state:nth-child(2) {
+	.active .state_1 {
 		color: var(--ft2);
 	}
-	.active .state:last-of-type {
+	.active .state_2 {
 		color: white;
 	}
 </style>

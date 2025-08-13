@@ -4,33 +4,32 @@
 
 	import { Content } from '$lib/layout';
 	import { Meta, Icon2, Avatar, Log } from '$lib/macro';
-	import { RoundButton, Button, Link, Toggle } from '$lib/button';
+	import { RoundButton, Button, LinkArrow, Toggle } from '$lib/button';
 
-	import Photo from '../[slug]/photo.edit.svelte';
+	import Photo from '../[slug]/photo/edit.svelte';
 	import Name from './_name.svelte';
 	import Phone from './_phone.svelte';
 	import Email from './_email_1.svelte';
-	import Delete from './_delete.svelte';
+	import Delete from './_delete_1_warning.svelte';
 	import Password from './_password_1_email.svelte';
 	import Access from './_access.svelte';
 	import Action from './_admin_action.svelte';
 	import Block from './_admin_block.svelte';
 
-	let me = $state(app.user);
 	let { data } = $props();
 	let user = $derived(data.user);
 	let edit_mode = $state(false);
 
 	const ppt = ['user:set_access', 'user:reset_name', 'user:reset_photo', 'user:block'];
 	let is_admin = $derived.by(() => {
-		for (const x of ppt) if (me.access.includes(x)) return true;
+		for (const x of ppt) if (app.user.access.includes(x)) return true;
 		return false;
 	});
 
 	const update = (data) => {
 		user = data;
-		if (user.key == me.key) {
-			me = user;
+		if (user.key == app.user.key) {
+			app.user = data;
 		}
 	};
 </script>
@@ -39,10 +38,11 @@
 <Log action={'viewed'} entity_key={user.key} entity_type={'user'} />
 
 <Content>
-	<div class="title">
-		<strong class="ititle">Profile </strong>
+	<br />
+	<div class="line">
+		<div class="ititle">Profile</div>
 
-		{#if me.login && (user.key == me.key || is_admin)}
+		{#if app.user.login && (user.key == app.user.key || is_admin)}
 			<Toggle
 				state_2="edit"
 				active={edit_mode}
@@ -55,10 +55,10 @@
 
 	<br /><br /><br />
 
-	<div class="line">
+	<div class="line center">
 		<Avatar name={user.name} photo={user.photo} size="120" />
 
-		{#if edit_mode && user.key == me.key}
+		{#if edit_mode && user.key == app.user.key}
 			<RoundButton
 				icon="edit"
 				onclick={() => {
@@ -67,6 +67,7 @@
 						name: user.name,
 						photo: user.photo,
 						type: 'user',
+						slug: '/user/photo',
 						update
 					});
 				}}
@@ -76,12 +77,12 @@
 
 	<br />
 
-	<div class="line">
+	<div class="line center">
 		<Icon2 icon="user" />
-		<strong class="ititle">
+		<div class="name">
 			{user.name}
-		</strong>
-		{#if edit_mode && user.key == me.key}
+		</div>
+		{#if edit_mode && user.key == app.user.key}
 			<RoundButton
 				icon="edit"
 				onclick={() => {
@@ -91,42 +92,46 @@
 		{/if}
 	</div>
 
-	<div class="line">
+	<div class="line center">
 		<Icon2 icon="email" />
 		{user.email}
 
-		{#if edit_mode && user.key == me.key}
+		{#if edit_mode && user.key == app.user.key}
 			<RoundButton icon="edit" onclick={() => module.open(Email, { update })} />
 		{/if}
 	</div>
 
-	<div class="line">
-		<Icon2 icon="call" />
-		{user.phone || 'None'}
-		{#if edit_mode && user.key == me.key}
-			<RoundButton icon="edit" onclick={() => module.open(Phone, { ...user, update })} />
-		{/if}
-	</div>
+	{#if (edit_mode && user.key == app.user.key) || user.phone}
+		<div class="line center">
+			<Icon2 icon="call" />
+			{user.phone || 'None'}
+			{#if edit_mode && user.key == app.user.key}
+				<RoundButton icon="edit" onclick={() => module.open(Phone, { ...user, update })} />
+			{/if}
+		</div>
+	{/if}
 
 	{#if edit_mode}
 		<br />
-		<div class="line">
-			{#if user.key == me.key}
-				<Button size="small" onclick={() => module.open(Password)}>
+		<div class="line center wrap">
+			{#if user.key == app.user.key}
+				<Button --button-font-size="0.8rem" onclick={() => module.open(Password)}>
 					<Icon2 icon="key" />
 					Change Password
 				</Button>
 
-				<Button size="small" onclick="{() => module.open(Delete, user)}}">
+				<Button --button-font-size="0.8rem" onclick={() => module.open(Delete)}>
 					<Icon2 icon="delete" />
 					Delete Account
 				</Button>
 			{:else if is_admin}
-				{#if me.access.includes('user:set_access')}
-					<Button size="small" onclick="{() => module.open(Access)}}">Access</Button>
+				{#if app.user.access.includes('user:set_access')}
+					<Button --button-font-size="0.8rem" onclick={() => module.open(Access, { ...user })}
+						>Access</Button
+					>
 				{/if}
 
-				{#if me.access.some((x) => ['user:reset_name', 'user:reset_photo'].includes(x))}
+				{#if app.user.access.some((x) => ['user:reset_name', 'user:reset_photo'].includes(x))}
 					<Button
 						size="small"
 						onclick={() => {
@@ -137,8 +142,11 @@
 					</Button>
 				{/if}
 
-				{#if me.access.includes('user:block')}
-					<Button size="small" onclick={() => (module, open(Block, { ...user, update }))}>
+				{#if app.user.access.includes('user:block')}
+					<Button
+						--button-font-size="0.8rem"
+						onclick={() => (module, open(Block, { ...user, update }))}
+					>
 						{#if user.status == 'blocked'}
 							Unblock
 						{:else}
@@ -151,32 +159,28 @@
 	{/if}
 	<br /><br /><br />
 
-	{#if me.access.includes('log:view')}
+	{#if app.user.access.includes('log:view')}
 		<hr />
 		<div class="pad">
-			<Link
+			<LinkArrow
 				href="/log?{new URLSearchParams(`search=${user.email}:all:all:`).toString()}"
 				--link-font-size="0.8rem"
 			>
 				View Logs
-			</Link>
+			</LinkArrow>
 		</div>
 	{/if}
-	<!-- {/if} -->
 </Content>
 
 <style>
-	.title {
-		display: flex;
-		gap: var(--sp2);
-		align-items: center;
+	.name {
+		font-weight: 800;
+		color: var(--ft1);
+		font-size: 1.2rem;
 	}
-
-	.line {
-		display: flex;
-		gap: var(--sp1);
+	.center {
+		text-align: center;
 		justify-content: center;
-		align-items: center;
 	}
 
 	.pad,

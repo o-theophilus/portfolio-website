@@ -19,6 +19,7 @@
 <Meta title="Logs" />
 
 <Content>
+	<br />
 	<strong class="ititle"> Logs </strong>
 	<Search {search_query} bind:search />
 

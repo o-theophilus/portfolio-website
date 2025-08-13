@@ -14,7 +14,7 @@
 	let form = {
 		email: module.value.email
 	};
-	let error = {};
+	let error = $state({});
 	let email_template;
 
 	const validate = () => {

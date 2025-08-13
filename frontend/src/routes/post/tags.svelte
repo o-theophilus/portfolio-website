@@ -8,13 +8,13 @@
 
 	let loading = $state(true);
 	onMount(async () => {
-		if (!app.memory.tags) {
+		if (!app.tags) {
 			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tag`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {
-				app.memory.tags = resp.tags;
-				app.memory.tags = resp.tags;
+				app.tags = resp.tags;
+				app.tags = resp.tags;
 			}
 		}
 		loading = false;
@@ -30,10 +30,10 @@
 		Loading tags . . .
 	</Row>
 	<Br />
-{:else if app.memory.tags.length > 0}
+{:else if app.tags.length > 0}
 	<hr />
 	<Row --row-gap="4px">
-		{#each app.memory.tags as x}
+		{#each app.tags as x}
 			<Tag
 				--tag-background-color={tag.includes(x) ? 'var(--cl1)' : 'unset'}
 				--tag-color={tag.includes(x) ? 'white' : 'unset'}

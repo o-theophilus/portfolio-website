@@ -10,7 +10,7 @@
 	import { Form } from '$lib/layout';
 
 	let form = {};
-	let error = {};
+	let error = $state({});
 
 	const validate = () => {
 		error = {};

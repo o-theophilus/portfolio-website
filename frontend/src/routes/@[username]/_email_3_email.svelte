@@ -4,14 +4,16 @@
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
 	import { Icon } from '$lib/macro';
+	import { Note } from '$lib/info';
+	import { Form } from '$lib/layout';
 	import EmailTemplate from './_email.template.svelte';
 
 	import Code from './_email_4_code.svelte';
 
 	let form = {
-		...module.value.form
+		...module.value
 	};
-	let error = {};
+	let error = $state({});
 	let email_template;
 
 	const validate = () => {
@@ -50,6 +52,10 @@
 </script>
 
 <Form title="Change Email" error={error.error}>
+	<Note note="Enter your new email address and click the button below.">
+		A verification code will be sent to that address to confirm your ownership.
+	</Note>
+
 	<IG
 		name="New Email"
 		icon="email"
@@ -62,6 +68,16 @@
 	<Button primary onclick={validate}>
 		Submit
 		<Icon icon="send" />
+	</Button>
+	<Button
+		--button-background-color="darkred"
+		--button-background-color-hover="red"
+		onclick={() => {
+			module.close();
+		}}
+	>
+		Cancel
+		<Icon icon="close" />
 	</Button>
 </Form>
 

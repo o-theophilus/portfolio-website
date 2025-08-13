@@ -9,7 +9,7 @@
 	import { Icon, Spinner } from '$lib/macro';
 	import { Dropdown } from '$lib/input';
 	import { PageNote } from '$lib/info';
-	import One from './one/index.svelte';
+	import One from './one.svelte';
 	import Add from './_add.svelte';
 
 	let { post } = $props();
@@ -24,12 +24,7 @@
 		comments = data;
 	};
 
-	export const reset = () => {
-		loading = true;
-		comments = [];
-	};
-
-	export const refresh = async () => {
+	export const load = async () => {
 		let s = {};
 		if (search.status) {
 			s.status = search.status;
@@ -71,15 +66,17 @@
 		<Spinner active={loading} size="20" />
 	</strong>
 
-	<FoldButton
-		{open}
-		onclick={() => {
-			open = !open;
-		}}
-	/>
+	{#if !loading}
+		<FoldButton
+			{open}
+			onclick={() => {
+				open = !open;
+			}}
+		/>
+	{/if}
 </div>
 
-{#if open}
+{#if open && !loading}
 	<div class="margin" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 		<div class="line">
 			{#if app.user.access.includes('comment:view_deleted')}
@@ -126,6 +123,7 @@
 	<Button size="small" onclick={() => module.open(Login)}>Login to add comment</Button>
 {/if}
 
+<br />
 <br />
 
 <style>

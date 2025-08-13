@@ -4,31 +4,31 @@
 	import { module, app } from '$lib/store.svelte.js';
 
 	import { Content } from '$lib/layout';
-	import { Button, Toggle } from '$lib/button';
-	import { Meta, Icon, Log } from '$lib/macro';
+	import { Toggle } from '$lib/button';
+	import { Meta, Log } from '$lib/macro';
+	import Button from './button.svelte';
 
-	import Photo from './photo.svelte';
-	import Title from './title.svelte';
-	import Date from './date.svelte';
-	import Description from './description.svelte';
-	import Content_ from './content.svelte';
-	import Engage from './engage.svelte';
-	import Engagement from './engage.view.svelte';
-	import Author from './author.svelte';
-	import Tags from './tags.svelte';
-	import Edit_Status from './status.svelte';
+	import {
+		Status,
+		Photo,
+		Title,
+		Date,
+		Description,
+		Content_,
+		Tags,
+		Author,
+		Engage,
+		Comment
+	} from '.';
+	import Engagement from './engagement.svelte';
 	import Highlight from './highlight.svelte';
-	import Comment from './comment/index.svelte';
 	import Similar from './similar.svelte';
-
-	import Refresh from './refresh.svelte';
 	import ToTop from './to_top.svelte';
 
 	let { data } = $props();
 	let post = $derived(data.post);
 	let edit_mode = $state(false);
 	let is_admin = $state(false);
-	let ready = $state(false);
 
 	let content = $state();
 	const update = (data) => {
@@ -49,36 +49,27 @@
 			edit_mode = true;
 			window.history.replaceState(history.state, '', page.url.href);
 		}
-
-		ready = true;
 	});
 
 	let author = $state();
 	let engagement = $state();
 	let comment = $state();
 	let similar = $state();
-	const refresh = async () => {
+	$effect(async () => {
 		edit_mode = false;
-		author.reset();
-		engagement.reset();
-		comment.reset();
-		similar.reset();
-		await author.refresh();
-		await engagement.refresh();
-		await comment.refresh();
-		await similar.refresh();
-	};
+		await author.load();
+		await engagement.load();
+		await comment.load();
+		await similar.load();
+	});
 </script>
 
 {#key post.key}
 	<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
 	<Meta title={post.title} description={post.description} image={post.photo} />
 
-	{#if ready}
-		<Refresh {refresh} />
-	{/if}
-
 	<Content>
+		<br />
 		{#if is_admin}
 			<div class="toggle">
 				<Toggle
@@ -95,8 +86,7 @@
 			<hr />
 			<div class="line">
 				{#if app.user.access.includes('post:edit_status') && edit_mode}
-					<Button size="small" onclick={() => module.open(Edit_Status, { post, update })}>
-						<Icon icon="edit" size="1.4" />
+					<Button onclick={() => module.open(Status, { post, update })}>
 						<span> Edit Status: <strong>{post.status}</strong> </span>
 					</Button>
 				{/if}
@@ -118,7 +108,6 @@
 		<Engage {post} {update} />
 		<Comment {post} bind:this={comment} />
 		<Similar post_key={post.key} bind:this={similar} />
-
 		<ToTop />
 	</Content>
 {/key}

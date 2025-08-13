@@ -3,10 +3,10 @@ import { goto, invalidate, replaceState } from '$app/navigation';
 import { page } from '$app/state';
 
 export const app = $state({
-
 	user: {},
-	settings: {},
-	memory: {},
+	highlight: [],
+	tags: [],
+	post: {},
 
 	token_name: 'token',
 	get token() {

@@ -258,31 +258,27 @@ def similar_posts(key):
     keywords = list(set(
         post["tags"] + re.split(r'\s+', post["title"].lower())))
 
+    print(keywords)
     cur.execute("""
-        WITH
-        likeness AS (
-            SELECT
-                post.key,
-                (
-                    SELECT COUNT(*)
-                    FROM unnest(tags || STRING_TO_ARRAY(title, ' ')) AS tn
-                    WHERE tn = ANY(%s)
-                ) AS likeness
-            FROM post
+        WITH likeness AS (
+            SELECT key, COUNT(*) AS score
+            FROM post,
+                unnest(tags || STRING_TO_ARRAY(lower(title), ' ')) AS tn
+            WHERE tn = ANY(%s)
+            GROUP BY key
         )
-
         SELECT post.*
         FROM post
-        LEFT JOIN likeness ON post.key = likeness.key
-        WHERE
-            post.status = 'active'
-            AND post.key != %s
-            AND likeness.likeness > 0
-        ORDER BY likeness DESC
+        JOIN likeness ON post.key = likeness.key
+        WHERE post.status = 'active'
+        AND post.key != %s
+        AND likeness.score > 0
+        ORDER BY likeness.score DESC
         LIMIT 4;
     """, (keywords, key))
     posts = cur.fetchall()
 
+    print(posts)
     db_close(con, cur)
     return jsonify({
         "status": 200,

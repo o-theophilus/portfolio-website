@@ -5,13 +5,14 @@
 	import { Icon2 } from '$lib/macro';
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
+	import { Note } from '$lib/info';
 
 	import Password from './forgot_3.password.svelte';
 
 	let form = {
-		...module.value.form
+		...module.value
 	};
-	let error = {};
+	let error = $state({});
 
 	const validate_submit = async () => {
 		error = {};
@@ -47,6 +48,11 @@
 </script>
 
 <Form title="Forgot Password" error={error.error}>
+	<Note --note-margin-top="16px" --note-margin-bottom="16px">
+		A Verification Code has been sent to:
+		<b> {form.email} </b>
+	</Note>
+
 	<IG name="Code" error={error.code} bind:value={form.code} type="code"></IG>
 	<Button primary onclick={validate_submit}
 		>Submit

@@ -3,12 +3,14 @@
 
 	import { Button } from '$lib/button';
 	import { Icon } from '$lib/macro';
+	import { Note } from '$lib/info';
+	import { Form } from '$lib/layout';
 	import EmailTemplate from './_email.template.svelte';
 
 	import Code from './_email_2_code.svelte';
 
 	let form = {};
-	let error = {};
+	let error = $state({});
 	let email_template;
 
 	const submit = async () => {
@@ -34,33 +36,21 @@
 	};
 </script>
 
-<div class="form">
-	<strong class="ititle"> Change Email </strong>
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-	<br />
-	<br />
+<Form title="Change Email" error={error.error}>
+	<Note
+		note="To change the email address associated with this account, please click the button below to
+			request a verification code."
+	>
+		This code will be sent to your current email address to confirm that you are the owner of this
+		account.
+	</Note>
 
 	<Button primary onclick={submit}>
 		Request Code
 		<Icon icon="send" />
 	</Button>
-</div>
+</Form>
 
 <div bind:this={email_template} style="display: none;">
 	<EmailTemplate />
 </div>
-
-<style>
-	.form {
-		padding: var(--sp3);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
-</style>

@@ -7,7 +7,7 @@
 
 	let report_key = module.value.report_key;
 	let form = {};
-	let error = {};
+	let error = $state({});
 
 	const validate = (status) => {
 		error = {};

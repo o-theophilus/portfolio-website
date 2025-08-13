@@ -3,7 +3,7 @@
 	import { cubicInOut } from 'svelte/easing';
 
 	import { Content, Row } from '$lib/layout';
-	import { Link, Tag } from '$lib/button';
+	import { LinkArrow, Tag } from '$lib/button';
 	import { Icon2 } from '$lib/macro';
 
 	let exp = [
@@ -180,12 +180,9 @@
 			</div>
 		</div>
 		<br />
-		<Link href="/Theophilus_Ogbolu_Resume.pdf" blank --link-font-size="0.8rem">
-			<div class="link">
-				View Résumé
-				<Icon2 icon="arrow_right" />
-			</div>
-		</Link>
+		<LinkArrow href="/Theophilus_Ogbolu_Resume.pdf" blank --link-font-size="0.8rem">
+			View Résumé
+		</LinkArrow>
 	</div>
 </Content>
 
@@ -267,18 +264,6 @@
 
 	li::marker {
 		color: var(--cl1);
-	}
-
-	.link {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--sp1);
-		width: fit-content;
-		transition: gap var(--trans);
-	}
-
-	.link:hover {
-		gap: var(--sp2);
 	}
 
 	.tabs {

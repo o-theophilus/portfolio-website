@@ -1,0 +1,62 @@
+<script>
+	import { module, app } from '$lib/store.svelte.js';
+
+	import { Link } from '$lib/button';
+	import Button from '../button.svelte';
+	import { Avatar, Spinner } from '$lib/macro';
+	import { Row } from '$lib/layout';
+	import Form from './edit.svelte';
+
+	let { post, edit_mode } = $props();
+	let author = $state({});
+	let loading = $state(true);
+
+	const update = async (data) => {
+		post = data;
+		await refresh();
+	};
+
+	export const load = async () => {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/author/${post.key}`);
+		resp = await resp.json();
+		loading = false;
+		if (resp.status == 200) {
+			author = resp.user;
+		}
+	};
+</script>
+
+{#if loading || author.key}
+	<hr />
+	{#if app.user.access.includes('post:edit_author') && edit_mode}
+		<Button onclick={() => module.open(Form, { post_key: post.key, update })}>Edit Author</Button>
+	{/if}
+
+	<Row>
+		{#if loading}
+			<Spinner active={loading} size="20" />
+		{:else}
+			<Link href="/@{author.key}">
+				<Avatar name={author.name} photo={author.photo} --avatar-border-radius="100%" />
+			</Link>
+			<Link href="/@{author.key}" --link-font-size="0.8rem">
+				<div class="name">
+					{author.name}
+				</div>
+			</Link>
+		{/if}
+
+		<span class="author"> | </span>
+		<span class="author"> Author </span>
+	</Row>
+{/if}
+
+<style>
+	hr {
+		margin: var(--sp2) 0;
+	}
+
+	.author {
+		font-size: 0.8rem;
+	}
+</style>

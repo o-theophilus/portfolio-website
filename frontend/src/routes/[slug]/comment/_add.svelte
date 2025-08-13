@@ -12,7 +12,7 @@
 	if (module.value.comment) {
 		comment = module.value.comment;
 	}
-	let error = {};
+	let error = $state({});
 
 	const validate = () => {
 		error = {};

@@ -7,16 +7,14 @@
 	import { Form } from '$lib/layout';
 
 	let form = {
-		phone: module.value.user.phone
+		phone: module.value.phone
 	};
 
-	let error = {};
+	let error = $state({});
 
 	const validate = () => {
 		error = {};
-		if (!form.phone) {
-			error.phone = 'cannot be empty';
-		} else if (form.phone == module.value.user.phone) {
+		if (form.phone == module.value.phone) {
 			error.phone = 'no change';
 		}
 
@@ -25,7 +23,7 @@
 
 	const submit = async () => {
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/${module.value.user.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -61,5 +59,3 @@
 		<Icon icon="send" />
 	</Button>
 </Form>
-
-

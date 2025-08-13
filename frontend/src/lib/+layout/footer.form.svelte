@@ -10,15 +10,13 @@
 	import { IG } from '$lib/input';
 
 	let email_template;
+	let form = $state({});
+	let error = $state({});
 
-	let form = {};
-	let error = {};
-
-	const clear_error = () => {
+	$effect(() => {
+		const x = page.url.pathname;
 		error = {};
-	};
-
-	$: clear_error(page);
+	});
 
 	const validate = () => {
 		error = {};

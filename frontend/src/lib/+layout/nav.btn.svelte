@@ -1,19 +1,19 @@
 <script>
 	import { page } from '$app/state';
-	let { href = '', home = false, onclick, children } = $props();
+	let { href = '', is_home = false, onclick, children } = $props();
 </script>
 
 {#if href}
 	<a
 		class:active={href.split('/')[1] == page.url.pathname.split('/')[1]}
-		class:home
+		class:is_home
 		{href}
 		data-sveltekit-preload-data
 	>
 		{@render children()}
 	</a>
 {:else}
-	<button class:home onclick={() => onclick?.()}> {@render children()}</button>
+	<button class:is_home onclick={() => onclick?.()}> {@render children()}</button>
 {/if}
 
 <style>
@@ -34,6 +34,7 @@
 		font-size: 0.8rem;
 		font-weight: 600;
 		text-decoration: none;
+		line-height: 100%;
 
 		transition:
 			border-color var(--trans),
@@ -48,11 +49,11 @@
 		text-decoration: none;
 	}
 
-	.home {
+	.is_home {
 		color: var(--bg1);
 	}
-	a.home:hover,
-	button.home:hover {
+	a.is_home:hover,
+	button.is_home:hover {
 		color: var(--bg1);
 	}
 

@@ -30,7 +30,6 @@
 			entity_key: temp[3]
 		};
 		subbmited = { ...search };
-		console.log(search);
 	});
 
 	const to_string = (x) =>
@@ -48,7 +47,7 @@
 		<Search
 			non_default
 			placeholder="Search for User"
-			bind:search={search.user_key}
+			bind:value={search.user_key}
 			onclear={() => {
 				search.user_key = null;
 			}}

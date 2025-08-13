@@ -11,7 +11,7 @@
 	let form = {
 		access: module.value.mods
 	};
-	let error = {};
+	let error = $state({});
 	let show_password = false;
 
 	const validate = async () => {
@@ -56,7 +56,7 @@
 		icon="key"
 		error={error.password}
 		bind:value={form.password}
-		type={show_password ? 'text' : 'password'}
+		type="password+"
 		placeholder="Password here"
 	></IG>
 

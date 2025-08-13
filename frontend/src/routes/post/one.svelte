@@ -5,13 +5,13 @@
 
 	let { post } = $props();
 
-	const click = () => {
-		app.memory['post_item'] = post;
+	const prerender = () => {
+		app.post = post;
 	};
 	let src = $state(post.photo || '/no_photo.png');
 </script>
 
-<a href="/{post.slug}" onclick={click} onmouseenter={click}>
+<a href="/{post.slug}" onclick={prerender} onmouseenter={prerender}>
 	<img {src} alt={post.title} onerror={() => (src = '/file_error.png')} />
 
 	<div class="details">

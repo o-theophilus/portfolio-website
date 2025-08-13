@@ -22,7 +22,14 @@
 	};
 </script>
 
-<Button size="small" extra="hover_red" onclick={submit}>
+<Button
+	size="small"
+	extra="hover_red"
+	onclick={submit}
+	--button-height="40px"
+	--button-font-size="0.8rem"
+	--button-background-color-hover="red"
+>
 	<Icon icon="logout" size="1.4" />
 	Logout
 </Button>

@@ -8,7 +8,7 @@
 
 	const highlight = () => {
 		is_highlight = false;
-		for (const x of app.settings.highlight) {
+		for (const x of app.highlight) {
 			if (x.key == post_key) {
 				is_highlight = true;
 				break;
@@ -32,7 +32,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			app.settings.highlight = resp.posts;
+			app.highlight = resp.posts;
 			notify.open(`${is_highlight ? 'Added' : 'Removed'} as Highlight`);
 		} else {
 			notify.open(resp.error, 400);

@@ -5,11 +5,12 @@
 	import { IG } from '$lib/input';
 	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
+	import { Note } from '$lib/info';
 
 	let form = {
-		...module.value.form
+		...module.value
 	};
-	let error = {};
+	let error = $state({});
 
 	const validate = () => {
 		error = {};
@@ -47,7 +48,7 @@
 </script>
 
 <Form title="Change Email" error={error.error}>
-	<div class="message">Code has been sent to: {form.email}.</div>
+	<Note>A Verification Code has been sent to: {form.email}</Note>
 
 	<IG name="Code" error={error.code_2} bind:value={form.code_2} type="code"></IG>
 
@@ -55,17 +56,14 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
+	<Button
+		--button-background-color="darkred"
+		--button-background-color-hover="red"
+		onclick={() => {
+			module.close();
+		}}
+	>
+		Cancel
+		<Icon icon="close" />
+	</Button>
 </Form>
-
-<style>
-	.message {
-		margin: var(--sp2) 0;
-	}
-
-	.message {
-		background-color: color-mix(in srgb, var(--cl1), transparent 80%);
-		color: white;
-		padding: var(--sp1);
-		width: 100%;
-	}
-</style>

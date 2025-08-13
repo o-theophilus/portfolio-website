@@ -2,13 +2,13 @@
 	import '$lib/+layout/var.css';
 	import '$lib/+layout/main.css';
 	import { app } from '$lib/store.svelte.js';
-	import { Nav, Footer, Module, Loading,  } from '$lib/+layout';
+	import { Nav, Footer, Module, Loading } from '$lib/+layout';
 	import { Notify } from '$lib/info';
 
 	let { data, children } = $props();
 	app.user = data.locals.user;
 	app.token = data.locals.token;
-	app.settings.highlight = data.locals.posts;
+	app.highlight = data.locals.posts;
 </script>
 
 <main class:dark={app.user.setting_theme == 'dark'}>

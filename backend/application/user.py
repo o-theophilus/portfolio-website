@@ -1,14 +1,13 @@
 from flask import Blueprint, jsonify, request
 from .postgres import db_open, db_close
 from .tools import (
-    token_to_user, user_schema, send_mail, token_tool,
+    token_to_user, user_schema, send_mail,
     generate_code, check_code)
 from .log import log
 import re
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from .storage import storage
-from .account import anon
 
 
 bp = Blueprint("user", __name__)
@@ -59,7 +58,7 @@ def theme():
     })
 
 
-@bp.put("/user/<key>")
+@bp.put("/user")
 def edit_user():
     con, cur = db_open()
 
@@ -74,23 +73,22 @@ def edit_user():
     error = {}
 
     if "name" in request.json:
-        if not request.json["name"]:
+        name = ' '.join(request.json["name"].strip().split())
+        if not name:
             error['name'] = "cannot be empty"
-        elif request.json["name"] == user["name"]:
+        elif name == user["name"]:
             error['name'] = "no change"
         else:
             cur.execute("""
                 UPDATE "user" SET name = %s WHERE key = %s
                 RETURNING *;
             """, (
-                request.json["name"], user["key"]
+                name, user["key"]
             ))
             user = cur.fetchone()
 
     if "phone" in request.json:
-        if not request.json["phone"]:
-            error['phone'] = "cannot be empty"
-        elif request.json["phone"] == user["phone"]:
+        if request.json["phone"] == user["phone"]:
             error['phone'] = "no change"
         else:
             cur.execute("""
@@ -490,79 +488,7 @@ def password_3_password():
     })
 
 
-@bp.delete("/user")
-def delete():
-    con, cur = db_open()
-
-    user = token_to_user(cur)
-    if not user:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
-
-    error = {}
-
-    if "note" not in request.json or not request.json["note"]:
-        error["note"] = "cannot be empty"
-    if "password" not in request.json or not request.json["password"]:
-        error["password"] = "cannot be empty"
-
-    if error != {}:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            **error
-        })
-
-    if not check_password_hash(user["password"], request.json["password"]):
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "incorrect password"
-        })
-
-    cur.execute("""
-        UPDATE "user"
-        SET status = 'deleted', login = %s, access = %s
-        WHERE key = %s;
-    """, (
-        False,
-        [],
-        user["key"]
-    ))
-
-    anon_user = anon(cur)
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="deleted_account",
-        entity_type="account",
-        misc={"note": request.json["note"]}
-    )
-    log(
-        cur=cur,
-        user_key=anon_user["key"],
-        action="created",
-        entity_type="account",
-        misc={
-            "from": user["key"],
-            "name": user["name"]
-        }
-    )
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "user": user_schema(anon_user),
-        "token": token_tool().dumps(anon_user["key"])
-    })
-
-
-# TODO: remove key
-@bp.put("/user/photo/<key>")
+@bp.put("/user/photo")
 def add_photo():
     con, cur = db_open()
 
@@ -626,8 +552,7 @@ def add_photo():
     })
 
 
-# TODO: remove key
-@bp.delete("/user/photo/<key>")
+@bp.delete("/user/photo")
 def delete_photo():
     con, cur = db_open()
 

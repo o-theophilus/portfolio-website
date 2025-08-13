@@ -10,12 +10,15 @@
 		name: module.value.user.name
 	};
 
-	let error = {};
+	let error = $state({});
 
 	const validate = () => {
 		error = {};
+		form.name = form.name.trim().replace(/\s+/g, ' ');
 		if (!form.name) {
 			error.name = 'cannot be empty';
+		} else if (form.name.length > 100) {
+			error.name = 'too long'; // TODO: validate all length
 		} else if (form.name == module.value.user.name) {
 			error.name = 'no change';
 		}
@@ -25,7 +28,7 @@
 
 	const submit = async () => {
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/${module.value.user.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -61,4 +64,3 @@
 		<Icon icon="send" />
 	</Button>
 </Form>
-

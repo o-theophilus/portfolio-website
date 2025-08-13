@@ -5,13 +5,14 @@
 	import { IG } from '$lib/input';
 	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
+	import { Note } from '$lib/info';
 
 	import Password from './_password_3_password.svelte';
 
 	let form = {
-		...module.value.form
+		...module.value
 	};
-	let error = {};
+	let error = $state({});
 
 	const validate = () => {
 		error = {};
@@ -47,9 +48,7 @@
 </script>
 
 <Form title="Change Password" error={error.error}>
-	<br />
-	<br />
-	<div class="message">Code has been sent to: {app.user.email}.</div>
+	<Note>A Verification Code has been sent to: {app.user.email}</Note>
 
 	<IG name="Code" error={error.code} bind:value={form.code} type="code"></IG>
 
@@ -57,13 +56,14 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
+	<Button
+		--button-background-color="darkred"
+		--button-background-color-hover="red"
+		onclick={() => {
+			module.close();
+		}}
+	>
+		Cancel
+		<Icon icon="close" />
+	</Button>
 </Form>
-
-<style>
-	.message {
-		background-color: color-mix(in srgb, var(--cl1), transparent 80%);
-		color: white;
-		padding: var(--sp1);
-		width: 100%;
-	}
-</style>

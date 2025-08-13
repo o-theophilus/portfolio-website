@@ -38,6 +38,7 @@
 		cursor: pointer;
 	}
 
+	:focus,
 	:hover {
 		color: var(--link-color-hover, hsl(0, 0%, 0%));
 	}

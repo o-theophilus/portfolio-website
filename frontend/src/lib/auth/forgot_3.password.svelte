@@ -10,9 +10,9 @@
 	import Login from './login.svelte';
 
 	let form = {
-		...module.value.form
+		...module.value
 	};
-	let error = {};
+	let error = $state({});
 	let show_password = false;
 
 	const validate_submit = async () => {
@@ -74,20 +74,20 @@
 
 <Form title="Forgot Password" error={error.error}>
 	<IG
-		name="Password"
+		name="New Password"
 		icon="key"
 		error={error.password}
 		bind:value={form.password}
-		type={show_password ? 'text' : 'password'}
+		type="password++"
 		placeholder="Password here"
 	></IG>
 
 	<IG
-		name="Confirm Password"
+		name="Confirm New Password"
 		icon="key"
 		error={error.confirm_password}
 		bind:value={form.confirm_password}
-		type={show_password ? 'text' : 'password'}
+		type="password"
 		placeholder="Password here"
 	/>
 

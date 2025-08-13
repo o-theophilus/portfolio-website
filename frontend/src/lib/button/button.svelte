@@ -6,16 +6,17 @@
 		tooltip,
 		onclick,
 		onmouseenter,
-		href = null
+		href = null,
+		tabindex = null
 	} = $props();
 </script>
 
 {#if href}
-	<a {href} class:caps {onmouseenter} title={tooltip}>
+	<a {href} class:caps {onmouseenter} title={tooltip} tabindex={null}>
 		{@render children()}
 	</a>
 {:else if onclick}
-	<button {onclick} class:caps {disabled} {onmouseenter} title={tooltip}>
+	<button {onclick} class:caps {disabled} {onmouseenter} title={tooltip} {tabindex}>
 		{@render children()}
 	</button>
 {:else}
@@ -34,6 +35,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 8px;
+		flex-shrink: 0;
 
 		width: var(--button-width, unset);
 		height: var(--button-height, 48px);
@@ -65,6 +67,8 @@
 		cursor: pointer;
 	}
 
+	a:focus,
+	button:focus,
 	a:hover,
 	button:hover {
 		background-color: var(--button-background-color-hover, hsl(0, 0%, 85%));

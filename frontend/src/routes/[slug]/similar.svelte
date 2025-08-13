@@ -1,8 +1,8 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
-	import { memory } from '$lib/store.svelte.js';
 
+	import { app } from '$lib/store.svelte.js';
 	import { FoldButton, Link } from '$lib/button';
 	import { Spinner } from '$lib/macro';
 
@@ -11,85 +11,55 @@
 	let open = $state(true);
 	let loading = $state(true);
 
-
-	export const reset = () => {
-		posts = [];
-	};
-
-	export const refresh = async () => {
+	export const load = async () => {
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/similar/${post_key}`);
 		resp = await resp.json();
 		loading = false;
+
 		if (resp.status == 200) {
 			posts = resp.posts;
 		}
 	};
 
-	const click = (post) => {
-		let sn = 'post_item';
-		let i = $memory.findIndex((x) => x.name == sn);
-		if (i == -1) {
-			$memory.push({
-				name: sn,
-				data: post
-			});
-		} else {
-			$memory[i].data = post;
-		}
+	const prerender = (post) => {
+		app.post = post;
 	};
 </script>
 
-<Spinner active={loading} size="20" />
-{#if posts.length > 0}
+{#if loading || posts.length > 0}
 	<hr />
 	<div class="title line">
 		<strong class="ititle line">
-			Similar Posts
-			<!-- <Loading active={loading} size="20" /> -->
+			Similar Post{#if posts.length > 1}s{/if}
+			<Spinner active={loading} size="20" />
 		</strong>
 
-		<FoldButton
-			{open}
-			onclick={() => {
-				open = !open;
-			}}
-		/>
+		{#if !loading}
+			<FoldButton
+				{open}
+				onclick={() => {
+					open = !open;
+				}}
+			/>
+		{/if}
 	</div>
 
-	{#if open}
+	{#if open && !loading}
 		<div class="area" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
-			{#each posts as x, i}
+			{#each posts as x}
 				<div class="post">
-					<a href="/{x.slug}" onclick={() => click(x)} onmouseenter={() => click(x)}>
+					<a href="/{x.slug}" onclick={() => prerender(x)} onmouseenter={() => prerender(x)}>
 						<img src={x.photo || '/no_photo.png'} alt={x.title} />
 					</a>
 					<div class="details">
-						<!-- <a
+						<a
 							class="link"
 							href="/{x.slug}"
-							onclick={() => {
-								click(x);
-							}}
-							on:mouseenter={() => {
-								click(x);
-							}}
+							onclick={() => prerender(x)}
+							onmouseenter={() => prerender(x)}
 						>
 							{x.title}
-						</a> -->
-
-						<Link
-							href="/{x.slug}"
-							onclick={() => {
-								click(x);
-							}}
-							on:mouseenter={() => {
-								click(x);
-							}}
-						>
-							<span class="link">
-								{x.title}
-							</span>
-						</Link>
+						</a>
 
 						{#if x.description}
 							<br />
@@ -108,12 +78,6 @@
 	.title {
 		justify-content: space-between;
 		margin: var(--sp2) 0;
-	}
-
-	.line {
-		display: flex;
-		align-items: center;
-		gap: var(--sp1);
 	}
 
 	.area {

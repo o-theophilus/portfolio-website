@@ -22,7 +22,7 @@
 		{#if note}
 			<div class="title">
 				<Icon2 icon={_status} size="20" />
-				{note}
+				{@html note}
 			</div>
 		{/if}
 

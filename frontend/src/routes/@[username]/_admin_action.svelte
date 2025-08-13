@@ -9,7 +9,7 @@
 	let form = {
 		actions: []
 	};
-	let error = {};
+	let error = $state({});
 
 	const validate = () => {
 		error = {};

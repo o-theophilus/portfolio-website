@@ -17,7 +17,7 @@
 	let form = {
 		email: module.value.email
 	};
-	let error = {};
+	let error = $state({});
 
 	let return_url = page.url.pathname;
 	if (module.value.return_url) {

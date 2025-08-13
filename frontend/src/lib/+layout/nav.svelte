@@ -18,7 +18,7 @@
 				<div class="logo">
 					<div class="cover"></div>
 					<div class="icon">
-						<Icon icon="logo" size="1.7" />
+						<Icon icon="logo" size="2" />
 					</div>
 				</div>
 				<span class="name">
@@ -29,29 +29,38 @@
 			{/if}
 		</a>
 		<div class="links">
-			<Link home={is_home} href="/post">Post</Link>
-			{#if app.user.login}
-				<User />
-			{:else}
-				<Link home={is_home} onclick={() => module.open(Login)}>Login</Link>
-			{/if}
 			<Theme />
+			<Link {is_home} href="/post">Post</Link>
+			{#if app.user.login}
+				<User {is_home} />
+			{:else}
+				<Link {is_home} onclick={() => module.open(Login)}>Login</Link>
+			{/if}
 		</div>
 	</div>
 </nav>
 
 <style>
+	#top_nav {
+		border-bottom: 1px solid var(--bg2);
+	}
+
+	#top_nav.is_home {
+		background-color: #82c6ff;
+		border: none;
+	}
+
 	.block {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		gap: var(--sp2);
 
-		height: var(--headerHeight);
+		min-height: var(--headerHeight);
 		max-width: var(--mobileWidth);
 		width: 100%;
 		margin: auto;
-		padding: 0 var(--sp2);
+		padding: var(--sp2);
 	}
 
 	.block,
@@ -65,7 +74,6 @@
 		gap: var(--sp1);
 
 		color: var(--cl1);
-		font-size: 1.2rem;
 		font-weight: 800;
 		text-decoration: none;
 
@@ -96,15 +104,18 @@
 		color: var(--ft1);
 		line-height: 0%;
 	}
+	.is_home .name {
+		color: var(--bg1);
+	}
 	.full {
 		display: none;
 	}
-	@media screen and (min-width: 390px) {
+	@media screen and (min-width: 350px) {
 		.name {
 			display: inline;
 		}
 	}
-	@media screen and (min-width: 450px) {
+	@media screen and (min-width: 400px) {
 		.abbr {
 			display: none;
 		}
@@ -116,12 +127,5 @@
 	.links {
 		display: flex;
 		gap: var(--sp2);
-	}
-
-	.is_home {
-		background-color: #82c6ff;
-	}
-	.is_home .name {
-		color: var(--bg1);
 	}
 </style>

@@ -7,7 +7,7 @@
 
 		photo,
 		crop = false,
-		empty = null,
+		no_photo = null,
 
 		area_lock = false,
 
@@ -40,9 +40,13 @@
 	let color = get_color(name);
 	let dim = get_size();
 
-	let src = $state(empty);
-	if (photo) src = photo;
-	if (crop) src += `${size}`;
+	let src = $derived.by(() => {
+		if (photo) {
+			if (crop) photo += `${size}`;
+			return photo;
+		}
+		return no_photo;
+	});
 
 	// TODO: use this
 	let w = $state();

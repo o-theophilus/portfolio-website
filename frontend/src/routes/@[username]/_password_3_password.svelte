@@ -4,11 +4,13 @@
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/Layout';
+	import { Icon } from '$lib/macro';
 
 	let form = {
-		...module.value.form
+		...module.value
 	};
-	let error = {};
+
+	let error = $state({});
 	let show_password = false;
 
 	const validate = async () => {
@@ -64,7 +66,7 @@
 		icon="key"
 		error={error.password}
 		bind:value={form.password}
-		type={show_password ? 'text' : 'password'}
+		type="password++"
 		placeholder="Password here"
 	></IG>
 
@@ -73,10 +75,19 @@
 		icon="key"
 		error={error.confirm_password}
 		bind:value={form.confirm_password}
-		type={show_password ? 'text' : 'password'}
+		type="password"
 		placeholder="Password here"
 	/>
 
-	<Button primary onclick={validate}>Reset</Button>
+	<Button primary onclick={validate}>Change Password</Button>
+	<Button
+		--button-background-color="darkred"
+		--button-background-color-hover="red"
+		onclick={() => {
+			module.close();
+		}}
+	>
+		Cancel
+		<Icon icon="close" />
+	</Button>
 </Form>
-

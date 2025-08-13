@@ -7,22 +7,15 @@
 	import { Button, FoldButton, Toggle } from '$lib/button';
 	import Access_Ok from './_access.ok.svelte';
 	import { Icon } from '$lib/macro';
+	import { json } from '@sveltejs/kit';
 
-	let { user = page.data.user } = $props();
-	let init = [...user.access];
+	let user = module.value;
 	let mods = $state([...user.access]);
-	if (module.value.mods) {
-		mods = [...module.value.mods];
-	}
-	let sub_open = $state('');
+	let init = [...user.access];
+	let active_name = $state('');
 
-	const select = (_in) => {
-		if (mods.includes(_in)) {
-			mods = mods.filter((x) => x != _in);
-		} else {
-			mods.push(_in);
-			mods = mods;
-		}
+	const select = (x) => {
+		mods = mods.includes(x) ? mods.filter((p) => p !== x) : [...mods, x];
 	};
 </script>
 
@@ -34,17 +27,17 @@
 			class="type"
 			role="presentation"
 			onclick={() => {
-				if (sub_open == _type) {
-					sub_open = '';
+				if (active_name == _type) {
+					active_name = '';
 				} else {
-					sub_open = _type;
+					active_name = _type;
 				}
 			}}
 		>
 			{_type}
-			<FoldButton open={sub_open == _type} />
+			<FoldButton open={active_name == _type} />
 		</div>
-		{#if sub_open == _type}
+		{#if active_name == _type}
 			<div class="content" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 				{#each Object.entries(level) as [lv, actions]}
 					<div class="sub_type">
@@ -68,18 +61,18 @@
 		{/if}
 	{/each}
 
-	<br />
-
 	<div class="line">
+		<!-- disabled={mods.length === init.length && mods.every((p) => init.includes(p))} -->
 		<Button
-			disabled={mods.sort().join(',') == init.sort().join(',')}
+			disabled={JSON.stringify(mods.sort()) === JSON.stringify(init.sort())}
 			onclick={() => module.open(Access_Ok, { mods })}
 		>
 			Submit
 			<Icon icon="send" />
 		</Button>
+		<!-- disabled={mods.length === init.length && mods.every((p) => init.includes(p))} -->
 		<Button
-			disabled={mods.sort().join(',') == init.sort().join(',')}
+			disabled={JSON.stringify(mods.sort()) === JSON.stringify(init.sort())}
 			onclick={() => {
 				mods = [...init];
 			}}
@@ -129,8 +122,6 @@
 	}
 
 	.line {
-		display: flex;
-		align-items: center;
-		gap: var(--sp1);
+		padding-top: 16px;
 	}
 </style>

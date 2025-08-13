@@ -1,7 +1,7 @@
 <script>
 	import { notify } from '$lib/store.svelte.js';
 
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 	import { Row } from '$lib/layout';
 
 	let { one } = $props();
@@ -22,14 +22,11 @@
 
 <div class="notify" class:bad={one.status == 400} class:caution={one.status == 201}>
 	<Row nowrap>
-		<Icon
-			size="2"
-			icon={one.status == 201 ? 'error' : one.status == 400 ? 'cancel' : 'check_circle'}
-		/>
+		<Icon2 size="20" icon={one.status == 201 ? '201' : one.status == 400 ? '400' : '200'} />
 		{one.message || 'no message'}
 
 		<button onclick={() => notify.close(one.key)}>
-			<Icon icon="close"></Icon>
+			<Icon2 icon="x"></Icon2>
 			<svg viewBox="0 0 120 120">
 				<circle
 					cx="60"
@@ -55,27 +52,28 @@
 
 		border-radius: var(--sp0);
 		fill: currentColor;
+		font-size: 0.8rem;
 
 		pointer-events: all;
 		padding: var(--sp2);
 
-		color: var(--green);
-		border-left: 16px solid var(--green);
-		background-color: color-mix(in srgb, var(--green), white 90%);
+		color: green;
+		border-left: 8px solid green;
+		background-color: color-mix(in srgb, green, white 90%);
 	}
 	.bad {
-		color: var(--red);
-		border-left: 16px solid var(--red);
-		background-color: color-mix(in srgb, var(--red), white 90%);
+		color: red;
+		border-color: red;
+		background-color: color-mix(in srgb, red, white 90%);
 	}
 	.caution {
 		color: var(--yellow);
-		border-left: 16px solid var(--yellow);
+		border-color: var(--yellow);
 		background-color: color-mix(in srgb, var(--yellow), white 90%);
 	}
 
 	button {
-		--size: 32px;
+		--size: 24px;
 
 		position: relative;
 
@@ -88,33 +86,33 @@
 		border-radius: 50%;
 
 		border: none;
-		background-color: var(--bg1);
-		color: var(--ft1);
+		background-color: transparent;
+		color: var(--ft2);
 
 		transition:
 			background-color var(--trans),
 			color var(--trans);
 	}
 	button:hover {
-		background-color: var(--cl1_d);
-		color: var(--ft1_b);
+		background-color: red;
+		color: white;
 	}
 
 	svg {
 		position: absolute;
-		top: -2px;
-		left: -2px;
+		top: -5px;
+		left: -5px;
 
-		width: calc(var(--size) + 4px);
-		height: calc(var(--size) + 4px);
+		width: calc(var(--size) + 10px);
+		height: calc(var(--size) + 10px);
 
 		pointer-events: none;
 	}
 
 	circle {
 		fill: none;
-		stroke: rgb(183, 183, 183);
-		stroke-width: 8px;
+		stroke: var(--ft2);
+		stroke-width: 5px;
 		transform: rotate(-90deg);
 		transform-origin: 60px 60px;
 		transition: stroke-dashoffset var(--time) ease-in-out;

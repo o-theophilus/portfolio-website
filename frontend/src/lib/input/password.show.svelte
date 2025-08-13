@@ -5,10 +5,11 @@
 	let { show_password: show = $bindable() } = $props();
 </script>
 
-<form onsubmit={(e) => e.preventDefault()}>
+<form onsubmit={(e) => e.preventDefault()} >
 	<RoundButton
 		icon={show ? 'eye' : 'eye_off'}
 		extra="hover_red"
+		tabindex="-1"
 		onclick={() => {
 			show = !show;
 		}}

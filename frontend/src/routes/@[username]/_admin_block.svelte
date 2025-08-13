@@ -7,7 +7,7 @@
 
 	let user = { ...module.value.user };
 	let form = {};
-	let error = {};
+	let error = $state({});
 
 	const validate = () => {
 		error = {};

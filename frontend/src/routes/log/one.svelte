@@ -1,5 +1,5 @@
 <script>
-	import { app, memory } from '$lib/store.svelte.js';
+	import { app } from '$lib/store.svelte.js';
 	import { Datetime, Icon2 } from '$lib/macro';
 
 	let { log, search = $bindable() } = $props();
@@ -51,13 +51,13 @@
 			{href}
 			data-sveltekit-preload-data="off"
 			onclick={() => {
-				if (log.entity.type == 'report') {
-					let pn = 'reports';
-					let i = $memory.findIndex((x) => x.name == pn);
-					if (i != -1) {
-						$memory.splice(i, 1);
-					}
-				}
+				// if (log.entity.type == 'report') {
+				// 	let pn = 'reports';
+				// 	let i = $memory.findIndex((x) => x.name == pn);
+				// 	if (i != -1) {
+				// 		$memory.splice(i, 1);
+				// 	}
+				// }
 			}}
 		>
 			{log.entity.name}
