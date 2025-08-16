@@ -1,40 +1,31 @@
 <script>
 	import { page } from '$app/state';
 	import { Content } from '$lib/layout';
-	import { Meta, Icon } from '$lib/macro';
+	import { Meta } from '$lib/macro';
 	import { Button } from '$lib/button';
 
 	let error = page.error.message;
-	export const data = '';
-	export const form = '';
+	console.log(page);
 </script>
 
-<Meta title={error} description={error.message} />
+<Meta title={error} />
 
 <Content>
+	<div class="page_title">{page.status}</div>
+	{error}
 	<br />
 	<br />
-	<section>
-		<div>
-			<strong class="ititle">{page.status}</strong>
-			<br />
-			{error}
-		</div>
-		<img src="/error.png" alt="error" />
+	<br />
+	<img src="/error.png" alt="error" />
+	<br />
+	<br />
+	<br />
 
-		<Button href="/">
-			<Icon icon="home" />
-			Back to Home
-		</Button>
-	</section>
+	<Button icon="house" href="/">Back to Home</Button>
 </Content>
-<br />
-<br />
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-		gap: var(--sp3);
+	img {
+		width: 100%;
 	}
 </style>

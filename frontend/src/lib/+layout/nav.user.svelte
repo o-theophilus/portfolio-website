@@ -49,7 +49,6 @@
 			<div class="details">
 				<div class="name">
 					{name}
-					<!-- TODO: set max width -->
 				</div>
 				<div class="email">
 					{app.user.email}

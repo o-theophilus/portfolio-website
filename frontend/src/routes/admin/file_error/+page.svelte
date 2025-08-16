@@ -50,9 +50,9 @@
 <Meta title="Manage Files" description="Here you will find missing or excess images" />
 
 <Content>
-	<div class="title">
+	<div class="line">
 		<BackButton />
-		<strong class="ititle"> Photo Error </strong>
+		<div class="page_title">Photo Error</div>
 	</div>
 
 	<div class="fold">
@@ -176,12 +176,6 @@
 </Content>
 
 <style>
-	.title {
-		display: flex;
-		align-items: center;
-		gap: var(--sp2);
-	}
-
 	.fold {
 		margin: var(--sp2) 0;
 	}

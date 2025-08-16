@@ -4,6 +4,8 @@
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
 	import { Icon, Marked } from '$lib/macro';
+	import { Form } from '$lib/layout';
+	import { Note } from '$lib/info';
 
 	let form = {
 		path: module.value.path
@@ -52,26 +54,10 @@
 	};
 </script>
 
-<form onsubmit={(e) => e.preventDefault()} novalidate autocomplete="off">
-	<strong class="ititle">
-		{#if comment}
-			Reply
-		{:else}
-			Add
-		{/if}
-		Comment
-	</strong>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
-	{#if comment}
-		<div class="comment">
-			<Marked content={comment} />
-		</div>
-	{/if}
+<Form title="{comment ? 'Reply' : 'Add'} Comment" error={error.error}>
+	<Note>
+		<Marked content={comment} />
+	</Note>
 
 	<IG
 		name="Comment"
@@ -86,22 +72,4 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
-</form>
-
-<style>
-	form {
-		padding: var(--sp3);
-	}
-	.comment {
-		padding: 1px var(--sp2);
-		border-radius: var(--sp0);
-
-		background-color: color-mix(in srgb, var(--cl1), transparent 80%);
-		color: var(--ft1);
-		font-size: 0.8rem;
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
-</style>
+</Form>

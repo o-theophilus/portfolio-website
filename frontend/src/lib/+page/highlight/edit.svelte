@@ -1,16 +1,16 @@
 <script>
-	import Add from './add.svelte';
-	import Order from './order.svelte';
+	import Add from './edit.add.svelte';
+	import Order from './edit.order.svelte';
 
-	let reset;
+	let order;
 </script>
 
 <div class="comp">
-	<strong class="ititle"> Add Highlights </strong>
-	<Add on:ok={reset} />
+	<div class="page_title">Add Highlights</div>
+	<Add ondone={() => order.reset()} />
 	<hr />
-	<strong class="ititle"> Change Order </strong>
-	<Order bind:reset />
+	<div class="page_title">Change Order</div>
+	<Order bind:this={order} />
 </div>
 
 <style>

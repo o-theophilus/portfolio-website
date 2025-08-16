@@ -39,9 +39,7 @@
 </script>
 
 <div class="content">
-	<div class="ititle">
-		<strong>Change Status</strong>
-	</div>
+	<div class="page_title">Change Status</div>
 
 	{#if error.error}
 		<div class="error">
@@ -54,7 +52,9 @@
 		</div>
 	{/if}
 
-	<div>Status: <strong>{_status}</strong></div>
+	<div>
+		Status: <div class="status">{_status}</div>
+	</div>
 
 	<div>Change to:</div>
 	<div class="line">
@@ -94,7 +94,7 @@
 		padding: var(--sp3);
 	}
 
-	.ititle {
+	.page_title {
 		margin-bottom: var(--sp2);
 	}
 
@@ -105,5 +105,9 @@
 
 	.error {
 		margin: var(--sp2) 0;
+	}
+
+	.status {
+		font-weight: 800;
 	}
 </style>

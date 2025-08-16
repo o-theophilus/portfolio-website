@@ -40,7 +40,7 @@
 <Content>
 	<br />
 	<div class="line">
-		<div class="ititle">Profile</div>
+		<div class="page_title">Profile</div>
 
 		{#if app.user.login && (user.key == app.user.key || is_admin)}
 			<Toggle

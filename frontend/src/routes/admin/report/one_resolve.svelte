@@ -44,12 +44,12 @@
 </script>
 
 <form onsubmit={(e) => e.preventDefault()} novalidate autocomplete="off">
-	<strong class="ititle">
+	<div class="page_title">
 		Resolve:
 		<span class="caps">
 			{report_key.slice(-10)}
 		</span>
-	</strong>
+	</div>
 
 	{#if error.error}
 		<div class="error">

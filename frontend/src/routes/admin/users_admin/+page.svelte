@@ -15,7 +15,6 @@
 	let { search_query } = data;
 	let { order_by } = data;
 	console.log(search_query);
-	
 </script>
 
 <Log entity_type={'page'} />
@@ -25,9 +24,9 @@
 	<div class="line space line1">
 		<div class="line">
 			<BackButton />
-			<strong class="ititle">
+			<div class="page_title">
 				Admin{users.length > 1 ? 's' : ''}
-			</strong>
+			</div>
 		</div>
 		<Dropdown name="order" list={order_by} novalue icon="arrow-down-narrow-wide" />
 	</div>

@@ -8,7 +8,7 @@
 </script>
 
 <div class="comp">
-	<strong class="ititle"> Manage File </strong>
+	<div class="page_title">Manage File</div>
 	<br />
 	<br />
 

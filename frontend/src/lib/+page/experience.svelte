@@ -106,91 +106,84 @@
 	// let devlope = [{ name: 'Verge3D', value: 80 }];
 </script>
 
-<Content fit>
-	<div class="comp">
-		<strong class="ititle dark"> Where I've Worked </strong>
-		<br />
-		<br />
+<Content --content-height="100%" --content-padding-top="80px">
+	<div class="page_title dark">Where I've Worked</div>
+	<br />
 
-		<div class="tabs">
-			{#each exp as x, i}
-				{#if i != 0}
-					<div class="line"></div>
-				{/if}
-				<div
-					class="tab2"
-					role="presentation"
-					class:active={active == i}
-					onclick={() => {
-						active = i;
-					}}
-				>
-					<div></div>
-					{x.key}
-				</div>
-			{/each}
-		</div>
-
-		<div class="block">
-			<div class="left">
-				<div class="indicator">
-					<div
-						class="pos"
-						style:--height="{100 / exp.length}%"
-						style:--active="{active * (100 / exp.length)}%"
-					></div>
-				</div>
-				<div>
-					{#each exp as x, i}
-						<div
-							role="presentation"
-							class="tab"
-							class:active={active == i}
-							onclick={() => {
-								active = i;
-							}}
-						>
-							{x.key}
-						</div>
-					{/each}
-				</div>
+	<div class="tabs">
+		{#each exp as x, i}
+			{#if i != 0}
+				<div class="line"></div>
+			{/if}
+			<div
+				class="tab2"
+				role="presentation"
+				class:active={active == i}
+				onclick={() => {
+					active = i;
+				}}
+			>
+				<div></div>
+				{x.key}
 			</div>
-
-			<div class="right">
-				{#key active}
-					<div class="details" in:fade={{ duration: 1000, easing: cubicInOut }}>
-						<div class="name">{exp[active].name}</div>
-						<div class="role">{exp[active].role}</div>
-						<div class="date">{exp[active].date}</div>
-						<div class="info">
-							<ul>
-								{#each exp[active].exps as x}
-									<li>{x}</li>
-								{/each}
-							</ul>
-						</div>
-
-						<Row --row-gap="4px">
-							{#each exp[active].tags as x}
-								<Tag --tag-color="var(--ft2)">{x}</Tag>
-							{/each}
-						</Row>
-					</div>
-				{/key}
-			</div>
-		</div>
-		<br />
-		<LinkArrow href="/Theophilus_Ogbolu_Resume.pdf" blank --link-font-size="0.8rem">
-			View Résumé
-		</LinkArrow>
+		{/each}
 	</div>
+
+	<div class="block">
+		<div class="left">
+			<div class="indicator">
+				<div
+					class="pos"
+					style:--height="{100 / exp.length}%"
+					style:--active="{active * (100 / exp.length)}%"
+				></div>
+			</div>
+			<div>
+				{#each exp as x, i}
+					<div
+						role="presentation"
+						class="tab"
+						class:active={active == i}
+						onclick={() => {
+							active = i;
+						}}
+					>
+						{x.key}
+					</div>
+				{/each}
+			</div>
+		</div>
+
+		<div class="right">
+			{#key active}
+				<div class="details" in:fade={{ duration: 1000, easing: cubicInOut }}>
+					<div class="name">{exp[active].name}</div>
+					<div class="role">{exp[active].role}</div>
+					<div class="date">{exp[active].date}</div>
+					<div class="info">
+						<ul>
+							{#each exp[active].exps as x}
+								<li>{x}</li>
+							{/each}
+						</ul>
+					</div>
+
+					<Row --row-gap="4px">
+						{#each exp[active].tags as x}
+							<Tag --tag-color="var(--ft2)">{x}</Tag>
+						{/each}
+					</Row>
+				</div>
+			{/key}
+		</div>
+	</div>
+	<br />
+	<LinkArrow href="/Theophilus_Ogbolu_Resume.pdf" blank --link-font-size="0.8rem">
+		View Résumé
+	</LinkArrow>
 </Content>
 
 <style>
-	.comp {
-		margin: var(--sp5) 0;
-	}
-
 	.block {
 		display: flex;
 		gap: var(--sp3);

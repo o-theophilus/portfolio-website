@@ -248,7 +248,7 @@ def edit(key):
             error["status"] = "unauthorized access"
         elif (
             not request.json["status"]
-            or request.json["status"] not in ['active', 'draft', 'delete']
+            or request.json["status"] not in ['active', 'draft']
         ):
             error["status"] = "invalid request"
         elif request.json["status"] == post["status"]:
@@ -289,6 +289,60 @@ def edit(key):
     return jsonify({
         "status": 200,
         "post": post_schema(post)
+    })
+
+
+@bp.delete("/post/<key>")
+def delete(key):
+    con, cur = db_open()
+
+    user = token_to_user(cur)
+    if not user:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid token"
+        })
+
+    if "post:edit_status" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
+    if not post:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "invalid request"
+        })
+
+    cur.execute("""
+        DELETE FROM comment WHERE post_key = %s;
+    """, (post["key"],))
+
+    cur.execute("""
+        DELETE FROM post WHERE key = %s;
+    """, (post["key"],))
+
+    storage("delete", post["photo"])
+    for x in post["files"]:
+        storage("delete", x)
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="deleted",
+        entity_key=post["key"],
+        entity_type="post"
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
     })
 
 

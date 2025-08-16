@@ -6,14 +6,13 @@
 	import { page } from '$app/state';
 
 	import { Datetime, Marked, Avatar } from '$lib/macro';
-	import { Link, RoundButton } from '$lib/button';
+	import { Link, RoundButton, Like } from '$lib/button';
 	import Add from './_add.svelte';
 	import One from './one.svelte';
 	import Delete from './one.delete.svelte';
 	import Report from './one.report.svelte';
-	import Like from '../engage/like.svelte';
 
-	let { post_key, update, search, comment = {}, comments = [] } = $props();
+	let { post_key, update, search, comment, comments = [] } = $props();
 	let error = $state({});
 	let path = [...comment.path];
 	path.push(comment.key);
@@ -27,6 +26,31 @@
 			_this.scrollIntoView({ behavior: 'smooth' });
 		}
 	});
+
+	const submit_like = async (liked) => {
+		error = {};
+
+		let url = `${import.meta.env.VITE_BACKEND}/comment/like/${comment.key}`;
+		if (Object.keys(search).length != 0) {
+			url = `${url}?${new URLSearchParams(search).toString()}`;
+		}
+
+		let resp = await fetch(url, {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: app.token
+			},
+			body: JSON.stringify({ like: liked })
+		});
+		resp = await resp.json();
+
+		if (resp.status == 200) {
+			comment = resp.comment;
+		} else {
+			error = resp;
+		}
+	};
 </script>
 
 <svelte:window
@@ -44,12 +68,11 @@
 		<div class="content">
 			<div class="top">
 				<div>
-					<strong class="name">{comment.user.name}</strong>
+					<div class="name">{comment.user.name}</div>
 					<div class="date"><Datetime datetime={comment.date} type="ago" /></div>
 				</div>
 
 				<div class="right">
-					<!-- TODO: update icon -->
 					<RoundButton
 						icon="ellipsis"
 						onclick={() => {
@@ -93,14 +116,13 @@
 			</div>
 
 			{#if error.error}
-				<div class="error">
+				<div class="error" transition:slide>
 					{error.error}
 				</div>
 			{/if}
 
 			{#if app.user.login}
 				<div class="line">
-					<!-- TODO: update icon -->
 					<RoundButton
 						icon="reply"
 						onclick={() =>
@@ -109,11 +131,25 @@
 
 					<Like
 						--like-height="32px"
-						name="comment"
-						entity={comment}
-						{search}
-						onupdate={(e) => {
-							update(e.detail.comments);
+						like={comment.like.length}
+						dislike={comment.dislike.length}
+						onlike={() => {
+							comment.dislike = comment.dislike.filter((e) => e != app.user.key);
+							if (comment.like.includes(app.user.key)) {
+								comment.like = comment.like.filter((e) => e != app.user.key);
+							} else {
+								comment.like.push(app.user.key);
+							}
+							submit_like(true);
+						}}
+						ondislike={() => {
+							comment.like = comment.like.filter((e) => e != app.user.key);
+							if (comment.dislike.includes(app.user.key)) {
+								comment.dislike = comment.dislike.filter((e) => e != app.user.key);
+							} else {
+								comment.dislike.push(app.user.key);
+							}
+							submit_like(false);
 						}}
 					/>
 				</div>
@@ -194,6 +230,8 @@
 	}
 
 	.error {
-		margin: var(--sp2) 0;
+		color: red;
+		font-size: 0.8rem;
+		margin-top: 16px;
 	}
 </style>

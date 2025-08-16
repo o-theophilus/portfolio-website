@@ -23,9 +23,9 @@
 <Content>
 	<div class="line line1">
 		<BackButton />
-		<strong class="ititle">
+		<div class="page_title">
 			Report{reports.length > 1 ? 's' : ''}
-		</strong>
+		</div>
 	</div>
 
 	<div class="line nowrap">

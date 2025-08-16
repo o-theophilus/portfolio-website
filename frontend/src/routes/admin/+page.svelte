@@ -10,7 +10,7 @@
 <Meta title="Admin Dashboard" description="This contains this website settings" />
 
 <Content>
-	<strong class="ititle"> Admin Dashboard</strong>
+	<div class="page_title">Admin Dashboard</div>
 
 	<div class="btns">
 		{#if app.user.access.includes('user:set_access')}

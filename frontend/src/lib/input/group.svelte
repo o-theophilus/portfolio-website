@@ -166,8 +166,6 @@
 	.error {
 		color: red;
 		font-size: 0.8rem;
-		margin-top: var(--error-margin-top, 0);
-		margin-bottom: var(--error-margin-bottom, 0);
 	}
 
 	.left_pad {

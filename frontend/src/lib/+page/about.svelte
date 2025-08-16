@@ -5,7 +5,7 @@
 </script>
 
 <div id="scroll_1"></div>
-<Content fit>
+<Content --content-height="100%">
 	<Observe let:intersecting>
 		<div class="comp" class:intersecting>
 			<div class="headline">Creating Engaging & Accessible Digital Experiences.</div>
@@ -24,8 +24,6 @@
 
 <style>
 	.comp {
-		margin-bottom: var(--sp5);
-
 		position: relative;
 		opacity: 0;
 		transform: translate(0, -500px) scale(0);

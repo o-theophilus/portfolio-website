@@ -127,7 +127,6 @@ def get_comments(key, cur=None):
         "status": 200,
         "comments": comments,
         "order_by": list(order_by.keys()),
-        "_status": ["active", "deleted"]
     })
 
 
@@ -302,7 +301,7 @@ def like(key):
     return comments
 
 
-@ bp.delete("/comment/<key>")
+@bp.delete("/comment/<key>")
 def delete(key):
     con, cur = db_open()
 
@@ -327,15 +326,8 @@ def delete(key):
         })
 
     cur.execute("""
-        UPDATE comment
-        SET status = 'deleted'
-        WHERE
-            key = %s
-            OR %s = ANY(path);
-    """, (
-        comment["key"],
-        comment["key"]
-    ))
+        DELETE FROM comment WHERE key = %s OR %s = ANY(path);
+    """, (comment["key"], comment["key"]))
 
     log(
         cur=cur,

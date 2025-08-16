@@ -22,9 +22,9 @@
 	<div class="line space line1">
 		<div class="line">
 			<BackButton />
-			<strong class="ititle">
+			<div class="page_title">
 				User{users.length > 1 ? 's' : ''}
-			</strong>
+			</div>
 		</div>
 		<Dropdown name="status" list={['all', ..._status]} icon="arrow-down-narrow-wide" />
 	</div>

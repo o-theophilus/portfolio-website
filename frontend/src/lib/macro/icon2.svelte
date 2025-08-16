@@ -38,7 +38,9 @@
 		SquareCheck,
 		ArrowDownNarrowWide,
 		Reply,
-		Ellipsis
+		Ellipsis,
+		Info,
+		House
 	} from 'lucide';
 	import { onMount } from 'svelte';
 	onMount(() => {
@@ -81,7 +83,9 @@
 				SquareCheck,
 				ArrowDownNarrowWide,
 				Reply,
-				Ellipsis
+				Ellipsis,
+				Info,
+				House
 			},
 			attrs: {
 				width: 16,

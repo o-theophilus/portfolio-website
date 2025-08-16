@@ -30,57 +30,55 @@
 	<div class=" pos"></div>
 </div>
 
-<Content fit>
-	<div class="comp">
-		<Observe let:intersecting>
-			<div class="observe">
-				<strong class="ititle"> What I Can Do </strong>
-			</div>
-		</Observe>
+<Content --content-height="100%" --content-padding-top="80px">
+	<Observe let:intersecting>
+		<div class="observe">
+			<div class="page_title">What I Can Do</div>
+		</div>
+	</Observe>
 
-		<div class="block">
-			<div class="card">
-				<div class="pos">
-					<div class="icon one">
-						<Icon icon="design" size="1.5" />
-					</div>
-					<div class="title">Design</div>
+	<div class="block">
+		<div class="card">
+			<div class="pos">
+				<div class="icon one">
+					<Icon icon="design" size="1.5" />
+				</div>
+				<div class="title">Design</div>
 
-					<div class="text">
-						With over eight years of experience, I am a skilled visual communicator. My expertise
-						spans branding, UI/UX, web, and print design. I create stunning designs that cater to
-						your specific needs.
-					</div>
+				<div class="text">
+					With over eight years of experience, I am a skilled visual communicator. My expertise
+					spans branding, UI/UX, web, and print design. I create stunning designs that cater to your
+					specific needs.
 				</div>
 			</div>
+		</div>
 
-			<div class="card">
-				<div class="pos">
-					<div class="icon two">
-						<Icon icon="code2" size="1.5" />
-					</div>
-					<div class="title">Code</div>
+		<div class="card">
+			<div class="pos">
+				<div class="icon two">
+					<Icon icon="code2" size="1.5" />
+				</div>
+				<div class="title">Code</div>
 
-					<div class="text">
-						My technical expertise enables me to build fast, secure, responsive, and scalable web
-						applications. Proficient in both frontend and backend development, I stay updated with
-						the latest web technologies.
-					</div>
+				<div class="text">
+					My technical expertise enables me to build fast, secure, responsive, and scalable web
+					applications. Proficient in both frontend and backend development, I stay updated with the
+					latest web technologies.
 				</div>
 			</div>
+		</div>
 
-			<div class="card">
-				<div class="pos">
-					<div class="icon three">
-						<Icon icon="lightbulb" size="1.5" />
-					</div>
-					<div class="title">Innovate</div>
+		<div class="card">
+			<div class="pos">
+				<div class="icon three">
+					<Icon icon="lightbulb" size="1.5" />
+				</div>
+				<div class="title">Innovate</div>
 
-					<div class="text">
-						I combine design and coding to deliver innovative solutions. From conceptualizing new
-						products to enhancing and automating existing ones through scripting, I deliver
-						impactful results.
-					</div>
+				<div class="text">
+					I combine design and coding to deliver innovative solutions. From conceptualizing new
+					products to enhancing and automating existing ones through scripting, I deliver impactful
+					results.
 				</div>
 			</div>
 		</div>
@@ -88,10 +86,6 @@
 </Content>
 
 <style>
-	.comp {
-		margin: var(--sp5) 0;
-	}
-
 	.block {
 		display: flex;
 		flex-direction: column;
@@ -109,7 +103,7 @@
 		width: 100%;
 	}
 	.card:nth-of-type(1) {
-		--color: #EF5A6F;
+		--color: #ef5a6f;
 	}
 	.card:nth-of-type(2) {
 		--color: green;

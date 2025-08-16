@@ -27,12 +27,10 @@
 	};
 
 	let man = '';
-
-	import { page } from '$app/state';
 </script>
 
 <Log entity_type={'page'} />
-<!-- <UpdateUrl /> -->
+<UpdateUrl />
 <Meta
 	title="Posts"
 	description="This page showcases a collection of interesting blogs and projects that I have worked on"
@@ -40,10 +38,10 @@
 
 <section class="background">
 	<Content>
-		<div class="line space line1">
-			<strong class="ititle">
+		<div class="line space">
+			<div class="page_title">
 				Post{posts.length > 1 ? 's' : ''}
-			</strong>
+			</div>
 			{#if app.user.access.includes('post:add')}
 				<div class="line">
 					<Radio list={_status} name="status"></Radio>
@@ -85,10 +83,6 @@
 	.background {
 		background-color: var(--bg2);
 		padding: 1px 0;
-	}
-
-	.line1 {
-		margin-top: var(--sp3);
 	}
 
 	.search_bar {

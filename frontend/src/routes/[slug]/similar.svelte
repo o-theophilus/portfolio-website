@@ -29,10 +29,10 @@
 {#if loading || posts.length > 0}
 	<hr />
 	<div class="title line">
-		<strong class="ititle line">
+		<div class="page_title line">
 			Similar Post{#if posts.length > 1}s{/if}
 			<Spinner active={loading} size="20" />
-		</strong>
+		</div>
 
 		{#if !loading}
 			<FoldButton

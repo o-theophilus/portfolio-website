@@ -20,7 +20,7 @@
 
 <Content>
 	<br />
-	<strong class="ititle"> Logs </strong>
+	<div class="page_title">Logs</div>
 	<Search {search_query} bind:search />
 
 	{#each logs as log (log.key)}

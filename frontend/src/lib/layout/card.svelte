@@ -9,7 +9,7 @@
 
 <div class="block" class:open>
 	<div
-		class="title"
+		class="line space"
 		role="presentation"
 		onclick={(e) => {
 			if (e.target != e.currentTarget) return;
@@ -41,18 +41,14 @@
 		border-bottom: 2px solid var(--ft1_d);
 	}
 
-	.title {
-		justify-content: space-between;
+	.line {
 		padding: var(--sp2) 0;
-		display: flex;
-		align-items: center;
-		gap: var(--sp2);
 		text-transform: capitalize;
 
 		transition: font-weight var(--trans);
 	}
 
-	.open .title {
+	.open .line {
 		font-weight: 800;
 	}
 

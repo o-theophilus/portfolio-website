@@ -58,13 +58,13 @@
 <hr />
 
 <div class="title">
-	<strong class="ititle">
+	<div class="page_title">
 		{#if comments.length > 0}
 			{comments.length}
 		{/if}
 		Comment{#if comments.length > 1}s{/if}
 		<Spinner active={loading} size="20" />
-	</strong>
+	</div>
 
 	{#if !loading}
 		<FoldButton
@@ -137,7 +137,7 @@
 		font-weight: 800;
 		color: var(--ft1);
 	}
-	.ititle {
+	.page_title {
 		display: flex;
 		align-items: center;
 		gap: var(--sp2);

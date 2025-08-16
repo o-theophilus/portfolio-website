@@ -4,33 +4,27 @@
 	import { Observe } from '$lib/macro';
 </script>
 
-<Content fit>
-	<div class="scroll_2">
-		<Observe let:intersecting>
-			<div class="observe" class:intersecting>
-				<div>
-					<strong class="ititle"> How Can I Help? </strong>
-					<br />
-					I am currently available for freelance work and collaborations. Whether you're looking to refresh
-					your branding, create a new website, or design marketing materials, I'm here to help.
-				</div>
-				<div>
-					<Scroller query="footer">
-						get in
-						<br />
-						touch
-					</Scroller>
-				</div>
+<Content --content-height="100%" --content-padding-top="80px">
+	<Observe let:intersecting>
+		<div class="observe" class:intersecting>
+			<div>
+				<div class="page_title">How Can I Help?</div>
+				<br />
+				I am currently available for freelance work and collaborations. Whether you're looking to refresh
+				your branding, create a new website, or design marketing materials, I'm here to help.
 			</div>
-		</Observe>
-	</div>
+			<div>
+				<Scroller query="footer">
+					get in
+					<br />
+					touch
+				</Scroller>
+			</div>
+		</div>
+	</Observe>
 </Content>
 
 <style>
-	.scroll_2 {
-		margin: var(--sp5) 0;
-	}
-
 	.observe {
 		display: flex;
 		gap: var(--sp2);

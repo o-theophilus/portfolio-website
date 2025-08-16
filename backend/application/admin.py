@@ -431,7 +431,12 @@ def delete_file():
     })
 
 
+@bp.get("/highlight")
 def get_highlight(cur=None):
+    close_conn = not cur
+    if not cur:
+        con, cur = db_open()
+
     cur.execute("SELECT * FROM setting WHERE key = 'highlight';",)
     highlight = cur.fetchone()
     if not highlight:
@@ -449,7 +454,12 @@ def get_highlight(cur=None):
     posts = cur.fetchall()
     posts = sorted(posts, key=lambda d: keys.index(d['key']))
 
-    return [post_schema(x) for x in posts]
+    if close_conn:
+        db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "posts": [post_schema(x) for x in posts]
+    })
 
 
 @bp.post("/highlight")
@@ -522,7 +532,7 @@ def set_highlight():
         }
     )
 
-    posts = get_highlight(cur)
+    posts = get_highlight(cur).json["posts"]
 
     db_close(con, cur)
     return jsonify({
@@ -584,7 +594,7 @@ def edit_highlight():
         }
     )
 
-    posts = get_highlight(cur)
+    posts = get_highlight(cur).json["posts"]
 
     db_close(con, cur)
     return jsonify({

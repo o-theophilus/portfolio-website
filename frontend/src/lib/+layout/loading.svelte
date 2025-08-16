@@ -35,9 +35,9 @@
 			{#if typeof loading.value == 'string' && loading.value.length > 0}
 				<br />
 				{#if visible}
-					<strong transition:typewriter>
+					<div class="loading" transition:typewriter>
 						{loading.value}
-					</strong>
+					</div>
 				{/if}
 			{/if}
 		</div>
@@ -73,7 +73,7 @@
 		border-radius: var(--sp1);
 	}
 
-	strong {
+	.loading {
 		height: 0;
 		text-align: center;
 		padding: 0 var(--sp3);

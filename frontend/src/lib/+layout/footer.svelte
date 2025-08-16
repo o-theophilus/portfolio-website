@@ -13,9 +13,9 @@
 	<hr />
 {/if}
 
-<Content fit>
+<Content --content-height="100%" --content-padding-top="56px" --content-padding-bottom="56px">
 	<footer id="footer">
-		<div class="ititle"><strong> Get In Touch </strong></div>
+		<div class="page_title">Get In Touch</div>
 
 		<section>
 			<div class="form">
@@ -36,16 +36,10 @@
 			</div>
 		</section>
 		<div class="copyright">&copy 2025 | Designed & Built by Theophilus Ogbolu.</div>
-		<br /><br /><br />
 	</footer>
 </Content>
 
 <style>
-	.ititle {
-		margin-top: var(--sp5);
-		margin-bottom: var(--sp3);
-	}
-
 	section {
 		display: flex;
 		flex-direction: column;

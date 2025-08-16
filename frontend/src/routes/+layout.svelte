@@ -8,7 +8,6 @@
 	let { data, children } = $props();
 	app.user = data.locals.user;
 	app.token = data.locals.token;
-	app.highlight = data.locals.posts;
 </script>
 
 <main class:dark={app.user.setting_theme == 'dark'}>

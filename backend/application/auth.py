@@ -4,10 +4,11 @@ from .tools import (
     generate_code, check_code)
 from uuid import uuid4
 import re
+import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from .postgres import db_open, db_close
 from .log import log
-from .admin import get_highlight
+from .storage import storage
 
 bp = Blueprint("auth", __name__)
 
@@ -49,14 +50,11 @@ def init():
 
         token = token_tool().dumps(user["key"])
 
-    posts = get_highlight(cur)
-
     db_close(con, cur)
     return jsonify({
         "status": 200,
         "user": user_schema(user),
         "token": token,
-        "posts": posts
     })
 
 
@@ -612,28 +610,51 @@ def deactivate():
         })
 
     cur.execute("""
-        UPDATE "user"
-        SET status = 'deleted', login = %s, access = %s
-        WHERE key = %s;
-    """, (
-        False,
-        [],
-        user["key"]
-    ))
+        UPDATE post
+        SET author_key = (SELECT key FROM "user" WHERE email = %s)
+        WHERE key = %s
+    ;""", (os.environ["MAIL_USERNAME"], user["key"]))
+
+    cur.execute("""
+        WITH user_comments AS (
+            SELECT key FROM comment WHERE user_key = %s
+        )
+        DELETE FROM comment
+        WHERE user_key = %s
+        OR path && (SELECT array_agg(key) FROM user_comments);
+    """, (user["key"], user["key"]))
+
+    cur.execute("""DELETE FROM report
+        WHERE reporter_key = %s OR reported_key = %s
+    ;""", (user["key"], user["key"]))
+
+    cur.execute("""
+        DELETE FROM code WHERE user_key = %s;
+    """, (user["key"],))
+
+    cur.execute("""
+        DELETE FROM log WHERE user_key = %s OR entity_key = %s;
+    """, (user["key"], user["key"]))
+
+    cur.execute("""
+        DELETE FROM "user" WHERE key = %s;
+    """, (user["key"],))
+
+    storage("delete", user["photo"])
 
     anon_user = anon(cur)
 
-    note = {}
-    if "note" in request.json and request.json["note"]:
-        note = {"note": request.json["note"]}
+    # note = {}
+    # if "note" in request.json and request.json["note"]:
+    #     note = {"note": request.json["note"]}
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="deleted_account",
-        entity_type="account",
-        misc=note
-    )
+    # log(
+    #     cur=cur,
+    #     user_key=user["key"],
+    #     action="deleted_account",
+    #     entity_type="account",
+    #     misc=note
+    # )
     log(
         cur=cur,
         user_key=anon_user["key"],

@@ -1,9 +1,11 @@
 <script>
+	import { slide } from 'svelte/transition';
 	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
 	import { Icon } from '$lib/macro';
+	import { Form } from '$lib/layout';
 
 	let user = { ...module.value.user };
 	let form = {};
@@ -44,21 +46,7 @@
 	};
 </script>
 
-<form onsubmit={(e) => e.preventDefault()} novalidate autocomplete="off">
-	<strong class="ititle">
-		{#if user.status == 'blocked'}
-			Unblock
-		{:else}
-			Block
-		{/if}
-		User
-	</strong>
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title={user.status == 'blocked' ? 'Unblock' : 'Block'} error={error.error}>
 	<IG
 		name="Note"
 		error={error.note}
@@ -71,14 +59,4 @@
 		Submit
 		<Icon icon="send" />
 	</Button>
-</form>
-
-<style>
-	form {
-		padding: var(--sp3);
-	}
-	.error {
-		margin: var(--sp2) 0;
-		font-size: 0.8rem;
-	}
-</style>
+</Form>

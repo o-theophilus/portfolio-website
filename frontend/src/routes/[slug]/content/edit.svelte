@@ -54,7 +54,7 @@
 </script>
 
 <form onsubmit={e.preventDefault} novalidate autocomplete="off">
-	<strong class="ititle"> Edit Content </strong>
+	<div class="page_title">Edit Content</div>
 
 	<IG>
 		<div class="block">

@@ -5,6 +5,7 @@
 	import { Button } from '$lib/button';
 	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
+	import { slide } from 'svelte/transition';
 
 	let form = {
 		actions: []
@@ -68,7 +69,7 @@
 			</label>
 		{/if}
 		{#if error.actions}
-			<span class="error">
+			<span class="error" transition:slide>
 				{error.actions}
 			</span>
 		{/if}
@@ -92,6 +93,7 @@
 	.error {
 		margin: var(--sp2) 0;
 		font-size: 0.8rem;
+		color: red;
 	}
 
 	.actions {

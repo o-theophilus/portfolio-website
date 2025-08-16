@@ -1,14 +1,12 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
 	import { app, loading, notify, module } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
 
-	let emit = createEventDispatcher();
-
 	let slug = $state();
 	let error = $state({});
+	let { ondone } = $props();
 
 	const validate = () => {
 		error = {};
@@ -34,20 +32,20 @@
 
 		if (resp.status == 200) {
 			app.highlight = resp.posts;
-			module.value.update();
+			module.value.reset_index();
 
-			let is_highlight = false;
+			let is_added = false;
 			for (const x of app.highlight) {
 				if (x.slug == slug) {
-					is_highlight = true;
+					is_added = true;
 					break;
 				}
 			}
 
-			notify.open(`Highlight ${is_highlight ? 'Added' : 'Removed'}`);
+			notify.open(`Highlight ${is_added ? 'Added' : 'Removed'}`);
 
 			slug = null;
-			emit('ok');
+			ondone();
 		} else {
 			error = resp;
 		}

@@ -89,7 +89,9 @@
 		<div class="line">
 			{#if app.user.access.includes('post:edit_status') && edit_mode}
 				<Button onclick={() => module.open(Status, { post, update })}>
-					<span> Edit Status: <strong>{post.status}</strong> </span>
+					<span>
+						Edit Status: <div class="status">{post.status}</div>
+					</span>
 				</Button>
 			{/if}
 			{#if app.user.access.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
@@ -122,5 +124,8 @@
 		display: flex;
 		align-items: center;
 		gap: var(--sp1);
+	}
+	.status {
+		font-weight: 800;
 	}
 </style>

@@ -4,12 +4,13 @@
 	import { loading, notify, app, module } from '$lib/store.svelte.js';
 
 	import { Button, RoundButton } from '$lib/button';
+	import { slide } from 'svelte/transition';
 
 	let posts = $state([...app.highlight]);
 	let init = $state([...app.highlight]);
 	let error = $state({});
 
-	const move_down = (key, dir = true) => {
+	const order = (key, down = true) => {
 		const index = posts.findIndex((x) => x.key == key);
 
 		if (index == -1) {
@@ -17,7 +18,7 @@
 		}
 
 		let newIndex = index - 1;
-		if (dir) {
+		if (down) {
 			newIndex = index + 1;
 		}
 
@@ -60,7 +61,7 @@
 			app.highlight = resp.posts;
 			posts = [...app.highlight];
 			init = [...app.highlight];
-			module.value.update();
+			module.value.reset_index();
 			notify.open('Highlight updated');
 		} else {
 			error = resp;
@@ -79,14 +80,14 @@
 				icon="chevron-up"
 				disabled={i == 0}
 				onclick={() => {
-					move_down(x.key, false);
+					order(x.key, false);
 				}}
 			/>
 			<RoundButton
 				icon="chevron-down"
 				disabled={i == posts.length - 1}
 				onclick={() => {
-					move_down(x.key);
+					order(x.key);
 				}}
 			/>
 			<RoundButton
@@ -101,7 +102,7 @@
 {/each}
 
 {#if error.error}
-	<div class="error">
+	<div class="error" transition:slide>
 		{error.error}
 	</div>
 {/if}
@@ -117,17 +118,16 @@
 
 <style>
 	.line {
-		/* display: flex; */
-		/* gap: var(--sp1); */
 		margin-top: var(--sp1);
 	}
 
 	.post_name {
 		font-size: 0.8rem;
-		/* width: 100%; */
 	}
 
 	.error {
-		margin: var(--sp2) 0;
+		margin: 16px 0;
+		font-size: 0.8rem;
+		color: red;
 	}
 </style>

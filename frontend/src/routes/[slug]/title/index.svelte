@@ -14,12 +14,14 @@
 					key: post.key,
 					title: post.title,
 					update
-				})}>Edit Title</Button
+				})}
 		>
+			Edit Title
+		</Button>
 	{/if}
-	<strong class="ititle">
+	<div class="page_title">
 		{post.title}
-	</strong>
+	</div>
 </div>
 
 <style>

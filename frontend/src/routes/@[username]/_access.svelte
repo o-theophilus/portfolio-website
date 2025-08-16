@@ -20,7 +20,7 @@
 </script>
 
 <section>
-	<strong class="ititle"> Edit Access </strong>
+	<div class="page_title">Edit Access</div>
 
 	{#each Object.entries(page.data.access) as [_type, level]}
 		<div

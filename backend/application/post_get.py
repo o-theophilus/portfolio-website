@@ -16,10 +16,8 @@ def post_schema(post):
 
 
 @bp.get("/post/<key>")
-def get_post(key, cur=None):
-    close_conn = not cur
-    if not cur:
-        con, cur = db_open()
+def get_post(key):
+    con, cur = db_open()
 
     cur.execute("""
         SELECT * FROM post WHERE post.slug = %s OR post.key = %s;
@@ -27,8 +25,7 @@ def get_post(key, cur=None):
     post = cur.fetchone()
 
     if not post:
-        if close_conn:
-            db_close(con, cur)
+        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid request"
@@ -37,8 +34,7 @@ def get_post(key, cur=None):
     if post["status"] != "active":
         user = token_to_user(cur)
         if not user:
-            if close_conn:
-                db_close(con, cur)
+            db_close(con, cur)
             return jsonify({
                 "status": 400,
                 "error": "invalid token"
@@ -48,15 +44,13 @@ def get_post(key, cur=None):
             "post:add" not in user["access"]
             and "post:edit_status" not in user["access"]
         ):
-            if close_conn:
-                db_close(con, cur)
+            db_close(con, cur)
             return jsonify({
                 "status": 400,
                 "error": "unauthorized access"
             })
 
-    if close_conn:
-        db_close(con, cur)
+    db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post_schema(post)
@@ -234,7 +228,7 @@ def get_all(order="latest", page_size=24, cur=None):
         "status": 200,
         "posts": [post_schema(x) for x in posts],
         "order_by": list(order_by.keys()),
-        "_status": ['active', 'draft', 'delete'],
+        "_status": ['active', 'draft'],
         "total_page": ceil(posts[0]["_count"] / page_size) if posts else 0
     })
 

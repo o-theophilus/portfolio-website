@@ -28,20 +28,17 @@ input:-webkit-autofill:active {
 	-webkit-text-fill-color: var(--ft1);
 }
 
-.error {
-	color: red;
-}
+
 
 hr {
 	border: none;
 	border-top: 2px solid var(--input);
 }
 
-.ititle {
+.page_title {
 	color: var(--ft1);
 	font-size: 1.5rem;
 	font-weight: 800;
-	/* text-transform: capitalize; */
 }
 
 .line {

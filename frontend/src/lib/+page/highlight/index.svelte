@@ -9,6 +9,7 @@
 	import { Icon2 } from '$lib/macro';
 	import { Tag } from '$lib/button';
 	import Edit from './edit.svelte';
+	import { onMount } from 'svelte';
 
 	let index = $state(0);
 
@@ -26,105 +27,115 @@
 		app.post = post;
 	};
 
-	const update = () => {
+	const reset_index = () => {
 		index = 0;
 	};
 
-	update();
+	onMount(async () => {
+		if (!app.tags) {
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight`);
+			resp = await resp.json();
+
+			if (resp.status == 200) {
+				app.highlight = resp.posts;
+			}
+		}
+	});
+
 	let src = $derived(app.highlight[index].photo || '/no_photo.png');
 </script>
 
 {#if app.highlight.length > 0 || app.user.access.includes('post:edit_highlight')}
-	<Content fit>
-		<dir class="comp">
-			<div class="title">
-				<strong class="ititle">
-					Some Thing{app.highlight.length > 1 ? 's' : ''}
-					I've Built
-				</strong>
-
-				{#if app.user.access.includes('post:edit_highlight')}
-					<RoundButton icon="square-pen" onclick={() => module.open(Edit, { update })} />
-				{/if}
+	<Content --content-height="100%" --content-padding-top="80px" --content-padding-bottom="56px">
+		<div class="line">
+			<div class="page_title">
+				Some Thing{app.highlight.length > 1 ? 's' : ''}
+				I've Built
 			</div>
 
-			{#if app.highlight.length > 0}
-				<LinkArrow href="/post" --link-font-size="0.8rem">View more</LinkArrow>
+			{#if app.user.access.includes('post:edit_highlight')}
+				<RoundButton icon="square-pen" onclick={() => module.open(Edit, { reset_index })} />
+			{/if}
+		</div>
 
-				<br />
-				<br />
+		{#if app.highlight.length > 0}
+			<LinkArrow href="/post" --link-font-size="0.8rem">View more</LinkArrow>
 
-				<dir class="carousel">
-					{#key index}
-						<img
-							in:fade|local={{ delay: 0, duration: 500, easing: cubicInOut }}
+			<br />
+			<br />
+
+			<dir class="carousel">
+				{#key index}
+					<img
+						in:fade|local={{ delay: 0, duration: 500, easing: cubicInOut }}
+						onclick={() => {
+							prerender(app.highlight[index]);
+							goto(`/${app.highlight[index].slug}`);
+						}}
+						onmouseenter={() => {
+							prerender(app.highlight[index]);
+						}}
+						role="presentation"
+						{src}
+						alt={app.highlight[index].title}
+						onerror={() => (src = '/no_photo.png')}
+					/>
+				{/key}
+				<div class="hidden">
+					{#each Array(app.highlight.length) as _, i}
+						<img src={app.highlight[i].photo || '/no_photo.png'} alt={app.highlight[i].title} />
+					{/each}
+				</div>
+
+				{#if app.highlight.length > 1}
+					<div class="nav">
+						<button
 							onclick={() => {
-								prerender(app.highlight[index]);
-								goto(`/${app.highlight[index].slug}`);
+								set(-1);
 							}}
-							onmouseenter={() => {
-								prerender(app.highlight[index]);
+						>
+							<Icon2 icon="chevron-left" />
+						</button>
+
+						<button
+							onclick={() => {
+								set(1);
 							}}
-							role="presentation"
-							{src}
-							alt={app.highlight[index].title}
-							onerror={() => (src = '/no_photo.png')}
-						/>
-					{/key}
-					<div class="hidden">
-						{#each Array(app.highlight.length) as _, i}
-							<img src={app.highlight[i].photo || '/no_photo.png'} alt={app.highlight[i].title} />
-						{/each}
+						>
+							<Icon2 icon="chevron-right" />
+						</button>
 					</div>
 
-					{#if app.highlight.length > 1}
-						<div class="nav">
+					<div class="indicator">
+						{#each Array(app.highlight.length) as _, i}
 							<button
+								class="one"
+								class:active={i == index}
 								onclick={() => {
-									set(-1);
+									index = i;
 								}}
 							>
-								<Icon2 icon="chevron-left" />
-							</button>
-
-							<button
-								onclick={() => {
-									set(1);
-								}}
+								<span style:display="none">hidden</span></button
 							>
-								<Icon2 icon="chevron-right" />
-							</button>
-						</div>
+						{/each}
+					</div>
+				{/if}
+			</dir>
 
-						<div class="indicator">
-							{#each Array(app.highlight.length) as _, i}
-								<button
-									class="one"
-									class:active={i == index}
-									onclick={() => {
-										index = i;
-									}}
-								>
-									<span style:display="none">hidden</span></button
-								>
-							{/each}
+			{#key index}
+				<div class="info" in:fade|local={{ delay: 0, duration: 500, easing: cubicInOut }}>
+					<a href="/{app.highlight[index].slug}" class="name">
+						{app.highlight[index].title}
+					</a>
+
+					{#if app.highlight[index].description}
+						<div class="description">
+							{app.highlight[index].description}
 						</div>
 					{/if}
-				</dir>
 
-				{#key index}
-					<div class="info" in:fade|local={{ delay: 0, duration: 500, easing: cubicInOut }}>
-						<a href="/{app.highlight[index].slug}" class="name">
-							{app.highlight[index].title}
-						</a>
-
-						{#if app.highlight[index].description}
-							<div class="description">
-								{app.highlight[index].description}
-							</div>
-						{/if}
-
-						<div class="line">
+					{#if app.highlight[index].tags.length > 0}
+						<div class="line tag">
 							{#each app.highlight[index].tags as x}
 								<Tag
 									onclick={() => {
@@ -134,24 +145,14 @@
 								>
 							{/each}
 						</div>
-					</div>
-				{/key}
-			{/if}
-		</dir>
+					{/if}
+				</div>
+			{/key}
+		{/if}
 	</Content>
 {/if}
 
 <style>
-	.comp {
-		margin: var(--sp5) 0;
-	}
-
-	.title {
-		display: flex;
-		gap: var(--sp2);
-		align-items: center;
-	}
-
 	.carousel {
 		position: relative;
 		aspect-ratio: 4/3;
@@ -286,7 +287,7 @@
 		margin-top: var(--sp2);
 	}
 
-	.line {
+	.tag {
 		margin-top: 16px;
 	}
 </style>

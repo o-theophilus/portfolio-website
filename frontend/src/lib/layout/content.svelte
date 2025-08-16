@@ -1,8 +1,8 @@
 <script>
-	let { fit = false, children } = $props();
+	let { children } = $props();
 </script>
 
-<section class:fill={!fit}>
+<section>
 	{@render children()}
 </section>
 
@@ -11,10 +11,9 @@
 		max-width: var(--mobileWidth);
 		width: 100%;
 		margin: auto;
-		padding: 0 var(--sp3);
-	}
-
-	.fill {
-		min-height: calc(100vh - var(--headerHeight));
+		padding: 0 24px;
+		padding-top: var(--content-padding-top, 24px);
+		padding-bottom: var(--content-padding-bottom, 24px);
+		min-height: var(--content-height, calc(100vh - var(--headerHeight)));
 	}
 </style>

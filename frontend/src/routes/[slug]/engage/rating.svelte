@@ -54,7 +54,7 @@
 </script>
 
 <section>
-	<strong class="ititle"> Add Rating </strong>
+	<div class="page_title">Add Rating</div>
 
 	{#if error.error}
 		<div class="error">
