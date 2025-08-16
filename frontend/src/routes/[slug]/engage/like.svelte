@@ -1,7 +1,7 @@
 <script>
 	import { app } from '$lib/store.svelte.js';
 
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 	import { createEventDispatcher } from 'svelte';
 
 	let { name, entity = {}, search = {} } = $props();
@@ -62,7 +62,7 @@
 			like();
 		}}
 	>
-		<Icon icon={entity.like.includes(app.user.key) ? 'thumb_up_fill' : 'thumb_up'} size="1.4" />
+		<Icon2 icon="thumbs-up" active={entity.like.includes(app.user.key)} />
 		{entity.like.length}
 	</button>
 
@@ -72,10 +72,7 @@
 			like(false);
 		}}
 	>
-		<Icon
-			icon={entity.dislike.includes(app.user.key) ? 'thumb_down_fill' : 'thumb_down'}
-			size="1.4"
-		/>
+		<Icon2 icon="thumbs-down" active={entity.dislike.includes(app.user.key)} />
 		{entity.dislike.length}
 	</button>
 
@@ -94,12 +91,11 @@
 	}
 
 	button {
-		--height: 48px;
 		display: flex;
 		align-items: center;
 		gap: var(--sp0);
 
-		height: var(--height);
+		height: var(--like-height, 48px);
 		padding: var(--sp0) var(--sp2);
 		font-size: 0.8rem;
 
@@ -113,10 +109,10 @@
 			color var(--trans);
 	}
 	.left {
-		border-radius: var(--height) 0 0 var(--height);
+		border-radius: var(--like-height, 48px) 0 0 var(--like-height, 48px);
 	}
 	.right {
-		border-radius: 0 var(--height) var(--height) 0;
+		border-radius: 0 var(--like-height, 48px) var(--like-height, 48px) 0;
 	}
 
 	button:hover {

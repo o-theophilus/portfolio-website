@@ -2,7 +2,7 @@
 	import { loading, module, notify, app } from '$lib/store.svelte.js';
 
 	import { Button, Link } from '$lib/button';
-	import { Tags, Form } from '$lib/layout';
+	import { Form } from '$lib/layout';
 	import { IG, Dropdown } from '$lib/input';
 	import { Icon, Avatar } from '$lib/macro';
 	import { template, tags } from './one.report.template.js';
@@ -10,14 +10,14 @@
 	let reported = module.value.reported;
 	let entity = module.value.entity;
 
-	let form = {
+	let form = $state({
 		reported_key: reported.key,
 		_entity_key: entity.key,
 		_entity_type: entity.type,
 
 		tags: [],
 		report: ''
-	};
+	});
 	let error = $state({});
 
 	const validate = () => {
@@ -86,7 +86,7 @@
 
 	Select applicable tags
 
-	<Tags
+	<!-- <Tags
 		style="1"
 		{tags}
 		active={form.tags}
@@ -98,7 +98,17 @@
 			}
 			form = form;
 		}}
-	/>
+	/> -->
+
+	<!-- <div class="line wrap">
+		{#each post.tags as x}
+			<Tag
+				onclick={() => {
+					page_state.set({ tag: [x] });
+				}}>{x}</Tag
+			>
+		{/each}
+	</div> -->
 
 	<Button onclick={validate}>
 		Submit

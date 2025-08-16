@@ -22,11 +22,14 @@
 
 <div class="notify" class:bad={one.status == 400} class:caution={one.status == 201}>
 	<Row nowrap>
-		<Icon2 size="20" icon={one.status == 201 ? '201' : one.status == 400 ? '400' : '200'} />
+		<Icon2
+			size="24"
+			icon={one.status == 201 ? 'triangle-alert' : one.status == 400 ? 'circle-x' : 'square-check'}
+		/>
 		{one.message || 'no message'}
 
 		<button onclick={() => notify.close(one.key)}>
-			<Icon2 icon="x"></Icon2>
+			<Icon2 icon="x" size="16"></Icon2>
 			<svg viewBox="0 0 120 120">
 				<circle
 					cx="60"

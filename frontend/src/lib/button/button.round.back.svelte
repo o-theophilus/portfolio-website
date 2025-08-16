@@ -7,7 +7,7 @@
 </script>
 
 <RoundButton
-	icon="arrow_left"
+	icon="arrow-left"
 	onclick={() => {
 		if (href) {
 			goto(href);

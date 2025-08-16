@@ -1,6 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
-
 	let {
 		size = 40,
 		name,
@@ -47,25 +45,15 @@
 		}
 		return no_photo;
 	});
-
-	// TODO: use this
-	let w = $state();
-	let h = $state();
-	onMount(() => {
-		// console.log(w);
-		// console.log(h);
-	});
 </script>
 
 {#if src}
 	<img
-		bind:naturalWidth={w}
-		bind:naturalHeight={h}
 		{src}
 		alt={name}
 		style:aspect-ratio={dim[0]}
 		style:max-width="{dim[1]}px"
-		onerror={() => (src = null)}
+		onerror={() => (src = no_photo || null)}
 	/>
 {:else if children}
 	{@render children()}
@@ -79,8 +67,9 @@
 	img {
 		display: block;
 
-		width: 100%;
+		/* width: 100%; */
 		object-fit: cover;
+		background-color: var(--bg2);
 
 		border-radius: var(--avatar-border-radius, 8px);
 	}

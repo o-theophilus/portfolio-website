@@ -6,16 +6,7 @@
 	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
-	let date = new Date(module.value.post.date);
-	var year = date.getFullYear();
-	var month = (date.getMonth() + 1).toString().padStart(2, '0');
-	var day = date.getDate().toString().padStart(2, '0');
-	var hours = date.getHours().toString().padStart(2, '0');
-	var minutes = date.getMinutes().toString().padStart(2, '0');
-	var seconds = date.getSeconds().toString().padStart(2, '0');
-	let form = {
-		date: `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`
-	};
+	let form = { date: new Date(module.value.date).toISOString().slice(0, 19) };
 	let error = $state({});
 
 	const validate = async () => {
@@ -30,7 +21,7 @@
 
 	const submit = async () => {
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',

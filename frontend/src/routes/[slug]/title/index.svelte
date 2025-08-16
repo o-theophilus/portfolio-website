@@ -8,7 +8,14 @@
 
 <div class="comp">
 	{#if app.user.access.includes('post:edit_title') && edit_mode}
-		<Button onclick={() => module.open(Edit, post, update)}>Edit Title</Button>
+		<Button
+			onclick={() =>
+				module.open(Edit, {
+					key: post.key,
+					title: post.title,
+					update
+				})}>Edit Title</Button
+		>
 	{/if}
 	<strong class="ititle">
 		{post.title}

@@ -12,7 +12,6 @@
 	let form = {
 		...module.value
 	};
-	console.log(form);
 
 	let error = $state({});
 

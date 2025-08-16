@@ -4,12 +4,13 @@
 	import { goto } from '$app/navigation';
 	import { module, app } from '$lib/store.svelte.js';
 
-	import { Content, Tags } from '$lib/layout';
+	import { Content } from '$lib/layout';
 	import { LinkArrow, RoundButton } from '$lib/button';
 	import { Icon2 } from '$lib/macro';
+	import { Tag } from '$lib/button';
 	import Edit from './edit.svelte';
 
-	let index = 0;
+	let index = $state(0);
 
 	const set = (dir = 0) => {
 		index = index + dir;
@@ -21,11 +22,16 @@
 		}
 	};
 
+	const prerender = (post) => {
+		app.post = post;
+	};
+
 	const update = () => {
 		index = 0;
 	};
 
 	update();
+	let src = $derived(app.highlight[index].photo || '/no_photo.png');
 </script>
 
 {#if app.highlight.length > 0 || app.user.access.includes('post:edit_highlight')}
@@ -38,7 +44,7 @@
 				</strong>
 
 				{#if app.user.access.includes('post:edit_highlight')}
-					<RoundButton icon="edit" onclick={() => module.open(Edit, { update })} />
+					<RoundButton icon="square-pen" onclick={() => module.open(Edit, { update })} />
 				{/if}
 			</div>
 
@@ -53,13 +59,17 @@
 						<img
 							in:fade|local={{ delay: 0, duration: 500, easing: cubicInOut }}
 							onclick={() => {
+								prerender(app.highlight[index]);
 								goto(`/${app.highlight[index].slug}`);
 							}}
+							onmouseenter={() => {
+								prerender(app.highlight[index]);
+							}}
 							role="presentation"
-							src={app.highlight[index].photo || '/no_photo.png'}
+							{src}
 							alt={app.highlight[index].title}
+							onerror={() => (src = '/no_photo.png')}
 						/>
-						<!-- onerror="this.src='/file_error.png';" -->
 					{/key}
 					<div class="hidden">
 						{#each Array(app.highlight.length) as _, i}
@@ -74,7 +84,7 @@
 									set(-1);
 								}}
 							>
-								<Icon2 icon="arrow_left" />
+								<Icon2 icon="chevron-left" />
 							</button>
 
 							<button
@@ -82,7 +92,7 @@
 									set(1);
 								}}
 							>
-								<Icon2 icon="arrow_right" />
+								<Icon2 icon="chevron-right" />
 							</button>
 						</div>
 
@@ -95,7 +105,7 @@
 										index = i;
 									}}
 								>
-									<span style:display="none">hiddden</span></button
+									<span style:display="none">hidden</span></button
 								>
 							{/each}
 						</div>
@@ -114,19 +124,16 @@
 							</div>
 						{/if}
 
-						<Tags
-							style="1"
-							tags={app.highlight[index].tags}
-							onclick={(e) => {
-								let pn = 'post';
-								let i = state.findIndex((x) => x.name == pn);
-								if (i != -1) {
-									state.splice(i, 1);
-								}
-
-								goto(`post?${new URLSearchParams({ tag: e.detail }).toString()}`);
-							}}
-						/>
+						<div class="line">
+							{#each app.highlight[index].tags as x}
+								<Tag
+									onclick={() => {
+										goto(`post?${new URLSearchParams({ tag: e.detail }).toString()}`);
+										// page_state.set({ tag: [x] });
+									}}>{x}</Tag
+								>
+							{/each}
+						</div>
 					</div>
 				{/key}
 			{/if}
@@ -277,5 +284,9 @@
 	.name,
 	.description {
 		margin-top: var(--sp2);
+	}
+
+	.line {
+		margin-top: 16px;
 	}
 </style>

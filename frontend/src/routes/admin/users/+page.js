@@ -1,28 +1,31 @@
 import { error } from '@sveltejs/kit';
-import { get } from 'svelte/store';
-import { memory, loading } from "$lib/store.svelte.js"
+import { loading, page_state } from "$lib/store.svelte.js"
 
-export const load = async ({ fetch, url, parent }) => {
+export const load = async ({ fetch, url, parent, depends }) => {
+	depends(true)
+
 	let a = await parent();
 	if (!a.locals.user.access.includes("user:view")) {
 		throw error(400, "unauthorized access")
 	}
 
 	let page_name = "users"
-	let _state = get(memory)
-	let i = _state.findIndex(x => x.name == page_name);
-
-	if (i == -1) {
-		_state.push({
-			name: page_name,
-			search: url.search
-		})
-		memory.set(_state)
-		i = _state.findIndex(x => x.name == page_name);
+	if (!page_state.state[page_name]) {
+		let sp = {}
+		for (let [key, value] of url.searchParams) {
+			sp[key] = value
+		}
+		page_state.state[page_name] = {
+			searchParams: sp,
+			data: [],
+			loaded: false
+		}
+	} else if (page_state.state[page_name].loaded) {
+		return page_state.state[page_name].data
 	}
 
 	let backend = new URL(`${import.meta.env.VITE_BACKEND}/users`)
-	backend.search = _state[i].search
+	backend.search = new URLSearchParams(page_state.state[page_name].searchParams);
 	let resp = await fetch(backend.href, {
 		method: 'get',
 		headers: {
@@ -35,6 +38,9 @@ export const load = async ({ fetch, url, parent }) => {
 
 	if (resp.status == 200) {
 		resp.page_name = page_name
+		page_state.state[page_name].data = resp
+		page_state.state[page_name].loaded = true
+
 		return resp
 	}
 }

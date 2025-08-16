@@ -1,16 +1,15 @@
 <script>
 	import Code from './code.svelte';
-	let { value = $bindable(), ...props } = $props();
+	let { value = $bindable(), type, ...props } = $props();
+	if (type == 'datetime') type = 'datetime-local';
 </script>
 
-{#if props.type == 'datetime'}
-	<input bind:value type="datetime-local" {...props} />
-{:else if props.type == 'textarea'}
+{#if type == 'textarea'}
 	<textarea bind:value {...props}></textarea>
-{:else if props.type == 'code'}
+{:else if type == 'code'}
 	<Code bind:value {...props}></Code>
 {:else}
-	<input bind:value {...props}  />
+	<input bind:value {type} {...props} />
 {/if}
 
 <style>

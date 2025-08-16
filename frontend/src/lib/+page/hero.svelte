@@ -9,7 +9,7 @@
 
 	<div class="scroller">
 		<Scroller query="#scroll_1" invert>
-			<Icon2 icon="arrow_down" />
+			<Icon2 icon="arrow-down" />
 		</Scroller>
 	</div>
 </section>

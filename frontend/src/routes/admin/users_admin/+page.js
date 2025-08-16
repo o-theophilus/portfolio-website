@@ -1,20 +1,15 @@
-import { page_state, loading } from "$lib/store.svelte.js"
-import { redirect } from "@sveltejs/kit";
+import { error } from '@sveltejs/kit';
+import { loading, page_state } from "$lib/store.svelte.js"
 
 export const load = async ({ fetch, url, parent, depends }) => {
-	let a = await parent();
-	if (!a.locals.user.login || !a.locals.user.access.includes('log:view')) {
-		throw redirect(307, `/?${new URLSearchParams({
-			"module": "dialogue",
-			"title": "Warning",
-			"status": 201,
-			"message": "Unauthorized Access",
-		})}`);
-	}
-
 	depends(true)
 
-	let page_name = "logs"
+	let a = await parent();
+	if (!a.locals.user.access.includes("user:set_access")) {
+		throw error(400, "unauthorized access")
+	}
+
+	let page_name = "admin_users"
 	if (!page_state.state[page_name]) {
 		let sp = {}
 		for (let [key, value] of url.searchParams) {
@@ -29,7 +24,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
 		return page_state.state[page_name].data
 	}
 
-	let backend = new URL(`${import.meta.env.VITE_BACKEND}/log`)
+	let backend = new URL(`${import.meta.env.VITE_BACKEND}/admin/user`)
 	backend.search = new URLSearchParams(page_state.state[page_name].searchParams);
 	let resp = await fetch(backend.href, {
 		method: 'get',

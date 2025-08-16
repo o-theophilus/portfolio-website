@@ -4,7 +4,6 @@
 	import { loading, notify, app, module } from '$lib/store.svelte.js';
 
 	import { Button, RoundButton } from '$lib/button';
-	import { Icon } from '$lib/macro';
 
 	let posts = $state([...app.highlight]);
 	let init = $state([...app.highlight]);
@@ -70,32 +69,34 @@
 </script>
 
 {#each posts as x, i (x.key)}
-	<div class="line" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
+	<div class="line space" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
 		<div class="post_name">
 			{x.title}
 		</div>
 
-		<RoundButton
-			icon="arrow_upward"
-			disabled={i == 0}
-			onclick={() => {
-				move_down(x.key, false);
-			}}
-		/>
-		<RoundButton
-			icon="arrow_downward"
-			disabled={i == posts.length - 1}
-			onclick={() => {
-				move_down(x.key);
-			}}
-		/>
-		<RoundButton
-			icon="delete"
-			extra="hover_red"
-			onclick={() => {
-				remove(x.key);
-			}}
-		/>
+		<div>
+			<RoundButton
+				icon="chevron-up"
+				disabled={i == 0}
+				onclick={() => {
+					move_down(x.key, false);
+				}}
+			/>
+			<RoundButton
+				icon="chevron-down"
+				disabled={i == posts.length - 1}
+				onclick={() => {
+					move_down(x.key);
+				}}
+			/>
+			<RoundButton
+				icon="trash-2"
+				--button-background-color-hover="red"
+				onclick={() => {
+					remove(x.key);
+				}}
+			/>
+		</div>
 	</div>
 {/each}
 
@@ -106,26 +107,24 @@
 {/if}
 
 <div class="line">
-	<Button onclick={submit} disabled={JSON.stringify(posts) === JSON.stringify(init)}>
-		<Icon icon="save" />
+	<Button icon="save" onclick={submit} disabled={JSON.stringify(posts) === JSON.stringify(init)}>
 		Save
 	</Button>
-	<Button onclick={reset} disabled={JSON.stringify(posts) === JSON.stringify(init)}>
-		<Icon icon="history" />
+	<Button icon="history" onclick={reset} disabled={JSON.stringify(posts) === JSON.stringify(init)}>
 		Reset
 	</Button>
 </div>
 
 <style>
 	.line {
-		display: flex;
-		gap: var(--sp1);
+		/* display: flex; */
+		/* gap: var(--sp1); */
 		margin-top: var(--sp1);
 	}
 
 	.post_name {
 		font-size: 0.8rem;
-		width: 100%;
+		/* width: 100%; */
 	}
 
 	.error {

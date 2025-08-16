@@ -1,5 +1,5 @@
 <script>
-	import { Icon, Spinner } from '$lib/macro';
+	import { Icon2, Spinner } from '$lib/macro';
 
 	let { post_key } = $props();
 	let post = $state();
@@ -20,23 +20,23 @@
 {:else}
 	<div class="line info">
 		<div class="line" title="view{post.view > 1 ? 's' : ''}">
-			<Icon icon="visibility" />
+			<Icon2 icon="eye" size=12/>
 			{post.view}
 		</div>
 		<div class="line" title="comment{post.comment > 1 ? 's' : ''}">
-			<Icon icon="comment" />
+			<Icon2 icon="message-circle" size=12/>
 			{post.comment}
 		</div>
 		<div class="line" title="like{post._like > 1 ? 's' : ''}">
-			<Icon icon="thumb_up" />
+			<Icon2 icon="thumbs-up" size=12/>
 			{post._like}
 		</div>
 		<div class="line" title="rating{post.ratings.length > 1 ? 's' : ''}">
-			<Icon icon="hotel_class" />
+			<Icon2 icon="star" size=12/>
 			{parseFloat(post.rating)}{#if post.ratings.length != 0}|{post.ratings.length}{/if}
 		</div>
 		<div class="line" title="share{post.share > 1 ? 's' : ''}">
-			<Icon icon="share" />
+			<Icon2 icon="share-2" size=12/>
 			{post.share}
 		</div>
 	</div>

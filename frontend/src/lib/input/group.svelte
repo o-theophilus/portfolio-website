@@ -1,6 +1,6 @@
 <script>
 	import Input from './input.svelte';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 	import Check from './password.checker.svelte';
 	import Show from './password.show.svelte';
 	import { slide } from 'svelte/transition';
@@ -10,8 +10,7 @@
 		show_password = $bindable(),
 
 		name = '',
-		icon = '',
-		icon_size = 1.2,
+		icon = null,
 		error = '',
 		no_pad = false,
 		required = false,
@@ -21,6 +20,7 @@
 
 		right,
 		type: props_type,
+		onblur,
 		...props
 	} = $props();
 
@@ -72,7 +72,7 @@
 	{:else}
 		<div class="input" class:left_pad={icon} class:disabled={props.disabled}>
 			{#if icon}
-				<Icon {icon} size={icon_size} />
+				<Icon2 {icon}></Icon2>
 			{/if}
 			<Input
 				bind:value
@@ -93,6 +93,7 @@
 					if (props_type.startsWith('password++')) {
 						show_check = false;
 					}
+					onblur?.();
 				}}
 			/>
 			{#if props_type?.startsWith('password+') && !props.disabled}

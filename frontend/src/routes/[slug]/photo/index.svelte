@@ -5,7 +5,7 @@
 	import Edit from './edit.svelte';
 
 	let { post, edit_mode, update } = $props();
-	let src = $state(post.photo || '/no_photo.png');
+	let src = $derived(post.photo || '/no_photo.png');
 </script>
 
 <div class="img">
@@ -15,12 +15,11 @@
 			<Button
 				onclick={() => {
 					module.open(Edit, {
-						entity: {
-							key: post.key,
-							name: post.title,
-							photo: post.photo,
-							type: 'post'
-						},
+						key: post.key,
+						name: post.title,
+						photo: post.photo,
+						type: 'post',
+						slug: `/post/photo/${post.key}`,
 						update
 					});
 				}}

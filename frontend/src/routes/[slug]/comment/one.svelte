@@ -51,7 +51,7 @@
 				<div class="right">
 					<!-- TODO: update icon -->
 					<RoundButton
-						icon="more_horiz"
+						icon="ellipsis"
 						onclick={() => {
 							open_menu = !open_menu;
 							self = true;
@@ -108,10 +108,11 @@
 					/>
 
 					<Like
+						--like-height="32px"
 						name="comment"
 						entity={comment}
 						{search}
-						on:update={(e) => {
+						onupdate={(e) => {
 							update(e.detail.comments);
 						}}
 					/>

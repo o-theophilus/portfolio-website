@@ -11,9 +11,13 @@
 		data-sveltekit-preload-data
 	>
 		{@render children()}
+		<div class="hover"></div>
 	</a>
 {:else}
-	<button class:is_home onclick={() => onclick?.()}> {@render children()}</button>
+	<button class:is_home onclick={() => onclick?.()}>
+		{@render children()}
+		<div class="hover"></div>
+	</button>
 {/if}
 
 <style>
@@ -21,14 +25,10 @@
 		all: unset;
 		cursor: pointer;
 	}
+
 	button,
 	a {
 		position: relative;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		border-bottom: 2px solid transparent;
 
 		color: var(--ft2);
 		font-size: 0.8rem;
@@ -45,8 +45,6 @@
 	button:hover,
 	a:hover {
 		color: var(--ft1);
-		border-color: var(--cl1);
-		text-decoration: none;
 	}
 
 	.is_home {
@@ -60,5 +58,22 @@
 	.active {
 		font-weight: bold;
 		color: var(--ft1);
+	}
+
+	.hover {
+		position: absolute;
+		bottom: -8px;
+
+		width: 100%;
+		height: 2px;
+		background-color: transparent;
+		pointer-events: none;
+
+		transition: background-color var(--trans);
+	}
+
+	button:hover .hover,
+	a:hover .hover {
+		background-color: var(--cl1);
 	}
 </style>

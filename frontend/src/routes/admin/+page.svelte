@@ -14,7 +14,7 @@
 
 	<div class="btns">
 		{#if app.user.access.includes('user:set_access')}
-			<Button href="/admin/admin_users" size="wide">Admins</Button>
+			<Button href="/admin/users_admin" size="wide">Admins</Button>
 		{/if}
 
 		{#if app.user.access.includes('user:view')}

@@ -2,7 +2,7 @@
 	import { loading, notify, module, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 	import { Form } from '$lib/layout';
 
 	let entity = $state({ ...module.value });
@@ -44,7 +44,7 @@
 
 		if (resp.status == 200) {
 			entity.photo = resp[entity.type].photo;
-			entity.update(resp[entity.type]);
+			module.value.update(resp[entity.type]);
 			has_photo = true;
 			notify.open('Photo updated');
 		} else {
@@ -68,7 +68,6 @@
 
 		if (resp.status == 200) {
 			entity.photo = null;
-			console.log();
 
 			entity.update(resp[entity.type]);
 			has_photo = false;
@@ -128,21 +127,22 @@
 			}}
 		>
 			{#if entity.photo}
-				<Icon icon="edit" />
+				<Icon2 icon="square-pen" />
 				Change
 			{:else}
-				<Icon icon="add" />
+				<Icon2 icon="plus" />
 				Add
 			{/if}
 		</Button>
 
 		{#if has_photo}
 			<Button
+				--button-background-color-hover="red"
 				onclick={() => {
 					remove('delete');
 				}}
 			>
-				<Icon icon="delete" />
+				<Icon2 icon="trash-2" />
 				Delete
 			</Button>
 		{/if}

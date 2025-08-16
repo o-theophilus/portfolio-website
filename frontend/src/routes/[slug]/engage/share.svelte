@@ -6,8 +6,6 @@
 	import { Icon } from '$lib/macro';
 	import { Form, Row, Br } from '$lib/layout';
 
-	console.log(module);
-
 	let text = `Check Out: ${module.value.title}`;
 
 	let platforms = [

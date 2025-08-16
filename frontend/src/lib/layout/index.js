@@ -5,7 +5,3 @@ export { default as Form } from "./form.svelte"
 export { default as Row } from "./row.svelte"
 export { default as Br } from "./br.svelte"
 export { default as EmailTemplate } from "./email_template.svelte"
-
-
-export { default as Tags } from "./tags.svelte"
-

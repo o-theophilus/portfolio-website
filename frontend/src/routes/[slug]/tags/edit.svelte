@@ -1,22 +1,34 @@
 <script>
 	import { onMount } from 'svelte';
-	import { module, loading, notify, memory, app } from '$lib/store.svelte.js';
+	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
 	import { IG } from '$lib/input';
-	import { Button } from '$lib/button';
-	import { Tags, Form } from '$lib/layout';
+	import { Button, Tag } from '$lib/button';
+	import { Form } from '$lib/layout';
 	import { Icon } from '$lib/macro';
 
-	let post = { ...module.value.post };
-	let tags = post.tags.join(', ');
-	let all_tags = [];
-	let unused_tags = [];
 	let error = $state({});
+	let init = module.value.tags;
+	let tags_string = $state(init.join(', '));
+	let tags = $derived(
+		tags_string
+			.replace(/\r?\n/g, ',')
+			.replace(/\s+/g, ' ')
+			.toLowerCase()
+			.split(',')
+			.map((i) => i.trim())
+			.filter(Boolean)
+			.filter((v, i, arr) => arr.indexOf(v) === i)
+	);
+	let unused_tags = $derived.by(() => {
+		if (!app.tags) return [];
+		return app.tags.filter((i) => !tags.includes(i));
+	});
 
 	const validate = () => {
 		error = {};
 
-		if (tags.split(', ').filter(Boolean).sort().join(', ') == post.tags.slice().sort().join(', ')) {
+		if (JSON.stringify(tags.sort()) === JSON.stringify(init.sort())) {
 			error.tags = 'no change';
 		}
 
@@ -27,13 +39,13 @@
 		error = {};
 
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: app.token
 			},
-			body: JSON.stringify({ tags: tags.split(', ').filter(Boolean) })
+			body: JSON.stringify({ tags })
 		});
 		resp = await resp.json();
 		loading.close();
@@ -48,72 +60,56 @@
 	};
 
 	const clean_value = (tag = '') => {
-		tags = `${tags}, ${tag}`;
-		tags = tags.replace(/\r?\n/g, ',');
-		tags = tags.replace(/\s+/g, ' ');
-		tags = tags.toLowerCase();
-		tags = tags.split(',');
-		tags = tags.map((i) => i.trim());
-		tags = tags.filter(Boolean);
-		tags = tags.filter((v, i, l) => l.indexOf(v) === i);
-		tags = tags.join(', ');
-
-		unused_tags = all_tags.filter((i) => !tags.split(', ').includes(i));
+		tags_string += `, ${tag}`;
+		tags_string = tags.join(', ');
 	};
 
-	let loading_tags = true;
+	let _loading = true;
 	onMount(async () => {
-		if (tags == '') {
-			tags = post.title.split(' ').join(', ');
+		if (tags_string == '') {
+			tags_string = module.value.title.split(' ').join(', ');
 		}
 
-		let pn = 'tags';
-		let i = $memory.findIndex((x) => x.name == pn);
-		if (i == -1) {
+		if (!app.tags) {
 			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tag`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {
-				all_tags = resp.tags;
-				$memory.push({
-					name: pn,
-					data: resp.tags
-				});
+				app.tags = resp.tags;
 			}
-		} else {
-			all_tags = $memory[i].data;
 		}
-		loading_tags = false;
-
-		clean_value();
+		_loading = false;
 	});
 </script>
 
 <Form title="Edit Tags" error={error.error}>
 	<IG
 		name="Tags"
-		bind:value={tags}
+		bind:value={tags_string}
 		error={error.tags}
 		type="textarea"
 		placeholder="Tags here"
-		on:blur={() => {
-			clean_value();
-		}}
+		onblur={clean_value}
 	/>
 
-	<Tags
-		tags={unused_tags}
-		onclick={(e) => {
-			clean_value(e.detail);
-		}}
-	/>
+	<div class="line">
+		{#each unused_tags as x}
+			<Tag
+				onclick={() => {
+					clean_value(x);
+				}}>{x}</Tag
+			>
+		{/each}
+	</div>
 
-	<Button
-		onclick={validate}
-		disabled={tags.split(', ').filter(Boolean).sort().join(', ') ==
-			post.tags.slice().sort().join(', ')}
-	>
+	<Button onclick={validate}>
 		Submit
 		<Icon icon="send" />
 	</Button>
 </Form>
+
+<style>
+	.line {
+		margin: 16px 0;
+	}
+</style>

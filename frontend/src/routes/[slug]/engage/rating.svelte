@@ -2,9 +2,9 @@
 	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 
-	let rating = 0;
+	let rating = $state(0);
 	let error = $state({});
 	for (const x of module.value.post.ratings) {
 		if (x.user_key == app.user.key) {
@@ -69,21 +69,27 @@
 		<div class="block red">
 			{#each Array(5) as _, i}
 				{@const j = -5 + i}
-				<button class:active={j == rating} onclick={() => set_active(j)}>ooooo</button>
+				<button class:active={j == rating} onclick={() => set_active(j)}>
+					<span style:display="none">hidden</span></button
+				>
 			{/each}
 		</div>
-		<button class:active={0 == rating} class="b0" onclick={() => set_active(0)}>ooooo</button>
+		<button class:active={0 == rating} class="b0" onclick={() => set_active(0)}>
+			<span style:display="none">hidden</span></button
+		>
 		<div class="block green">
 			{#each Array(5) as _, i}
 				{@const j = 5 - i}
-				<button class:active={j == rating} onclick={() => set_active(j)}>ooooo</button>
+				<button class:active={j == rating} onclick={() => set_active(j)}>
+					<span style:display="none">hidden</span></button
+				>
 			{/each}
 		</div>
 	</div>
 
 	<Button onclick={validate}>
 		Submit
-		<Icon icon="send" />
+		<Icon2 icon="send-horizontal" />
 	</Button>
 </section>
 

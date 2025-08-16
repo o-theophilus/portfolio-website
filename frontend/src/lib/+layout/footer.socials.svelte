@@ -2,7 +2,7 @@
 	import { Icon } from '$lib/macro';
 </script>
 
-<div class="block">
+<div class="line">
 	<a href="https://wa.me/2348067397793/?text=Hello%20Theophilus">
 		<Icon icon="whatsapp" />
 	</a>
@@ -27,16 +27,14 @@
 </div>
 
 <style>
-	.block {
-		display: flex;
-		flex-wrap: wrap;
+	.line {
 		justify-content: center;
 		gap: var(--sp2);
 
 		max-width: var(--mobileWidth);
 	}
 	@media screen and (min-width: 600px) {
-		.block {
+		.line {
 			justify-content: unset;
 		}
 	}

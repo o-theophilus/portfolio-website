@@ -6,7 +6,7 @@
 
 	import { Button, FoldButton } from '$lib/button';
 	import { Login } from '$lib/auth';
-	import { Icon, Spinner } from '$lib/macro';
+	import { Icon2, Spinner } from '$lib/macro';
 	import { Dropdown } from '$lib/input';
 	import { PageNote } from '$lib/info';
 	import One from './one.svelte';
@@ -116,7 +116,7 @@
 
 {#if app.user.login}
 	<Button onclick={() => module.open(Add, { post_key: post.key, path: [], update, search })}>
-		<Icon icon="add_comment" />
+		<Icon2 icon="message-circle-plus" />
 		Add comment
 	</Button>
 {:else}

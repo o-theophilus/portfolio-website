@@ -60,7 +60,7 @@
 
 		{#if edit_mode && user.key == app.user.key}
 			<RoundButton
-				icon="edit"
+				icon="square-pen"
 				onclick={() => {
 					module.open(Photo, {
 						key: user.key,
@@ -84,7 +84,7 @@
 		</div>
 		{#if edit_mode && user.key == app.user.key}
 			<RoundButton
-				icon="edit"
+				icon="square-pen"
 				onclick={() => {
 					module.open(Name, { user, update });
 				}}
@@ -97,7 +97,7 @@
 		{user.email}
 
 		{#if edit_mode && user.key == app.user.key}
-			<RoundButton icon="edit" onclick={() => module.open(Email, { update })} />
+			<RoundButton icon="square-pen" onclick={() => module.open(Email, { update })} />
 		{/if}
 	</div>
 
@@ -106,7 +106,7 @@
 			<Icon2 icon="call" />
 			{user.phone || 'None'}
 			{#if edit_mode && user.key == app.user.key}
-				<RoundButton icon="edit" onclick={() => module.open(Phone, { ...user, update })} />
+				<RoundButton icon="square-pen" onclick={() => module.open(Phone, { ...user, update })} />
 			{/if}
 		</div>
 	{/if}
@@ -116,12 +116,12 @@
 		<div class="line center wrap">
 			{#if user.key == app.user.key}
 				<Button --button-font-size="0.8rem" onclick={() => module.open(Password)}>
-					<Icon2 icon="key" />
+					<Icon2 icon="key-round" />
 					Change Password
 				</Button>
 
 				<Button --button-font-size="0.8rem" onclick={() => module.open(Delete)}>
-					<Icon2 icon="delete" />
+					<Icon2 icon="trash-2" />
 					Delete Account
 				</Button>
 			{:else if is_admin}

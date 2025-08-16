@@ -6,13 +6,13 @@
 <div class="block">
 	<Link href="tel:+2348067397793">
 		<span>
-			<Icon2 icon="call" />
+			<Icon2 icon="phone" />
 			+234 806 739 7793
 		</span>
 	</Link>
 	<Link href="mailto:theophilus.ogbolu@gmail.com">
 		<span>
-			<Icon2 icon="email" />
+			<Icon2 icon="mail" />
 			theophilus.ogbolu&#8203;@gmail.com
 		</span>
 	</Link>
@@ -21,7 +21,7 @@
 		blank
 	>
 		<span>
-			<Icon2 icon="location" />
+			<Icon2 icon="map-pin" />
 			Lagos, Nigeria.
 		</span>
 	</Link>

@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 
 	import Button from '../button.svelte';
-	import { Tags } from '$lib/layout';
+	import { Tag } from '$lib/button';
 	import Edit from './edit.svelte';
 
 	let { post, edit_mode, update } = $props();
@@ -14,30 +14,38 @@
 {/if}
 
 {#if app.user.access.includes('post:edit_tags') && edit_mode}
-	<Button onclick={() => module.open(Edit, { post, update })}>Edit Tags</Button>
+	<Button
+		onclick={() =>
+			module.open(Edit, {
+				key: post.key,
+				title: post.title,
+				tags: post.tags,
+				update
+			})}>Edit Tags</Button
+	>
 {/if}
 
 {#if post.tags.length > 0}
-	<Tags
-		style="1"
-		tags={post.tags}
-		onclick={(e) => {
-			let pn = 'post';
-			let i = $memory.findIndex((x) => x.name == pn);
-			if (i != -1) {
-				$memory.splice(i, 1);
-			}
-
-			goto(`post?${new URLSearchParams({ tag: e.detail }).toString()}`);
-		}}
-	/>
+	<div class="line">
+		{#each post.tags as x}
+			<Tag
+				onclick={() => {
+					page_state.set({ tag: [x] });
+				}}>{x}</Tag
+			>
+		{/each}
+	</div>
 {:else if edit_mode}
-	<div class="margin">No tag</div>
+	<div class="notag">No tag</div>
 {/if}
 
 <style>
-	.margin {
-		margin: var(--sp2) 0;
+	.notag {
+		font-size: 0.8rem;
+	}
+
+	.line {
+		margin-top: 8px;
 	}
 
 	hr {

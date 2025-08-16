@@ -4,9 +4,9 @@
 
 	import { app } from '$lib/store.svelte.js';
 	import { FoldButton, Link } from '$lib/button';
-	import { Spinner } from '$lib/macro';
+	import { Spinner, Avatar } from '$lib/macro';
 
-	let { post_key } = $props();
+	let { post_key, refresh } = $props();
 	let posts = $state([]);
 	let open = $state(true);
 	let loading = $state(true);
@@ -48,14 +48,24 @@
 		<div class="area" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 			{#each posts as x}
 				<div class="post">
-					<a href="/{x.slug}" onclick={() => prerender(x)} onmouseenter={() => prerender(x)}>
-						<img src={x.photo || '/no_photo.png'} alt={x.title} />
+					<a
+						href="/{x.slug}"
+						onclick={() => {
+							prerender(x);
+							refresh();
+						}}
+						onmouseenter={() => prerender(x)}
+					>
+						<Avatar size="58" photo={x.photo} no_photo="/no_photo.png" name={x.title}></Avatar>
 					</a>
 					<div class="details">
 						<a
 							class="link"
 							href="/{x.slug}"
-							onclick={() => prerender(x)}
+							onclick={() => {
+								prerender(x);
+								refresh();
+							}}
 							onmouseenter={() => prerender(x)}
 						>
 							{x.title}
@@ -90,29 +100,15 @@
 		display: flex;
 		gap: var(--sp2);
 
-		/* margin-bottom: var(--sp3); */
-	}
-
-	img {
-		display: block;
-
-		height: 58px;
-		aspect-ratio: 1 / 1;
-
-		object-fit: cover;
-		background-color: var(--bg2);
-		border-radius: var(--sp1);
-
-		flex-shrink: 0;
-		flex-grow: 0;
+		margin-bottom: var(--sp2);
 	}
 
 	.link {
-		/* text-decoration: none; */
+		text-decoration: none;
 		color: var(--ft1);
-		/* font-weight: 700;
+		font-weight: 700;
 
-		transition: color var(--trans); */
+		transition: color var(--trans);
 	}
 
 	.link:hover {

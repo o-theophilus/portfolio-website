@@ -3,13 +3,9 @@
 
 	let { datetime, type = 'date_medium' } = $props();
 
-	// Reactive date handling
-	let dateObj = datetime ? new SvelteDate(datetime) : null;
+	let dateObj = $derived(datetime ? new SvelteDate(datetime) : null);
+	let timeAgo = $derived(dateObj ? calculateTimeAgo(dateObj) : '');
 
-	// Time ago calculation
-	let timeAgo = dateObj ? calculateTimeAgo(dateObj) : '';
-
-	// Date formatting constants
 	export const DAYS_FULL = [
 		'Sunday',
 		'Monday',

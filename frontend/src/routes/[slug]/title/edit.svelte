@@ -3,29 +3,24 @@
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
 
-	let form = {
-		title: module.value.post.title
-	};
-
+	let form = $state({ title: module.value.title });
 	let error = $state({});
 
 	const validate = () => {
 		error = {};
 		if (!form.title) {
 			error.title = 'cannot be empty';
-		} else if (form.title == module.value.post.title) {
+		} else if (form.title == module.value.title) {
 			error.title = 'no change';
 		}
-
 		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -50,15 +45,12 @@
 <Form title="Edit Title" error={error.error}>
 	<IG
 		name="Title"
-		icon="edit"
+		icon="square-pen"
 		error={error.title}
 		placeholder="Title here"
 		type="text"
 		bind:value={form.title}
 	/>
 
-	<Button onclick={validate}>
-		Submit
-		<Icon icon="send" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 </Form>

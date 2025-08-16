@@ -7,8 +7,10 @@
 	import { Icon2 } from '$lib/macro';
 	import { Row } from '$lib/layout';
 
-	let { search = $bindable(), search_query } = $props();
-	let empty = $state({ user_key: '', entity_type: 'all', action: 'all', entity_key: '' });
+	let { search_query = {} } = $props();
+
+	let empty = $state({ user_key: '', entity_type: 'all', action: 'all' });
+	let search = $state({ ...empty });
 	let subbmited = $state({ ...empty });
 
 	onMount(() => {
@@ -18,7 +20,7 @@
 			return;
 		}
 		let temp = page_state.searchParams.search.split(':');
-		if (temp.length != 4) {
+		if (temp.length != 3) {
 			search = { ...empty };
 			subbmited = { ...empty };
 			return;
@@ -26,8 +28,7 @@
 		search = {
 			user_key: temp[0],
 			entity_type: temp[1],
-			action: temp[2],
-			entity_key: temp[3]
+			action: temp[2]
 		};
 		subbmited = { ...search };
 	});
@@ -35,26 +36,13 @@
 	const submit = () => {
 		subbmited = { ...search };
 
-		let ss = `${search.user_key}:${search.entity_type || 'all'}:${search.action || 'all'}:${search.entity_key}`;
+		let ss = `${search.user_key}:${search.entity_type || 'all'}:${search.action || 'all'}`;
 		if (JSON.stringify(search) == JSON.stringify(empty)) ss = '';
 		page_state.set({ search: ss });
 	};
 </script>
 
 <section class="search">
-	{#if app.user.access.includes('log:view')}
-		<Search
-			non_default
-			placeholder="Search for User"
-			bind:value={search.user_key}
-			onclear={() => {
-				search.user_key = null;
-			}}
-		>
-			<Button onclick={() => (search.user_key = app.user.key)}>Me</Button>
-		</Search>
-	{/if}
-
 	<Row nowrap --row-gap="8px">
 		<Dropdown
 			icon="chevron-down"
@@ -77,9 +65,9 @@
 		<Search
 			non_default
 			placeholder="Search for {search.entity_type}"
-			bind:value={search.entity_key}
+			bind:value={search.user_key}
 			onclear={() => {
-				search.entity_key = null;
+				search.user_key = null;
 			}}
 		></Search>
 		<Button
@@ -96,7 +84,6 @@
 				search.user_key = '';
 				search.entity_type = 'all';
 				search.action = 'all';
-				search.entity_key = '';
 				if (JSON.stringify(subbmited) != JSON.stringify(empty)) submit();
 			}}
 		></Button>

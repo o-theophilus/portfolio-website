@@ -29,12 +29,23 @@
 	let post = $derived(data.post);
 	let edit_mode = $state(false);
 	let is_admin = $state(false);
-
 	let content = $state();
+
 	const update = (data) => {
 		post = data;
-		content.refresh(post);
-		engagement.refresh();
+	};
+
+	let author = $state();
+	let engagement = $state();
+	let comment = $state();
+	let similar = $state();
+
+	const refresh = async () => {
+		edit_mode = false;
+		await author.load();
+		await engagement.load();
+		await comment.load();
+		await similar.load();
 	};
 
 	onMount(async () => {
@@ -44,73 +55,63 @@
 			is_admin = app.user.access.some((x) => resp.access.includes(x));
 		}
 
+		refresh();
+
 		if (page.url.searchParams.has('edit') && is_admin) {
 			page.url.searchParams.delete('edit');
 			edit_mode = true;
 			window.history.replaceState(history.state, '', page.url.href);
 		}
 	});
-
-	let author = $state();
-	let engagement = $state();
-	let comment = $state();
-	let similar = $state();
-	$effect(async () => {
-		edit_mode = false;
-		await author.load();
-		await engagement.load();
-		await comment.load();
-		await similar.load();
-	});
 </script>
 
 {#key post.key}
 	<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
-	<Meta title={post.title} description={post.description} image={post.photo} />
-
-	<Content>
-		<br />
-		{#if is_admin}
-			<div class="toggle">
-				<Toggle
-					state_2="edit"
-					active={edit_mode}
-					onclick={() => {
-						edit_mode = !edit_mode;
-					}}
-				/>
-			</div>
-		{/if}
-
-		{#if edit_mode && (app.user.access.includes('post:edit_status') || (app.user.access.includes('post:edit_highlight') && post.status == 'active'))}
-			<hr />
-			<div class="line">
-				{#if app.user.access.includes('post:edit_status') && edit_mode}
-					<Button onclick={() => module.open(Status, { post, update })}>
-						<span> Edit Status: <strong>{post.status}</strong> </span>
-					</Button>
-				{/if}
-				{#if app.user.access.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
-					<Highlight post_key={post.key} />
-				{/if}
-			</div>
-		{/if}
-
-		<Photo {post} {edit_mode} {update} />
-		<Title {post} {edit_mode} {update} />
-		<Description {post} {edit_mode} {update} />
-		<Date {post} {edit_mode} {update}>
-			<Engagement post_key={post.key} bind:this={engagement} />
-		</Date>
-		<Content_ {post} {edit_mode} {update} bind:this={content} />
-		<Tags {post} {edit_mode} {update} />
-		<Author {post} {edit_mode} bind:this={author} />
-		<Engage {post} {update} />
-		<Comment {post} bind:this={comment} />
-		<Similar post_key={post.key} bind:this={similar} />
-		<ToTop />
-	</Content>
 {/key}
+<Meta title={post.title} description={post.description} image={post.photo} />
+
+<Content>
+	<br />
+	{#if is_admin}
+		<div class="toggle">
+			<Toggle
+				state_2="edit"
+				active={edit_mode}
+				onclick={() => {
+					edit_mode = !edit_mode;
+				}}
+			/>
+		</div>
+	{/if}
+
+	{#if edit_mode && (app.user.access.includes('post:edit_status') || (app.user.access.includes('post:edit_highlight') && post.status == 'active'))}
+		<hr />
+		<div class="line">
+			{#if app.user.access.includes('post:edit_status') && edit_mode}
+				<Button onclick={() => module.open(Status, { post, update })}>
+					<span> Edit Status: <strong>{post.status}</strong> </span>
+				</Button>
+			{/if}
+			{#if app.user.access.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
+				<Highlight post_key={post.key} />
+			{/if}
+		</div>
+	{/if}
+
+	<Photo bind:post {edit_mode} {update} />
+	<Title {post} {edit_mode} {update} />
+	<Description {post} {edit_mode} {update} />
+	<Date {post} {edit_mode} {update}>
+		<Engagement post_key={post.key} bind:this={engagement} />
+	</Date>
+	<Content_ {post} {edit_mode} {update} bind:this={content} />
+	<Tags {post} {edit_mode} {update} />
+	<Author {post} {edit_mode} bind:this={author} />
+	<Engage {post} {update} />
+	<Comment {post} bind:this={comment} />
+	<Similar post_key={post.key} bind:this={similar} {refresh} />
+	<ToTop />
+</Content>
 
 <style>
 	hr {

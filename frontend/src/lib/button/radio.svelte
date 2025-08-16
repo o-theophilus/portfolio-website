@@ -2,26 +2,20 @@
 	import { onMount } from 'svelte';
 
 	let { value = $bindable(), list = ['on', 'off'], onclick } = $props();
-	let ready = $state(false);
 	if (!value || !list.includes(value)) {
 		value = list[0];
 	}
 
 	let btns = $state({});
 	let btn = $derived.by(() => {
-		if (!ready) return {};
-
 		let elem = btns[list.indexOf(value)];
+		if (!elem) return {};
 		let parent = elem.parentElement.getBoundingClientRect();
 
 		return {
 			left: elem.getBoundingClientRect().left - parent.left,
 			width: elem.getBoundingClientRect().width
 		};
-	});
-
-	onMount(() => {
-		ready = true;
 	});
 </script>
 
@@ -41,7 +35,7 @@
 			{x}
 		</button>
 	{/each}
-	<div class="pos" style:left="{btn.left}px" style:width="{btn.width}px">
+	<div class="pos" style:left="{btn.left - 0.5}px" style:width="{btn.width}px">
 		<div class="active">
 			{value}
 		</div>
@@ -56,27 +50,31 @@
 		grid-template-columns: repeat(var(--len), 1fr);
 
 		width: min-content;
-		height: var(--button-height, 40px);
+		height: var(--button-height, 48px);
 		border-radius: var(--button-border-radius, 4px);
 
-		outline: 2px solid var(--button-outline-color, hsl(0, 0%, 85%));
+		outline: 2px solid var(--button-outline-color, hsl(0, 0%, 80%));
+		outline-offset: -2px;
 		flex-shrink: 0;
 		transition: outline-color 0.2s ease-in-out;
 	}
 	.radio:hover {
-		outline-color: var(--button-outline-color-hover, hsl(0, 0%, 75%));
+		outline-color: var(--button-outline-color-hover, hsl(0, 0%, 100%));
 	}
 
 	button,
 	.pos {
-		height: var(--button-height, 40px);
+		height: 100%;
+
+		cursor: pointer;
 		text-transform: capitalize;
 	}
 	button {
 		border: none;
 
 		padding: 0 var(--button-padding-x, 16px);
-		border-right: 1px solid var(--button-outline-color, hsl(0, 0%, 85%));
+		border-right: 1px solid var(--button-outline-color, hsl(0, 0%, 80%));
+		color: var(--button-color, hsl(0, 0%, 20%));
 
 		background-color: transparent;
 	}
@@ -107,7 +105,6 @@
 		font-weight: var(--button-font-weight, 700);
 		background-color: var(--button-background-color, hsl(0, 0%, 90%));
 		color: var(--button-color, hsl(0, 0%, 0%));
-		cursor: pointer;
 
 		transition:
 			color 0.2s ease-in-out,

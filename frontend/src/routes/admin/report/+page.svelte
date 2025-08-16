@@ -4,37 +4,49 @@
 
 	import { Content } from '$lib/layout';
 	import { BackButton } from '$lib/button';
-	import { UpdateUrl, Meta, Pagination, Dropdown, Log } from '$lib/macro';
+	import { PageNote } from '$lib/info';
+	import { Meta, Pagination, Dropdown, Log, Icon2 } from '$lib/macro';
 	import { Search } from '$lib/input';
 	import One from './one.svelte';
 
 	let { data } = $props();
-	reports = data.reports;
-	total_page = data.total_page;
+	let reports = $derived(data.reports);
+	let total_page = $derived(data.total_page);
 	let { order_by } = data;
-	let { _status } = data;
 	let { _type } = data;
+	let { _status } = data;
 </script>
 
 <Log entity_type={'page'} />
-<UpdateUrl />
 <Meta title="All Users" />
 
 <Content>
-	<div class="title">
+	<div class="line line1">
 		<BackButton />
 		<strong class="ititle">
 			Report{reports.length > 1 ? 's' : ''}
 		</strong>
 	</div>
 
-	<div class="line">
-		<Dropdown name="status" list={_status} default_value={_status[0]} wide />
-		<Dropdown name="type" list={['all', ..._type]} default_value="all" wide />
+	<div class="line nowrap">
+		<Dropdown
+			icon="chevron-down"
+			name="type"
+			list={['all', ..._type]}
+			default_value="all"
+			--select-width="100%"
+		/>
+		<Dropdown
+			icon="chevron-down"
+			name="status"
+			list={_status}
+			default_value={_status[0]}
+			--select-width="100%"
+		/>
 	</div>
 	<div class="line">
 		<Search />
-		<Dropdown name="order" list={order_by} icon="sort" />
+		<Dropdown name="order" list={order_by} icon="arrow-down-narrow-wide" />
 	</div>
 
 	{#each reports as x (x.key)}
@@ -42,29 +54,25 @@
 			<One one={x} />
 		</div>
 	{:else}
-		<div class="item">no item here</div>
+		<PageNote>
+			<Icon2 icon="search" size="50" />
+			No report found
+		</PageNote>
 	{/each}
 
-	<Pagination {total_page} />
+	<div class="pagination">
+		<Pagination {total_page} />
+	</div>
 </Content>
 
 <style>
-	.title {
-		display: flex;
-		align-items: center;
-		gap: var(--sp2);
-
-		margin: var(--sp2) 0;
+	.line1 {
+		margin-top: 16px;
 	}
 
-	.line {
+	.pagination {
 		display: flex;
-		gap: var(--sp1);
-		align-items: center;
-		margin: var(--sp2) 0;
-	}
-
-	.item {
-		margin: var(--sp2) 0;
+		justify-content: center;
+		margin: 16px;
 	}
 </style>

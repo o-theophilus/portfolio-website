@@ -28,7 +28,7 @@
 				</span>
 			{/if}
 		</a>
-		<div class="links">
+		<div class="line">
 			<Theme />
 			<Link {is_home} href="/post">Post</Link>
 			{#if app.user.login}
@@ -63,8 +63,7 @@
 		padding: var(--sp2);
 	}
 
-	.block,
-	.links {
+	.block {
 		flex-wrap: wrap;
 	}
 
@@ -124,8 +123,7 @@
 		}
 	}
 
-	.links {
-		display: flex;
-		gap: var(--sp2);
+	.line {
+		gap: 16px;
 	}
 </style>

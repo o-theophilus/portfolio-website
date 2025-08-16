@@ -5,5 +5,3 @@ pillow
 requests
 supabase
 psycopg2-binary
-pytest
-PyPDF2

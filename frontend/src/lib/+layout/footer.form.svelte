@@ -79,7 +79,7 @@
 <Form error={error.error} --form-padding="0">
 	<IG
 		name="Full name"
-		icon="person"
+		icon="user"
 		bind:value={form.name}
 		error={error.name}
 		type="text"
@@ -87,7 +87,7 @@
 	/>
 	<IG
 		name="Email Address"
-		icon="email"
+		icon="mail"
 		bind:value={form.email}
 		error={error.email}
 		type="text"
@@ -120,10 +120,7 @@
 		{/snippet}
 	</IG>
 
-	<Button onclick={validate}>
-		Send
-		<Icon2 icon="send" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate}>Send</Button>
 </Form>
 
 <div bind:this={email_template} style="display: none;">

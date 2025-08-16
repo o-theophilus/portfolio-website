@@ -3,14 +3,14 @@
 	let { user } = $props();
 </script>
 
-<a href="/profile?search={user.key}">
+<a href="/@{user.key}">
 	<Avatar name={user.name} photo={user.photo} />
 	<div class="details">
 		<div class="name">
 			{user.name}
 		</div>
 
-		<span>
+		<span class="email">
 			{user.email}
 		</span>
 	</div>
@@ -35,11 +35,15 @@
 
 	.details {
 		width: 100%;
+		line-height: 100%;
 	}
 
 	.name {
 		font-weight: 700;
 		color: var(--ft1);
+	}
+	.email {
+		font-size: 0.8em;
 	}
 
 	span {

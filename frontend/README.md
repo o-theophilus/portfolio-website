@@ -1,34 +1,49 @@
 
 FEATURES:
 
-login time tracking
 delete post ripple delete photo
 cron to cleanup files from drive
 cron to clean anonymous users
 update email regex
 use layout/error
-<!-- onerror="this.src='/file_error.png';"  -->
+verify input length
+
+
+
+login time tracking
+
+
+
+
 createEventDispatcher
-delete tags.svelte
-	<!-- onclick|stopPropagation -->
-
-class="line" / class="row"
-
-search: <form
-
-.view_more link animated arrow
-
 clean main.css
-
-fix going back after logout
-
-fix viewing deleted user with permission
-fix authentication of deleted user email
-delete photos of deleted users
-what happens to engagement of deleted users?
-
+class="line" / class="row"
 look for variables that starts with $ but not a rune
 and $:
-
+search: <form
 search class="title"
 search class="ititle"
+<!-- onerror="this.src='/file_error.png';"  -->
+	<!-- onclick|stopPropagation -->
+
+
+deleted user
+- need admin access to view
+- delete photo
+- logout
+- cant login
+- delete comment
+what happens to engagement of deleted users?
+- delete engagement logs (like, rating, comment, view, share)
+- cant signup withsame email
+
+
+blocked user
+- cant login
+- cant use account
+
+
+disabled buttond should give a message insteda
+
+<!-- <UpdateUrl /> -->
+

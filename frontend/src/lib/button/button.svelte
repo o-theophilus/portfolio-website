@@ -1,4 +1,6 @@
 <script>
+	import { Icon2 } from '$lib/macro';
+
 	let {
 		children,
 		caps = false,
@@ -7,21 +9,42 @@
 		onclick,
 		onmouseenter,
 		href = null,
-		tabindex = null
+		tabindex = null,
+		icon = null,
+		icon2 = null,
+		icon_size = 16
 	} = $props();
 </script>
 
 {#if href}
 	<a {href} class:caps {onmouseenter} title={tooltip} tabindex={null}>
-		{@render children()}
+		{#if icon}
+			<Icon2 {icon} size={icon_size}></Icon2>
+		{/if}
+		{@render children?.()}
+		{#if icon2}
+			<div data-lucide={icon2}></div>
+		{/if}
 	</a>
 {:else if onclick}
 	<button {onclick} class:caps {disabled} {onmouseenter} title={tooltip} {tabindex}>
-		{@render children()}
+		{#if icon}
+			<Icon2 {icon} size={icon_size}></Icon2>
+		{/if}
+		{@render children?.()}
+		{#if icon2}
+			<div data-lucide={icon2}></div>
+		{/if}
 	</button>
 {:else}
 	<div class="tag" class:caps title={tooltip}>
-		{@render children()}
+		{#if icon}
+			<Icon2 {icon} size={icon_size}></Icon2>
+		{/if}
+		{@render children?.()}
+		{#if icon2}
+			<div data-lucide={icon2}></div>
+		{/if}
 	</div>
 {/if}
 

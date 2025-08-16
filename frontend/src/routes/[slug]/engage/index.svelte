@@ -2,7 +2,7 @@
 	import { module, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
+	import { Icon2 } from '$lib/macro';
 
 	import Like from './like.svelte';
 	import Rating from './rating.svelte';
@@ -42,13 +42,13 @@
 			primary={my_rating != 0}
 			onclick={() => module.open(Rating, { post, update, set_rating })}
 		>
-			<Icon icon="hotel_class" />
+			<Icon2 icon="star" />
 			Rate{#if my_rating}: {my_rating}{/if}
 		</Button>
 	{/if}
 
 	<Button size="small" onclick={() => module.open(Share, post)}>
-		<Icon icon="share" />
+		<Icon2 icon="share-2" />
 		Share
 	</Button>
 </div>

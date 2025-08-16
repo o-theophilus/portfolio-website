@@ -6,7 +6,7 @@
 	import { Content } from '$lib/layout';
 	import One from './one.svelte';
 	import { Button } from '$lib/button';
-	import { Meta, Icon2, Log, Dropdown, Pagination, Search, UpdateUrl } from '$lib/macro';
+	import { Meta, Icon2, Log, Dropdown, Radio, Pagination, Search, UpdateUrl } from '$lib/macro';
 
 	import Add from './_add.svelte';
 
@@ -40,16 +40,14 @@
 
 <section class="background">
 	<Content>
-		<div class="title">
+		<div class="line space line1">
 			<strong class="ititle">
 				Post{posts.length > 1 ? 's' : ''}
 			</strong>
 			{#if app.user.access.includes('post:add')}
 				<div class="line">
-					<Dropdown list={_status} name="status" />
-
-					<Button extra="outline" onclick={() => module.open(Add, { update })}>
-						<Icon2 icon="add" />
+					<Radio list={_status} name="status"></Radio>
+					<Button icon="plus" extra="outline" onclick={() => module.open(Add, { update })}>
 						Add
 					</Button>
 				</div>
@@ -58,7 +56,7 @@
 
 		<div class="search_bar">
 			<Search />
-			<Dropdown list={order_by} name="order" icon="sort" novalue />
+			<Dropdown list={order_by} name="order" icon="arrow-down-narrow-wide" novalue />
 		</div>
 
 		<FilterNote />
@@ -89,11 +87,7 @@
 		padding: 1px 0;
 	}
 
-	.title {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-
+	.line1 {
 		margin-top: var(--sp3);
 	}
 
@@ -110,11 +104,6 @@
 		gap: var(--sp2);
 	}
 
-	.line {
-		display: flex;
-		gap: var(--sp1);
-		align-items: center;
-	}
 	@media screen and (min-width: 550px) {
 		.items {
 			grid-template-columns: 1fr 1fr;

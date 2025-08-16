@@ -48,10 +48,11 @@ hr {
 	display: flex;
 	gap: 8px;
 	align-items: center;
+	flex-wrap: wrap;
 }
 .line.space{
 	justify-content: space-between;
 }
-.line.wrap{
-	flex-wrap: wrap;
+.line.nowrap{
+	flex-wrap: nowrap;
 }

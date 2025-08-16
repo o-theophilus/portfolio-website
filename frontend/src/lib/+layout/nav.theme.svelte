@@ -1,7 +1,6 @@
 <script>
 	import { page } from '$app/state';
 	import { app } from '$lib/store.svelte.js';
-
 	import { Icon2 } from '$lib/macro';
 
 	const submit = async () => {
@@ -32,10 +31,10 @@
 	>
 		<div class="switch" class:dark={app.user.setting_theme == 'dark'}>
 			<div class="state">
-				<Icon2 icon="light_mode" />
+				<Icon2 icon="sun" />
 			</div>
 			<div class="state">
-				<Icon2 icon="dark_mode" />
+				<Icon2 icon="moon" />
 			</div>
 		</div>
 	</button>

@@ -2,7 +2,6 @@
 	import { app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 
 	const submit = async () => {
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/logout`, {
@@ -23,13 +22,11 @@
 </script>
 
 <Button
-	size="small"
-	extra="hover_red"
+	icon="log-out"
 	onclick={submit}
 	--button-height="40px"
 	--button-font-size="0.8rem"
 	--button-background-color-hover="red"
 >
-	<Icon icon="logout" size="1.4" />
 	Logout
 </Button>

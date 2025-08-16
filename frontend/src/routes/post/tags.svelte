@@ -14,36 +14,36 @@
 
 			if (resp.status == 200) {
 				app.tags = resp.tags;
-				app.tags = resp.tags;
 			}
 		}
 		loading = false;
 	});
 
-	let tag = $derived(page_state.searchParams.tag || []);
+	let active_tags = $derived(page_state.searchParams.tag || []);
 </script>
 
 {#if loading}
 	<hr />
-	<Row>
+
+	<div class="line">
 		<Spinner active={loading} size="20" />
 		Loading tags . . .
-	</Row>
+	</div>
 	<Br />
-{:else if app.tags.length > 0}
+{:else if app.tags?.length > 0}
 	<hr />
-	<Row --row-gap="4px">
+	<div class="line wrap">
 		{#each app.tags as x}
 			<Tag
-				--tag-background-color={tag.includes(x) ? 'var(--cl1)' : 'unset'}
-				--tag-color={tag.includes(x) ? 'white' : 'unset'}
-				--tag-outline-color={tag.includes(x) ? 'transparent' : 'unset'}
+				--tag-background-color={active_tags.includes(x) ? 'var(--cl1)' : 'unset'}
+				--tag-color={active_tags.includes(x) ? 'white' : 'unset'}
+				--tag-outline-color={active_tags.includes(x) ? 'transparent' : 'unset'}
 				onclick={() => {
 					page_state.set({ tag: [x] });
 				}}>{x}</Tag
 			>
 		{/each}
-	</Row>
+	</div>
 	<Br />
 {/if}
 

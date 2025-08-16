@@ -4,7 +4,7 @@
 
 	import { Content } from '$lib/layout';
 	import { PageNote } from '$lib/info';
-	import { Meta, Pagination, UpdateUrl, Icon2 } from '$lib/macro';
+	import { Meta, Pagination, Icon2 } from '$lib/macro';
 	import Search from './search.svelte';
 	import One from './one.svelte';
 
@@ -12,10 +12,10 @@
 	let logs = $derived(data.logs);
 	let total_page = $derived(data.total_page);
 	let search_query = $derived(data.search_query);
+
 	let search = $state({ user_key: '', entity_type: 'all', action: 'all', entity_key: '' });
 </script>
 
-<!-- <UpdateUrl /> -->
 <Meta title="Logs" />
 
 <Content>

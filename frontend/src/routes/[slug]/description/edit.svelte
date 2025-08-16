@@ -7,14 +7,14 @@
 	import { Form } from '$lib/layout';
 
 	let form = {
-		description: module.value.post.description
+		description: module.value.description
 	};
 	let error = $state({});
 
 	const validate = () => {
 		error = {};
 
-		if (form.description == module.value.post.description) {
+		if (form.description == module.value.description) {
 			error.description = 'no change';
 		}
 
@@ -25,7 +25,7 @@
 		error = {};
 
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',

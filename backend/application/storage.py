@@ -1,10 +1,10 @@
-from flask import Blueprint, send_file, current_app, Response
+from flask import Blueprint, send_file, current_app, abort
 from PIL import Image, ImageOps
 from io import BytesIO
 from uuid import uuid4
 import os
-import PyPDF2
 from supabase import create_client
+from pathlib import Path
 
 
 bp = Blueprint("storage", __name__)
@@ -15,39 +15,23 @@ def drive():
     return sb.storage.from_('portfolio.website')
 
 
-def save_test_photo(x, path):
+def save_test(x, path):
     photo = Image.open(x).convert('RGBA')
     white = Image.new('RGBA', photo.size, (255, 255, 255))
     photo = Image.alpha_composite(white, photo).convert('RGB')
 
     name = f"{uuid4().hex}_{photo.size[0]}x{photo.size[1]}.jpg"
-    photo.save(f"{path}{name}")
+    photo.save(f"{path}/{name}")
 
     return name
 
 
-def save_test_file(x, path):
-    reader = PyPDF2.PdfReader(x)
-    writer = PyPDF2.PdfWriter()
+def get_test(x, path, thumbnail):
+    try:
+        photo = Image.open(f"{path}/{x}")
+    except Exception as e:
+        abort(400, description=str(e))
 
-    height = 0
-    width = 0
-    for i in reader.pages:
-        writer.add_page(i)
-        height += i.mediabox.height
-        if i.mediabox.width > width:
-            width = i.mediabox.width
-
-    dim = f"{width}x{height}x{len(reader.pages)}"
-    name = f"{uuid4().hex}_{dim}.pdf"
-
-    with open(f"{path}{name}", "wb") as f:
-        writer.write(f)
-    return name
-
-
-def get_test_photo(x, path, thumbnail):
-    photo = Image.open(f"{path}{x}")
     if thumbnail:
         size = int(thumbnail)
         photo = ImageOps.fit(photo, (size, size), Image.LANCZOS)
@@ -58,21 +42,21 @@ def get_test_photo(x, path, thumbnail):
     return file_io
 
 
-def get_test_file(x, path):
-    file = None
-    with open(f"{path}{x}", 'rb') as f:
-        file = f.read()
-    return file
+def get_all_test(path):
+    folder_path = Path(f"{os.getcwd()}/{path}")
+    file_names = [file.name for file in folder_path.iterdir()
+                  if file.is_file()]
+    return file_names
 
 
 def delete_test(x, path):
-    if os.path.exists(f"{path}{x}"):
-        os.remove(f"{path}{x}")
+    if os.path.exists(f"{path}/{x}"):
+        os.remove(f"{path}/{x}")
         return True
     return False
 
 
-def save_live_photo(x, path):
+def save(x, path):
     photo = Image.open(x).convert('RGBA')
     white = Image.new('RGBA', photo.size, (255, 255, 255))
     photo = Image.alpha_composite(white, photo).convert('RGB')
@@ -91,35 +75,12 @@ def save_live_photo(x, path):
     return name
 
 
-def save_live_file(x, path):
-    reader = PyPDF2.PdfReader(x)
-    writer = PyPDF2.PdfWriter()
+def get(x, path, thumbnail):
+    try:
+        photo = drive().download(f"{path}{x}")
+    except Exception as e:
+        abort(400, description=str(e))
 
-    height = 0
-    width = 0
-    for i in reader.pages:
-        writer.add_page(i)
-        height += i.mediabox.height
-        if i.mediabox.width > width:
-            width = i.mediabox.width
-
-    dim = f"{width}x{height}x{len(reader.pages)}"
-    name = f"{uuid4().hex}_{dim}.pdf"
-
-    b = BytesIO()
-    writer.write(b)
-
-    drive().upload(
-        f"{path}{name}",
-        b.getvalue(),
-        {'content-type': 'application/pdf'}
-    )
-
-    return name
-
-
-def get_live_photo(x, path, thumbnail):
-    photo = drive().download(f"{path}{x}")
     photo = Image.open(BytesIO(photo))
 
     if thumbnail:
@@ -133,59 +94,56 @@ def get_live_photo(x, path, thumbnail):
     return file_io
 
 
-def get_live_file(x, path):
-    file = drive().download(f"{path}{x}")
-    return BytesIO(file)
+def get_all(path):
+    try:
+        files = drive().list(path)
+    except Exception as e:
+        abort(400, description=str(e))
+
+    return files
 
 
-def delete_live(x, path):
+def delete(x, path):
     return drive().remove([f"{path}{x}"])
 
 
-def storage(method, x, thumbnail=False, path=""):
-    test = False
-    if current_app.config["DEBUG"]:
-        folder = f"{os.getcwd()}/static/{path}"
-        os.makedirs(folder, exist_ok=True)
-        test = True
+def storage(method, x=None, path="", thumbnail=False):
+    test = current_app.config["DEBUG"]
+    if test:
+        path = "static/post"
+        os.makedirs(f"{os.getcwd()}/{path}", exist_ok=True)
 
-    if method == "save":
-        if x.content_type in ['image/jpeg', 'image/png']:
-            if test:
-                return save_test_photo(x, path)
-            else:
-                return save_live_photo(x, path)
-        else:
-            if test:
-                return save_test_file(x, path)
-            else:
-                return save_live_file(x, path)
+    defs = {
+        "save": {
+            True: save_test,
+            False: save,
+        },
+        "get": {
+            True: lambda x, path: get_test(x, path, thumbnail),
+            False: lambda x, path: get(x, path, thumbnail),
+        },
+        "get_all": {
+            True: lambda x, path: get_all_test(path),
+            False: lambda x, path: get_all(path),
+        },
+        "delete": {
+            True: delete_test,
+            False: delete,
+        }
+    }
 
-    elif method == "get":
-        if x[-4:] == ".jpg":
-            if test:
-                return get_test_photo(x, path, thumbnail)
-            else:
-                return get_live_photo(x, path, thumbnail)
-        else:
-            if test:
-                return get_test_file(x, path)
-            else:
-                return get_live_file(x, path)
-
-    elif method == "delete":
-        if test:
-            return delete_test(x, path)
-        else:
-            return delete_live(x, path)
+    try:
+        print(method, test, x, path)
+        return defs[method][test](x, path)
+    except Exception as e:
+        abort(400, description=str(e))
 
 
-@bp.get("/file/<filename>")
-@bp.get("/file/<filename>/<thumbnail>")
-def get_photo(filename, thumbnail=False):
-    file = storage("get", filename, thumbnail=thumbnail)
-
-    if filename[-4:] == ".jpg":
-        return send_file(file, mimetype="image/jpg")
-    else:
-        return Response(file, mimetype='application/pdf')
+@bp.get("/file/<x>")
+@bp.get("/file/<x>/<thumbnail>")
+def get_photo(x, thumbnail=False):
+    try:
+        file = storage("get", x, thumbnail=thumbnail)
+    except Exception as e:
+        abort(400, description=str(e))
+    return send_file(file, mimetype="image/jpg")

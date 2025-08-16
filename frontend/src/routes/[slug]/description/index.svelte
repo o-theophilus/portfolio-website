@@ -8,7 +8,14 @@
 
 <div class="margin">
 	{#if app.user.access.includes('post:edit_description') && edit_mode}
-		<Button onclick={() => module.open(Edit, { post, update })}>Edit Description</Button>
+		<Button
+			onclick={() =>
+				module.open(Edit, {
+					key: post.key,
+					description: post.description,
+					update
+				})}>Edit Description</Button
+		>
 	{/if}
 
 	{#if post.description}

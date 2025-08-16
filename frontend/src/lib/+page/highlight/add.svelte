@@ -3,7 +3,6 @@
 	import { app, loading, notify, module } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { IG } from '$lib/input';
 
 	let emit = createEventDispatcher();
@@ -57,7 +56,4 @@
 
 <IG name="URL Path" type="text" bind:value={slug} error={error.error} placeholder="Post url path" />
 
-<Button onclick={validate} disabled={!slug}>
-	<Icon icon="add" />
-	Add
-</Button>
+<Button icon="plus" onclick={validate} disabled={!slug}>Add</Button>

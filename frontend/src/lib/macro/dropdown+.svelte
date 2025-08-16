@@ -30,7 +30,7 @@
 		{list}
 		onchange={() => {
 			let x = value != default_value ? value : '';
-			page_state.set({ name: x });
+			page_state.set({ [name]: x });
 			onchange?.(x);
 		}}
 		{...props}

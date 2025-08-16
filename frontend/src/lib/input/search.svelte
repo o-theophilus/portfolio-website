@@ -56,15 +56,15 @@
 
 			{#if !non_default}
 				<Button
+					icon="search"
+					--button-padding-x="0"
 					--button-width="40px"
 					--button-height="40px"
 					onclick={() => {
 						submit(value);
 					}}
 					disabled={value == value_submitted}
-				>
-					<Icon2 icon="search" />
-				</Button>
+				></Button>
 			{/if}
 		</div>
 	{/snippet}

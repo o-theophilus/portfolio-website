@@ -7,7 +7,7 @@
 <Link {...props}>
 	<div class="link">
 		{@render children()}
-		<Icon2 icon="arrow_right" />
+		<Icon2 icon="arrow-right" />
 	</div>
 </Link>
 

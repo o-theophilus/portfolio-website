@@ -5,7 +5,7 @@ import { page } from '$app/state';
 export const app = $state({
 	user: {},
 	highlight: [],
-	tags: [],
+	tags: null,
 	post: {},
 
 	token_name: 'token',

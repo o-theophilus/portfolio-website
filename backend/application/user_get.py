@@ -246,7 +246,7 @@ def get_admins():
     return jsonify({
         "status": 200,
         "users": [user_schema(x) for x in users],
-        "access": _access,
+        "search_query": _access,
         "order_by": list(order_by.keys()),
         "total_page": ceil(users[0]["_count"] / page_size) if users else 0
     })

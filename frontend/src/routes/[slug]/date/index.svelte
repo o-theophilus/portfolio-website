@@ -9,7 +9,14 @@
 </script>
 
 {#if app.user.access.includes('post:edit_date') && edit_mode}
-	<Button onclick={() => module.open(Edit, { post, update })}>Edit Date</Button>
+	<Button
+		onclick={() =>
+			module.open(Edit, {
+				key: post.key,
+				date: post.date,
+				update
+			})}>Edit Date</Button
+	>
 {/if}
 <span class="date">
 	<Datetime datetime={post.date} />

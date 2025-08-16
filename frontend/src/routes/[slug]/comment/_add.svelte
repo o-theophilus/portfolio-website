@@ -8,7 +8,7 @@
 	let form = {
 		path: module.value.path
 	};
-	let comment = '';
+	let comment = $state('');
 	if (module.value.comment) {
 		comment = module.value.comment;
 	}

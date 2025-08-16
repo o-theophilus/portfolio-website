@@ -7,7 +7,7 @@
 	import { Icon, Marked } from '$lib/macro';
 
 	let textarea;
-	let content = '';
+	let content = $state('');
 	let error = $state({});
 
 	const validate = () => {
