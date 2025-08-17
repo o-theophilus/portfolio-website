@@ -42,7 +42,7 @@
 		}
 	});
 
-	let src = $derived(app.highlight[index].photo || '/no_photo.png');
+	let src = $derived(app.highlight[index]?.photo || '/no_photo.png');
 </script>
 
 {#if app.highlight.length > 0 || app.user.access.includes('post:edit_highlight')}

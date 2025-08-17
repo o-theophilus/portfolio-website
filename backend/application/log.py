@@ -100,27 +100,26 @@ def get_many():
 
     page_no = 1
     page_size = 24
-    search = ":all:all:"
+    u_search = ""
+    entity_type = "all"
+    action = "all"
+    e_search = ""
 
     if "page_no" in request.args:
         page_no = int(request.args["page_no"])
     if "page_size" in request.args:
         page_size = int(request.args["page_size"])
-    if "search" in request.args:
-        search = request.args["search"]
-    search = search.split(":")
-    if len(search) != 4:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid search"
-        })
-    user_key, entity_type, user_action, entity_key = search
-    user_key = user_key.strip()
-    entity_key = entity_key.strip()
+    if "u_search" in request.args:
+        u_search = request.args["u_search"].strip()
+    if "entity_type" in request.args:
+        entity_type = request.args["entity_type"]
+    if "action" in request.args:
+        action = request.args["action"]
+    if "e_search" in request.args:
+        e_search = request.args["e_search"].strip()
 
     if "log:view" not in user["access"]:
-        user_key = user["key"]
+        u_search = user["key"]
 
     cur.execute("""
         SELECT
@@ -167,10 +166,10 @@ def get_many():
         ORDER BY log.date DESC
         LIMIT %s OFFSET %s;
     """, (
-        user_key, f"%{user_key}%",
+        u_search, f"%{u_search}%",
         entity_type, entity_type,
-        user_action, user_action,
-        entity_key, f"%{entity_key}%",
+        action, action,
+        e_search, f"%{e_search}%",
         page_size, (page_no - 1) * page_size
     ))
     logs = cur.fetchall()

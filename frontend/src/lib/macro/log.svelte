@@ -20,5 +20,4 @@
 			body: JSON.stringify({ action, entity_key, entity_type, status, misc })
 		});
 	});
-	console.log('log');
 </script>

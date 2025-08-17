@@ -1,8 +1,3 @@
-export { default as Dropdown } from "./dropdown+.svelte"
-export { default as Pagination } from "./pagination+.svelte"
-export { default as Radio } from "./radio+.svelte"
-export { default as Search } from "./search+.svelte"
-
 export { default as Icon } from "./icon.svelte"
 export { default as Icon2 } from "./icon2.svelte"
 export { default as Avatar } from "./avatar.svelte"
@@ -10,7 +5,6 @@ export { default as Spinner } from "./spinner.svelte"
 export { default as Datetime } from "./datetime.svelte"
 
 export { default as Log } from "./log.svelte"
-export { default as UpdateUrl } from "./update_url.svelte"
 export { default as Meta } from "./meta.svelte"
 export { default as Observe } from "./observe.svelte"
 export { default as Marked } from "./marked.svelte"

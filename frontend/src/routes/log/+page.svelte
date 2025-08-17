@@ -1,11 +1,15 @@
 <script>
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
+	import { onMount } from 'svelte';
+	import { page } from '$app/state';
+	import { app, page_state } from '$lib/store.svelte.js';
 
+	import { Button } from '$lib/button';
+	import { Dropdown, Pagination, Search } from '$lib/input';
 	import { Content } from '$lib/layout';
 	import { PageNote } from '$lib/info';
-	import { Meta, Pagination, Icon2 } from '$lib/macro';
-	import Search from './search.svelte';
+	import { Meta, Icon2 } from '$lib/macro';
 	import One from './one.svelte';
 
 	let { data } = $props();
@@ -13,15 +17,91 @@
 	let total_page = $derived(data.total_page);
 	let search_query = $derived(data.search_query);
 
-	let search = $state({ user_key: '', entity_type: 'all', action: 'all', entity_key: '' });
+	let search = $state({
+		u_search: '',
+		entity_type: 'all',
+		action: 'all',
+		e_search: '',
+		page_no: 1
+	});
+
+	onMount(() => {
+		if (page_state.searchParams.u_search) {
+			search.u_search = page_state.searchParams.u_search;
+		}
+		if (page_state.searchParams.entity_type) {
+			search.entity_type = page_state.searchParams.entity_type;
+		}
+		if (page_state.searchParams.action) {
+			search.action = page_state.searchParams.action;
+		}
+		if (page_state.searchParams.e_search) {
+			search.e_search = page_state.searchParams.e_search;
+		}
+		if (page_state.searchParams.page_no) {
+			search.page_no = page_state.searchParams.page_no;
+		}
+
+		page.url.search = new URLSearchParams(page_state.searchParams);
+		window.history.replaceState(history.state, '', page.url.href);
+	});
 </script>
 
 <Meta title="Logs" />
 
 <Content>
-	<br />
 	<div class="page_title">Logs</div>
-	<Search {search_query} bind:search />
+
+	<br />
+
+	{#if app.user.access.includes('log:view')}
+		<div class="line nowrap">
+			<Search
+				placeholder="Search for User"
+				bind:value={search.u_search}
+				ondone={(v) => {
+					search.page_no = 1;
+					page_state.set({ u_search: v });
+				}}
+			></Search>
+			<Button onclick={() => (search.u_search = app.user.key)}>Me</Button>
+		</div>
+	{/if}
+
+	<div class="line nowrap">
+		<Dropdown
+			icon2="chevron-down"
+			list={Object.keys(search_query)}
+			bind:value={search.entity_type}
+			onchange={(v) => {
+				v = v == 'all' ? '' : v;
+				search.action = 'all';
+				search.page_no = 1;
+				page_state.set({ entity_type: v, action: '' });
+			}}
+			--select-width="100%"
+		/>
+		<Dropdown
+			icon2="chevron-down"
+			list={search_query[search.entity_type]}
+			bind:value={search.action}
+			onchange={(v) => {
+				v = v == 'all' ? '' : v;
+				search.page_no = 1;
+				page_state.set({ action: v });
+			}}
+			--select-width="100%"
+		/>
+	</div>
+
+	<Search
+		placeholder="Search for {search.entity_type}"
+		bind:value={search.e_search}
+		ondone={(v) => {
+			search.page_no = 1;
+			page_state.set({ e_search: v });
+		}}
+	></Search>
 
 	{#each logs as log (log.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
@@ -33,15 +113,13 @@
 			No log found
 		</PageNote>
 	{/each}
-	<div class="pagination">
-		<Pagination {total_page} />
-	</div>
-</Content>
 
-<style>
-	.pagination {
-		display: flex;
-		justify-content: center;
-		margin: 16px;
-	}
-</style>
+	<Pagination
+		{total_page}
+		bind:value={search.page_no}
+		ondone={(v) => {
+			if (v == 1) v = 0;
+			page_state.set({ page_no: v });
+		}}
+	></Pagination>
+</Content>

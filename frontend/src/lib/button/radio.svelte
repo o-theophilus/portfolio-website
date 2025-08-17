@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 
-	let { value = $bindable(), list = ['on', 'off'], onclick } = $props();
+	let { value = $bindable(), list = ['on', 'off'], ondone } = $props();
 	if (!value || !list.includes(value)) {
 		value = list[0];
 	}
@@ -29,7 +29,7 @@
 				}
 
 				value = x;
-				onclick?.(value);
+				ondone?.(value);
 			}}
 		>
 			{x}

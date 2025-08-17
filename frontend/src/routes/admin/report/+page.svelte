@@ -1,12 +1,15 @@
 <script>
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
+	import { page } from '$app/state';
+	import { onMount } from 'svelte';
+	import { page_state } from '$lib/store.svelte.js';
 
 	import { Content } from '$lib/layout';
 	import { BackButton } from '$lib/button';
+	import { Pagination, Dropdown, Search } from '$lib/input';
 	import { PageNote } from '$lib/info';
-	import { Meta, Pagination, Dropdown, Log, Icon2 } from '$lib/macro';
-	import { Search } from '$lib/input';
+	import { Meta, Log, Icon2 } from '$lib/macro';
 	import One from './one.svelte';
 
 	let { data } = $props();
@@ -15,39 +18,100 @@
 	let { order_by } = data;
 	let { _type } = data;
 	let { _status } = data;
+	let search = $state({
+		type: '',
+		status: '',
+		search: '',
+		order: 'latest',
+		page_no: 1
+	});
+
+	onMount(() => {
+		if (page_state.searchParams.type) {
+			search.type = page_state.searchParams.type;
+		}
+		if (page_state.searchParams.status) {
+			search.status = page_state.searchParams.status;
+		}
+		if (page_state.searchParams.search) {
+			search.search = page_state.searchParams.search;
+		}
+		if (page_state.searchParams.order) {
+			search.order = page_state.searchParams.order;
+		}
+		if (page_state.searchParams.page_no) {
+			search.page_no = page_state.searchParams.page_no;
+		}
+
+		page.url.search = new URLSearchParams(page_state.searchParams);
+		window.history.replaceState(history.state, '', page.url.href);
+	});
 </script>
 
 <Log entity_type={'page'} />
 <Meta title="All Users" />
 
 <Content>
-	<div class="line line1">
+	<div class="line">
 		<BackButton />
 		<div class="page_title">
 			Report{reports.length > 1 ? 's' : ''}
 		</div>
 	</div>
 
+	<br />
+
 	<div class="line nowrap">
 		<Dropdown
-			icon="chevron-down"
-			name="type"
+			icon2="chevron-down"
 			list={['all', ..._type]}
-			default_value="all"
+			bind:value={search.type}
+			onchange={(v) => {
+				v = v == 'all' ? '' : v;
+
+				search.page_no = 1;
+				page_state.set({ type: v });
+			}}
 			--select-width="100%"
 		/>
 		<Dropdown
-			icon="chevron-down"
-			name="status"
+			icon2="chevron-down"
 			list={_status}
-			default_value={_status[0]}
+			bind:value={search.status}
+			onchange={(v) => {
+				v = v == _status[0] ? '' : v;
+				search.page_no = 1;
+				page_state.set({ status: v });
+			}}
 			--select-width="100%"
 		/>
 	</div>
-	<div class="line">
-		<Search />
-		<Dropdown name="order" list={order_by} icon="arrow-down-narrow-wide" />
-	</div>
+
+	<Search
+		bind:value={search.search}
+		ondone={(v) => {
+			page_state.set({ search: v });
+		}}
+	></Search>
+
+	<Dropdown
+		--select-height="10"
+		--select-padding-x="0"
+		--select-font-size="0.8rem"
+		--select-background-color="transparent"
+		--select-background-color-hover="transparent"
+		--select-color-hover="var(--ft1)"
+		--select-outline-color="transparent"
+		list={order_by}
+		icon="arrow-down-narrow-wide"
+		icon2="chevron-down"
+		bind:value={search.order}
+		onchange={(v) => {
+			search.page_no = 1;
+			v = v == 'latest' ? '' : v;
+			page_state.set({ order: v });
+		}}
+	/>
 
 	{#each reports as x (x.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
@@ -60,19 +124,12 @@
 		</PageNote>
 	{/each}
 
-	<div class="pagination">
-		<Pagination {total_page} />
-	</div>
+	<Pagination
+		{total_page}
+		bind:value={search.page_no}
+		ondone={(v) => {
+			if (v == 1) v = 0;
+			page_state.set({ page_no: v });
+		}}
+	></Pagination>
 </Content>
-
-<style>
-	.line1 {
-		margin-top: 16px;
-	}
-
-	.pagination {
-		display: flex;
-		justify-content: center;
-		margin: 16px;
-	}
-</style>

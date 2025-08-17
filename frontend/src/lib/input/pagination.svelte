@@ -2,41 +2,23 @@
 	import { Icon2 } from '$lib/macro';
 
 	let { value = $bindable(), total_page = 1, ondone } = $props();
-	let _value = $state(value);
+	let value_rt = $derived(value);
 	let width = $state();
 
-	const normalize = (x) => {
-		if (x < 1 || !x) {
-			x = 1;
-		} else if (x > total_page) {
-			x = total_page;
-		}
-		return x;
-	};
+	const submit = (val) => {
+		if (val == value) return;
 
-	const submit = (x) => {
-		if (x == value) {
-			return;
-		}
-		value = _value = normalize(x);
+		value = val;
+		if (value < 1 || !value) value = 1;
+		else if (value > total_page) value = total_page;
 		ondone?.(value);
 	};
-
-	export const reset = (n = 1) => {
-		value = _value = n;
-	};
-
-	value = normalize(value);
 </script>
 
 {#if total_page > 1}
 	<section>
 		{#if value > 1}
-			<button
-				onclick={() => {
-					submit(value - 1);
-				}}
-			>
+			<button onclick={() => submit(parseInt(value) - 1)}>
 				<Icon2 icon="chevron-left" />
 			</button>
 		{/if}
@@ -46,11 +28,9 @@
 				style:width="calc({width}px + 4px)"
 				type="text"
 				oninput={(e) => (e.target.value = e.target.value.replace(/[^0-9]/g, ''))}
-				bind:value={_value}
+				bind:value={value_rt}
 				onkeypress={(e) => {
-					if (e.key == 'Enter') {
-						submit(_value);
-					}
+					if (e.key == 'Enter') submit(value_rt);
 				}}
 			/>
 			<div class="total">
@@ -60,8 +40,8 @@
 
 		<div class="width_helper" bind:clientWidth={width}>
 			<span>
-				{#if _value}
-					{_value}
+				{#if value_rt}
+					{value_rt}
 				{:else}
 					0
 				{/if}
@@ -69,22 +49,14 @@
 			/ {total_page}
 		</div>
 
-		{#if _value != value}
-			<button
-				onclick={() => {
-					submit(_value);
-				}}
-			>
+		{#if value_rt != value}
+			<button onclick={() => submit(value_rt)}>
 				<Icon2 icon="chevrons-right" />
 			</button>
 		{/if}
 
 		{#if value < total_page}
-			<button
-				onclick={() => {
-					submit(value + 1);
-				}}
-			>
+			<button onclick={() => submit(parseInt(value) + 1)}>
 				<Icon2 icon="chevron-right" />
 			</button>
 		{/if}
@@ -126,7 +98,7 @@
 		color: var(--ft1);
 		background-color: transparent;
 	}
-	
+
 	.total {
 		position: absolute;
 		right: var(--size);

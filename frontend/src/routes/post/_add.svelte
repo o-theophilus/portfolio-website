@@ -58,7 +58,7 @@
 <Form title="Add Post" error={error.error}>
 	<IG
 		name="Title"
-		icon="edit"
+		icon="square-pen"
 		error={error.title}
 		placeholder="Title here"
 		type="text"

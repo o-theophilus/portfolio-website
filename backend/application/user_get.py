@@ -181,7 +181,9 @@ def get_admins():
     order = list(order_by.keys())[0]
     page_no = 1
     page_size = 24
-    search = ":all:all"
+    search = ""
+    entity_type = "all"
+    action = "all"
 
     if "order" in request.args:
         order = request.args["order"]
@@ -190,16 +192,11 @@ def get_admins():
     if "size" in request.args:
         page_size = int(request.args["size"])
     if "search" in request.args:
-        search = request.args["search"]
-    search = search.split(":")
-    if len(search) != 3:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid search"
-        })
-    user_key, _type, _action = search
-    user_key = user_key.strip()
+        search = request.args["search"].strip()
+    if "entity_type" in request.args:
+        entity_type = request.args["entity_type"]
+    if "action" in request.args:
+        action = request.args["action"]
 
     cur.execute("""
         SELECT
@@ -225,9 +222,9 @@ def get_admins():
     """.format(
         order_by[order], order_dir[order]
     ), (
-        user_key, f"%{user_key}%",
-        _type, f"%{_type}:%",
-        _action, f"%{_type}:{_action}%",
+        search, f"%{search}%",
+        entity_type, f"%{entity_type}:%",
+        action, f"%{entity_type}:{action}%",
         page_size, (page_no - 1) * page_size
     ))
     users = cur.fetchall()

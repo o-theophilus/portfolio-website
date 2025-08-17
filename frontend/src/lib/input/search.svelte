@@ -3,69 +3,53 @@
 	import { IG } from '$lib/input';
 	import { Icon2 } from '$lib/macro';
 
-	let {
-		value = $bindable(),
-		placeholder = 'Search',
-		non_default = false,
-
-		ondone
-	} = $props();
-	let value_submitted = $state();
+	let { value = $bindable(), placeholder = 'Search', ondone } = $props();
+	let value_rt = $derived(value);
 
 	const submit = (val) => {
-		if (val == value_submitted) return;
+		console.log('hete');
 
-		ondone?.(val);
-		set(val);
-	};
+		if (val == value) return;
 
-	export const set = (val) => {
 		value = val;
-		value_submitted = val;
+		ondone?.(value);
 	};
 </script>
 
 <IG
 	type="text"
 	{placeholder}
-	bind:value
+	bind:value={value_rt}
 	no_pad
 	onkeypress={(e) => {
 		if (e.key == 'Enter') {
-			submit(value);
+			submit(value_rt);
 		}
 	}}
 >
 	{#snippet right()}
 		<div class="right">
-			{#if value || value_submitted}
+			{#if value || value_rt}
 				<div class="close">
 					<RoundButton
 						--button-background-color-hover="red"
 						icon="x"
 						onclick={() => {
-							if (!value_submitted) {
-								value = '';
-								value_submitted = '';
-							}
+							if (!value) value_rt = '';
 							submit('');
 						}}
 					></RoundButton>
 				</div>
 			{/if}
 
-			{#if !non_default}
-				<Button
-					icon="search"
-					--button-padding-x="0"
-					--button-width="40px"
-					--button-height="40px"
-					onclick={() => {
-						submit(value);
-					}}
-					disabled={value == value_submitted}
-				></Button>
-			{/if}
+			<Button
+				icon="search"
+				--button-padding-x="0"
+				--button-width="40px"
+				--button-height="40px"
+				onclick={() => submit(value_rt)}
+				disabled={value == value_rt}
+			></Button>
 		</div>
 	{/snippet}
 </IG>

@@ -5,6 +5,7 @@
 	let {
 		label = null,
 		icon = null,
+		icon2 = null,
 		caps = false,
 		novalue = false,
 		id = null,
@@ -37,11 +38,6 @@
 </script>
 
 <button class:caps {disabled}>
-	{#if icon}
-		<div class="icon">
-			<Icon2 {icon} />
-		</div>
-	{/if}
 	<select
 		class:caps
 		{id}
@@ -56,13 +52,20 @@
 			</option>
 		{/each}
 	</select>
-	{#if !novalue}
-		<div class="value" class:no_icon={!icon}>
-			{#if label}
-				{label}
-			{:else}
-				{value}
-			{/if}
+
+	{#if icon}
+		<div class="icon">
+			<Icon2 {icon} />
+		</div>
+	{/if}
+	{#if label}
+		{label}
+	{:else if !novalue}
+		{value}
+	{/if}
+	{#if icon2}
+		<div class="icon">
+			<Icon2 icon={icon2} />
 		</div>
 	{/if}
 </button>
@@ -74,12 +77,13 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		/* flex-shrink: 0; */
+		gap: 8px;
 
 		width: var(--select-width, unset);
 		min-width: var(--select-height, 48px);
 		height: var(--select-height, 48px);
 		border-radius: var(--select-border-radics, 4px);
+		padding: 0 var(--select-padding-x, 16px);
 
 		border: none;
 		font-size: var(--select-font-size, 1rem);
@@ -112,6 +116,10 @@
 	.caps {
 		text-transform: capitalize;
 	}
+	.icon {
+		display: flex;
+		align-items: center;
+	}
 
 	select {
 		position: absolute;
@@ -122,23 +130,6 @@
 	option {
 		background-color: var(--bg1);
 		color: var(--ft2);
-	}
-
-	.icon {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		height: 100%;
-		aspect-ratio: 1;
-		pointer-events: none;
-	}
-
-	.value {
-		flex-shrink: 0;
-		padding-right: 16px;
-	}
-	.value.no_icon {
-		padding-left: 16px;
+		font-size: 0.8rem;
 	}
 </style>

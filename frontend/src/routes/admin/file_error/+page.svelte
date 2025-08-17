@@ -85,7 +85,7 @@
 						role="presentation"
 					/>
 				{:else}
-					no photo here
+					<div class="none">no photo here</div>
 				{/each}
 			</div>
 
@@ -142,7 +142,7 @@
 
 					<br />
 				{:else}
-					no user here
+					<div class="none">no user here</div>
 				{/each}
 			</div>
 		{/if}
@@ -168,7 +168,7 @@
 
 					<br />
 				{:else}
-					no post here
+					<div class="none">no post here</div>
 				{/each}
 			</div>
 		{/if}
@@ -211,5 +211,9 @@
 
 	.error {
 		margin: var(--sp2) 0;
+	}
+
+	.none {
+		font-size: 0.8rem;
 	}
 </style>

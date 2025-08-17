@@ -5,7 +5,6 @@
 	import { Button } from '$lib/button';
 
 	let error = page.error.message;
-	console.log(page);
 </script>
 
 <Meta title={error} />
