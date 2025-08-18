@@ -3,7 +3,7 @@
 	import { app, module } from '$lib/store.svelte.js';
 
 	import { Content } from '$lib/layout';
-	import { Meta, Icon2, Avatar, Log } from '$lib/macro';
+	import { Meta, Icon, Avatar, Log } from '$lib/macro';
 	import { RoundButton, Button, LinkArrow, Toggle } from '$lib/button';
 
 	import Photo from '../[slug]/photo/edit.svelte';
@@ -78,7 +78,7 @@
 	<br />
 
 	<div class="line center">
-		<Icon2 icon="user" />
+		<Icon icon="user" />
 		<div class="name">
 			{user.name}
 		</div>
@@ -93,7 +93,7 @@
 	</div>
 
 	<div class="line center">
-		<Icon2 icon="email" />
+		<Icon icon="email" />
 		{user.email}
 
 		{#if edit_mode && user.key == app.user.key}
@@ -103,7 +103,7 @@
 
 	{#if (edit_mode && user.key == app.user.key) || user.phone}
 		<div class="line center">
-			<Icon2 icon="call" />
+			<Icon icon="call" />
 			{user.phone || 'None'}
 			{#if edit_mode && user.key == app.user.key}
 				<RoundButton icon="square-pen" onclick={() => module.open(Phone, { ...user, update })} />
@@ -116,12 +116,12 @@
 		<div class="line center wrap">
 			{#if user.key == app.user.key}
 				<Button --button-font-size="0.8rem" onclick={() => module.open(Password)}>
-					<Icon2 icon="key-round" />
+					<Icon icon="key-round" />
 					Change Password
 				</Button>
 
 				<Button --button-font-size="0.8rem" onclick={() => module.open(Delete)}>
-					<Icon2 icon="trash-2" />
+					<Icon icon="trash-2" />
 					Delete Account
 				</Button>
 			{:else if is_admin}

@@ -1,5 +1,5 @@
 <script>
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 	import { Link } from '$lib/button';
 	let { children, ...props } = $props();
 </script>
@@ -7,7 +7,7 @@
 <Link {...props}>
 	<div class="link">
 		{@render children()}
-		<Icon2 icon="arrow-right" />
+		<Icon icon="arrow-right" />
 	</div>
 </Link>
 

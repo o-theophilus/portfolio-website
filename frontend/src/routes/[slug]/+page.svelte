@@ -29,7 +29,6 @@
 	let post = $derived(data.post);
 	let edit_mode = $state(false);
 	let is_admin = $state(false);
-	let content = $state();
 
 	const update = (data) => {
 		post = data;
@@ -73,29 +72,27 @@
 <Content>
 	<br />
 	{#if is_admin}
-		<div class="toggle">
-			<Toggle
-				state_2="edit"
-				active={edit_mode}
-				onclick={() => {
-					edit_mode = !edit_mode;
-				}}
-			/>
-		</div>
+		<Toggle state_2="edit" active={edit_mode} onclick={() => (edit_mode = !edit_mode)} />
 	{/if}
 
 	{#if edit_mode && (app.user.access.includes('post:edit_status') || (app.user.access.includes('post:edit_highlight') && post.status == 'active'))}
 		<hr />
 		<div class="line">
 			{#if app.user.access.includes('post:edit_status') && edit_mode}
-				<Button onclick={() => module.open(Status, { post, update })}>
-					<span>
-						Edit Status: <div class="status">{post.status}</div>
-					</span>
+				<Button
+					onclick={() =>
+						module.open(Status, {
+							key: post.key,
+							status: post.status,
+							photo: post.photo,
+							update
+						})}
+				>
+					Edit Status: <span class="status {post.status}">{post.status}</span>
 				</Button>
 			{/if}
 			{#if app.user.access.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
-				<Highlight post_key={post.key} />
+				<Highlight {post} />
 			{/if}
 		</div>
 	{/if}
@@ -106,7 +103,7 @@
 	<Date {post} {edit_mode} {update}>
 		<Engagement post_key={post.key} bind:this={engagement} />
 	</Date>
-	<Content_ {post} {edit_mode} {update} bind:this={content} />
+	<Content_ {post} {edit_mode} {update} />
 	<Tags {post} {edit_mode} {update} />
 	<Author {post} {edit_mode} bind:this={author} />
 	<Engage {post} {update} />
@@ -127,5 +124,12 @@
 	}
 	.status {
 		font-weight: 800;
+	}
+
+	.status.active {
+		color: green;
+	}
+	.status.draft {
+		color: red;
 	}
 </style>

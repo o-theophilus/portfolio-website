@@ -1,7 +1,6 @@
 <script>
 	import { module } from '$lib/store.svelte.js';
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
 	import Password from './_delete_2_password.svelte';
@@ -18,11 +17,11 @@
 	</Note>
 
 	<Button
+		icon="trash-2"
 		onclick={() => {
 			module.open(Password);
 		}}
 	>
-		<Icon icon="delete" />
 		Continue
 	</Button>
 </Form>

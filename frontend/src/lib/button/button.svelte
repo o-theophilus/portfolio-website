@@ -1,5 +1,5 @@
 <script>
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 
 	let {
 		children,
@@ -19,7 +19,7 @@
 {#if href}
 	<a {href} class:caps {onmouseenter} title={tooltip} tabindex={null}>
 		{#if icon}
-			<Icon2 {icon} size={icon_size}></Icon2>
+			<Icon {icon} size={icon_size}></Icon>
 		{/if}
 		{@render children?.()}
 		{#if icon2}
@@ -29,7 +29,7 @@
 {:else if onclick}
 	<button {onclick} class:caps {disabled} {onmouseenter} title={tooltip} {tabindex}>
 		{#if icon}
-			<Icon2 {icon} size={icon_size}></Icon2>
+			<Icon {icon} size={icon_size}></Icon>
 		{/if}
 		{@render children?.()}
 		{#if icon2}
@@ -39,7 +39,7 @@
 {:else}
 	<div class="tag" class:caps title={tooltip}>
 		{#if icon}
-			<Icon2 {icon} size={icon_size}></Icon2>
+			<Icon {icon} size={icon_size}></Icon>
 		{/if}
 		{@render children?.()}
 		{#if icon2}

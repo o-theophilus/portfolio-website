@@ -3,17 +3,18 @@
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Icon, Marked } from '$lib/macro';
+	import { Marked } from '$lib/macro';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
 
 	let form = {
 		path: module.value.path
 	};
-	let comment = $state('');
-	if (module.value.comment) {
-		comment = module.value.comment;
-	}
+
+	// let comment = $state('');
+	// if (module.value.comment) {
+	// 	comment = module.value.comment;
+	// }
 	let error = $state({});
 
 	const validate = () => {
@@ -54,10 +55,12 @@
 	};
 </script>
 
-<Form title="{comment ? 'Reply' : 'Add'} Comment" error={error.error}>
-	<Note>
-		<Marked content={comment} />
-	</Note>
+<Form title="{module.value.comment ? 'Reply' : 'Add'} Comment" error={error.error}>
+	{#if module.value.comment}
+		<Note>
+			<Marked content={module.value.comment} />
+		</Note>
+	{/if}
 
 	<IG
 		name="Comment"
@@ -68,8 +71,5 @@
 		on:keypress
 	/>
 
-	<Button onclick={validate}>
-		Submit
-		<Icon icon="send" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 </Form>

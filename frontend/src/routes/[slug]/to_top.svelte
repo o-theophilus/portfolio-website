@@ -35,7 +35,7 @@
 	</svg>
 
 	<div class="center">
-		<Icon icon="arrow_upward"></Icon>
+		<Icon icon="arrow-up"></Icon>
 		<!-- {percent} -->
 	</div>
 </div>

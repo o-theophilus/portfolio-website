@@ -1,7 +1,7 @@
 <script>
 	import { notify } from '$lib/store.svelte.js';
 
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 	import { Row } from '$lib/layout';
 
 	let { one } = $props();
@@ -22,14 +22,14 @@
 
 <div class="notify" class:bad={one.status == 400} class:caution={one.status == 201}>
 	<Row nowrap>
-		<Icon2
+		<Icon
 			size="24"
 			icon={one.status == 201 ? 'triangle-alert' : one.status == 400 ? 'circle-x' : 'square-check'}
 		/>
 		{one.message || 'no message'}
 
 		<button onclick={() => notify.close(one.key)}>
-			<Icon2 icon="x" size="16"></Icon2>
+			<Icon icon="x" size="16"></Icon>
 			<svg viewBox="0 0 120 120">
 				<circle
 					cx="60"

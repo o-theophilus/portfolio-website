@@ -3,7 +3,6 @@
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 
 	let report_key = module.value.report_key;
 	let form = {};
@@ -58,15 +57,7 @@
 	{/if}
 
 	<IG name="Note" error={error.note} type="textarea" placeholder="Note" bind:value={form.note} />
-
-	<Button
-		onclick={() => {
-			validate('resolved');
-		}}
-	>
-		Resolve
-		<Icon icon="send" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={() => validate('resolved')}>Resolve</Button>
 </form>
 
 <style>

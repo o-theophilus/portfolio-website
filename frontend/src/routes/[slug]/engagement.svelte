@@ -1,5 +1,5 @@
 <script>
-	import { Icon2, Spinner } from '$lib/macro';
+	import { Icon, Spinner } from '$lib/macro';
 
 	let { post_key } = $props();
 	let post = $state();
@@ -20,23 +20,23 @@
 {:else}
 	<div class="line info">
 		<div class="line" title="view{post.view > 1 ? 's' : ''}">
-			<Icon2 icon="eye" size=12/>
+			<Icon icon="eye" size="12" />
 			{post.view}
 		</div>
 		<div class="line" title="comment{post.comment > 1 ? 's' : ''}">
-			<Icon2 icon="message-circle" size=12/>
+			<Icon icon="message-circle" size="12" />
 			{post.comment}
 		</div>
 		<div class="line" title="like{post._like > 1 ? 's' : ''}">
-			<Icon2 icon="thumbs-up" size=12/>
+			<Icon icon="thumbs-up" size="12" />
 			{post._like}
 		</div>
 		<div class="line" title="rating{post.ratings.length > 1 ? 's' : ''}">
-			<Icon2 icon="star" size=12/>
+			<Icon icon="star" size="12" />
 			{parseFloat(post.rating)}{#if post.ratings.length != 0}|{post.ratings.length}{/if}
 		</div>
 		<div class="line" title="share{post.share > 1 ? 's' : ''}">
-			<Icon2 icon="share-2" size=12/>
+			<Icon icon="share-2" size="12" />
 			{post.share}
 		</div>
 	</div>
@@ -44,18 +44,12 @@
 
 <style>
 	.line {
-		display: flex;
-		align-items: center;
-		gap: 2px;
-
-		font-size: 0.8rem;
-		color: var(--ft2);
-		line-height: 1;
+		gap: 0;
 
 		transition: color var(--trans);
 	}
 
 	.info {
-		gap: var(--sp1);
+		gap: 8px;
 	}
 </style>

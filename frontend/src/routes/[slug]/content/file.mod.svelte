@@ -4,72 +4,48 @@
 	import { loading, notify, module, app } from '$lib/store.svelte.js';
 
 	import { Button, RoundButton } from '$lib/button';
-	import {  Icon2 } from '$lib/macro';
-	import { createEventDispatcher } from 'svelte';
+	import { Icon } from '$lib/macro';
 
-	let emit = createEventDispatcher();
-
-	let post = $state(module.value.post);
-	let files = $derived([...post.files]);
-	let active_photo = $derived(files[0]);
-	let count = $derived(post.content.split('@[file]').length - 1);
-	let { error = {} } = $props();
+	let { ops, onadd } = $props();
+	let files = $derived(ops.files);
 
 	const order = (dir = true) => {
-		error = {};
-		const old_i = files.findIndex((x) => x == active_photo);
+		ops.error = {};
 
-		if (old_i == -1) {
-			return;
-		}
+		if (files.length < 2 || !ops.active) return;
+		const currentIndex = files.indexOf(ops.active);
 
-		let new_i = old_i - 1;
-		if (dir) {
-			new_i = old_i + 1;
-		}
+		if (currentIndex == -1) return;
+		const newIndex = dir ? currentIndex + 1 : currentIndex - 1;
+		if (newIndex < 0 || newIndex >= files.length) return;
 
-		if (new_i < 0 || new_i >= files.length) {
-			return;
-		}
-
-		const temp = files[new_i];
-		files[new_i] = files[old_i];
-		files[old_i] = temp;
+		files = files.map((file, i) => {
+			if (i === currentIndex) return files[newIndex];
+			if (i === newIndex) return files[currentIndex];
+			return file;
+		});
 	};
 
 	const remove = () => {
-		error = {};
+		ops.error = {};
 
-		let i = files.findIndex((x) => x == active_photo);
-		files = files.filter((x) => x != active_photo);
+		let i = files.findIndex((x) => x == ops.active);
+		files = files.filter((x) => x != ops.active);
 
 		if (i < files.length) {
-			active_photo = files[i];
+			ops.active = files[i];
 		} else if (i == files.length) {
-			active_photo = files[i - 1];
+			ops.active = files[i - 1];
 		} else {
-			active_photo = files[0];
-		}
-
-		emit('active', active_photo);
-	};
-
-	export const reset = (data) => {
-		error = {};
-
-		post.files = [...data];
-		files = [...data];
-		if (!files.includes(active_photo)) {
-			active_photo = files[0];
-			emit('active', active_photo);
+			ops.active = files[0];
 		}
 	};
 
 	const submit = async () => {
-		error = {};
+		ops.error = {};
 
 		loading.open('Saving . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/file/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/file/${ops.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -81,54 +57,55 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			post = resp.post;
-			module.value.update(post);
-			emit('update', post.files);
-			reset(post.files);
+			ops.files = resp.post.files;
+			module.value.update(resp.post);
 			notify.open('Order Saved');
 		} else {
-			error = resp;
+			ops.error = resp;
 		}
 	};
 </script>
+
+<div>
+	{files.join('<br/>')}
+</div>
 
 <div class="line">
 	{#each files as x, i (x)}
 		<div
 			class="used"
 			animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
-			class:excess={i > count - 1}
-			class:active={active_photo == x}
+			class:excess={i > ops.count - 1}
+			class:active={ops.active == x}
 			onclick={() => {
-				error = {};
-				active_photo = x;
-				emit('active', active_photo);
+				ops.error = {};
+				ops.active = x;
 			}}
 			role="presentation"
 		>
 			{#if x.slice(-4) == '.jpg'}
-				<img src="{x}/200" alt={post.name} />
+				<img src="{x}/200" alt={ops.title} />
 			{:else}
 				{x.slice(-3)}
 			{/if}
 		</div>
 	{/each}
 
-	{#if count - files.length > 0}
-		{#each Array(count - files.length) as _, i (i)}
+	{#if ops.count - files.length > 0}
+		{#each Array(ops.count - files.length) as _, i (i)}
 			<div
 				class="empty"
 				animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
 				onclick={() => {
-					if (post.files.length < count) {
-						emit('add');
+					if (ops.files.length < ops.count) {
+						onadd();
 					} else {
-						error.error = 'save changes and try again';
+						ops.error.error = 'save changes and try again';
 					}
 				}}
 				role="presentation"
 			>
-				<Icon2 icon="add" />
+				<Icon icon="plus" />
 			</div>
 		{/each}
 	{/if}
@@ -136,37 +113,42 @@
 
 <div class="line">
 	<RoundButton
-		icon="arrow_left"
-		disabled={files.length <= 1 || files[0] == active_photo}
+		icon="chevron-left"
+		disabled={files.length <= 1 || files[0] == ops.active}
 		onclick={() => {
 			order(false);
 		}}
 	/>
 
 	<RoundButton
-		icon="arrow_right"
-		disabled={files.length <= 1 || files[files.length - 1] == active_photo}
+		icon="chevron-right"
+		disabled={files.length <= 1 || files[files.length - 1] == ops.active}
 		onclick={order}
 	/>
 
-	<RoundButton icon="delete" disabled={files.length == 0} onclick={remove} />
+	<RoundButton icon="trash-2" disabled={files.length == 0} onclick={remove} />
 </div>
 
 <br />
 
 <div class="line">
-	<Button disabled={JSON.stringify(post.files) == JSON.stringify(files)} onclick={submit}>
-		<Icon2 icon="save" />
+	<Button
+		icon="save"
+		disabled={JSON.stringify(ops.files) == JSON.stringify(files)}
+		onclick={submit}
+	>
 		Save
 	</Button>
 
 	<Button
+		icon="history"
 		onclick={() => {
-			reset(post.files);
+			ops.error = {};
+			files = ops.files;
+			if (!files.includes(ops.active)) ops.active = files[0];
 		}}
-		disabled={JSON.stringify(post.files) == JSON.stringify(files)}
+		disabled={JSON.stringify(ops.files) == JSON.stringify(files)}
 	>
-		<Icon2 icon="history" />
 		Reset
 	</Button>
 </div>

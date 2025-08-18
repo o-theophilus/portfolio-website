@@ -2,7 +2,7 @@
 	import { loading, notify, module, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
 
 	let entity = $state({ ...module.value });
@@ -127,10 +127,10 @@
 			}}
 		>
 			{#if entity.photo}
-				<Icon2 icon="square-pen" />
+				<Icon icon="square-pen" />
 				Change
 			{:else}
-				<Icon2 icon="plus" />
+				<Icon icon="plus" />
 				Add
 			{/if}
 		</Button>
@@ -142,7 +142,7 @@
 					remove('delete');
 				}}
 			>
-				<Icon2 icon="trash-2" />
+				<Icon icon="trash-2" />
 				Delete
 			</Button>
 		{/if}

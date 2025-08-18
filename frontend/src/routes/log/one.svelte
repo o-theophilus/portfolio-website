@@ -1,6 +1,6 @@
 <script>
 	import { app } from '$lib/store.svelte.js';
-	import { Datetime, Icon2 } from '$lib/macro';
+	import { Datetime, Icon } from '$lib/macro';
 
 	let { log, search = $bindable() } = $props();
 
@@ -38,7 +38,7 @@
 
 	{#if log.user.key && app.user.access.includes('log:view')}
 		<button onclick={() => (search.user_key = log.user.key)}>
-			<Icon2 icon="square-chevron-up"></Icon2>
+			<Icon icon="square-chevron-up"></Icon>
 		</button>
 	{/if}
 
@@ -46,20 +46,7 @@
 	{log.entity.type}
 
 	{#if href}
-		<a
-			class="break"
-			{href}
-			data-sveltekit-preload-data="off"
-			onclick={() => {
-				// if (log.entity.type == 'report') {
-				// 	let pn = 'reports';
-				// 	let i = $memory.findIndex((x) => x.name == pn);
-				// 	if (i != -1) {
-				// 		$memory.splice(i, 1);
-				// 	}
-				// }
-			}}
-		>
+		<a class="break" {href} data-sveltekit-preload-data="off">
 			{log.entity.name}
 		</a>
 
@@ -68,7 +55,7 @@
 				search.entity_key = log.entity.key;
 			}}
 		>
-			<Icon2 icon="square-chevron-up"></Icon2>
+			<Icon icon="square-chevron-up"></Icon>
 		</button>
 	{/if}
 

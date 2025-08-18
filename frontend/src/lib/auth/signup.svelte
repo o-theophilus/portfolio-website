@@ -3,7 +3,7 @@
 
 	import { IG } from '$lib/input';
 	import { Button, Link } from '$lib/button';
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 	import { Br, Form } from '$lib/layout';
 	import Login from './login.svelte';
 	import EmailTemplate from './confirm.template.svelte';
@@ -110,7 +110,7 @@
 
 	<Button onclick={validate}>
 		Submit
-		<Icon2 icon="send" />
+		<Icon icon2="send-horizontal" />
 	</Button>
 
 	<br />

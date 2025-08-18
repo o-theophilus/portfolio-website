@@ -616,6 +616,28 @@ def deactivate():
     ;""", (os.environ["MAIL_USERNAME"], user["key"]))
 
     cur.execute("""
+        UPDATE post
+        SET likes = array_remove(likes, %s),
+            dislikes = array_remove(dislikes, %s)
+        WHERE %s = ANY(likes) OR %s = ANY(dislikes);
+    """, (user["key"], user["key"], user["key"], user["key"]))
+
+    cur.execute("""
+        UPDATE post
+        SET rating = (
+            SELECT COALESCE(
+                jsonb_agg(elem), '[]'::jsonb
+            )
+            FROM jsonb_array_elements(rating) elem
+            WHERE elem->>'user_key' <> %s
+        )
+        WHERE EXISTS (
+            SELECT 1 FROM jsonb_array_elements(rating) elem
+            WHERE elem->>'user_key' = %s
+        );
+    """, (user["key"], user["key"]))
+
+    cur.execute("""
         WITH user_comments AS (
             SELECT key FROM comment WHERE user_key = %s
         )
@@ -632,9 +654,9 @@ def deactivate():
         DELETE FROM code WHERE user_key = %s;
     """, (user["key"],))
 
-    cur.execute("""
-        DELETE FROM log WHERE user_key = %s OR entity_key = %s;
-    """, (user["key"], user["key"]))
+    # cur.execute("""
+    #     DELETE FROM log WHERE user_key = %s OR entity_key = %s;
+    # """, (user["key"], user["key"]))
 
     cur.execute("""
         DELETE FROM "user" WHERE key = %s;
@@ -644,17 +666,17 @@ def deactivate():
 
     anon_user = anon(cur)
 
-    # note = {}
-    # if "note" in request.json and request.json["note"]:
-    #     note = {"note": request.json["note"]}
+    note = {}
+    if "note" in request.json and request.json["note"]:
+        note = {"note": request.json["note"]}
 
-    # log(
-    #     cur=cur,
-    #     user_key=user["key"],
-    #     action="deleted_account",
-    #     entity_type="account",
-    #     misc=note
-    # )
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="deleted_account",
+        entity_type="account",
+        misc=note
+    )
     log(
         cur=cur,
         user_key=anon_user["key"],

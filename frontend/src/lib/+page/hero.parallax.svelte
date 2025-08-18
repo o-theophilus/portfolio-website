@@ -12,7 +12,7 @@
 
 	<div class="block" style:--no="8">
 		<div class="icon">
-			<Icon icon="logo" size="6" />
+			<Icon icon="logo" size="96" />
 		</div>
 		<div class="details">
 			<div class="name">Theophilus Ogbolu</div>
@@ -92,15 +92,13 @@
 	.icon {
 		border-radius: 50%;
 		line-height: 0;
-		color: var(--cl1);
+		fill: var(--cl1);
 		background-color: white;
 	}
 
 	.name {
-		/* margin-top: var(--sp3); */
 		font-size: 2rem;
 		font-weight: 800;
-		/* text-align: center; */
 	}
 
 	.role {

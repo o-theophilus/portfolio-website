@@ -3,7 +3,6 @@
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
 
 	let form = {
@@ -59,8 +58,5 @@
 		bind:value={form.name}
 	/>
 
-	<Button onclick={validate}>
-		Submit
-		<Icon icon="send" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 </Form>

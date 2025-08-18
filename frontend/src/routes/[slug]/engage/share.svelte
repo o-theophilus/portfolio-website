@@ -4,7 +4,7 @@
 
 	import { Button } from '$lib/button';
 	import { Icon } from '$lib/macro';
-	import { Form, Row, Br } from '$lib/layout';
+	import { Form } from '$lib/layout';
 
 	let text = `Check Out: ${module.value.title}`;
 
@@ -45,8 +45,7 @@
 </script>
 
 <Form title="Share">
-	<Br />
-	<Row>
+	<div class="line">
 		{#each platforms as x}
 			<Button
 				target="_blank"
@@ -56,8 +55,8 @@
 				}}
 				href={x.href}
 			>
-				<Icon icon={x.name} size="1.4" />
+				<Icon icon={x.name} />
 			</Button>
 		{/each}
-	</Row>
+	</div>
 </Form>

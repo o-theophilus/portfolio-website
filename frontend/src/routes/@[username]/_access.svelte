@@ -6,8 +6,6 @@
 
 	import { Button, FoldButton, Toggle } from '$lib/button';
 	import Access_Ok from './_access.ok.svelte';
-	import { Icon } from '$lib/macro';
-	import { json } from '@sveltejs/kit';
 
 	let user = module.value;
 	let mods = $state([...user.access]);
@@ -62,24 +60,11 @@
 	{/each}
 
 	<div class="line">
-		<!-- disabled={mods.length === init.length && mods.every((p) => init.includes(p))} -->
-		<Button
-			disabled={JSON.stringify(mods.sort()) === JSON.stringify(init.sort())}
-			onclick={() => module.open(Access_Ok, { mods })}
-		>
-			Submit
-			<Icon icon="send" />
-		</Button>
-		<!-- disabled={mods.length === init.length && mods.every((p) => init.includes(p))} -->
-		<Button
-			disabled={JSON.stringify(mods.sort()) === JSON.stringify(init.sort())}
-			onclick={() => {
-				mods = [...init];
-			}}
-		>
-			Reset
-			<Icon icon="history" />
-		</Button>
+		<!-- TODO:fix disabled -->
+		<!-- disabled={JSON.stringify(mods.sort()) == JSON.stringify(init.sort())} -->
+		<Button icon="history" onclick={() => (mods = [...init])}>Reset</Button>
+		<!-- disabled={JSON.stringify(mods.sort()) == JSON.stringify(init.sort())} -->
+		<Button icon2="send-horizontal" onclick={() => module.open(Access_Ok, { mods })}>Submit</Button>
 	</div>
 </section>
 

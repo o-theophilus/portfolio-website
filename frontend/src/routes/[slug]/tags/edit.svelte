@@ -5,7 +5,6 @@
 	import { IG } from '$lib/input';
 	import { Button, Tag } from '$lib/button';
 	import { Form } from '$lib/layout';
-	import { Icon } from '$lib/macro';
 
 	let error = $state({});
 	let init = module.value.tags;
@@ -102,10 +101,7 @@
 		{/each}
 	</div>
 
-	<Button onclick={validate}>
-		Submit
-		<Icon icon="send" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 </Form>
 
 <style>

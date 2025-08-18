@@ -8,6 +8,7 @@ from .storage import storage
 from .log import log
 from .post_get import get_all, post_schema
 from datetime import datetime
+from werkzeug.security import check_password_hash
 
 bp = Blueprint("post", __name__)
 
@@ -304,11 +305,19 @@ def delete(key):
             "error": "invalid token"
         })
 
+    error = None
     if "post:edit_status" not in user["access"]:
+        error = "unauthorized access"
+    elif "password" not in request.json:
+        error = "cannot be empty"
+    elif not check_password_hash(user["password"], request.json["password"]):
+        error = "incorrect password"
+
+    if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "unauthorized access"
+            "error": error
         })
 
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
@@ -323,6 +332,10 @@ def delete(key):
     cur.execute("""
         DELETE FROM comment WHERE post_key = %s;
     """, (post["key"],))
+
+    # cur.execute("""
+    #     DELETE FROM log WHERE entity_type='post' AND entity_key = %s;
+    # """, (post["key"],))
 
     cur.execute("""
         DELETE FROM post WHERE key = %s;

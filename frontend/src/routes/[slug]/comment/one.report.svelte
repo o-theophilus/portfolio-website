@@ -4,7 +4,7 @@
 	import { Button, Link } from '$lib/button';
 	import { Form } from '$lib/layout';
 	import { IG, Dropdown } from '$lib/input';
-	import { Icon, Avatar } from '$lib/macro';
+	import { Avatar } from '$lib/macro';
 	import { template, tags } from './one.report.template.js';
 
 	let reported = module.value.reported;
@@ -62,8 +62,6 @@
 		{entity.extra}
 	</div>
 
-	<hr />
-
 	<IG
 		bind:value={form.report}
 		error={error.report}
@@ -110,10 +108,7 @@
 		{/each}
 	</div> -->
 
-	<Button onclick={validate}>
-		Submit
-		<Icon icon="send" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 </Form>
 
 <style>

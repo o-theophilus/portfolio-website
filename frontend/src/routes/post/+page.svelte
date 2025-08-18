@@ -9,7 +9,7 @@
 	import { Button, Radio } from '$lib/button';
 	import { Dropdown, Search, Pagination } from '$lib/input';
 	import { PageNote } from '$lib/info';
-	import { Meta, Icon2, Log } from '$lib/macro';
+	import { Meta, Icon, Log } from '$lib/macro';
 	import One from './one.svelte';
 
 	import Add from './_add.svelte';
@@ -117,7 +117,7 @@
 			</section>
 		{:else}
 			<PageNote>
-				<Icon2 icon="search" size="50" />
+				<Icon icon="search" size="50" />
 				No post found
 			</PageNote>
 		{/if}

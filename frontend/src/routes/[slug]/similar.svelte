@@ -93,14 +93,14 @@
 	.area {
 		display: grid;
 		gap: var(--sp3);
-		margin: var(--sp2) 0;
+		/* margin: var(--sp2) 0; */
 	}
 
 	.post {
 		display: flex;
 		gap: var(--sp2);
 
-		margin-bottom: var(--sp2);
+		/* margin-bottom: var(--sp2); */
 	}
 
 	.link {

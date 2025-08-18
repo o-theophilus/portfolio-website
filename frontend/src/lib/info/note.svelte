@@ -1,6 +1,6 @@
 <script>
 	import { slide } from 'svelte/transition';
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 
 	let { status, note, children } = $props();
 
@@ -21,7 +21,7 @@
 	<div class="block _{status}" transition:slide>
 		{#if note}
 			<div class="line">
-				<Icon2
+				<Icon
 					icon={status == 400
 						? 'circle-x'
 						: status == 201

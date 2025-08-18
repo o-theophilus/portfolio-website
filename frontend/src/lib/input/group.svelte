@@ -1,6 +1,6 @@
 <script>
 	import Input from './input.svelte';
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 	import Check from './password.checker.svelte';
 	import Show from './password.show.svelte';
 	import { slide } from 'svelte/transition';
@@ -72,7 +72,7 @@
 	{:else}
 		<div class="input" class:left_pad={icon} class:disabled={props.disabled}>
 			{#if icon}
-				<Icon2 {icon}></Icon2>
+				<Icon {icon}></Icon>
 			{/if}
 			<Input
 				bind:value

@@ -252,7 +252,6 @@ def similar_posts(key):
     keywords = list(set(
         post["tags"] + re.split(r'\s+', post["title"].lower())))
 
-    print(keywords)
     cur.execute("""
         WITH likeness AS (
             SELECT key, COUNT(*) AS score
@@ -272,7 +271,6 @@ def similar_posts(key):
     """, (keywords, key))
     posts = cur.fetchall()
 
-    print(posts)
     db_close(con, cur)
     return jsonify({
         "status": 200,

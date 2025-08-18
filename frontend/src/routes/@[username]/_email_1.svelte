@@ -2,7 +2,6 @@
 	import { module, loading, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { Note } from '$lib/info';
 	import { Form } from '$lib/layout';
 	import EmailTemplate from './_email.template.svelte';
@@ -45,10 +44,7 @@
 		account.
 	</Note>
 
-	<Button primary onclick={submit}>
-		Request Code
-		<Icon icon="send" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={submit}>Request Code</Button>
 </Form>
 
 <div bind:this={email_template} style="display: none;">

@@ -18,7 +18,7 @@
 				<div class="logo">
 					<div class="cover"></div>
 					<div class="icon">
-						<Icon icon="logo" size="2" />
+						<Icon icon="logo" size="32" />
 					</div>
 				</div>
 				<span class="name">
@@ -85,6 +85,10 @@
 
 		display: flex;
 		align-items: center;
+	}
+
+	.icon {
+		fill: var(--cl1);
 	}
 
 	.cover {

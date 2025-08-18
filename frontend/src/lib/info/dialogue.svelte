@@ -1,7 +1,7 @@
 <script>
 	import { module } from '$lib/store.svelte.js';
 
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 	import { Button } from '$lib/button';
 	import { Row } from '$lib/layout';
 
@@ -18,11 +18,11 @@
 	class:warning={status == 201}
 >
 	{#if status == 200}
-		<Icon2 icon="200" size="24" />
+		<Icon icon="200" size="24" />
 	{:else if status == 400}
-		<Icon2 icon="400" size="24" />
+		<Icon icon="400" size="24" />
 	{:else if status == 201}
-		<Icon2 icon="201" size="24" /> 
+		<Icon icon="201" size="24" />
 	{/if}
 	{title}
 </div>
@@ -40,7 +40,7 @@
 				}}
 			>
 				{#if x.icon}
-					<Icon2 icon={x.icon} />
+					<Icon icon={x.icon} />
 				{/if}
 				{x.name}
 			</Button>

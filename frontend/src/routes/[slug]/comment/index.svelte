@@ -6,7 +6,7 @@
 
 	import { Button, FoldButton } from '$lib/button';
 	import { Login } from '$lib/auth';
-	import { Icon2, Spinner } from '$lib/macro';
+	import { Icon, Spinner } from '$lib/macro';
 	import { Dropdown } from '$lib/input';
 	import { PageNote } from '$lib/info';
 	import One from './one.svelte';
@@ -15,41 +15,28 @@
 	let { post } = $props();
 	let comments = $state([]);
 	let order_by = $state([]);
-	let _status = $state([]);
-	let open = $state(true);
+	let open = $state(false);
 	let loading = $state(true);
-	let search = {};
+	let search = $state({
+		order: 'latest',
+		page_no: 1
+	});
 
 	const update = (data) => {
 		comments = data;
+		open = true;
 	};
 
 	export const load = async () => {
-		let s = {};
-		if (search.status) {
-			s.status = search.status;
-		}
-		if (search.order) {
-			s.order = search.order;
-		}
-
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/comment/${post.key}?${new URLSearchParams(s).toString()}`,
-			{
-				method: 'get',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: app.token
-				}
-			}
+			`${import.meta.env.VITE_BACKEND}/comment/${post.key}?${new URLSearchParams(search).toString()}`
 		);
 		resp = await resp.json();
 
 		if (resp.status == 200) {
 			comments = resp.comments;
 			order_by = resp.order_by;
-			_status = resp._status;
-			if (!comments.length) open = false;
+			if (comments.length) open = true;
 		}
 		loading = false;
 	};
@@ -57,12 +44,14 @@
 
 <hr />
 
-<div class="title">
-	<div class="page_title">
-		{#if comments.length > 0}
-			{comments.length}
-		{/if}
-		Comment{#if comments.length > 1}s{/if}
+<div class="line space">
+	<div class="line">
+		<span class="page_title">
+			{#if comments.length > 0}
+				{comments.length}
+			{/if}
+			Comment{#if comments.length > 1}s{/if}
+		</span>
 		<Spinner active={loading} size="20" />
 	</div>
 
@@ -78,29 +67,27 @@
 
 {#if open && !loading}
 	<div class="margin" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
-		<div class="line">
-			{#if app.user.access.includes('comment:view_deleted')}
-				<Dropdown
-					list={_status}
-					default_value={search.status || 'active'}
-					on:change={(e) => {
-						search.status = e.target.value;
-						refresh();
-					}}
-				/>
-			{/if}
-			{#if comments.length > 1}
-				<Dropdown
-					icon="sort"
-					list={order_by}
-					default_value={search.order || 'latest'}
-					on:change={(e) => {
-						search.order = e.target.value;
-						refresh();
-					}}
-				/>
-			{/if}
-		</div>
+		{#if comments.length > 1}
+			<Dropdown
+				--select-height="10"
+				--select-padding-x="0"
+				--select-font-size="0.8rem"
+				--select-background-color="transparent"
+				--select-background-color-hover="transparent"
+				--select-color-hover="var(--ft1)"
+				--select-outline-color="transparent"
+				list={order_by}
+				icon="arrow-down-narrow-wide"
+				icon2="chevron-down"
+				bind:value={search.order}
+				onchange={(v) => {
+					search.page_no = 1;
+					// v = v == 'latest' ? '' : v;
+					// page_state.set({ order: v });
+					load();
+				}}
+			/>
+		{/if}
 
 		{#each comments as x (x.key)}
 			<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
@@ -114,43 +101,20 @@
 	</div>
 {/if}
 
-{#if app.user.login}
-	<Button onclick={() => module.open(Add, { post_key: post.key, path: [], update, search })}>
-		<Icon2 icon="message-circle-plus" />
-		Add comment
-	</Button>
-{:else}
-	<Button size="small" onclick={() => module.open(Login)}>Login to add comment</Button>
-{/if}
-
-<br />
-<br />
+<div class="button">
+	{#if app.user.login}
+		<Button onclick={() => module.open(Add, { post_key: post.key, path: [], update, search })}>
+			<Icon icon="message-circle-plus" />
+			Add comment
+		</Button>
+	{:else}
+		<Button size="small" onclick={() => module.open(Login)}>Login to add comment</Button>
+	{/if}
+</div>
 
 <style>
-	.title {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: var(--sp2);
-		margin: var(--sp2) 0;
-
-		font-weight: 800;
-		color: var(--ft1);
-	}
-	.page_title {
-		display: flex;
-		align-items: center;
-		gap: var(--sp2);
-	}
-	.margin {
-		margin: var(--sp2) 0;
-	}
-
-	.line {
-		display: flex;
-		align-items: center;
-		gap: var(--sp1);
-		margin-bottom: var(--sp2);
+	.button {
+		margin: 16px 0;
 	}
 
 	hr {

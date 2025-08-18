@@ -1,5 +1,5 @@
 <script>
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 	import { onMount } from 'svelte';
 
 	let {
@@ -55,7 +55,7 @@
 
 	{#if icon}
 		<div class="icon">
-			<Icon2 {icon} />
+			<Icon {icon} />
 		</div>
 	{/if}
 	{#if label}
@@ -65,7 +65,7 @@
 	{/if}
 	{#if icon2}
 		<div class="icon">
-			<Icon2 icon={icon2} />
+			<Icon icon={icon2} />
 		</div>
 	{/if}
 </button>

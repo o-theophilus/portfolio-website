@@ -13,7 +13,6 @@
 
 	const update = async (data) => {
 		post = data;
-		await refresh();
 	};
 
 	export const load = async () => {

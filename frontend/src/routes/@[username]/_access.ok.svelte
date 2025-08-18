@@ -2,7 +2,6 @@
 	import { module, notify, loading, app } from '$lib/store.svelte.js';
 	import { page } from '$app/state';
 
-	import { Icon } from '$lib/macro';
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
@@ -12,7 +11,6 @@
 		access: module.value.mods
 	};
 	let error = $state({});
-	let show_password = false;
 
 	const validate = async () => {
 		error = {};
@@ -26,6 +24,7 @@
 
 	const submit = async () => {
 		error = {};
+
 		loading.open('saving . . .');
 		let resp = await fetch(
 			`${import.meta.env.VITE_BACKEND}/admin/user/access/${page.data.user.key}`,
@@ -61,14 +60,10 @@
 	></IG>
 
 	<div class="line">
-		<Button onclick={validate}>
-			Submit
-			<Icon icon="send" />
-		</Button>
-		<Button onclick={() => module.open(Access, { mods: module.value.mods })}>
+		<Button icon="arrow-left" onclick={() => module.open(Access, { mods: module.value.mods })}>
 			Back
-			<!-- <Icon icon="send" /> -->
 		</Button>
+		<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 	</div>
 </Form>
 

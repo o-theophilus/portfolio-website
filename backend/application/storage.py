@@ -133,7 +133,6 @@ def storage(method, x=None, path="", thumbnail=False):
     }
 
     try:
-        print(method, test, x, path)
         return defs[method][test](x, path)
     except Exception as e:
         abort(400, description=str(e))

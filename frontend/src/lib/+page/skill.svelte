@@ -41,7 +41,7 @@
 		<div class="card">
 			<div class="pos">
 				<div class="icon one">
-					<Icon icon="design" size="1.5" />
+					<Icon icon="pencil-ruler" size="24" />
 				</div>
 				<div class="title">Design</div>
 
@@ -56,7 +56,7 @@
 		<div class="card">
 			<div class="pos">
 				<div class="icon two">
-					<Icon icon="code2" size="1.5" />
+					<Icon icon="square-terminal" size="24" />
 				</div>
 				<div class="title">Code</div>
 
@@ -71,7 +71,7 @@
 		<div class="card">
 			<div class="pos">
 				<div class="icon three">
-					<Icon icon="lightbulb" size="1.5" />
+					<Icon icon="lightbulb" size="24" />
 				</div>
 				<div class="title">Innovate</div>
 

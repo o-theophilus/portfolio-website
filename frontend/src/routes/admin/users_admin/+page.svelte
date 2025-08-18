@@ -9,7 +9,7 @@
 	import { Pagination, Dropdown, Search } from '$lib/input';
 	import { BackButton } from '$lib/button';
 	import { PageNote } from '$lib/info';
-	import { Meta, Log, Icon2 } from '$lib/macro';
+	import { Meta, Log, Icon } from '$lib/macro';
 	import One from '../users/one.svelte';
 
 	let { data } = $props();
@@ -117,7 +117,7 @@
 		</div>
 	{:else}
 		<PageNote>
-			<Icon2 icon="search" size="50" />
+			<Icon icon="search" size="50" />
 			No user found
 		</PageNote>
 	{/each}

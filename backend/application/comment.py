@@ -325,6 +325,10 @@ def delete(key):
             "error": "invalid request"
         })
 
+    # cur.execute("""
+    #     DELETE FROM comment WHERE entity_type='comment' AND entity_key = %s;
+    # """, (comment["key"],))
+
     cur.execute("""
         DELETE FROM comment WHERE key = %s OR %s = ANY(path);
     """, (comment["key"], comment["key"]))
@@ -337,6 +341,7 @@ def delete(key):
         entity_type="comment",
         misc={
             "post_key": comment["post_key"]
+            # TODO: add children comment keys
         }
     )
 

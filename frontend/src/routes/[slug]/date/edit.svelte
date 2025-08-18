@@ -2,7 +2,6 @@
 	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
@@ -51,8 +50,5 @@
 		placeholder="Date here"
 	/>
 
-	<Button onclick={validate}>
-		Submit
-		<Icon icon="send" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 </Form>

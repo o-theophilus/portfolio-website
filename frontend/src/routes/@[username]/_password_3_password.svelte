@@ -4,7 +4,6 @@
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/Layout';
-	import { Icon } from '$lib/macro';
 
 	let form = {
 		...module.value
@@ -83,11 +82,11 @@
 	<Button
 		--button-background-color="darkred"
 		--button-background-color-hover="red"
+		icon="x"
 		onclick={() => {
 			module.close();
 		}}
 	>
 		Cancel
-		<Icon icon="close" />
 	</Button>
 </Form>

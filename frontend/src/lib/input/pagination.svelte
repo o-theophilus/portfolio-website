@@ -1,5 +1,5 @@
 <script>
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 
 	let { value = $bindable(), total_page = 1, ondone } = $props();
 	let value_rt = $derived(value);
@@ -19,7 +19,7 @@
 	<section>
 		{#if value > 1}
 			<button onclick={() => submit(parseInt(value) - 1)}>
-				<Icon2 icon="chevron-left" />
+				<Icon icon="chevron-left" />
 			</button>
 		{/if}
 
@@ -51,13 +51,13 @@
 
 		{#if value_rt != value}
 			<button onclick={() => submit(value_rt)}>
-				<Icon2 icon="chevrons-right" />
+				<Icon icon="chevrons-right" />
 			</button>
 		{/if}
 
 		{#if value < total_page}
 			<button onclick={() => submit(parseInt(value) + 1)}>
-				<Icon2 icon="chevron-right" />
+				<Icon icon="chevron-right" />
 			</button>
 		{/if}
 	</section>

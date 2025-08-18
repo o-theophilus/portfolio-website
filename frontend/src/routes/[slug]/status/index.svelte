@@ -2,22 +2,28 @@
 	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
+	import { Form } from '$lib/layout';
 	import Delete from './delete.svelte';
+	import { slide } from 'svelte/transition';
 
-	let _status = module.value.post.status;
+	let post = {
+		key: module.value.key,
+		status: module.value.status,
+		photo: module.value.photo
+	};
+	let _status = post.status;
 
 	let error = $state({});
 
 	const submit = async (status) => {
-		if (!module.value.post.photo) {
+		if (!post.photo) {
 			error.error = 'no title photo';
 			return;
 		}
 		error = {};
 
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -38,76 +44,65 @@
 	};
 </script>
 
-<div class="content">
-	<div class="page_title">Change Status</div>
+<Form title="Change Status" error={error.error}>
+	Status: <span class="status {_status}">{_status}</span>
 
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
+	<br />
+	<br />
+
+	<div class="label">Change to:</div>
+
 	{#if error.status}
-		<div class="error">
+		<div class="error" transition:slide>
 			{error.status}
 		</div>
 	{/if}
 
-	<div>
-		Status: <div class="status">{_status}</div>
-	</div>
-
-	<div>Change to:</div>
 	<div class="line">
 		{#if _status != 'active'}
-			<Button
-				onclick={() => {
-					submit('active');
-				}}
-			>
-				<Icon icon="check" />
+			<Button icon="check" onclick={() => submit('active')}>
 				{'active'}
 			</Button>
 		{/if}
 
 		{#if _status != 'draft'}
-			<Button
-				onclick={() => {
-					submit('draft');
-				}}
-			>
-				<Icon icon="design_services" />
+			<Button icon="square-pen" onclick={() => submit('draft')}>
 				{'draft'}
 			</Button>
 		{/if}
 
 		{#if _status != 'delete'}
-			<Button onclick={() => module.open(Delete, { post: module.value.post })}>
-				<Icon icon="delete" />
+			<Button
+				--button-background-color-hover="red"
+				icon="trash-2"
+				onclick={() => module.open(Delete, { ...module.value })}
+			>
 				Delete
 			</Button>
 		{/if}
 	</div>
-</div>
+</Form>
 
 <style>
-	.content {
-		padding: var(--sp3);
+	.status {
+		font-weight: 800;
+	}
+	.status.active {
+		color: green;
+	}
+	.status.draft {
+		color: red;
 	}
 
-	.page_title {
-		margin-bottom: var(--sp2);
+	.label,
+	.error {
+		font-size: 0.8rem;
+	}
+	.error {
+		color: red;
 	}
 
 	.line {
-		display: flex;
-		gap: var(--sp1);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
-
-	.status {
-		font-weight: 800;
+		margin-top: 8px;
 	}
 </style>

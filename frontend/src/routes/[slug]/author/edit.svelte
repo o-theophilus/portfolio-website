@@ -3,7 +3,6 @@
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
 
 	let form = {};
@@ -55,14 +54,8 @@
 	/>
 
 	<div class="line">
-		<Button onclick={validate}>
-			Submit
-			<Icon icon="send" />
-		</Button>
-		<Button onclick={submit}>
-			Reset
-			<Icon icon="undo" />
-		</Button>
+		<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
+		<Button icon="history" onclick={submit}>Reset</Button>
 	</div>
 </Form>
 

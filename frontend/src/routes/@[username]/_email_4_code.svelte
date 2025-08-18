@@ -3,7 +3,6 @@
 
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
-	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
 
@@ -52,18 +51,15 @@
 
 	<IG name="Code" error={error.code_2} bind:value={form.code_2} type="code"></IG>
 
-	<Button primary onclick={validate}>
-		Submit
-		<Icon icon="send" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 	<Button
 		--button-background-color="darkred"
 		--button-background-color-hover="red"
+		icon="x"
 		onclick={() => {
 			module.close();
 		}}
 	>
 		Cancel
-		<Icon icon="close" />
 	</Button>
 </Form>

@@ -9,7 +9,7 @@
 	import { Dropdown, Pagination, Search } from '$lib/input';
 	import { Content } from '$lib/layout';
 	import { PageNote } from '$lib/info';
-	import { Meta, Icon2 } from '$lib/macro';
+	import { Meta, Icon } from '$lib/macro';
 	import One from './one.svelte';
 
 	let { data } = $props();
@@ -109,7 +109,7 @@
 		</div>
 	{:else}
 		<PageNote>
-			<Icon2 icon="search" size="50" />
+			<Icon icon="search" size="50" />
 			No log found
 		</PageNote>
 	{/each}

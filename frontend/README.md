@@ -1,21 +1,14 @@
+delete user commment like
+
 
 FEATURES:
 
-
-
-
-createEventDispatcher
 clean main.css
 class="line" / class="row"
 remove <Br and <Row
-look for variables that starts with $ but not a rune
 search: <form
 search class="title"
 class="error"
-
-
-what happens to engagement of deleted users?
-- delete engagement logs (like, rating, view, share)
 
 
 blocked user
@@ -34,3 +27,4 @@ update email regex
 use layout/error
 verify input length
 login time tracking
+

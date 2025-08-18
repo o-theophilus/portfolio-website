@@ -14,7 +14,6 @@ def get(key):
 
     me = token_to_user(cur)
     if not me:
-        print("here2")
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -30,7 +29,6 @@ def get(key):
     user = cur.fetchone()
 
     if not user:
-        # print("here")
         db_close(con, cur)
         return jsonify({
             "status": 400,

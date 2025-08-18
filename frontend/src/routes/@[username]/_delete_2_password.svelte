@@ -3,7 +3,6 @@
 
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
-	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
 
@@ -69,17 +68,17 @@
 	<Button
 		--button-background-color="darkred"
 		--button-background-color-hover="red"
+		icon="trash-2"
 		onclick={validate}
 	>
-		<Icon icon="delete" />
 		Delete Account
 	</Button>
 	<Button
+		icon="x"
 		onclick={() => {
 			module.close();
 		}}
 	>
-		<Icon icon="close" />
 		Cancel
 	</Button>
 </Form>

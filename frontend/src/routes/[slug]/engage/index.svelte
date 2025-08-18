@@ -3,7 +3,7 @@
 	import { module, app } from '$lib/store.svelte.js';
 
 	import { Button, Like } from '$lib/button';
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 	import { Note } from '$lib/info';
 
 	import Rating from './rating.svelte';
@@ -79,13 +79,13 @@
 			primary={my_rating != 0}
 			onclick={() => module.open(Rating, { post, update, set_rating })}
 		>
-			<Icon2 icon="star" />
+			<Icon icon="star" />
 			Rate{#if my_rating}: {my_rating}{/if}
 		</Button>
 	{/if}
 
 	<Button size="small" onclick={() => module.open(Share, post)}>
-		<Icon2 icon="share-2" />
+		<Icon icon="share-2" />
 		Share
 	</Button>
 </div>

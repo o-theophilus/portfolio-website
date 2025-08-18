@@ -1,18 +1,12 @@
 <script>
 	import { loading, notify, module, app } from '$lib/store.svelte.js';
-	import { createEventDispatcher } from 'svelte';
 
-	let emit = createEventDispatcher();
-
-	let post = $state(module.value.post);
-	let count = $derived(post.content.split('@[file]').length - 1);
-	let active_photo = $state('');
+	let { ops } = $props();
 	let input;
 	let dragover = $state(false);
-	let { error = {} } = $props();
 
 	const on_input = () => {
-		error = {};
+		ops.error = {};
 
 		let files = [];
 		for (let i = 0; i < input.files.length; i++) {
@@ -21,12 +15,12 @@
 			let err = '';
 			if (!['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
 				err = `${file.name} => invalid file`;
-			} else if (files.length + post.files.length >= count) {
+			} else if (files.length + ops.files.length >= ops.count) {
 				err = `${file.name} => excess file`;
 			}
 
 			if (err) {
-				error.error = error.error ? `${error.error}, ${err}` : err;
+				ops.error.error = ops.error.error ? `${ops.error.error}, ${err}` : err;
 			} else {
 				files.push(file);
 			}
@@ -43,7 +37,7 @@
 		}
 
 		loading.open('uploading . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/file/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/file/${ops.key}`, {
 			method: 'post',
 			headers: {
 				Authorization: app.token
@@ -55,55 +49,47 @@
 		input.value = '';
 
 		if (resp.status == 200) {
-			post = resp.post;
-			module.value.update(post);
-			emit('update', post.files);
+			ops.files = resp.post.files;
+			module.value.update(resp.post);
 			notify.open('Photo added');
 
-			if (resp.error) {
-				error = resp;
-			}
+			if (resp.error) ops.error = resp;
 		} else {
-			error = resp;
+			ops.error = resp;
 		}
 	};
 
 	export const add = () => {
 		input.click();
 	};
-	export const reset = (data) => {
-		post.files = data;
-	};
 
 	let dim = $state([1, 1]);
 	export const active = (data) => {
-		active_photo = data;
+		ops.active = data;
 		dim = [1, 1];
 
-		if (!active_photo) {
-			active_photo = '/select_file.png';
-		} else if (active_photo.slice(-4) == '.jpg') {
-			let match = active_photo.match(/_(\d+)x(\d+)\./);
+		if (!ops.active) {
+			ops.active = '/select_file.png';
+		} else if (ops.active.slice(-4) == '.jpg') {
+			let match = ops.active.match(/_(\d+)x(\d+)\./);
 			if (match) {
 				dim = [parseInt(match[1]), parseInt(match[2])];
 			}
 		} else {
-			active_photo = '/no_preview.png';
+			ops.active = '/no_preview.png';
 		}
 	};
-
-	// active(post.files[0]);
 </script>
 
 <img
-	src={active_photo}
-	alt={post.title}
+	src={ops.active}
+	alt={ops.title}
 	class="main"
 	class:dragover
-	class:incomplete={post.files.length < count}
+	class:incomplete={ops.files.length < ops.count}
 	style:--ar={dim[0] / dim[1]}
 	onclick={() => {
-		if (post.files.length < count) {
+		if (ops.files.length < ops.count) {
 			input.click();
 		}
 	}}
@@ -117,7 +103,7 @@
 	}}
 	ondrop={(e) => {
 		dragover = false;
-		if (post.files.length < count) {
+		if (ops.files.length < ops.count) {
 			e.preventDefault();
 			input.files = e.dataTransfer.files;
 			on_input();

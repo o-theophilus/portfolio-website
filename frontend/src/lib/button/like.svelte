@@ -1,17 +1,17 @@
 <script>
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 
 	let { active = '', like = 0, dislike = 0, onlike, ondislike } = $props();
 </script>
 
 <div class="group">
 	<button class="like" onclick={onlike} class:active={active == 'like'}>
-		<Icon2 icon="thumbs-up" />
+		<Icon icon="thumbs-up" />
 		{like}
 	</button>
 
 	<button class="dislike" onclick={ondislike} class:active={active == 'dislike'}>
-		<Icon2 icon="thumbs-down" />
+		<Icon icon="thumbs-down" />
 		{dislike}
 	</button>
 </div>

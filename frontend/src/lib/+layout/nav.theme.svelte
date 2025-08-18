@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/state';
 	import { app } from '$lib/store.svelte.js';
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 
 	const submit = async () => {
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/theme`, {
@@ -31,10 +31,10 @@
 	>
 		<div class="switch" class:dark={app.user.setting_theme == 'dark'}>
 			<div class="state">
-				<Icon2 icon="sun" />
+				<Icon icon="sun" />
 			</div>
 			<div class="state">
-				<Icon2 icon="moon" />
+				<Icon icon="moon" />
 			</div>
 		</div>
 	</button>

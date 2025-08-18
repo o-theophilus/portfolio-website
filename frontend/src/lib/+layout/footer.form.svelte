@@ -4,7 +4,7 @@
 
 	import { template } from './footer.form.template.js';
 	import { Button } from '$lib/button';
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 	import { EmailTemplate, Form } from '$lib/layout';
 	import { Dialogue } from '$lib/info';
 	import { IG } from '$lib/input';
@@ -103,7 +103,7 @@
 		{#snippet label()}
 			<button class="label">
 				Message
-				<Icon2 icon="chevron-down" />
+				<Icon icon="chevron-down" />
 				<select
 					onchange={(e) => {
 						form.message = e.target.value;

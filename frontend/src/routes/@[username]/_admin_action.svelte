@@ -3,7 +3,6 @@
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
 	import { slide } from 'svelte/transition';
 
@@ -83,10 +82,7 @@
 		bind:value={form.note}
 	/>
 
-	<Button onclick={validate}>
-		Submit
-		<Icon icon="send" />
-	</Button>
+	<Button icon2="send-Horizontal" onclick={validate}>Submit</Button>
 </Form>
 
 <style>

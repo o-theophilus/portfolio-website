@@ -6,7 +6,7 @@
 
 	import { Content } from '$lib/layout';
 	import { LinkArrow, RoundButton } from '$lib/button';
-	import { Icon2 } from '$lib/macro';
+	import { Icon } from '$lib/macro';
 	import { Tag } from '$lib/button';
 	import Edit from './edit.svelte';
 	import { onMount } from 'svelte';
@@ -32,7 +32,7 @@
 	};
 
 	onMount(async () => {
-		if (!app.tags) {
+		if (!app.highlight) {
 			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight`);
 			resp = await resp.json();
 
@@ -42,14 +42,14 @@
 		}
 	});
 
-	let src = $derived(app.highlight[index]?.photo || '/no_photo.png');
+	let src = $derived(app.highlight?.[index]?.photo || '/no_photo.png');
 </script>
 
-{#if app.highlight.length > 0 || app.user.access.includes('post:edit_highlight')}
+{#if app.highlight?.length > 0 || app.user.access.includes('post:edit_highlight')}
 	<Content --content-height="100%" --content-padding-top="80px" --content-padding-bottom="56px">
 		<div class="line">
 			<div class="page_title">
-				Some Thing{app.highlight.length > 1 ? 's' : ''}
+				Some Thing{app.highlight?.length > 1 ? 's' : ''}
 				I've Built
 			</div>
 
@@ -58,7 +58,7 @@
 			{/if}
 		</div>
 
-		{#if app.highlight.length > 0}
+		{#if app.highlight?.length > 0}
 			<LinkArrow href="/post" --link-font-size="0.8rem">View more</LinkArrow>
 
 			<br />
@@ -94,7 +94,7 @@
 								set(-1);
 							}}
 						>
-							<Icon2 icon="chevron-left" />
+							<Icon icon="chevron-left" />
 						</button>
 
 						<button
@@ -102,7 +102,7 @@
 								set(1);
 							}}
 						>
-							<Icon2 icon="chevron-right" />
+							<Icon icon="chevron-right" />
 						</button>
 					</div>
 

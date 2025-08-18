@@ -2,7 +2,6 @@
 	import { module, loading, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
 	import EmailTemplate from './_password.template.svelte';
@@ -43,10 +42,7 @@
 		This code will be sent to your current email address to confirm that you are the owner of this
 		account.
 	</Note>
-	<Button primary onclick={submit}>
-		Request Code
-		<Icon icon="send" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={submit}>Request Code</Button>
 </Form>
 
 <div bind:this={email_template} style="display: none;">

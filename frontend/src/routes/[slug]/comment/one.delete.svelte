@@ -2,7 +2,6 @@
 	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon, Marked } from '$lib/macro';
 	import { Form } from '$lib/layout';
 
 	let comment = { ...module.value.comment };
@@ -48,18 +47,8 @@
 	<br />
 
 	<div class="line">
-		<Button extra="hover_red" onclick={submit}>
-			<Icon icon="delete" />
-			Yes
-		</Button>
-		<Button
-			onclick={() => {
-				module.close();
-			}}
-		>
-			<Icon icon="close" />
-			No
-		</Button>
+		<Button icon="trash-2" --button-background-color-hover="red" onclick={submit}>Yes</Button>
+		<Button icon="x" onclick={() => module.close()}>No</Button>
 	</div>
 </Form>
 

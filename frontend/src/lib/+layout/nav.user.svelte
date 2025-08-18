@@ -4,7 +4,7 @@
 	import { page } from '$app/state';
 	import { app } from '$lib/store.svelte.js';
 
-	import { Avatar, Icon2 } from '$lib/macro';
+	import { Avatar, Icon } from '$lib/macro';
 	import { Hamburger } from '$lib/button';
 	import Menu from './nav.user.menu.svelte';
 
