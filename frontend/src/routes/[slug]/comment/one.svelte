@@ -93,9 +93,8 @@
 				<div class="date"><Datetime datetime={comment.date} type="ago" /></div>
 			</div>
 
-			<!-- TODO: fix comment height -->
 			<div class="comment">
-				<Marked content={comment.comment} />
+				{comment.comment}
 			</div>
 
 			{#if error.error}
@@ -197,6 +196,7 @@
 
 	.comment {
 		font-size: 0.8rem;
+		margin-top: 4px;
 	}
 
 	.error {

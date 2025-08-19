@@ -32,7 +32,7 @@ def send_email():
         error["name"] = "cannot be empty"
     if "email" not in request.json or not request.json["email"]:
         error["email"] = "cannot be empty"
-    elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
+    elif not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", request.json["email"]):
         error["email"] = "invalid email"
     if "message" not in request.json or not request.json["message"]:
         error["message"] = "cannot be empty"

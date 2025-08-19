@@ -20,7 +20,7 @@
 
 		if (!form.email) {
 			error.email = 'cannot be empty';
-		} else if (!/\S+@\S+\.\S+/.test(form.email)) {
+		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
 			error.email = 'Please enter a valid email';
 		} else if (form.email == app.user.email) {
 			error.email = 'please use a different email form your current email';

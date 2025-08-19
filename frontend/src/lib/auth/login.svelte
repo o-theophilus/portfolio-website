@@ -5,7 +5,7 @@
 
 	import { IG } from '$lib/input';
 	import { Button, Link } from '$lib/button';
-	import { Br, Row, Form } from '$lib/layout';
+	import {  Form } from '$lib/layout';
 	import Signup from './signup.svelte';
 	import Forgot from './forgot_1.email.svelte';
 	import EmailTemplate from './confirm.template.svelte';
@@ -85,9 +85,10 @@
 
 	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 
-	<Br></Br>
+	<br />
+	<br />
 
-	<Row>
+	<div class="line">
 		<Link onclick={() => module.open(Signup, { email: form.email })} --link-font-size="0.8rem">
 			Signup
 		</Link>
@@ -95,7 +96,7 @@
 		<Link onclick={() => module.open(Forgot, { email: form.email })} --link-font-size="0.8rem">
 			Forgot Password
 		</Link>
-	</Row>
+	</div>
 </Form>
 
 <div bind:this={email_template} style="display: none;">
@@ -103,4 +104,7 @@
 </div>
 
 <style>
+	.line {
+		gap: 16px;
+	}
 </style>

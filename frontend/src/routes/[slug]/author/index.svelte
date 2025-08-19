@@ -4,7 +4,6 @@
 	import { Link } from '$lib/button';
 	import Button from '../button.svelte';
 	import { Avatar, Spinner } from '$lib/macro';
-	import { Row } from '$lib/layout';
 	import Form from './edit.svelte';
 
 	let { post, edit_mode } = $props();
@@ -31,7 +30,7 @@
 		<Button onclick={() => module.open(Form, { post_key: post.key, update })}>Edit Author</Button>
 	{/if}
 
-	<Row>
+	<div class="line">
 		{#if loading}
 			<Spinner active={loading} size="20" />
 		{:else}
@@ -47,7 +46,7 @@
 
 		<span class="author"> | </span>
 		<span class="author"> Author </span>
-	</Row>
+	</div>
 {/if}
 
 <style>

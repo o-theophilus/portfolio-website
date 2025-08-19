@@ -3,7 +3,7 @@
 
 	import { IG } from '$lib/input';
 	import { Button, Link } from '$lib/button';
-	import { Br, Form } from '$lib/layout';
+	import { Form } from '$lib/layout';
 	import Login from './login.svelte';
 	import EmailTemplate from './confirm.template.svelte';
 	import Confirm from './confirm.svelte';
@@ -23,7 +23,7 @@
 		}
 		if (!form.email) {
 			error.email = 'cannot be empty';
-		} else if (!/\S+@\S+\.\S+/.test(form.email)) {
+		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
 			error.email = 'invalid email';
 		}
 		if (!form.password) {
@@ -110,8 +110,7 @@
 	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 
 	<br />
-
-	<Br></Br>
+	<br />
 
 	<Link onclick={() => module.open(Login, { email: form.email })} --link-font-size="0.8rem"
 		>Login</Link

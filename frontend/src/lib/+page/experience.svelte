@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 
-	import { Content, Row } from '$lib/layout';
+	import { Content } from '$lib/layout';
 	import { LinkArrow, Tag } from '$lib/button';
 
 	let exp = [
@@ -167,11 +167,11 @@
 						</ul>
 					</div>
 
-					<Row --row-gap="4px">
+					<div class="line">
 						{#each exp[active].tags as x}
 							<Tag --tag-color="var(--ft2)">{x}</Tag>
 						{/each}
-					</Row>
+					</div>
 				</div>
 			{/key}
 		</div>
@@ -337,5 +337,9 @@
 		.left {
 			display: flex;
 		}
+	}
+
+	.line {
+		gap: 4px;
 	}
 </style>

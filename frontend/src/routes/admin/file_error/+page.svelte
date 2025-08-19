@@ -90,7 +90,7 @@
 			</div>
 
 			{#if error.error}
-				<div class="error">
+				<div class="error" transition:slide>
 					{error.error}
 				</div>
 			{/if}
@@ -211,6 +211,8 @@
 
 	.error {
 		margin: var(--sp2) 0;
+		color: red;
+		font-size: 0.8rem;
 	}
 
 	.none {

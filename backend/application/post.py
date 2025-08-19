@@ -217,7 +217,8 @@ def edit(key):
         elif not request.json["author_email"]:
             error["author_email"] = "cannot be empty"
         elif (
-            not re.match(r"\S+@\S+\.\S+", request.json["author_email"])
+            not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$",
+                         request.json["author_email"])
             and request.json["author_email"] != "default"
         ):
             error["author_email"] = "Please enter a valid email"

@@ -3,7 +3,6 @@
 
 	import { Icon } from '$lib/macro';
 	import { Button } from '$lib/button';
-	import { Row } from '$lib/layout';
 
 	let title = module.value.title || 'Done';
 	let status = module.value.status || 200;
@@ -31,7 +30,7 @@
 		{@html message}
 	</div>
 
-	<Row --row-gap="8px">
+	<div class="line">
 		{#each buttons as x}
 			<Button
 				--button-width="100%"
@@ -45,7 +44,7 @@
 				{x.name}
 			</Button>
 		{/each}
-	</Row>
+	</div>
 </div>
 
 <style>

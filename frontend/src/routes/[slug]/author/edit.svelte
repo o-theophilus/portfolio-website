@@ -13,7 +13,7 @@
 
 		if (!form.author_email) {
 			error.author_email = 'cannot be empty';
-		} else if (!/\S+@\S+\.\S+/.test(form.author_email)) {
+		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.author_email)) {
 			error.author_email = 'invalid email';
 		}
 

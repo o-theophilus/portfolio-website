@@ -3,6 +3,7 @@
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
+	import { Form } from '$lib/layout';
 
 	let report_key = module.value.report_key;
 	let form = {};
@@ -42,34 +43,7 @@
 	};
 </script>
 
-<form onsubmit={(e) => e.preventDefault()} novalidate autocomplete="off">
-	<div class="page_title">
-		Resolve:
-		<span class="caps">
-			{report_key.slice(-10)}
-		</span>
-	</div>
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Resolve: {report_key.slice(-10).upperCase()}" error={error.error}>
 	<IG name="Note" error={error.note} type="textarea" placeholder="Note" bind:value={form.note} />
 	<Button icon2="send-horizontal" onclick={() => validate('resolved')}>Resolve</Button>
-</form>
-
-<style>
-	form {
-		padding: var(--sp3);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-	}
-
-	.caps {
-		text-transform: uppercase;
-	}
-</style>
+</Form>

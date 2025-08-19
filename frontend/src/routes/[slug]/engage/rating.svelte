@@ -2,6 +2,7 @@
 	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
+	import { Form } from '$lib/layout';
 
 	let rating = $state(0);
 	let error = $state({});
@@ -52,15 +53,7 @@
 	};
 </script>
 
-<section>
-	<div class="page_title">Add Rating</div>
-
-	{#if error.error}
-		<div class="error">
-			{error.error}
-		</div>
-	{/if}
-
+<Form title="Add Rating" error={error.error}>
 	<div class="label">
 		Rating ({rating})
 	</div>
@@ -87,13 +80,9 @@
 	</div>
 
 	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
-</section>
+</Form>
 
 <style>
-	section {
-		padding: var(--sp3);
-	}
-
 	.block {
 		position: relative;
 
@@ -151,9 +140,6 @@
 		cursor: pointer;
 	}
 
-	.error {
-		margin: var(--sp2) 0;
-	}
 	.label {
 		margin-top: var(--sp2);
 		font-size: 0.8rem;

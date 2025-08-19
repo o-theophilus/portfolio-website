@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import { app, page_state } from '$lib/store.svelte.js';
 
-	import { Row, Br } from '$lib/layout';
 	import { Spinner } from '$lib/macro';
 	import { Tag } from '$lib/button';
 
@@ -29,7 +28,6 @@
 		<Spinner active={loading} size="20" />
 		Loading tags . . .
 	</div>
-	<Br />
 {:else if app.tags?.length > 0}
 	<hr />
 	<div class="line wrap">
@@ -44,7 +42,6 @@
 			>
 		{/each}
 	</div>
-	<Br />
 {/if}
 
 <style>

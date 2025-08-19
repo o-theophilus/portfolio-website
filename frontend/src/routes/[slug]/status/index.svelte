@@ -71,15 +71,13 @@
 			</Button>
 		{/if}
 
-		{#if _status != 'delete'}
-			<Button
-				--button-background-color-hover="red"
-				icon="trash-2"
-				onclick={() => module.open(Delete, { ...module.value })}
-			>
-				Delete
-			</Button>
-		{/if}
+		<Button
+			--button-background-color-hover="red"
+			icon="trash-2"
+			onclick={() => module.open(Delete, { ...module.value })}
+		>
+			Delete
+		</Button>
 	</div>
 </Form>
 

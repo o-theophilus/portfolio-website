@@ -39,7 +39,6 @@
 		display: block;
 
 		width: 100%;
-		margin: var(--sp2) 0;
 		border-radius: var(--sp1);
 
 		background-color: var(--bg2);

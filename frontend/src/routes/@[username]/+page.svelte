@@ -38,7 +38,6 @@
 <Log action={'viewed'} entity_key={user.key} entity_type={'user'} />
 
 <Content>
-	<br />
 	<div class="line">
 		<div class="page_title">Profile</div>
 
@@ -56,7 +55,7 @@
 	<br /><br /><br />
 
 	<div class="line center">
-		<Avatar name={user.name} photo={user.photo} size="120" />
+		<Avatar name={user.name} photo={user.photo} size="120" --avatar-border-radius="50%" />
 
 		{#if edit_mode && user.key == app.user.key}
 			<RoundButton

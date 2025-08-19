@@ -70,7 +70,6 @@
 <Meta title={post.title} description={post.description} image={post.photo} />
 
 <Content>
-	<br />
 	{#if is_admin}
 		<Toggle state_2="edit" active={edit_mode} onclick={() => (edit_mode = !edit_mode)} />
 	{/if}

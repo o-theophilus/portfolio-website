@@ -218,7 +218,7 @@ def email_3_new_email():
     error = None
     if "email" not in request.json or not request.json["email"]:
         error = "cannot be empty"
-    elif not re.match(r"\S+@\S+\.\S+", request.json["email"]):
+    elif not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", request.json["email"]):
         error = "invalid email"
     if error:
         db_close(con, cur)
@@ -282,7 +282,7 @@ def email_4_new_code():
 
     if (
         "email" not in request.json or not request.json["email"]
-        or not re.match(r"\S+@\S+\.\S+", request.json["email"])
+        or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", request.json["email"])
     ):
         db_close(con, cur)
         return jsonify({

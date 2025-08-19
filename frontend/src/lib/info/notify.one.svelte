@@ -2,7 +2,6 @@
 	import { notify } from '$lib/store.svelte.js';
 
 	import { Icon } from '$lib/macro';
-	import { Row } from '$lib/layout';
 
 	let { one } = $props();
 
@@ -21,7 +20,7 @@
 </script>
 
 <div class="notify" class:bad={one.status == 400} class:caution={one.status == 201}>
-	<Row nowrap>
+	<div class="line nowrap">
 		<Icon
 			size="24"
 			icon={one.status == 201 ? 'triangle-alert' : one.status == 400 ? 'circle-x' : 'square-check'}
@@ -41,7 +40,7 @@
 				/>
 			</svg>
 		</button>
-	</Row>
+	</div>
 </div>
 
 <style>

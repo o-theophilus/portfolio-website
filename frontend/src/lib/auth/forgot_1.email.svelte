@@ -2,7 +2,7 @@
 	import { module, app, loading } from '$lib/store.svelte.js';
 
 	import { IG } from '$lib/input';
-	import { Br, Row, Form } from '$lib/layout';
+	import { Form } from '$lib/layout';
 	import { Button, Link } from '$lib/button';
 
 	import Signup from './signup.svelte';
@@ -21,7 +21,7 @@
 
 		if (!form.email) {
 			error.email = 'cannot be empty';
-		} else if (!/\S+@\S+\.\S+/.test(form.email)) {
+		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
 			error.email = 'invalid email';
 		}
 
@@ -63,9 +63,10 @@
 
 	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 
-	<Br></Br>
+	<br />
+	<br />
 
-	<Row>
+	<div class="line">
 		<Link onclick={() => module.open(Login, { email: form.email })} --link-font-size="0.8rem"
 			>Login</Link
 		>
@@ -73,7 +74,7 @@
 		<Link onclick={() => module.open(Signup, { email: form.email })} --link-font-size="0.8rem"
 			>Signup</Link
 		>
-	</Row>
+	</div>
 </Form>
 
 <div bind:this={email_template} style="display: none;">
@@ -81,4 +82,7 @@
 </div>
 
 <style>
+	.line {
+		gap: 16px;
+	}
 </style>
