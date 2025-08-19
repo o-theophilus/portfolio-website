@@ -24,3 +24,8 @@ use layout/error
 verify input length
 login time tracking
 
+
+remove all comments
+//
+#
+<!-- -->

@@ -3,7 +3,7 @@
 
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Form } from '$lib/Layout';
+	import { Form } from '$lib/layout';
 
 	let form = {
 		...module.value
