@@ -112,6 +112,7 @@ def storage(method, x=None, path="", thumbnail=False):
     if test:
         path = "static/post"
         os.makedirs(f"{os.getcwd()}/{path}", exist_ok=True)
+    # test = False
 
     defs = {
         "save": {
