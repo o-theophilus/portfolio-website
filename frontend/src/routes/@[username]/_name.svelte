@@ -51,7 +51,7 @@
 <Form title="Edit Name" error={error.error}>
 	<IG
 		name="Name"
-		icon="person"
+		icon="user"
 		error={error.name}
 		placeholder="Name here"
 		type="text"

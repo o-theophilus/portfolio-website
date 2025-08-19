@@ -50,30 +50,30 @@
 <hr />
 
 <div class="line">
-	<Like
-		like={post.like.length}
-		dislike={post.dislike.length}
-		onlike={() => {
-			post.dislike = post.dislike.filter((e) => e != app.user.key);
-			if (post.like.includes(app.user.key)) {
-				post.like = post.like.filter((e) => e != app.user.key);
-			} else {
-				post.like.push(app.user.key);
-			}
-			submit_like(true);
-		}}
-		ondislike={() => {
-			post.like = post.like.filter((e) => e != app.user.key);
-			if (post.dislike.includes(app.user.key)) {
-				post.dislike = post.dislike.filter((e) => e != app.user.key);
-			} else {
-				post.dislike.push(app.user.key);
-			}
-			submit_like(false);
-		}}
-	/>
-
 	{#if app.user.login}
+		<Like
+			like={post.like.length}
+			dislike={post.dislike.length}
+			onlike={() => {
+				post.dislike = post.dislike.filter((e) => e != app.user.key);
+				if (post.like.includes(app.user.key)) {
+					post.like = post.like.filter((e) => e != app.user.key);
+				} else {
+					post.like.push(app.user.key);
+				}
+				submit_like(true);
+			}}
+			ondislike={() => {
+				post.like = post.like.filter((e) => e != app.user.key);
+				if (post.dislike.includes(app.user.key)) {
+					post.dislike = post.dislike.filter((e) => e != app.user.key);
+				} else {
+					post.dislike.push(app.user.key);
+				}
+				submit_like(false);
+			}}
+		/>
+
 		<Button
 			size="small"
 			primary={my_rating != 0}

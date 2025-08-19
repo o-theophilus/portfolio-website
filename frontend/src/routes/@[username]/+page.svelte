@@ -103,7 +103,7 @@
 
 	{#if (edit_mode && user.key == app.user.key) || user.phone}
 		<div class="line center">
-			<Icon icon="call" />
+			<Icon icon="phone" />
 			{user.phone || 'None'}
 			{#if edit_mode && user.key == app.user.key}
 				<RoundButton icon="square-pen" onclick={() => module.open(Phone, { ...user, update })} />

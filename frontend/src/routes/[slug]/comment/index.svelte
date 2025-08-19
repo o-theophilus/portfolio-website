@@ -95,19 +95,21 @@
 				{/if}
 			</div>
 		{:else}
-			<PageNote>No comment</PageNote>
+			<PageNote>
+				<Icon icon="message-circle-off" size="50" />
+				No comment
+			</PageNote>
 		{/each}
 	</div>
 {/if}
 
 <div class="button">
 	{#if app.user.login}
-		<Button onclick={() => module.open(Add, { post, update, search })}>
-			<Icon icon="message-circle-plus" />
+		<Button icon="message-circle-plus" onclick={() => module.open(Add, { post, update, search })}>
 			Add comment
 		</Button>
 	{:else}
-		<Button size="small" onclick={() => module.open(Login)}>Login to add comment</Button>
+		<Button icon="log-in" onclick={() => module.open(Login)}>Login to add comment</Button>
 	{/if}
 </div>
 
