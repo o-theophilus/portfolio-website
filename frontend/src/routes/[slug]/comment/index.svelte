@@ -38,6 +38,7 @@
 			order_by = resp.order_by;
 			if (comments.length) open = true;
 		}
+
 		loading = false;
 	};
 </script>
@@ -82,17 +83,15 @@
 				bind:value={search.order}
 				onchange={(v) => {
 					search.page_no = 1;
-					// v = v == 'latest' ? '' : v;
-					// page_state.set({ order: v });
 					load();
 				}}
 			/>
 		{/if}
 
-		{#each comments as x (x.key)}
+		{#each comments as comment (comment.key)}
 			<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-				{#if x.path.length == 0}
-					<One comment={x} {comments} post_key={post.key} {update} {search} />
+				{#if comment.path.length == 0}
+					<One {post} {comment} {comments} {update} {search} />
 				{/if}
 			</div>
 		{:else}
@@ -103,7 +102,7 @@
 
 <div class="button">
 	{#if app.user.login}
-		<Button onclick={() => module.open(Add, { post_key: post.key, path: [], update, search })}>
+		<Button onclick={() => module.open(Add, { post, update, search })}>
 			<Icon icon="message-circle-plus" />
 			Add comment
 		</Button>

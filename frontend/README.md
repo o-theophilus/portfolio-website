@@ -1,6 +1,3 @@
-delete user commment like
-
-
 FEATURES:
 
 clean main.css
@@ -17,7 +14,6 @@ blocked user
 
 
 disabled buttond should give a message insteda
-
 
 
 cron to cleanup files from drive

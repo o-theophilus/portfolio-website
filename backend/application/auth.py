@@ -646,6 +646,13 @@ def deactivate():
         OR path && (SELECT array_agg(key) FROM user_comments);
     """, (user["key"], user["key"]))
 
+    cur.execute("""
+        UPDATE comment
+        SET likes = array_remove(likes, %s),
+            dislikes = array_remove(dislikes, %s)
+        WHERE %s = ANY(likes) OR %s = ANY(dislikes);
+    """, (user["key"], user["key"], user["key"], user["key"]))
+
     cur.execute("""DELETE FROM report
         WHERE reporter_key = %s OR reported_key = %s
     ;""", (user["key"], user["key"]))

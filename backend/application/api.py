@@ -94,7 +94,6 @@ def create_tables():
     })
 
 
-# @bp.get("/fix")
 def copy_table():
     con1 = psycopg2.connect("postgres://admin:admin@localhost/loup")
     cur1 = con1.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -178,6 +177,20 @@ def fix_access():
         [f"{x}:{y[0]}" for x in access for y in access[x]],
         os.environ["MAIL_USERNAME"]
     ))
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
+# @bp.get("/fix")
+def quick_fix():
+    con, cur = db_open()
+
+    cur.execute("""
+        DELETE FROM log WHERE key = 'ce2873fdca1d4883b6a3b6badf4ca82c';
+    """)
 
     db_close(con, cur)
     return jsonify({

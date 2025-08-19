@@ -8,7 +8,7 @@
 	import { Content } from '$lib/layout';
 	import { BackButton } from '$lib/button';
 	import { Pagination, Dropdown, Search } from '$lib/input';
-	import { Meta, Radio, Log, Icon } from '$lib/macro';
+	import { Meta, Log, Icon } from '$lib/macro';
 	import { PageNote } from '$lib/info';
 	import One from './one.svelte';
 

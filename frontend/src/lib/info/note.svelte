@@ -20,7 +20,7 @@
 {#if note || children}
 	<div class="block _{status}" transition:slide>
 		{#if note}
-			<div class="line">
+			<div class="line nowrap">
 				<Icon
 					icon={status == 400
 						? 'circle-x'

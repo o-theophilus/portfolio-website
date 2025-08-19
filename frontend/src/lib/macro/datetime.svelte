@@ -41,6 +41,7 @@
 		return i + 'th';
 	};
 
+	// TODO: fix this
 	function calculateTimeAgo(date) {
 		const now = new SvelteDate();
 		const diff = now - date;

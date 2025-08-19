@@ -1,22 +1,19 @@
 <script>
 	import { loading, module, notify, app } from '$lib/store.svelte.js';
 
-	import { Button, Link } from '$lib/button';
+	import { Button, Tag } from '$lib/button';
 	import { Form } from '$lib/layout';
 	import { IG, Dropdown } from '$lib/input';
 	import { Avatar } from '$lib/macro';
 	import { template, tags } from './one.report.template.js';
+	import One from './one.mini.svelte';
 
-	let reported = module.value.reported;
-	let entity = module.value.entity;
+	let comment = { ...module.value.comment };
 
 	let form = $state({
-		reported_key: reported.key,
-		_entity_key: entity.key,
-		_entity_type: entity.type,
-
-		tags: [],
-		report: ''
+		entity_key: comment.key,
+		entity_type: 'comment',
+		tags: []
 	});
 	let error = $state({});
 
@@ -32,6 +29,7 @@
 
 	const submit = async () => {
 		loading.open('Sending Report . . .');
+
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/report`, {
 			method: 'post',
 			headers: {
@@ -53,14 +51,7 @@
 </script>
 
 <Form title="Report" error={error.error}>
-	<div class="highlight">
-		<Avatar name={reported.name} photo={reported.photo} />
-		<Link href="/profile?search={reported.key}" blank>
-			{reported.name}
-		</Link>
-		<div></div>
-		{entity.extra}
-	</div>
+	<One {comment}></One>
 
 	<IG
 		bind:value={form.report}
@@ -68,63 +59,54 @@
 		type="textarea"
 		placeholder="Reason for reporting"
 	>
-		<svelte:fragment slot="label">
+		{#snippet label()}
 			<Dropdown
-				wide
+				--select-height="10"
+				--select-padding-x="0"
+				--select-font-size="0.8rem"
+				--select-background-color="transparent"
+				--select-background-color-hover="transparent"
+				--select-color="var(--ft2)"
+				--select-color-hover="var(--ft1)"
+				--select-outline-color="transparent"
 				list={Object.keys(template)}
-				on:change={(e) => {
-					form.report = template[e.target.value];
-					e.target.value = 'Select Template';
+				label="Message"
+				icon2="chevron-down"
+				onchange={(e) => {
+					form.report = template[e];
 				}}
 			/>
-
-			<div class="gap"></div>
-		</svelte:fragment>
+		{/snippet}
 	</IG>
 
-	Select applicable tags
-
-	<!-- <Tags
-		style="1"
-		{tags}
-		active={form.tags}
-		onclick={(e) => {
-			if (form.tags.includes(e.detail)) {
-				form.tags = form.tags.filter((i) => i != e.detail);
-			} else {
-				form.tags.push(e.detail);
-			}
-			form = form;
-		}}
-	/> -->
-
-	<!-- <div class="line wrap">
-		{#each post.tags as x}
+	<div class="label">Select applicable tags</div>
+	<div class="line">
+		{#each tags as x}
 			<Tag
+				--tag-background-color={form.tags.includes(x) ? 'var(--cl1)' : 'unset'}
+				--tag-color={form.tags.includes(x) ? 'white' : 'unset'}
 				onclick={() => {
-					page_state.set({ tag: [x] });
-				}}>{x}</Tag
+					if (form.tags.includes(x)) {
+						form.tags = form.tags.filter((i) => i != x);
+					} else {
+						form.tags.push(x);
+					}
+				}}
 			>
+				{x}
+			</Tag>
 		{/each}
-	</div> -->
+	</div>
 
 	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 </Form>
 
 <style>
-	.highlight {
-		display: grid;
-		grid-template-columns: 1fr 100%;
-		gap: 0 var(--sp1);
-		align-items: center;
-
-		background-color: var(--bg2);
-		padding: var(--sp2);
-		border-radius: var(--sp0);
-		margin: var(--sp2) 0;
+	.label {
+		font-size: 0.8rem;
 	}
-
-	.gap {
-		height: var(--sp1);
+	.line {
+		margin-top: 8px;
+		margin-bottom: 16px;
 	}
 </style>

@@ -67,6 +67,7 @@ comment_table = """CREATE TABLE IF NOT EXISTS comment (
 );"""
 
 
+# TODO: remove reported_key
 report_table = """CREATE TABLE IF NOT EXISTS report (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'unresolved' NOT NULL,

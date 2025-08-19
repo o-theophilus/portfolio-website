@@ -24,15 +24,36 @@ def log(
         con, cur = db_open()
 
     try:
-        if "action" in request.json and request.json["action"]:
+        if (
+            not action
+            and "action" in request.json
+            and request.json["action"]
+        ):
             action = request.json["action"]
-        if "entity_type" in request.json and request.json["entity_type"]:
+        if (
+            not entity_type
+            and "entity_type" in request.json
+            and request.json["entity_type"]
+        ):
             entity_type = request.json["entity_type"]
-        if "entity_key" in request.json and request.json["entity_key"]:
+        if (
+            not entity_key
+            and "entity_key" in request.json
+            and request.json["entity_key"]
+        ):
             entity_key = request.json["entity_key"]
-        if "status" in request.json and request.json["status"]:
-            status = int(request.json["status"])
-        if "misc" in request.json and type(request.json["misc"]) is dict:
+        if (
+            status == 200
+            and "status" in request.json
+            and request.json["status"]
+            and request.json["status"] is int
+        ):
+            status = request.json["status"]
+        if (
+            misc == {}
+            and "misc" in request.json
+            and type(request.json["misc"]) is dict
+        ):
             misc = request.json["misc"]
     except Exception:
         pass

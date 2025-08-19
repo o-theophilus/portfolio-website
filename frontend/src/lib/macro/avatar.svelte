@@ -1,15 +1,12 @@
 <script>
 	let {
-		size = 40,
 		name,
-
 		photo,
-		crop = false,
 		no_photo = null,
+		size = 40
 
-		area_lock = false,
-
-		children
+		// crop = false,
+		// area_lock = false
 	} = $props();
 
 	function get_color(str) {
@@ -22,41 +19,34 @@
 		return [bg, fg];
 	}
 
-	const get_size = () => {
-		let sz = [1, size, size];
-		if (!photo || !area_lock || crop) return sz;
-		let match = photo.match(/_(\d+)x(\d+)\./);
-		if (!match) return sz;
+	// const get_size = () => {
+	// 	let sz = [1, size, size];
+	// 	if (!photo || !area_lock || crop) return sz;
+	// 	let match = photo.match(/_(\d+)x(\d+)\./);
+	// 	if (!match) return sz;
 
-		sz[0] = match[1] / match[2]; //aspect-ratio
-		sz[1] = Math.sqrt(size * size * sz[0]); // width
-		sz[2] = sz[1] / sz[0]; // height
+	// 	sz[0] = match[1] / match[2]; //aspect-ratio
+	// 	sz[1] = Math.sqrt(size * size * sz[0]); // width
+	// 	sz[2] = sz[1] / sz[0]; // height
 
-		return sz;
-	};
+	// 	return sz;
+	// };
 
 	let color = get_color(name);
-	let dim = get_size();
+	// let dim = get_size();
 
 	let src = $derived.by(() => {
 		if (photo) {
-			if (crop) photo += `${size}`;
-			return photo;
+			// if (crop)
+			// photo = `${photo}/${size}`;
+			return `${photo}/${size}`;
 		}
 		return no_photo;
 	});
 </script>
 
 {#if src}
-	<img
-		{src}
-		alt={name}
-		style:aspect-ratio={dim[0]}
-		style:max-width="{dim[1]}px"
-		onerror={() => (src = no_photo || null)}
-	/>
-{:else if children}
-	{@render children()}
+	<img {src} alt={name} style:--size="{size}px" onerror={() => (src = no_photo)} />
 {:else}
 	<div class="avatar" style:color={color[1]} style:--hue={color[0]} style:--size="{size}px">
 		{name[0]}
@@ -65,13 +55,17 @@
 
 <style>
 	img {
-		display: block;
+		/* display: block; */
+		flex-shrink: 0;
+		flex-grow: 0;
 
-		/* width: 100%; */
+		width: var(--size);
+		height: var(--size);
+
 		object-fit: cover;
-		background-color: var(--bg2);
+		/* background-color: var(--bg2); */
 
-		border-radius: var(--avatar-border-radius, 8px);
+		border-radius: var(--avatar-border-radius, 4px);
 	}
 
 	.avatar {

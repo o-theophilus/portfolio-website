@@ -90,8 +90,8 @@
 		cursor: pointer;
 	}
 
-	a:focus,
-	button:focus,
+	/* a:focus, */
+	/* button:focus, */
 	a:hover,
 	button:hover {
 		background-color: var(--button-background-color-hover, hsl(0, 0%, 85%));

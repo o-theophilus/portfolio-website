@@ -197,12 +197,14 @@
 		/>
 	</svg>
 {:else}
-	<svg data-lucide={icon} style:--size="{size}px"></svg>
+	<svg data-lucide={icon} style:--sz="{size}px"></svg>
 {/if}
 
 <style>
 	svg {
-		width: var(--size);
-		height: var(--size);
+		width: var(--sz);
+		height: var(--sz);
+
+		flex-shrink: 0;
 	}
 </style>

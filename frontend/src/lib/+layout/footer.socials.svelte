@@ -16,7 +16,7 @@
 <div class="line">
 	{#each platforms as { icon, href }}
 		<a {href} target="_blank" rel="noopener noreferrer">
-			<Icon {icon} size="24" />
+			<Icon {icon} size="20" />
 		</a>
 	{/each}
 </div>
@@ -41,7 +41,6 @@
 		width: var(--size);
 		height: var(--size);
 		border-radius: 50%;
-		padding: 8px;
 
 		background-color: transparent;
 		fill: var(--ft2);

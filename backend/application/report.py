@@ -149,15 +149,18 @@ def create():
         })
 
     if (
-        "reported_key" not in request.json
-        or not request.json["reported_key"]
+        "entity_key" not in request.json
+        or not request.json["entity_key"]
+        or "entity_type" not in request.json
+        or not request.json["entity_type"]
+        or request.json["entity_type"] not in ["user", "comment"]
         or "tags" not in request.json
         or type(request.json["tags"]) is not list
     ):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "report": "invalid request"
+            "error": "invalid request"
         })
 
     if "report" not in request.json or not request.json["report"]:
@@ -167,12 +170,11 @@ def create():
             "report": "cannot be empty"
         })
 
-    cur.execute("""
-        SELECT * FROM "user" WHERE key = %s;
-    """, (request.json["reported_key"],))
-    reported_user = cur.fetchone()
-    if not reported_user:
-        db_close(con, cur)
+    cur.execute(f"""
+        SELECT * FROM "{request.json['entity_type']}" WHERE key = %s;
+    """, (request.json["entity_key"],))
+    entity = cur.fetchone()
+    if not entity:
         return jsonify({
             "status": 400,
             "error": "invalid request"
@@ -180,44 +182,19 @@ def create():
 
     cur.execute("""
         INSERT INTO report (key, reporter_key, reported_key,
-            report, tags)
-        VALUES (%s, %s, %s, %s, %s)
+            entity_key, entity_type, report, tags)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         RETURNING *;
     """, (
         uuid4().hex,
         user["key"],
-        reported_user["key"],
+        entity["user_key"],
+        entity["key"],
+        request.json["entity_type"],
         request.json["report"],
         request.json["tags"]
     ))
     report = cur.fetchone()
-
-    if (
-        "_entity_key" in request.json
-        and request.json["_entity_key"]
-        and "_entity_type" in request.json
-        and request.json["_entity_type"]
-        and request.json["_entity_type"] in ["comment"]
-    ):
-        cur.execute("""
-            SELECT * FROM {} WHERE key = %s;
-        """.format(request.json["_entity_type"]),
-            (request.json["_entity_key"],))
-        entity = cur.fetchone()
-        if entity:
-            cur.execute("""
-                UPDATE report
-                SET
-                    entity_key = %s,
-                    entity_type = %s
-                WHERE key = %s
-                RETURNING *;
-            """, (
-                request.json["_entity_key"],
-                request.json["_entity_type"],
-                report["key"])
-            )
-            report = cur.fetchone()
 
     log(
         cur=cur,
@@ -226,7 +203,8 @@ def create():
         entity_key=report["key"],
         entity_type="report",
         misc={
-            "reported_key":  reported_user["key"],
+            "entity_key":  request.json["entity_key"],
+            "entity_type":  request.json["entity_type"],
         }
     )
 
@@ -236,7 +214,7 @@ def create():
     })
 
 
-@ bp.post("/report/status/<key>")
+@bp.post("/report/status/<key>")
 def status(key):
     con, cur = db_open()
 

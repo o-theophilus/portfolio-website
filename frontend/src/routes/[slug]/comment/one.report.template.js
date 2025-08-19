@@ -1,5 +1,4 @@
 export let template = {
-	'Select Template': "",
 	'Personal attacks': "This comment contains personal attacks and insults towards other users. It creates a toxic environment and goes against the principles of respectful discourse.",
 	'Misinformation': "I believe this comment is spreading misinformation and is not based on factual evidence. It may mislead other readers and is therefore harmful.",
 	'Off-topic': "This comment is off-topic and does not relate to the content of the post. It is disrupting the conversation and may confuse other readers.",

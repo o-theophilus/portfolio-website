@@ -12,7 +12,8 @@
 	import Delete from './one.delete.svelte';
 	import Report from './one.report.svelte';
 
-	let { post_key, update, search, comment, comments = [] } = $props();
+	let { post, comment, comments = [], update, search } = $props();
+
 	let error = $state({});
 	let path = [...comment.path];
 	path.push(comment.key);
@@ -46,6 +47,8 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
+			console.log(resp);
+
 			comment = resp.comment;
 		} else {
 			error = resp;
@@ -72,23 +75,11 @@
 {#snippet menu()}
 	<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
 		{#if comment.user.key == app.user.key}
-			{@render button('Delete', 'trash-2', () => module.open(Delete, { comment, update }))}
-			{@render button('Report', 'flag-triangle-right', () => {
-				module.open(Report, {
-					reported: {
-						key: comment.user.key,
-						name: comment.user.name,
-						photo: comment.user.photo
-					},
-					entity: {
-						type: 'comment',
-						key: comment.key,
-						extra: comment.comment
-					}
-				});
-			})}
+			{@render button('Delete', 'trash-2', () => module.open(Delete, { comment, update, search }))}
 		{:else}
-			<!-- Report -->
+			{@render button('Report', 'flag-triangle-right', () => {
+				module.open(Report, { comment });
+			})}
 		{/if}
 	</div>
 {/snippet}
@@ -97,11 +88,12 @@
 	<div class="avatar_content">
 		<Avatar name={comment.user.name} photo={comment.user.photo} />
 		<div class="content">
-			<div class="line space">
+			<div class="line space name_date">
 				<div class="name">{comment.user.name}</div>
 				<div class="date"><Datetime datetime={comment.date} type="ago" /></div>
 			</div>
 
+			<!-- TODO: fix comment height -->
 			<div class="comment">
 				<Marked content={comment.comment} />
 			</div>
@@ -117,8 +109,7 @@
 					<div class="line">
 						<RoundButton
 							icon="reply"
-							onclick={() =>
-								module.open(Add, { post_key, path, comment: comment.comment, update, search })}
+							onclick={() => module.open(Add, { post, comment, update, search })}
 						/>
 
 						<Like
@@ -164,9 +155,9 @@
 		</div>
 	</div>
 
-	{#each comments as x}
-		{#if x.path[x.path.length - 1] == comment.key}
-			<One comment={x} {comments} {post_key} {update} {search} />
+	{#each comments as comm}
+		{#if comm.path[comm.path.length - 1] == comment.key}
+			<One {post} comment={comm} {comments} {update} {search} />
 		{/if}
 	{/each}
 </section>
@@ -188,6 +179,10 @@
 
 	.content {
 		width: 100%;
+	}
+
+	.name_date {
+		gap: 0 18px;
 	}
 
 	.name {

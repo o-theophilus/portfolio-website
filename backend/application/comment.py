@@ -14,16 +14,8 @@ def get_comments(key, cur=None):
         con, cur = db_open()
 
     order = "latest"
-    status = "active"
     if "order" in request.args:
         order = request.args["order"]
-    if "status" in request.args:
-        status = request.args["status"]
-
-    if status != "active":
-        user = token_to_user(cur)
-        if not user or "comment:view_deleted" not in user["access"]:
-            status = "active"
 
     order_by = {
         'latest': 'log.date',
@@ -73,7 +65,7 @@ def get_comments(key, cur=None):
                 (
                     SELECT COUNT(*)
                     FROM comment AS sub
-                    WHERE comm.key = ANY(sub.path) AND sub.status = 'active'
+                    WHERE comm.key = ANY(sub.path)
                 ) AS _count
             FROM comment AS comm
         )
@@ -85,6 +77,8 @@ def get_comments(key, cur=None):
             comment."like",
             comment.dislike,
             log.date,
+            log.entity_type,
+            log.misc,
             jsonb_build_object(
                 'key', "user".key,
                 'name', "user".name,
@@ -101,19 +95,15 @@ def get_comments(key, cur=None):
             AND log.entity_type = 'comment'
         WHERE
             comment.post_key = %s
-            AND comment.status = %s
         GROUP BY comment.key, log.date, "user".key,
             sub_2."like", sub_2.dislike,
             sub_2.most_reaction, sub_2.more_like,
-            child._count
+            child._count     , log.entity_type, log.misc
         ORDER BY {} {};
     """.format(
         order_by[order],
         order_dir[order]
-    ), (
-        key,
-        status
-    ))
+    ), (key,))
     comments = cur.fetchall()
     for x in comments:
         x["user"]["photo"] = (
@@ -296,9 +286,12 @@ def like(key):
         }
     )
 
-    comments = get_comments(comment["post_key"], cur)
     db_close(con, cur)
-    return comments
+    return jsonify({
+        "status": 200,
+        "comment": comment
+
+    })
 
 
 @bp.delete("/comment/<key>")

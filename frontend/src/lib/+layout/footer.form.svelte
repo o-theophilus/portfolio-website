@@ -7,7 +7,7 @@
 	import { Icon } from '$lib/macro';
 	import { EmailTemplate, Form } from '$lib/layout';
 	import { Dialogue } from '$lib/info';
-	import { IG } from '$lib/input';
+	import { IG, Dropdown } from '$lib/input';
 
 	let email_template;
 	let form = $state({});
@@ -101,22 +101,22 @@
 		placeholder="Message here"
 	>
 		{#snippet label()}
-			<button class="label">
-				Message
-				<Icon icon="chevron-down" />
-				<select
-					onchange={(e) => {
-						form.message = e.target.value;
-						e.target.value = 'Select Template';
-					}}
-				>
-					{#each Object.entries(template) as [key, val]}
-						<option value={val}>
-							{key}
-						</option>
-					{/each}
-				</select>
-			</button>
+			<Dropdown
+				--select-height="10"
+				--select-padding-x="0"
+				--select-font-size="0.8rem"
+				--select-color="var(--ft2)"
+				--select-color-hover="var(--ft1)"
+				--select-background-color="transparent"
+				--select-background-color-hover="transparent"
+				--select-outline-color="transparent"
+				label="Message"
+				list={Object.keys(template)}
+				icon2="chevron-down"
+				onchange={(e) => {
+					form.message = template[e];
+				}}
+			/>
 		{/snippet}
 	</IG>
 
@@ -132,31 +132,3 @@
 		{'{'}message{'}'}
 	</EmailTemplate>
 </div>
-
-<style>
-	.label {
-		position: relative;
-
-		display: flex;
-		align-items: center;
-		gap: 8px;
-
-		font-size: 0.8rem;
-		background-color: unset;
-		color: var(--ft2);
-		border: none;
-		padding: 0;
-	}
-
-	select {
-		position: absolute;
-		width: 74px;
-		opacity: 0;
-	}
-
-	option {
-		background-color: var(--bg1);
-		color: var(--ft2);
-		font-size: 1rem;
-	}
-</style>

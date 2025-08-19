@@ -6,15 +6,15 @@
 	import { Marked } from '$lib/macro';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
+	import One from './one.mini.svelte';
+
+	let post = module.value.post;
+	let comment = module.value.comment;
 
 	let form = {
-		path: module.value.path
+		path: comment ? [...comment.path, comment.key] : []
 	};
 
-	// let comment = $state('');
-	// if (module.value.comment) {
-	// 	comment = module.value.comment;
-	// }
 	let error = $state({});
 
 	const validate = () => {
@@ -30,7 +30,7 @@
 	const submit = async () => {
 		loading.open('Adding Comment . . .');
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/comment/${module.value.post_key}?${new URLSearchParams(
+			`${import.meta.env.VITE_BACKEND}/comment/${post.key}?${new URLSearchParams(
 				module.value.search
 			).toString()}`,
 			{
@@ -55,11 +55,9 @@
 	};
 </script>
 
-<Form title="{module.value.comment ? 'Reply' : 'Add'} Comment" error={error.error}>
-	{#if module.value.comment}
-		<Note>
-			<Marked content={module.value.comment} />
-		</Note>
+<Form title="{comment ? 'Reply' : 'Add'} Comment" error={error.error}>
+	{#if comment}
+		<One {comment}></One>
 	{/if}
 
 	<IG
@@ -68,7 +66,6 @@
 		type="textarea"
 		placeholder="Comment here"
 		bind:value={form.comment}
-		on:keypress
 	/>
 
 	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
