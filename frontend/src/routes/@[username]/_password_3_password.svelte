@@ -62,7 +62,7 @@
 <Form title="Change Password" error={error.error}>
 	<IG
 		name="Password"
-		icon="key"
+		icon="key-round"
 		error={error.password}
 		bind:value={form.password}
 		type="password++"
@@ -71,7 +71,7 @@
 
 	<IG
 		name="Confirm Password"
-		icon="key"
+		icon="key-round"
 		error={error.confirm_password}
 		bind:value={form.confirm_password}
 		type="password"

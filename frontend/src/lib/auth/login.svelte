@@ -5,7 +5,6 @@
 
 	import { IG } from '$lib/input';
 	import { Button, Link } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { Br, Row, Form } from '$lib/layout';
 	import Signup from './signup.svelte';
 	import Forgot from './forgot_1.email.svelte';
@@ -68,7 +67,7 @@
 <Form title="Login" error={error.error}>
 	<IG
 		name="Email"
-		icon="email"
+		icon="mail"
 		error={error.email}
 		type="email"
 		bind:value={form.email}
@@ -77,17 +76,14 @@
 
 	<IG
 		name="Password"
-		icon="key"
+		icon="key-round"
 		error={error.password}
 		placeholder="Password here"
 		type="password+"
 		bind:value={form.password}
 	></IG>
 
-	<Button onclick={validate}>
-		Submit
-		<Icon icon2="send-horizontal" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 
 	<Br></Br>
 

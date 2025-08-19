@@ -46,7 +46,7 @@
 <Form title="Edit Author" error={error.error}>
 	<IG
 		name="Author Email"
-		icon="email"
+		icon="mail"
 		error={error.author_email}
 		placeholder="Email here"
 		type="text"

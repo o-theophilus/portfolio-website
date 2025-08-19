@@ -57,7 +57,7 @@
 
 	<IG
 		name="New Email"
-		icon="email"
+		icon="mail"
 		error={error.email}
 		type="email"
 		bind:value={form.email}

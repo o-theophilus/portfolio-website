@@ -4,7 +4,6 @@
 
 	import { Content, Row } from '$lib/layout';
 	import { LinkArrow, Tag } from '$lib/button';
-	import { Icon } from '$lib/macro';
 
 	let exp = [
 		{

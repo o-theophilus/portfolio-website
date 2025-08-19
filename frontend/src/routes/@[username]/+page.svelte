@@ -93,7 +93,7 @@
 	</div>
 
 	<div class="line center">
-		<Icon icon="email" />
+		<Icon icon="mail" />
 		{user.email}
 
 		{#if edit_mode && user.key == app.user.key}

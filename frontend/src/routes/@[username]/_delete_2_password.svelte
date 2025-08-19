@@ -58,7 +58,7 @@
 
 	<IG
 		name="Password"
-		icon="key"
+		icon="key-round"
 		error={error.password}
 		bind:value={form.password}
 		type="password+"

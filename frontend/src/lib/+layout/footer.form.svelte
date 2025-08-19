@@ -4,7 +4,6 @@
 
 	import { template } from './footer.form.template.js';
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { EmailTemplate, Form } from '$lib/layout';
 	import { Dialogue } from '$lib/info';
 	import { IG, Dropdown } from '$lib/input';

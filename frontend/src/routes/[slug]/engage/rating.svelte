@@ -2,7 +2,6 @@
 	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 
 	let rating = $state(0);
 	let error = $state({});
@@ -87,10 +86,7 @@
 		</div>
 	</div>
 
-	<Button onclick={validate}>
-		Submit
-		<Icon icon2="send-horizontal" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 </section>
 
 <style>

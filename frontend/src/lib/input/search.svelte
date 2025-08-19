@@ -1,7 +1,6 @@
 <script>
 	import { Button, RoundButton } from '$lib/button';
 	import { IG } from '$lib/input';
-	import { Icon } from '$lib/macro';
 
 	let { value = $bindable(), placeholder = 'Search', ondone } = $props();
 	let value_rt = $derived(value);

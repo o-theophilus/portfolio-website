@@ -2,7 +2,6 @@
 	import { module, loading, app } from '$lib/store.svelte.js';
 
 	import { IG } from '$lib/input';
-	import { Icon } from '$lib/macro';
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
@@ -54,8 +53,5 @@
 	</Note>
 
 	<IG name="Code" error={error.code} bind:value={form.code} type="code"></IG>
-	<Button primary onclick={validate_submit}
-		>Submit
-		<Icon icon2="send-horizontal" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate_submit}>Submit</Button>
 </Form>

@@ -2,7 +2,6 @@
 	import { module, loading, app } from '$lib/store.svelte.js';
 
 	import { IG } from '$lib/input';
-	import { Icon } from '$lib/macro';
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
 
@@ -75,7 +74,7 @@
 <Form title="Forgot Password" error={error.error}>
 	<IG
 		name="New Password"
-		icon="key"
+		icon="key-round"
 		error={error.password}
 		bind:value={form.password}
 		type="password++"
@@ -84,15 +83,12 @@
 
 	<IG
 		name="Confirm New Password"
-		icon="key"
+		icon="key-round"
 		error={error.confirm_password}
 		bind:value={form.confirm_password}
 		type="password"
 		placeholder="Password here"
 	/>
 
-	<Button primary onclick={validate_submit}
-		>Submit
-		<Icon icon2="send-horizontal" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate_submit}>Submit</Button>
 </Form>

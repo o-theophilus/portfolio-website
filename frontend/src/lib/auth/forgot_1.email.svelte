@@ -2,7 +2,6 @@
 	import { module, app, loading } from '$lib/store.svelte.js';
 
 	import { IG } from '$lib/input';
-	import { Icon } from '$lib/macro';
 	import { Br, Row, Form } from '$lib/layout';
 	import { Button, Link } from '$lib/button';
 
@@ -55,17 +54,14 @@
 <Form title="Forgot Password" error={error.error}>
 	<IG
 		name="Email"
-		icon="email"
+		icon="mail"
 		error={error.email}
 		type="email"
 		bind:value={form.email}
 		placeholder="Email here"
 	/>
 
-	<Button primary onclick={validate}
-		>Submit
-		<Icon icon2="send-horizontal" />
-	</Button>
+	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 
 	<Br></Br>
 
