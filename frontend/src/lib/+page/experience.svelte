@@ -112,7 +112,7 @@
 	<div class="tabs">
 		{#each exp as x, i}
 			{#if i != 0}
-				<div class="line"></div>
+				<div class="hline"></div>
 			{/if}
 			<div
 				class="tab2"
@@ -267,7 +267,7 @@
 		margin-bottom: var(--sp3);
 	}
 
-	.tabs .line {
+	.tabs .hline {
 		background-color: gray;
 		height: 1px;
 		width: 100%;
@@ -340,6 +340,7 @@
 	}
 
 	.line {
+		margin-top: 16px;
 		gap: 4px;
 	}
 </style>

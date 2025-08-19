@@ -142,7 +142,6 @@ def send_mail(to, subject, body):
             print(f"Error sending email: {e}")
 
 
-# TODO: move to user_get.py
 def user_schema(user):
     del user["password"]
     user["photo"] = (
