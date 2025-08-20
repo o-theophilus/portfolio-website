@@ -4,7 +4,7 @@
 </script>
 
 <a href="/@{user.key}">
-	<Avatar name={user.name} photo={user.photo} />
+	<Avatar name={user.name} photo={user.photo} --avatar-border-radius="50%" />
 	<div class="details">
 		<div class="name">
 			{user.name}

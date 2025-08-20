@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { module } from '$lib/store.svelte.js';
 
-	import { Hero, About, Skill, Experience, Contact, Highlight } from '$lib/+page';
+	import { Hero, About, Skill, Experience, Contact, Highlight, ACD } from '$lib/+page';
 	import { Meta, Log } from '$lib/macro';
 	import { Dialogue } from '$lib/info';
 	import { Login } from '$lib/auth';
@@ -40,6 +40,7 @@
 <Meta title="Home" description="Welcome to my personal portfolio website." />
 
 <Hero />
+<ACD />
 <About />
 <Skill />
 <Contact />

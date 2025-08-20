@@ -289,5 +289,6 @@
 
 	.tag {
 		margin-top: 16px;
+		gap: 4px;
 	}
 </style>

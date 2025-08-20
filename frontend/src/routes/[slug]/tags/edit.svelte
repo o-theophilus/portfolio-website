@@ -107,5 +107,6 @@
 <style>
 	.line {
 		margin: 16px 0;
+		gap: 4px;
 	}
 </style>

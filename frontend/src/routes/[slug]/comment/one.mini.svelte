@@ -5,7 +5,7 @@
 
 <section>
 	<div class="avatar_content">
-		<Avatar name={comment.user.name} photo={comment.user.photo} />
+		<Avatar name={comment.user.name} photo={comment.user.photo} --avatar-border-radius="50%" />
 		<div class="content">
 			<div class="name">{comment.user.name}</div>
 			<div class="comment">

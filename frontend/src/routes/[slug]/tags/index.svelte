@@ -46,6 +46,7 @@
 
 	.line {
 		margin-top: 8px;
+		gap: 4px;
 	}
 
 	hr {

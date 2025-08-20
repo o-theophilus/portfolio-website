@@ -48,4 +48,7 @@
 	hr {
 		margin: var(--sp2) 0;
 	}
+	.line {
+		gap: 4px;
+	}
 </style>

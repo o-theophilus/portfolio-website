@@ -44,7 +44,7 @@
 
 {#snippet _user(details = true)}
 	<div class="user_details">
-		<Avatar name={app.user.name} photo={app.user.photo} size="32" --avatar-border-radius="4px" />
+		<Avatar name={app.user.name} photo={app.user.photo} size="32" --avatar-border-radius="50%" />
 		{#if details}
 			<div class="details">
 				<div class="name">

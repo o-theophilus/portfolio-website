@@ -22,7 +22,7 @@
 		</span>
 	</div>
 
-	<a href="/profile?search={one.reporter.key}">
+	<a href="/@{one.reporter.key}">
 		{one.reporter.name}
 	</a>
 	<div class="small">
@@ -30,8 +30,8 @@
 	</div>
 
 	<div class="highlight">
-		<Avatar name={one.reported.name} photo={one.reported.photo} />
-		<Link href="/profile?search={one.reported.key}" blank>
+		<Avatar name={one.reported.name} photo={one.reported.photo} --avatar-border-radius="50%" />
+		<Link href="/@{one.reported.key}" blank>
 			{one.reported.name}
 		</Link>
 		<div></div>

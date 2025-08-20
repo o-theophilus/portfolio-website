@@ -12,7 +12,7 @@
 	} else if (log.entity.type == 'page') {
 		href = log.entity.key;
 	} else if (['user', 'admin'].includes(log.entity.type) && log.entity.key) {
-		href = `/profile?search=${log.entity.key}`;
+		href = `/@${log.entity.key}`;
 	} else if (log.entity.type == 'comment') {
 		href = `/${log.misc.post_key}#${log.entity.key}`;
 	}

@@ -35,7 +35,7 @@
 			<Spinner active={loading} size="20" />
 		{:else}
 			<Link href="/@{author.key}">
-				<Avatar name={author.name} photo={author.photo} --avatar-border-radius="100%" />
+				<Avatar name={author.name} photo={author.photo} --avatar-border-radius="50%" />
 			</Link>
 			<Link href="/@{author.key}" --link-font-size="0.8rem">
 				<div class="name">
