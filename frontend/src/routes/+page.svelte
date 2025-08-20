@@ -8,6 +8,8 @@
 	import { Dialogue } from '$lib/info';
 	import { Login } from '$lib/auth';
 
+	import Carousel from '$lib/+page/carousel.svelte';
+
 	const get_module = (x) => {
 		if (x == 'login') {
 			return Login;
@@ -46,3 +48,4 @@
 <Contact />
 <Experience />
 <Highlight />
+<!-- <Carousel></Carousel> -->

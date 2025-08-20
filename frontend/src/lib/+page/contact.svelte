@@ -1,6 +1,6 @@
 <script>
 	import { Content } from '$lib/layout';
-	import Scroller from './scroller.svelte';
+	import Scroller from './scroller2.svelte';
 	import { Observe } from '$lib/macro';
 </script>
 
