@@ -42,8 +42,8 @@
 		line-height: 80%;
 
 		background-image: linear-gradient(
-			color-mix(in srgb, var(--ft2), transparent 75%),
-			color-mix(in srgb, var(--ft2), transparent 100%)
+			color-mix(in srgb, var(--ft2), transparent 80%),
+			color-mix(in srgb, var(--ft2), transparent 98%)
 		);
 		background-clip: text;
 		color: transparent;
