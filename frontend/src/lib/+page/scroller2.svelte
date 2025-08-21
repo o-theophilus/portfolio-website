@@ -22,7 +22,6 @@
 
 <style>
 	button {
-		--size: 100px;
 		all: unset;
 
 		display: flex;
@@ -30,8 +29,8 @@
 		justify-content: center;
 		align-items: center;
 
-		width: var(--size);
-		height: var(--size);
+		width: 100px;
+		aspect-ratio: 1;
 
 		color: var(--ft1);
 		border: 2px solid var(--ft1);
@@ -51,5 +50,12 @@
 		background-color: var(--ft1);
 		color: var(--bg1);
 		box-shadow: none;
+	}
+
+
+	@media screen and (min-width: 480px) {
+		button {
+			width: 120px;
+		}
 	}
 </style>
