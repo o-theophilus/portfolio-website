@@ -22,7 +22,7 @@
 
 <style>
 	button {
-		--size: 120px;
+		--size: 100px;
 		all: unset;
 
 		display: flex;
