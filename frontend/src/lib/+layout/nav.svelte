@@ -48,6 +48,7 @@
 	#top_nav.is_home {
 		background-color: #82c6ff;
 		border: none;
+		box-shadow: 0 0 0 10px #82c6ff;
 	}
 
 	.block {

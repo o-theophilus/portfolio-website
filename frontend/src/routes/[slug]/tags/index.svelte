@@ -1,5 +1,5 @@
 <script>
-	import { module, app, memory } from '$lib/store.svelte.js';
+	import { module, app, memory, page_state } from '$lib/store.svelte.js';
 	import { goto } from '$app/navigation';
 
 	import Button from '../button.svelte';
@@ -30,9 +30,12 @@
 		{#each post.tags as x}
 			<Tag
 				onclick={() => {
-					page_state.set({ tag: [x] });
-				}}>{x}</Tag
+					delete page_state.state.post;
+					goto(`/post?tag=${[x]}`);
+				}}
 			>
+				{x}
+			</Tag>
 		{/each}
 	</div>
 {:else if edit_mode}

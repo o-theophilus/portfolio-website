@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 	import { goto } from '$app/navigation';
-	import { module, app } from '$lib/store.svelte.js';
+	import { module, app, page_state } from '$lib/store.svelte.js';
 
 	import { Content } from '$lib/layout';
 	import { LinkArrow, RoundButton } from '$lib/button';
@@ -139,8 +139,8 @@
 							{#each app.highlight[index].tags as x}
 								<Tag
 									onclick={() => {
-										goto(`post?${new URLSearchParams({ tag: e.detail }).toString()}`);
-										// page_state.set({ tag: [x] });
+										delete page_state.state.post;
+										goto(`/post?tag=${[x]}`);
 									}}>{x}</Tag
 								>
 							{/each}

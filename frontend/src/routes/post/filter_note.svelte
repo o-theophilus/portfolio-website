@@ -20,6 +20,7 @@
 
 		return text;
 	});
+	let { onclick } = $props();
 </script>
 
 {#if text}
@@ -28,13 +29,7 @@
 			{text}
 		</span>
 
-		<RoundButton
-			icon="x"
-			--button-background-color-hover="red"
-			onclick={() => {
-				page_state.set({ search: '', tag: '' });
-			}}
-		></RoundButton>
+		<RoundButton icon="x" --button-background-color-hover="red" {onclick}></RoundButton>
 	</div>
 {/if}
 

@@ -105,7 +105,13 @@
 			}}
 		/>
 
-		<FilterNote />
+		<FilterNote
+			onclick={() => {
+				search.page_no = 1;
+				search.search = '';
+				page_state.set({ search: '', tag: '' });
+			}}
+		/>
 
 		{#if posts.length}
 			<section class="items">
