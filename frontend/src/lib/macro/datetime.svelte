@@ -1,10 +1,26 @@
 <script>
-	import { SvelteDate } from 'svelte/reactivity';
+	import { onMount, onDestroy } from 'svelte';
 
 	let { datetime, type = 'date_medium' } = $props();
 
-	let dateObj = $derived(datetime ? new SvelteDate(datetime) : null);
-	let timeAgo = $derived(dateObj ? calculateTimeAgo(dateObj) : '');
+	let dateObj = datetime ? new Date(datetime) : null;
+	let timeAgo = $state('');
+
+	function updateTimeAgo() {
+		if (dateObj) {
+			timeAgo = calculateTimeAgo(dateObj);
+		}
+	}
+
+	let interval;
+	onMount(() => {
+		updateTimeAgo();
+		interval = setInterval(updateTimeAgo, 60_000);
+	});
+
+	onDestroy(() => {
+		clearInterval(interval);
+	});
 
 	export const DAYS_FULL = [
 		'Sunday',
@@ -41,45 +57,36 @@
 		return i + 'th';
 	};
 
-	// TODO: fix this
 	function calculateTimeAgo(date) {
-		const now = new SvelteDate();
+		const now = new Date();
 		const diff = now - date;
 
-		if (diff < 60000) return 'just now';
-		if (diff < 3600000) {
-			const minutes = Math.floor(diff / 60000);
+		if (diff < 60_000) return 'just now';
+		if (diff < 3_600_000) {
+			const minutes = Math.floor(diff / 60_000);
 			return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
 		}
-		if (diff < 86400000) {
-			const hours = Math.floor(diff / 3600000);
+		if (diff < 86_400_000) {
+			const hours = Math.floor(diff / 3_600_000);
 			return `${hours} hour${hours > 1 ? 's' : ''} ago`;
 		}
-		if (diff < 2592000000) {
-			const days = Math.floor(diff / 86400000);
+		if (diff < 2_592_000_000) {
+			const days = Math.floor(diff / 86_400_000);
 			return `${days} day${days > 1 ? 's' : ''} ago`;
 		}
-
-		// Fallback to numeric date
 		return formatDate(date, 'date_numeric');
 	}
 
-	// Centralized formatting function
 	function formatDate(date, formatType) {
 		switch (formatType) {
-			// Day formats
 			case 'day_short':
 				return DAYS_SHORT[date.getDay()];
 			case 'day_full':
 				return DAYS_FULL[date.getDay()];
-
-			// Month formats
 			case 'month_short':
 				return MONTHS_SHORT[date.getMonth()];
 			case 'month_full':
 				return MONTHS_FULL[date.getMonth()];
-
-			// Date formats
 			case 'date_ordinal':
 				return `${ordinalSuffix(date.getDate())} of ${MONTHS_FULL[date.getMonth()]} ${date.getFullYear()}`;
 			case 'date_numeric':
@@ -100,12 +107,8 @@
 					MONTHS_SHORT[date.getMonth()],
 					date.getFullYear()
 				].join('-');
-
-			// Time formats
 			case 'time_period':
-				if (date.getHours() < 12) return 'Morning';
-				if (date.getHours() < 16) return 'Afternoon';
-				return 'Evening';
+				return date.getHours() < 12 ? 'Morning' : date.getHours() < 16 ? 'Afternoon' : 'Evening';
 			case 'time_12h':
 				return (
 					[
@@ -113,11 +116,8 @@
 						date.getMinutes().toString().padStart(2, '0')
 					].join(':') + (date.getHours() < 12 ? 'am' : 'pm')
 				);
-
-			// Year format
 			case 'year':
 				return date.getFullYear();
-
 			default:
 				return date.toString();
 		}

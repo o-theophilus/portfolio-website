@@ -32,7 +32,7 @@ user_table = """CREATE TABLE IF NOT EXISTS "user" (
 post_table = """CREATE TABLE IF NOT EXISTS post (
     key CHAR(32) PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'draft' NOT NULL,
-    date TIMESTAMP NOT NULL,
+    date TIMESTAMPTZ NOT NULL,
     author_key CHAR(32) NOT NULL,
 
     title VARCHAR(100) NOT NULL,
@@ -98,7 +98,7 @@ code_table = """CREATE TABLE IF NOT EXISTS code (
 
 log_table = """CREATE TABLE IF NOT EXISTS log (
     key CHAR(32) PRIMARY KEY,
-    date TIMESTAMP NOT NULL,
+    date TIMESTAMPTZ NOT NULL,
     user_key CHAR(32) NOT NULL,
     action VARCHAR(20) NOT NULL,
     entity_key TEXT,

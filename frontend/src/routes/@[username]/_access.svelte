@@ -11,6 +11,7 @@
 	let mods = $state([...user.access]);
 	let init = [...user.access];
 	let active_name = $state('');
+	let disabled = $derived(JSON.stringify([...mods].sort()) == JSON.stringify([...init].sort()));
 
 	const select = (x) => {
 		mods = mods.includes(x) ? mods.filter((p) => p !== x) : [...mods, x];
@@ -60,11 +61,10 @@
 	{/each}
 
 	<div class="line">
-		<!-- TODO:fix disabled -->
-		<!-- disabled={JSON.stringify(mods.sort()) == JSON.stringify(init.sort())} -->
-		<Button icon="history" onclick={() => (mods = [...init])}>Reset</Button>
-		<!-- disabled={JSON.stringify(mods.sort()) == JSON.stringify(init.sort())} -->
-		<Button icon2="send-horizontal" onclick={() => module.open(Access_Ok, { mods })}>Submit</Button>
+		<Button icon="history" onclick={() => (mods = [...init])} {disabled}>Reset</Button>
+		<Button icon2="send-horizontal" onclick={() => module.open(Access_Ok, { mods })} {disabled}
+			>Submit</Button
+		>
 	</div>
 </section>
 

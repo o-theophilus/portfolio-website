@@ -12,7 +12,7 @@
 </script>
 
 <a href="/{post.slug}" onclick={prerender} onmouseenter={prerender}>
-	<img {src} alt={post.title} onerror={() => (src = '/file_error.png')} />
+	<img {src} loading="lazy" alt={post.title} onerror={() => (src = '/file_error.png')} />
 
 	<div class="details">
 		<div class="title">

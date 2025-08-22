@@ -132,7 +132,7 @@
 
 				{#if app.user.access.some((x) => ['user:reset_name', 'user:reset_photo'].includes(x))}
 					<Button
-						size="small"
+						--button-font-size="0.8rem"
 						onclick={() => {
 							module.open(Action, { ...user, update });
 						}}

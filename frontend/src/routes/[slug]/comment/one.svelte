@@ -47,8 +47,6 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			console.log(resp);
-
 			comment = resp.comment;
 		} else {
 			error = resp;

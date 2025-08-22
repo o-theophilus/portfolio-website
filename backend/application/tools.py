@@ -3,7 +3,7 @@ from itsdangerous import URLSafeTimedSerializer
 import os
 from uuid import uuid4
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from psycopg2.extras import Json
 import smtplib
 import ssl
@@ -68,7 +68,7 @@ def generate_code(cur, key, email, _from, clear=True):
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
     """, (
         uuid4().hex,
-        datetime.now(),
+        datetime.now(timezone.utc),
         key,
         "requested",
         code_key,
@@ -107,7 +107,7 @@ def check_code(cur, key, email, n="code"):
 
     if not code:
         error = "invalid code"
-    elif datetime.now() - code["date"] > timedelta(minutes=15):
+    elif datetime.now(timezone.utc) - code["date"] > timedelta(minutes=15):
         cur.execute("""
             DELETE FROM code WHERE user_key = %s
         ;""", (key,))

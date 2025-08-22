@@ -72,6 +72,7 @@
 <Content>
 	{#if is_admin}
 		<Toggle state_2="edit" active={edit_mode} onclick={() => (edit_mode = !edit_mode)} />
+		<br />
 	{/if}
 
 	{#if edit_mode && (app.user.access.includes('post:edit_status') || (app.user.access.includes('post:edit_highlight') && post.status == 'active'))}
@@ -94,6 +95,7 @@
 				<Highlight {post} />
 			{/if}
 		</div>
+		<br />
 	{/if}
 
 	<Photo bind:post {edit_mode} {update} />
@@ -113,7 +115,7 @@
 
 <style>
 	hr {
-		margin: var(--sp2) 0;
+		margin-bottom: var(--sp2);
 	}
 
 	.line {

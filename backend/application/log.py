@@ -3,7 +3,7 @@ from .tools import token_to_user
 from math import ceil
 from .postgres import db_close, db_open
 from uuid import uuid4
-from datetime import datetime
+from datetime import datetime, timezone
 from psycopg2.extras import Json
 
 bp = Blueprint("log", __name__)
@@ -75,7 +75,7 @@ def log(
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
     """, (
         uuid4().hex,
-        datetime.now(),
+        datetime.now(timezone.utc),
         user_key,
         action,
         entity_key,

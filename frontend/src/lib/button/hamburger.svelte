@@ -14,7 +14,7 @@
 		display: none;
 	}
 	.menu_btn {
-		--size: var(--hamburger-s, 40px);
+		--size: var(--hamburger-size, 40px);
 		--sw: 2px;
 		--sh: 20px;
 		--offset: 6px;
@@ -32,8 +32,8 @@
 		border: none;
 		border-radius: 4px;
 
-		background-color: var(--hamburger-bgc, hsl(0, 0%, 20%));
-		outline: 2px solid var(--hamburger-o-c, transparent);
+		background-color: var(--hamburger-background-color, hsl(0, 0%, 20%));
+		outline: 2px solid var(--hamburger-outline-color, transparent);
 		outline-offset: -2px;
 		cursor: pointer;
 
@@ -43,8 +43,8 @@
 	}
 
 	.menu_btn:hover {
-		background-color: var(--hamburger-bgc-h, hsl(0, 0%, 0%));
-		outline: 2px solid var(--hamburger-o-c-h, transparent);
+		background-color: var(--hamburger-background-color-hover, hsl(0, 0%, 0%));
+		outline: 2px solid var(--hamburger-outline-color-hover, transparent);
 	}
 
 	.menu_btn div {
@@ -55,7 +55,7 @@
 		border-radius: 100px;
 		top: var(--mid);
 
-		background-color: var(--hamburger-c, hsl(0, 0%, 80%));
+		background-color: var(--hamburger-color, hsl(0, 0%, 80%));
 
 		transition:
 			background-color var(--trans),
@@ -63,7 +63,7 @@
 	}
 
 	.menu_btn:hover div {
-		background-color: var(--hamburger-c-h, hsl(0, 0%, 100%));
+		background-color: var(--hamburger-color-hover, hsl(0, 0%, 100%));
 	}
 
 	.a {

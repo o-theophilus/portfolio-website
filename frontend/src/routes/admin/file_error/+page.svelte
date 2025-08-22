@@ -73,6 +73,7 @@
 						animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
 						class:selected={files.includes(x)}
 						src={x.slice(-4) == '.jpg' ? `${x}/100` : '/no_preview.png'}
+						loading="lazy"
 						alt="unused file"
 						onclick={() => {
 							if (files.includes(x)) {

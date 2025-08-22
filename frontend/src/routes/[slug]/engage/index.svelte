@@ -75,7 +75,6 @@
 		/>
 
 		<Button
-			size="small"
 			primary={my_rating != 0}
 			onclick={() => module.open(Rating, { post, update, set_rating })}
 		>
@@ -84,7 +83,7 @@
 		</Button>
 	{/if}
 
-	<Button size="small" onclick={() => module.open(Share, post)}>
+	<Button onclick={() => module.open(Share, post)}>
 		<Icon icon="share-2" />
 		Share
 	</Button>

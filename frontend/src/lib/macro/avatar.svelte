@@ -46,7 +46,7 @@
 </script>
 
 {#if src}
-	<img {src} alt={name} style:--size="{size}px" onerror={() => (src = no_photo)} />
+	<img {src} loading="lazy" alt={name} style:--size="{size}px" onerror={() => (src = no_photo)} />
 {:else}
 	<div class="avatar" style:color={color[1]} style:--hue={color[0]} style:--size="{size}px">
 		{name[0]}

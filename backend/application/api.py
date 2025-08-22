@@ -184,7 +184,6 @@ def fix_access():
     })
 
 
-# @bp.get("/fix")
 def quick_fix():
     con, cur = db_open()
 
@@ -198,32 +197,21 @@ def quick_fix():
     })
 
 
+# @bp.get("/fix")
 def general_fix():
     con, cur = db_open()
 
-    # cur.execute("""
-    #     ALTER TABLE item
-    #     RENAME COLUMN old_price
-    #     TO discount_time;
+    cur.execute("""
+        ALTER TABLE log
+        ALTER COLUMN date TYPE TIMESTAMPTZ
+        USING date AT TIME ZONE 'UTC';
+    """)
 
-    #     ALTER TABLE item
-    #     ALTER COLUMN discount_time
-    #     TYPE VARCHAR(32);
-
-    #     ALTER TABLE item
-    #     ALTER COLUMN discount_time
-    #     SET DEFAULT 'TRUE';
-
-    #     UPDATE item
-    #     SET discount_time = 'TRUE';
-
-    # ALTER TABLE post
-    # DROP COLUMN videos;
-
-    # DROP TABLE IF EXISTS rating;
-
-    #     ALTER TABLE order_item
-    # """)
+    cur.execute("""
+        ALTER TABLE post
+        ALTER COLUMN date TYPE TIMESTAMPTZ
+        USING date AT TIME ZONE 'UTC';
+    """)
 
     db_close(con, cur)
     return jsonify({

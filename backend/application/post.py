@@ -7,7 +7,7 @@ from .postgres import db_open, db_close
 from .storage import storage
 from .log import log
 from .post_get import get_all, post_schema
-from datetime import datetime
+from datetime import datetime, timezone
 from werkzeug.security import check_password_hash
 
 bp = Blueprint("post", __name__)
@@ -60,7 +60,7 @@ def add():
         author["key"] if author else None,
         request.json["title"],
         slug,
-        datetime.now()
+        datetime.now(timezone.utc)
     ))
     post = cur.fetchone()
     post["ratings"] = []
@@ -140,23 +140,21 @@ def edit(key):
             error["date"] = "unauthorized access"
         else:
             try:
-                datetime.strptime(
-                    f"{request.json['date']}",
-                    "%Y-%m-%dT%H:%M:%S"
-                )
+                date_obj = datetime.fromisoformat(
+                    request.json["date"].replace("Z", "+00:00"))
             except Exception:
                 error["date"] = "invalid request"
-
-            cur.execute("""
-                UPDATE post
-                SET date = %s
-                WHERE key = %s
-                RETURNING *;
-            """, (
-                request.json['date'],
-                post["key"]
-            ))
-            post = cur.fetchone()
+            else:
+                cur.execute("""
+                    UPDATE post
+                    SET date = %s
+                    WHERE key = %s
+                    RETURNING *;
+                """, (
+                    date_obj,
+                    post["key"]
+                ))
+                post = cur.fetchone()
 
     if "description" in request.json:
         if "post:edit_description" not in user["access"]:

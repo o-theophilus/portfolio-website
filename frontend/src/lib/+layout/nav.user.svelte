@@ -52,7 +52,6 @@
 				</div>
 				<div class="email">
 					{app.user.email}
-					<!-- TODO: set max width -->
 				</div>
 			</div>
 		{/if}
@@ -66,10 +65,12 @@
 
 	<div class="hamburger">
 		<Hamburger
-			--hamburger-bgc="transpatent"
-			--hamburger-bgc-h={is_home ? 'color-mix(in srgb, var(--bg1), transparent 80%)' : 'var(--bg2)'}
-			--hamburger-c={is_home ? 'var(--bg1)' : 'var(--ft2)'}
-			--hamburger-c-h={is_home ? 'var(--bg1)' : 'var(--ft1)'}
+			--hamburger-background-color="transpatent"
+			--hamburger-background-color-hover={is_home
+				? 'color-mix(in srgb, var(--bg1), transparent 80%)'
+				: 'var(--bg2)'}
+			--hamburger-color={is_home ? 'var(--bg1)' : 'var(--ft2)'}
+			--hamburger-color-hover={is_home ? 'var(--bg1)' : 'var(--ft1)'}
 			{open}
 			onclick={() => {
 				open = !open;
@@ -165,5 +166,9 @@
 	.email {
 		font-size: 0.7rem;
 		line-height: 120%;
+
+		max-width: 150px;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 </style>

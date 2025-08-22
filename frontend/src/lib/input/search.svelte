@@ -6,8 +6,6 @@
 	let value_rt = $derived(value);
 
 	const submit = (val) => {
-		console.log('hete');
-
 		if (val == value) return;
 
 		value = val;
