@@ -1,3 +1,4 @@
+import resend
 from flask import request, current_app
 from itsdangerous import URLSafeTimedSerializer
 import os
@@ -5,9 +6,6 @@ from uuid import uuid4
 import random
 from datetime import datetime, timezone, timedelta
 from psycopg2.extras import Json
-import smtplib
-import ssl
-from email.mime.text import MIMEText
 
 
 reserved_words = [
@@ -122,22 +120,17 @@ def send_mail(to, subject, body):
     if current_app.config["DEBUG"]:
         print(body)
     else:
-        msg = MIMEText(body, "html")
-        msg['Subject'] = subject
-        msg['From'] = os.environ["MAIL_USERNAME"]
-        msg['To'] = to
-
-        context = ssl.create_default_context()
+        resend.api_key = os.environ["RESEND_API_KEY"]
+        params = {
+            "from": "Theophilus <info@theophilus.website>",
+            "to": [to],
+            "subject": subject,
+            "html": body,
+        }
 
         try:
-            with smtplib.SMTP("workplace.truehost.cloud", 587) as server:
-                server.starttls(context=context)
-                server.login(os.environ["MAIL_USERNAME"],
-                             os.environ["MAIL_PASSWORD"])
-                server.sendmail(os.environ["MAIL_USERNAME"], [
-                                to], msg.as_string())
-
-            print("Email sent successfully")
+            email = resend.Emails.send(params)
+            print("Email sent successfully", email)
         except Exception as e:
             print(f"Error sending email: {e}")
 
