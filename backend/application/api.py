@@ -201,17 +201,17 @@ def quick_fix():
 def general_fix():
     con, cur = db_open()
 
-    cur.execute("""
-        ALTER TABLE log
-        ALTER COLUMN date TYPE TIMESTAMPTZ
-        USING date AT TIME ZONE 'UTC';
-    """)
+    # cur.execute("""
+    #     ALTER TABLE log
+    #     ALTER COLUMN date TYPE TIMESTAMPTZ
+    #     USING date AT TIME ZONE 'UTC';
+    # """)
 
-    cur.execute("""
-        ALTER TABLE post
-        ALTER COLUMN date TYPE TIMESTAMPTZ
-        USING date AT TIME ZONE 'UTC';
-    """)
+    # cur.execute("""
+    #     ALTER TABLE post
+    #     ALTER COLUMN date TYPE TIMESTAMPTZ
+    #     USING date AT TIME ZONE 'UTC';
+    # """)
 
     db_close(con, cur)
     return jsonify({

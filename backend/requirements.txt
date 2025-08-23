@@ -5,3 +5,4 @@ pillow
 requests
 supabase
 psycopg2-binary
+resend
