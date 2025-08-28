@@ -1,13 +1,5 @@
 <script>
-	let {
-		name,
-		photo,
-		no_photo = null,
-		size = 40
-
-		// crop = false,
-		// area_lock = false
-	} = $props();
+	let { name, photo, no_photo = null, size = 40 } = $props();
 
 	function get_color(str) {
 		let hash = 5381;
@@ -19,26 +11,10 @@
 		return [bg, fg];
 	}
 
-	// const get_size = () => {
-	// 	let sz = [1, size, size];
-	// 	if (!photo || !area_lock || crop) return sz;
-	// 	let match = photo.match(/_(\d+)x(\d+)\./);
-	// 	if (!match) return sz;
-
-	// 	sz[0] = match[1] / match[2]; //aspect-ratio
-	// 	sz[1] = Math.sqrt(size * size * sz[0]); // width
-	// 	sz[2] = sz[1] / sz[0]; // height
-
-	// 	return sz;
-	// };
-
 	let color = get_color(name);
-	// let dim = get_size();
 
 	let src = $derived.by(() => {
 		if (photo) {
-			// if (crop)
-			// photo = `${photo}/${size}`;
 			return `${photo}/${size}`;
 		}
 		return no_photo;
@@ -55,7 +31,6 @@
 
 <style>
 	img {
-		/* display: block; */
 		flex-shrink: 0;
 		flex-grow: 0;
 

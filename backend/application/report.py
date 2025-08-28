@@ -88,7 +88,7 @@ def get_reports():
 
         FROM report
         LEFT JOIN
-            "user" reporter ON report.reporter_key = reporter.key
+            "user" reporter ON report.user_key = reporter.key
         LEFT JOIN
             "user" reported ON report.reported_key = reported.key
         LEFT JOIN
@@ -117,6 +117,8 @@ def get_reports():
         _status, _status,
         page_size, (page_no - 1) * page_size
     ))
+
+    # TODO: include user as json if entity_type != "user"
     reports = cur.fetchall()
     for x in reports:
         x["reported"]["photo"] = (
@@ -181,14 +183,13 @@ def create():
         })
 
     cur.execute("""
-        INSERT INTO report (key, reporter_key, reported_key,
+        INSERT INTO report (key, user_key,
             entity_key, entity_type, report, tags)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, %s)
         RETURNING *;
     """, (
         uuid4().hex,
         user["key"],
-        entity["user_key"],
         entity["key"],
         request.json["entity_type"],
         request.json["report"],

@@ -653,9 +653,9 @@ def deactivate():
         WHERE %s = ANY(likes) OR %s = ANY(dislikes);
     """, (user["key"], user["key"], user["key"], user["key"]))
 
-    cur.execute("""DELETE FROM report
-        WHERE reporter_key = %s OR reported_key = %s
-    ;""", (user["key"], user["key"]))
+    cur.execute("""
+        DELETE FROM report WHERE user_key = %s;
+    """, (user["key"],))
 
     cur.execute("""
         DELETE FROM code WHERE user_key = %s;
