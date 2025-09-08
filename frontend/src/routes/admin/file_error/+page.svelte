@@ -139,7 +139,7 @@
 		{#if open_users}
 			<div transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 				{#each users as x}
-					<a href="/@{x.key}">{x.name}</a>
+					<a href="/@{x.username}">{x.name}</a>
 
 					<br />
 				{:else}

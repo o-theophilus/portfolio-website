@@ -21,7 +21,7 @@
 		error = {};
 
 		if (!form.comment) {
-			error.comment = 'cannot be empty';
+			error.comment = 'This field is required';
 		}
 
 		Object.keys(error).length === 0 && submit();

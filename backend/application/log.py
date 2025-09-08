@@ -1,9 +1,7 @@
 from flask import Blueprint, jsonify, request
-from .tools import token_to_user
+from .tools import get_session
 from math import ceil
 from .postgres import db_close, db_open
-from uuid import uuid4
-from datetime import datetime, timezone
 from psycopg2.extras import Json
 
 bp = Blueprint("log", __name__)
@@ -59,23 +57,18 @@ def log(
         pass
 
     if not user_key:
-        user = token_to_user(cur)
-        if not user:
+        session = get_session(cur)
+        if session["status"] != 200:
             if close_conn:
                 db_close(con, cur)
-            return jsonify({
-                "status": 400,
-                "error": "invalid user"
-            })
-        user_key = user["key"]
+            return jsonify(session)
+        user_key = session["user"]["key"]
 
     cur.execute("""
         INSERT INTO log (
-            key, date, user_key, action, entity_key, entity_type, status, misc
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+            user_key, action, entity_key, entity_type, status, misc
+        ) VALUES (%s, %s, %s, %s, %s, %s);
     """, (
-        uuid4().hex,
-        datetime.now(timezone.utc),
         user_key,
         action,
         entity_key,
@@ -111,13 +104,11 @@ def search_query(cur):
 def get_many():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     page_no = 1
     page_size = 24
@@ -145,13 +136,14 @@ def get_many():
     cur.execute("""
         SELECT
             log.key,
-            log.date,
+            log.date_created,
             log.status,
             log.misc,
             log.action,
 
             jsonb_build_object(
                 'key', "user".key,
+                'username', "user".username,
                 'name', "user".name
             ) AS user,
 
@@ -166,13 +158,13 @@ def get_many():
 
         FROM log
         LEFT JOIN "user" ON log.user_key = "user".key
-        LEFT JOIN "user" usr ON log.entity_key = usr.key
+        LEFT JOIN "user" usr ON log.entity_key = usr.key::TEXT
             AND (log.entity_type = 'user' OR log.entity_type = 'admin')
         LEFT JOIN
-            post ON log.entity_key = post.key
+            post ON log.entity_key = post.key::TEXT
             AND log.entity_type = 'post'
         LEFT JOIN
-            comment ON log.entity_key = comment.key
+            comment ON log.entity_key = comment.key::TEXT
             AND log.entity_type = 'comment'
 
         WHERE
@@ -184,7 +176,7 @@ def get_many():
             AND (%s = '' OR CONCAT_WS(
                 ', ', log.entity_key, usr.name, usr.email, post.title
             ) ILIKE %s)
-        ORDER BY log.date DESC
+        ORDER BY log.date_created DESC
         LIMIT %s OFFSET %s;
     """, (
         u_search, f"%{u_search}%",
@@ -211,6 +203,9 @@ def get_many():
             if x["action"] == "viewed":
                 if x["user"]["key"] == x["entity"]["key"]:
                     x["entity"]["type"] = "profile"
+            elif x["action"] == "changed_theme":
+                x["entity"]["type"] = ""
+                x["entity"]["key"] = ""
 
     sq = search_query(cur)
     db_close(con, cur)

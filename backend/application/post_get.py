@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from .postgres import db_open, db_close
-from .tools import token_to_user
+from .tools import get_session
 from math import ceil
 import re
 import os
@@ -20,25 +20,23 @@ def get_post(key):
     con, cur = db_open()
 
     cur.execute("""
-        SELECT * FROM post WHERE post.slug = %s OR post.key = %s;
+        SELECT * FROM post WHERE post.slug = %s OR post.key::TEXT = %s;
     """, (key, key))
     post = cur.fetchone()
 
     if not post:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
-            "error": "invalid request"
+            "status": 404,
+            "error": "Oops! The post you’re looking for doesn’t exist"
         })
 
     if post["status"] != "active":
-        user = token_to_user(cur)
-        if not user:
+        session = get_session(cur, True)
+        if session["status"] != 200:
             db_close(con, cur)
-            return jsonify({
-                "status": 400,
-                "error": "invalid token"
-            })
+            return jsonify(session)
+        user = session["user"]
 
         if (
             "post:add" not in user["access"]
@@ -63,7 +61,11 @@ def get_all(order="latest", page_size=24, cur=None):
     if not cur:
         con, cur = db_open()
 
-    user = token_to_user(cur)
+    session = get_session(cur)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
 
     status = "active"
     search = ""
@@ -95,8 +97,8 @@ def get_all(order="latest", page_size=24, cur=None):
     tags = [] if not tags[0] else tags
 
     order_by = {
-        'latest': 'post.date',
-        'oldest': 'post.date',
+        'latest': 'post.date_created',
+        'oldest': 'post.date_created',
         'title (a-z)': 'post.title',
         'title (z-a)': 'post.title',
         'rating': 'rating',
@@ -129,13 +131,14 @@ def get_all(order="latest", page_size=24, cur=None):
         _like AS (
             SELECT
                 key,
-                COALESCE(array_length("like", 1), 0) -
-                COALESCE(array_length(dislike, 1), 0) AS _count
+                COALESCE(array_length(likes, 1), 0) -
+                COALESCE(array_length(dislikes, 1), 0) AS _count
             FROM post
         ),
 
         ratings AS (
-            SELECT key, (unnest(ratings) ->> 'rating')::INTEGER AS ratings
+            SELECT key,
+            (jsonb_array_elements(ratings) ->> 'rating')::INTEGER AS ratings
             FROM post
         ),
         rating AS (
@@ -149,15 +152,13 @@ def get_all(order="latest", page_size=24, cur=None):
                 post_key AS key,
                 COUNT(*) AS _count
             FROM comment
-            WHERE
-                status = 'active'
             GROUP BY post_key
         ),
 
         view1 AS (
             SELECT
                 DISTINCT ON (user_key, entity_key)
-                entity_key
+                entity_key::UUID
             FROM log
             WHERE
                 entity_type = 'post'
@@ -172,7 +173,7 @@ def get_all(order="latest", page_size=24, cur=None):
         ),
 
         share1 AS (
-            SELECT entity_key
+            SELECT entity_key::UUID
             FROM log
             WHERE
                 entity_type = 'post'

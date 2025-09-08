@@ -20,7 +20,7 @@
 	<br />
 	<br />
 
-	<Button icon="house" href="/">Back to Home</Button>
+	<Button icon="house" onclick={() => (document.location = '/')}>Back to Home</Button>
 </Content>
 
 <style>

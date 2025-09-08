@@ -2,13 +2,10 @@ from flask import Blueprint, jsonify, request
 import re
 import os
 from .tools import send_mail
-from .postgres import db_open, db_close
-from .postgres import (
-    post_table, user_table, log_table, comment_table,
-    code_table, setting_table, report_table)
+from .postgres import db_open, db_close, create_tables_query
 from .admin import access
 import psycopg2
-import psycopg2.extras
+from psycopg2.extras import Json
 from werkzeug.security import generate_password_hash
 
 bp = Blueprint("api", __name__)
@@ -23,19 +20,19 @@ def send_email():
     ):
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     error = {}
 
     if "name" not in request.json or not request.json["name"]:
-        error["name"] = "cannot be empty"
+        error["name"] = "This field is required"
     if "email" not in request.json or not request.json["email"]:
-        error["email"] = "cannot be empty"
+        error["email"] = "This field is required"
     elif not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", request.json["email"]):
-        error["email"] = "invalid email"
+        error["email"] = "Invalid email address"
     if "message" not in request.json or not request.json["message"]:
-        error["message"] = "cannot be empty"
+        error["message"] = "This field is required"
 
     if error != {}:
         return jsonify({
@@ -61,31 +58,18 @@ def send_email():
 
 @bp.get("/cron")
 def cron():
+    con, cur = db_open()
     print("cron is running")
 
-    return jsonify({
-        "status": 200
-    })
-
-
-def create_tables():
-    con, cur = db_open()
-
-    cur.execute(f"""
-        DROP TABLE IF EXISTS setting CASCADE;
-        DROP TABLE IF EXISTS "user" CASCADE;
-        DROP TABLE IF EXISTS post CASCADE;
-        DROP TABLE IF EXISTS comment CASCADE;
-        DROP TABLE IF EXISTS report CASCADE;
-        DROP TABLE IF EXISTS code CASCADE;
-        DROP TABLE IF EXISTS log CASCADE;
-        {setting_table}
-        {user_table}
-        {post_table}
-        {comment_table}
-        {report_table}
-        {code_table}
-        {log_table}
+    cur.execute("""
+        DELETE FROM session
+        WHERE (
+                stay_loggedin = FALSE
+                AND updated_at <= NOW() - INTERVAL '1 day'
+            ) OR (
+                stay_loggedin = TRUE
+                AND updated_at <= NOW() - INTERVAL '3 days'
+            );
     """)
 
     db_close(con, cur)
@@ -94,74 +78,91 @@ def create_tables():
     })
 
 
-def copy_table():
-    con1 = psycopg2.connect("postgres://admin:admin@localhost/loup")
-    cur1 = con1.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+def create_tables():
+    con, cur = db_open()
 
-    cur1.execute("""SELECT * FROM post;""")
-    posts = cur1.fetchall()
+    tables = ['setting', '"user"', 'post', 'comment',
+              'report', 'code', 'log', 'session']
+    tables = [f"DROP TABLE IF EXISTS {x} CASCADE;" for x in tables]
+    query = "\n".join(tables) + "\n\n" + create_tables_query()
 
-    con1.commit()
-    cur1.close()
-    con1.close()
+    cur.execute('CREATE EXTENSION IF NOT EXISTS "pgcrypto";')
+    cur.execute(query)
 
-    con2 = psycopg2.connect(
-        "postgresql://postgres.viwdxqnhuoozxslwkbmr:qulWftcsaaIeB8bL@" +
-        "aws-0-eu-central-1.pooler.supabase.com:6543/postgres")
-    cur2 = con2.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
 
-    cur2.execute("""
-            INSERT INTO "user" (key, status, name, email, password, access)
-            VALUES (%s, %s, %s, %s, %s, %s);
+
+def copy_post_table():
+    con = psycopg2.connect(os.environ["ONLINE_DB"])
+    cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    cur.execute("SELECT * FROM post;")
+    data = cur.fetchall()
+    con.commit()
+    cur.close()
+    con.close()
+
+    con = psycopg2.connect(os.environ["LOCAL_DB"])
+    cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    cur.execute("""
+            INSERT INTO "user"
+            (status, name, username, email, password, access)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING *;
         """, (
-        "c7a9b3b4b68a4cc5afbc858b1b703ab2",
         "confirmed",
         "Theophilus",
-        "theophilus.ogbolu@protonmail.com",
+        "theophilus",
+        os.environ["MAIL_USERNAME"],
         generate_password_hash(
             os.environ["MAIL_PASSWORD"], method="scrypt"),
         [f"{x}:{y[0]}" for x in access for y in access[x]]
     ))
+    user = cur.fetchone()
 
-    for x in posts:
-        cur2.execute("""
-            INSERT INTO post (
+    for x in data:
+        cur.execute("""
+            INSERT INTO post(
                 key,
                 status,
-                date,
+                date_created,
                 author_key,
                 title,
                 slug,
                 content,
                 description,
-                photo
-                --files,
-                --tags,
-                --"like",
-                --dislike,
-                --ratings
+                photo,
+                files,
+                tags,
+                likes,
+                dislikes,
+                ratings
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+            VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """, (
             x["key"],
             x["status"],
             x["date"],
-            x["author_key"],
+            user["key"],
             x["title"],
             x["slug"],
             x["content"],
             x["description"],
             x["photo"],
-            # Json(x["files"]),
-            # Json(x["tags"]),
-            # Json(x["like"]),
-            # Json(x["dislike"]),
-            # Json(x["ratings"]),
+            x["files"],
+            x["tags"],
+            x["like"],
+            x["dislike"],
+            Json(x["ratings"]),
         ))
 
-    con2.commit()
-    cur2.close()
-    con2.close()
+    con.commit()
+    cur.close()
+    con.close()
 
     return jsonify({
         "status": 200
@@ -172,7 +173,7 @@ def fix_access():
     con, cur = db_open()
 
     cur.execute("""
-            UPDATE "user" SET access = %s WHERE email = %s;
+            UPDATE "user" SET access=% s WHERE email = % s;
         """, (
         [f"{x}:{y[0]}" for x in access for y in access[x]],
         os.environ["MAIL_USERNAME"]
@@ -184,11 +185,12 @@ def fix_access():
     })
 
 
+# @bp.get("/fix")
 def quick_fix():
     con, cur = db_open()
 
     cur.execute("""
-        DELETE FROM log WHERE key = 'ce2873fdca1d4883b6a3b6badf4ca82c';
+        ALTER TABLE setting ADD COLUMN alias TEXT UNIQUE NOT NULL;
     """)
 
     db_close(con, cur)
@@ -197,17 +199,62 @@ def quick_fix():
     })
 
 
-# @bp.get("/fix")
 def general_fix():
     con, cur = db_open()
 
-    cur.execute("""
-        ALTER TABLE report
-        DROP COLUMN reported_key;
+    # cur.execute(f"""
+    #     DROP TABLE IF EXISTS session CASCADE;
+    #     {session_table}
+    # """)
 
-        ALTER TABLE report
-        RENAME COLUMN reporter_key TO user_key;
-    """)
+    # cur.execute("""
+    #     ALTER TABLE report DROP COLUMN reported_key;
+    #     ALTER TABLE "user" DROP COLUMN login;
+    # """)
+
+    # cur.execute("""
+    #     ALTER TABLE log
+    #     DROP CONSTRAINT log_user_key_fkey;
+    # """)
+
+    # cur.execute("""
+    #     ALTER TABLE report RENAME COLUMN reporter_key TO user_key;
+    #     ALTER TABLE post RENAME COLUMN "like" TO likes;
+    #     ALTER TABLE post RENAME COLUMN dislike TO dislikes;
+    #     ALTER TABLE comment RENAME COLUMN "like" TO likes;
+    #     ALTER TABLE comment RENAME COLUMN dislike TO dislikes;
+    # """)
+
+    ##########################
+    # cur.execute(
+    #     "ALTER TABLE post ADD COLUMN ratings_new jsonb DEFAULT '[]'::jsonb;")
+    # cur.execute("""
+    #     UPDATE post
+    #     SET ratings_new = COALESCE(
+    #         (SELECT jsonb_agg(elem) FROM unnest(ratings) AS elem),
+    #         '[]'::jsonb
+    #     );
+    # """)
+    # cur.execute("ALTER TABLE post DROP COLUMN ratings;")
+    # cur.execute("ALTER TABLE post RENAME COLUMN ratings_new TO ratings;")
+
+    ##########################
+    # cur.execute("ALTER TABLE comment ADD COLUMN parent_key TEXT;")
+    # cur.execute(
+    #     "UPDATE comment SET
+    #       parent_key = path[array_length(path, 1)];")
+    # cur.execute("ALTER TABLE comment DROP COLUMN path;")
+
+    ##########################
+    # cur.execute("""
+    #     ALTER TABLE comment ADD COLUMN created_at TIMESTAMPTZ;
+    # """)
+    # cur.execute("""
+    #     UPDATE comment SET created_at = now() WHERE created_at IS NULL;
+    # """)
+    # cur.execute("""
+    #     ALTER TABLE comment ALTER COLUMN created_at SET NOT NULL;
+    # """)
 
     db_close(con, cur)
     return jsonify({

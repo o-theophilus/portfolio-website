@@ -6,16 +6,14 @@
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
 
-	let form = {
-		...module.value
-	};
+	let form = $state({ ...module.value });
 	let error = $state({});
 
 	const validate = () => {
 		error = {};
 
 		if (!form.code_2) {
-			error.code_2 = 'cannot be empty';
+			error.code_2 = 'This field is required';
 		} else if (form.code_2.length != 6) {
 			error.code_2 = 'invalid code';
 		}

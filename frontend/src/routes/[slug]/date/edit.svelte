@@ -12,7 +12,7 @@
 		error = {};
 
 		if (!form.date) {
-			error.date = 'cannot be empty';
+			error.date = 'This field is required';
 		}
 
 		Object.keys(error).length === 0 && submit();

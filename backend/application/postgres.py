@@ -6,104 +6,335 @@ import psycopg2.extras
 
 bp = Blueprint("postgres", __name__)
 
-setting_table = """CREATE TABLE IF NOT EXISTS setting (
-    key VARCHAR(32) PRIMARY KEY,
-    misc JSONB DEFAULT '{}'::JSONB
-);"""
 
-# TODO: add username
-user_table = """CREATE TABLE IF NOT EXISTS "user" (
-    key CHAR(32) PRIMARY KEY,
-    status VARCHAR(20) DEFAULT 'anonymous' NOT NULL,
+schema = {
+    "user": {
+        "key": {
+            "type": "uuid",
+        },
+        "status": {
+            "type": "text",
+            "default": "anonymous",
+            "values": ["anonymous", "signedup", "confirmed", "blocked"]
+        },
+        "date_created": {
+            "type": "datetime",
+        },
+        "name": {
+            "type": "text",
+            "max_length": 100,
+        },
+        "username": {
+            "type": "text",
+            "max_length": 20,
+            "unique": True,
+            "validate": r"^[A-Za-z][A-Za-z0-9_]*$"
+        },
+        "email": {
+            "type": "text",
+            "max_length": 255,
+            "unique": True,
+            "validate": r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+        },
+        "password": {
+            "type": "text",
+            "max_length": 18,
+            "min_length": 8,
+            # TODO: use this to validate password
+            "validate": r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$"
+        },
+        "phone": {
+            "type": "text",
+            "max_length": 20,
+            "nullable": True
+        },
+        "photo": {
+            "type": "text",
+            "max_length": 40,
+            "nullable": True
+        },
+        "access": {
+            "type": "array_text",
+        },
+        "theme": {
+            "type": "text",
+            "default": "dark",
+            "values": ["dark", "light"]
+        },
+    },
 
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    phone VARCHAR(100),
-    password VARCHAR(200) NOT NULL,
-    photo VARCHAR(50),
+    "post": {
+        "key": {
+            "type": "uuid",
+        },
+        "status": {
+            "type": "text",
+            "default": "draft",
+            "values": ["draft", "live"]
+        },
+        "date_created": {
+            "type": "datetime",
+        },
+        "author_key": {
+            "type": "uuid",
+            "foreign_key": ["user", "key"]
+        },
+        "title": {
+            "type": "text",
+            "max_length": 100,
+        },
+        "slug": {
+            "type": "text",
+            "max_length": 100,
+            "unique": True,
+            "validate": "^[a-z][a-z0-9-]*$"
+        },
+        "content": {
+            "type": "text",
+            "nullable": True
+        },
+        "description": {
+            "type": "text",
+            "nullable": True
+        },
+        "photo": {
+            "type": "text",
+            "nullable": True
+        },
+        "files": {
+            "type": "array_text",
+        },
+        "tags": {
+            "type": "array_text",
+        },
+        "likes": {
+            "type": "array_text",
+        },
+        "dislikes": {
+            "type": "array_text",
+        },
+        "ratings": {
+            "type": "array_dict",
+        },
+    },
 
-    access TEXT[] DEFAULT ARRAY[]::TEXT[],
-    login BOOLEAN DEFAULT FALSE,
+    "comment": {
+        "key": {
+            "type": "uuid",
+        },
+        "date_created": {
+            "type": "datetime",
+        },
+        "user_key": {
+            "type": "uuid",
+            "foreign_key": ["user", "key"]
+        },
+        "post_key": {
+            "type": "uuid",
+            "foreign_key": ["post", "key"]
+        },
+        "parent_key": {
+            "type": "uuid",
+            "foreign_key": ["comment", "key"],
+            "nullable": True,
+        },
+        "comment": {
+            "type": "text",
+        },
+        "likes": {
+            "type": "array_text",
+        },
+        "dislikes": {
+            "type": "array_text",
+        },
+    },
 
-    setting_theme VARCHAR(20) DEFAULT 'dark'
-);"""
+    "report": {
+        "key": {
+            "type": "uuid",
+        },
+        "date_created": {
+            "type": "datetime",
+        },
+        "user_key": {
+            "type": "uuid",
+            "foreign_key": ["user", "key"]
+        },
+        "entity_key": {
+            "type": "uuid",
+        },
+        "entity_type": {
+            "type": "text",
+            "max_length": 20,
+        },
+        "report": {
+            "type": "text",
+        },
+        "tags": {
+            "type": "array_text",
+        },
+    },
 
-post_table = """CREATE TABLE IF NOT EXISTS post (
-    key CHAR(32) PRIMARY KEY,
-    status VARCHAR(20) DEFAULT 'draft' NOT NULL,
-    date TIMESTAMPTZ NOT NULL,
-    author_key CHAR(32) NOT NULL,
+    "code": {
+        "key": {
+            "type": "uuid",
+        },
+        "date_created": {
+            "type": "datetime",
+        },
+        "user_key": {
+            "type": "uuid",
+            "foreign_key": ["user", "key"]
+        },
+        "pin": {
+            "type": "text",
+            "max_length": 10,
+            "min_length": 10,
+        },
+        "email": {
+            "type": "text",
+            "max_length": 255,
+            "validate": r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+        },
+    },
 
-    title VARCHAR(100) NOT NULL,
-    slug VARCHAR(255) UNIQUE NOT NULL,
-    content TEXT,
-    description TEXT,
-    photo VARCHAR(50),
-    files TEXT[] DEFAULT ARRAY[]::TEXT[],
-    tags TEXT[] DEFAULT ARRAY[]::TEXT[],
-    "like" TEXT[] DEFAULT ARRAY[]::TEXT[],
-    dislike TEXT[] DEFAULT ARRAY[]::TEXT[],
-    ratings JSONB[] DEFAULT ARRAY[]::JSONB[],
+    "log": {
+        "key": {
+            "type": "uuid",
+        },
+        "date_created": {
+            "type": "datetime",
+        },
+        "user_key": {
+            "type": "uuid",
+        },
+        "action": {
+            "type": "text",
+            "max_length": 20,
+        },
+        "entity_key": {
+            "type": "text",
+            "max_length": 100,
+        },
+        "entity_type": {
+            "type": "text",
+            "max_length": 100,
+        },
+        "status": {
+            "type": "text",
+            "default": "200",
+            "values": ["200", "201", "400"],
+        },
+        "misc": {
+            "type": "dict",
+        },
+    },
 
-    FOREIGN KEY (author_key) REFERENCES "user"(key)
-);"""
+    "session": {
+        "key": {
+            "type": "uuid",
+        },
+        "date_created": {
+            "type": "datetime",
+        },
+        "date_updated": {
+            "type": "datetime",
+        },
+        "user_key": {
+            "type": "uuid",
+            "foreign_key": ["user", "key"]
+        },
+        "login": {
+            "type": "text",
+            "default": "false",
+            "values": ["false", "true", "persist"]
+        },
+    },
+
+    "setting": {
+        "key": {
+            "type": "uuid",
+        },
+        "alias": {
+            "type": "text",
+            "unique": True,
+        },
+        "value": {
+            "type": "dict",
+        },
+    }
+}
 
 
-comment_table = """CREATE TABLE IF NOT EXISTS comment (
-    key CHAR(32) PRIMARY KEY,
-    status VARCHAR(20) DEFAULT 'active' NOT NULL,
+def get_col(name, ppt):
+    column = []
 
-    user_key CHAR(32) NOT NULL,
-    post_key CHAR(32) NOT NULL,
+    default = ppt.get("default")
+    _type = ppt.get("type")
+    fk = ppt.get("foreign_key")
 
-    comment TEXT NOT NULL,
-    path TEXT[] DEFAULT ARRAY[]::TEXT[],
-    "like" TEXT[] DEFAULT ARRAY[]::TEXT[],
-    dislike TEXT[] DEFAULT ARRAY[]::TEXT[],
+    column.append(name)
 
-    FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE,
-    FOREIGN KEY (post_key) REFERENCES post(key)
-);"""
+    if _type == "uuid":
+        column.append("UUID")
+    elif _type == "datetime":
+        column.append("TIMESTAMPTZ")
+    elif _type == "array_text":
+        column.append("TEXT[]")
+    elif _type == "array_dict":
+        column.append("JSONB")
+    elif _type == "dict":
+        column.append("JSONB")
+    else:
+        column.append("TEXT")
+
+    if name == "key":
+        column.append("PRIMARY KEY")
+    elif ppt.get("unique"):
+        column.append("UNIQUE")
+
+    if (
+        not ppt.get("nullable")
+        and name != "key"
+        and _type != "datetime"
+        and _type != "dict"
+        and _type != "array_text"
+        and _type != "array_dict"
+    ):
+        column.append("NOT NULL")
+
+    if _type == "uuid" and name == "key":
+        column.append("DEFAULT gen_random_uuid()")
+    elif _type == "datetime":
+        column.append("DEFAULT now()")
+    elif _type == "dict":
+        column.append("DEFAULT '{}'::jsonb")
+    elif _type == "array_text":
+        column.append("DEFAULT '{}'::TEXT[]")
+    elif _type == "array_dict":
+        column.append("DEFAULT '[]'::jsonb")
+    elif default is not None and _type == "text":
+        column.append(f"DEFAULT '{default}'")
+
+    if fk:
+        ref_table = fk[0] if fk[0] != "user" else '"user"'
+        ref_col = fk[1]
+        column.append(f"REFERENCES {ref_table}({ref_col})")
+
+    return " ".join(column)
 
 
-report_table = """CREATE TABLE IF NOT EXISTS report (
-    key CHAR(32) PRIMARY KEY,
-    status VARCHAR(20) DEFAULT 'unresolved' NOT NULL,
+def create_tables_query():
+    tables = []
+    for tn, cols in schema.items():
+        tn = tn if tn != "user" else '"user"'
+        table = [f"CREATE TABLE IF NOT EXISTS {tn} ("]
+        cols_ = [f"    {get_col(cn, p)}" for cn, p in cols.items()]
+        table.append(",\n".join(cols_))
+        table.append(");")
+        tables.append("\n".join(table))
 
-    user_key CHAR(32) NOT NULL,
-    entity_key CHAR(32),
-    entity_type VARCHAR(100),
-
-    report TEXT,
-    tags TEXT[] DEFAULT ARRAY[]::TEXT[],
-    resolve TEXT,
-
-    FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE
-);"""
-
-
-code_table = """CREATE TABLE IF NOT EXISTS code (
-    key CHAR(32) PRIMARY KEY,
-
-    user_key CHAR(32) NOT NULL,
-    pin VARCHAR(10) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-
-    FOREIGN KEY (user_key) REFERENCES "user"(key)
-);"""
-
-log_table = """CREATE TABLE IF NOT EXISTS log (
-    key CHAR(32) PRIMARY KEY,
-    date TIMESTAMPTZ NOT NULL,
-    user_key CHAR(32) NOT NULL,
-    action VARCHAR(20) NOT NULL,
-    entity_key TEXT,
-    entity_type VARCHAR(100) NOT NULL,
-    status INT DEFAULT 200,
-    misc JSONB DEFAULT '{}'::JSONB,
-
-    FOREIGN KEY (user_key) REFERENCES "user"(key)
-);"""
+    return "\n\n".join(tables)
 
 
 def db_open():

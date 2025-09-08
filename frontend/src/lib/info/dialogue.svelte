@@ -10,27 +10,19 @@
 	let buttons = module.value.buttons || [];
 </script>
 
-<div
-	class="title"
-	class:good={status == 200}
-	class:bad={status == 400}
-	class:warning={status == 201}
->
-	{#if status == 200}
-		<Icon icon="200" size="24" />
-	{:else if status == 400}
-		<Icon icon="400" size="24" />
-	{:else if status == 201}
-		<Icon icon="201" size="24" />
-	{/if}
+<div class="title _{status}">
+	<Icon
+		icon={status == 400 ? 'circle-x' : status == 201 ? 'triangle-alert' : 'square-check'}
+		size="20"
+	/>
 	{title}
 </div>
-<div class="body">
-	<div class="text">
-		{@html message}
-	</div>
+<div class="text">
+	{@html message}
+</div>
 
-	<div class="line">
+{#if buttons.length}
+	<div class="line btn">
 		{#each buttons as x}
 			<Button
 				--button-width="100%"
@@ -45,7 +37,7 @@
 			</Button>
 		{/each}
 	</div>
-</div>
+{/if}
 
 <style>
 	.title {
@@ -62,21 +54,20 @@
 		text-transform: capitalize;
 	}
 
-	.good {
+	._200 {
 		background-color: green;
 	}
-	.bad {
+	._400 {
 		background-color: red;
 	}
-	.warning {
+	._201 {
 		background-color: var(--yellow);
 	}
-	.body {
-		display: flex;
-		flex-direction: column;
-		gap: var(--sp2);
 
-		padding: var(--sp2);
+	.text,
+	.btn {
+		padding: 0 var(--sp2);
+		margin: var(--sp2) 0;
 	}
 
 	.text:first-letter {

@@ -104,7 +104,7 @@
 {/if}
 
 <div class="button">
-	{#if app.user.login}
+	{#if app.login}
 		<Button icon="message-circle-plus" onclick={() => module.open(Add, { post, update, search })}>
 			Add comment
 		</Button>

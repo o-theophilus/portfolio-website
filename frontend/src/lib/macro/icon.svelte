@@ -50,7 +50,8 @@
 		FlagTriangleRight,
 		PencilRuler,
 		SquareTerminal,
-		Lightbulb
+		Lightbulb,
+		AtSign
 	} from 'lucide';
 	import { onMount } from 'svelte';
 	onMount(() => {
@@ -105,7 +106,8 @@
 				FlagTriangleRight,
 				PencilRuler,
 				SquareTerminal,
-				Lightbulb
+				Lightbulb,
+				AtSign
 			},
 			attrs: {
 				width: 16,

@@ -17,6 +17,6 @@ export const load = async ({ fetch, params, parent }) => {
     if (resp.status == 200) {
         return resp
     } else {
-        throw error(404, "page not found")
+        throw error(resp.status, resp.error)
     }
 }

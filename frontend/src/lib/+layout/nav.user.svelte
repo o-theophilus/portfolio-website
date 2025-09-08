@@ -59,7 +59,7 @@
 {/snippet}
 
 <div class="user">
-	<a href="/@{app.user.key}" class="menu_btn full" class:is_home>
+	<a href="/@{app.user.username}" class="menu_btn full" class:is_home>
 		{@render _user()}
 	</a>
 

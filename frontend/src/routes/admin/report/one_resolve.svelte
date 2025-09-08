@@ -13,7 +13,7 @@
 		error = {};
 
 		if (!form.note) {
-			error.note = 'cannot be empty';
+			error.note = 'This field is required';
 		}
 
 		Object.keys(error).length === 0 && submit(status);

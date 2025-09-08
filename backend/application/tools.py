@@ -1,8 +1,6 @@
 import resend
 from flask import request, current_app
-from itsdangerous import URLSafeTimedSerializer
 import os
-from uuid import uuid4
 import random
 from datetime import datetime, timezone, timedelta
 from psycopg2.extras import Json
@@ -13,34 +11,35 @@ reserved_words = [
     "terms", "admin", "omni", "user", "users", "store", "stores", "item",
     "items", "all"]
 
-
-def token_tool():
-    return URLSafeTimedSerializer(
-        current_app.config["SECRET_KEY"],
-        current_app.config["SECURITY_PASSWORD_SALT"]
-    )
-
-
 # TODO: restrict access of blocked users
-# TODO: accept login as a parameter
-def token_to_user(cur):
-    if (
-        "Authorization" not in request.headers or
-        not request.headers["Authorization"]
-    ):
-        return None
 
-    token = request.headers["Authorization"]
-    try:
-        token = token_tool().loads(token)
-    except Exception:
-        return None
+
+def get_session(cur, login=False):
+    token = request.headers.get("Authorization")
+    if not token:
+        return {"status": 404, "error": "invalid or expired token"}
+
+    cur.execute("""SELECT * FROM session WHERE key::TEXT = %s;""", (token,))
+    session = cur.fetchone()
+    if not session:
+        return {"status": 404, "error": "invalid or expired token"}
+
+    if login and session["login"] == "false":
+        return {"status": 404, "error": "invalid or expired token"}
 
     cur.execute("""
-        SELECT * FROM "user" WHERE key = %s AND status != 'deleted';
-    """, (token,))
+        SELECT * FROM "user" WHERE key = %s;
+    """, (session["user_key"],))
     user = cur.fetchone()
-    return user
+
+    if not user:
+        return {"status": 404, "error": "invalid or expired token"}
+
+    cur.execute("""
+        UPDATE session SET date_updated = %s WHERE key = %s;
+    """, (datetime.now(timezone.utc), session["key"]))
+
+    return {"status": 200, "user": user, "login": session["login"] != "false"}
 
 
 def generate_code(cur, key, email, _from, clear=True):
@@ -48,28 +47,21 @@ def generate_code(cur, key, email, _from, clear=True):
         cur.execute("DELETE FROM code WHERE user_key = %s;", (key,))
 
     code = f"{random.randint(100000, 999999)}"
-    code_key = uuid4().hex
 
     cur.execute("""
-        INSERT INTO code (key, user_key, pin, email)
-        VALUES (%s, %s, %s, %s);
-    """, (
-        code_key,
-        key,
-        code,
-        email
-    ))
+        INSERT INTO code (user_key, pin, email)
+        VALUES (%s, %s, %s) RETURNING *;
+    """, (key, code, email))
+    _code = cur.fetchone()
 
     cur.execute("""
         INSERT INTO log (
-            key, date, user_key, action, entity_key, entity_type, status, misc
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+            user_key, action, entity_key, entity_type, status, misc
+        ) VALUES (%s, %s, %s, %s, %s, %s);
     """, (
-        uuid4().hex,
-        datetime.now(timezone.utc),
         key,
         "requested",
-        code_key,
+        _code["key"],
         "code",
         200,
         Json({"from": _from, "to": email})
@@ -78,37 +70,23 @@ def generate_code(cur, key, email, _from, clear=True):
     return code
 
 
-def check_code(cur, key, email, n="code"):
+def check_code(cur, user_key, email, n="code"):
     error = None
     if n not in request.json or not request.json[n]:
-        error = "cannot be empty"
+        error = "This field is required"
     elif len(request.json[n]) != 6:
         error = "invalid code"
 
     cur.execute("""
-        SELECT code.*, log.date
-        FROM code
-        LEFT JOIN log ON
-            code.key = log.entity_key
-            AND log.entity_type = 'code'
-            AND log.action = 'requested'
-        WHERE
-            code.user_key = %s
-            AND code.pin = %s
-            AND code.email = %s;
-    """, (
-        key,
-        request.json[n],
-        email
-    ))
+        SELECT * FROM code WHERE user_key = %s AND pin = %s AND email = %s;
+    """, (user_key, request.json[n], email))
     code = cur.fetchone()
 
     if not code:
         error = "invalid code"
-    elif datetime.now(timezone.utc) - code["date"] > timedelta(minutes=15):
-        cur.execute("""
-            DELETE FROM code WHERE user_key = %s
-        ;""", (key,))
+    elif datetime.now(timezone.utc) - code[
+            "date_created"] > timedelta(minutes=15):
+        cur.execute("DELETE FROM code WHERE user_key = %s;", (user_key,))
         error = "invalid code"
 
     return error

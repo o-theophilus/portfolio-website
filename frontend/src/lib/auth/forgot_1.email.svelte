@@ -10,9 +10,7 @@
 	import Code from './forgot_2.code.svelte';
 	import EmailTemplate from './forgot.template.svelte';
 
-	let form = {
-		email: module.value.email
-	};
+	let form = $state({ email: module.value.email });
 	let error = $state({});
 	let email_template;
 
@@ -20,9 +18,9 @@
 		error = {};
 
 		if (!form.email) {
-			error.email = 'cannot be empty';
+			error.email = 'This field is required';
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-			error.email = 'invalid email';
+			error.email = 'Invalid email address';
 		}
 
 		Object.keys(error).length === 0 && submit();

@@ -5,7 +5,7 @@
 
 	import { IG } from '$lib/input';
 	import { Button, Link } from '$lib/button';
-	import {  Form } from '$lib/layout';
+	import { Form } from '$lib/layout';
 	import Signup from './signup.svelte';
 	import Forgot from './forgot_1.email.svelte';
 	import EmailTemplate from './confirm.template.svelte';
@@ -13,9 +13,7 @@
 
 	let email_template;
 
-	let form = {
-		email: module.value.email
-	};
+	let form = $state({ email: module.value.email });
 	let error = $state({});
 
 	let return_url = page.url.pathname;
@@ -27,10 +25,10 @@
 		error = {};
 
 		if (!form.email) {
-			error.email = 'cannot be empty';
+			error.email = 'This field is required';
 		}
 		if (!form.password) {
-			error.password = 'cannot be empty';
+			error.password = 'This field is required';
 		}
 		Object.keys(error).length === 0 && submit();
 	};
@@ -55,6 +53,8 @@
 
 		if (resp.status == 200) {
 			app.token = resp.token;
+			app.login = true;
+			app.user = {};
 			document.location = return_url;
 		} else if (resp.error == 'not confirmed') {
 			module.open(Confirm, { email: form.email });
@@ -66,12 +66,12 @@
 
 <Form title="Login" error={error.error}>
 	<IG
-		name="Email"
+		name="Email or Username"
 		icon="mail"
 		error={error.email}
 		type="email"
 		bind:value={form.email}
-		placeholder="Email here"
+		placeholder="Email or Username here"
 	/>
 
 	<IG

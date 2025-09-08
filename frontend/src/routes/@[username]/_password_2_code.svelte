@@ -8,16 +8,14 @@
 
 	import Password from './_password_3_password.svelte';
 
-	let form = {
-		...module.value
-	};
+	let form = $state({ ...module.value });
 	let error = $state({});
 
 	const validate = () => {
 		error = {};
 
 		if (!form.code) {
-			error.code = 'cannot be empty';
+			error.code = 'This field is required';
 		} else if (form.code.length != 6) {
 			error.code = 'invalid code';
 		}

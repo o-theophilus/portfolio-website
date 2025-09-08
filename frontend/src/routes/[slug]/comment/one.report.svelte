@@ -21,7 +21,7 @@
 		error = {};
 
 		if (!form.report) {
-			error.report = 'cannot be empty';
+			error.report = 'This field is required';
 		}
 
 		Object.keys(error).length === 0 && submit();

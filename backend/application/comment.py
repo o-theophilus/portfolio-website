@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request
-from .tools import token_to_user
+from .tools import get_session
 from uuid import uuid4
 from .postgres import db_close, db_open
 from .log import log
+from datetime import datetime, timezone
 
 bp = Blueprint("comment", __name__)
 
@@ -18,92 +19,74 @@ def get_comments(key, cur=None):
         order = request.args["order"]
 
     order_by = {
-        'latest': 'log.date',
-        'oldest': 'log.date',
-        # 'like': 'sub_2."like"',
-        # 'dislike': 'sub_2.dislike',
-        # 'most reaction': 'sub_2.most_reaction',
-        # 'more like': 'sub_2.more_like',
-        # 'more dislike': 'sub_2.more_like'
-        'like': 'sub_2.more_like',
-        'sub_comment': 'child._count',
+        'latest': 'comment.date',
+        'oldest': 'comment.date',
+        'likes': 'likes_count',
+        'dislikes': 'dislikes_count',
+        'most_liked': 'most_liked',
+        'reply': 'reply_count',
+        'most_reaction': 'total_reactions',
     }
 
     order_dir = {
         'latest': 'DESC',
         'oldest': 'ASC',
-        'like': 'DESC',
-        'dislike': 'DESC',
-        'most reaction': 'DESC',
-        'more like': 'DESC',
-        'more dislike': 'ASC',
-        'sub_comment': 'DESC',
+        'likes': 'DESC',
+        'dislikes': 'DESC',
+        'most_liked': 'DESC',
+        'reply': 'DESC',
+        'most_reaction': 'DESC',
     }
 
-    cur.execute("""
-        WITH
-        sub_1 AS (
+    cur.execute(f"""
+        WITH stats AS (
             SELECT
                 key,
-                COALESCE(array_length("like", 1), 0) AS "like",
-                COALESCE(array_length(dislike, 1), 0) AS dislike
+                COALESCE(array_length(likes, 1), 0) AS likes_count,
+                COALESCE(array_length(dislikes, 1), 0) AS dislikes_count,
+                COALESCE(array_length(likes, 1), 0)
+                    - COALESCE(array_length(dislikes, 1), 0) AS most_liked
             FROM comment
+            WHERE post_key = %s
         ),
-        sub_2 AS (
-            SELECT
-                key,
-                "like",
-                dislike,
-                ("like" + dislike) AS most_reaction,
-                ("like" - dislike) AS more_like
-            FROM sub_1
-        ),
-
-        child AS (
-            SELECT
-                comm.key,
-                (
-                    SELECT COUNT(*)
-                    FROM comment AS sub
-                    WHERE comm.key = ANY(sub.path)
-                ) AS _count
-            FROM comment AS comm
+        reply AS (
+            SELECT parent_key AS key, COUNT(*) AS reply_count
+            FROM comment
+            WHERE parent_key IS NOT NULL AND post_key = %s
+            GROUP BY parent_key
         )
 
         SELECT
             comment.key,
             comment.comment,
-            comment.path,
-            comment."like",
-            comment.dislike,
-            log.date,
-            log.entity_type,
-            log.misc,
+            comment.parent_key,
+            comment.likes,
+            comment.dislikes,
+            comment.date,
             jsonb_build_object(
                 'key', "user".key,
                 'name', "user".name,
                 'photo', "user".photo
-            ) AS user
+            ) AS user,
+
+            stats.likes_count AS likes_count,
+            stats.dislikes_count AS dislikes_count,
+            stats.most_liked AS most_liked,
+            COALESCE(reply.reply_count, 0) AS reply_count,
+            (stats.likes_count + stats.dislikes_count
+                + COALESCE(reply.reply_count, 0)) AS total_reactions
+
 
         FROM comment
-        LEFT JOIN sub_2 ON comment.key = sub_2.key
+        LEFT JOIN stats ON comment.key = stats.key
+        LEFT JOIN reply ON comment.key = reply.key
         LEFT JOIN "user" ON comment.user_key = "user".key
-        LEFT JOIN child ON comment.key = child.key
-        LEFT JOIN log ON
-            comment.key = log.entity_key
-            AND log.action = 'created'
-            AND log.entity_type = 'comment'
-        WHERE
-            comment.post_key = %s
-        GROUP BY comment.key, log.date, "user".key,
-            sub_2."like", sub_2.dislike,
-            sub_2.most_reaction, sub_2.more_like,
-            child._count     , log.entity_type, log.misc
-        ORDER BY {} {};
-    """.format(
-        order_by[order],
-        order_dir[order]
-    ), (key,))
+
+        WHERE comment.post_key = %s
+
+        ORDER BY {order_by[order]} {order_dir[order]};
+    """, (key, key, key))
+
     comments = cur.fetchall()
     for x in comments:
         x["user"]["photo"] = (
@@ -124,58 +107,56 @@ def get_comments(key, cur=None):
 def create(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user or not user["login"]:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     cur.execute("""
         SELECT * FROM post WHERE slug = %s OR key = %s;
     """, (key, key))
     post = cur.fetchone()
 
-    if (
-        not post
-        or "path" not in request.json
-        or type(request.json["path"]) is not list
-    ):
+    if not post:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     if "comment" not in request.json or not request.json["comment"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "comment": "cannot be empty"
+            "comment": "This field is required"
         })
 
-    cur.execute("""
-        SELECT * FROM comment WHERE key = ANY(%s);
-    """, (request.json["path"],))
-    comments = cur.fetchall()
-    if len(comments) != len(request.json["path"]):
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid request"
-        })
+    parent_key = None
+    if "parent_key" in request.json and request.json["parent_key"]:
+        cur.execute("""
+            SELECT * FROM comment WHERE key = %s;
+        """, (request.json["parent_key"],))
+        if not cur.fetchone():
+            db_close(con, cur)
+            return jsonify({
+                "status": 400,
+                "error": "Invalid request"
+            })
+        parent_key = request.json["parent_key"]
 
     cur.execute("""
-        INSERT INTO comment (key, user_key, post_key, comment, path)
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO comment (
+            key, created_at, user_key, post_key, comment, parent_key)
+        VALUES (%s, %s, %s, %s, %s, %s)
         RETURNING *;
     """, (
         uuid4().hex,
+        datetime.now(timezone.utc),
         user["key"],
         post["key"],
         request.json["comment"],
-        request.json["path"]
+        parent_key
     ))
     comment = cur.fetchone()
 
@@ -199,22 +180,20 @@ def create(key):
 def like(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     cur.execute("""
         SELECT
             comment.key,
             comment.post_key,
             comment.comment,
-            comment.path,
-            comment."like",
-            comment.dislike,
+            comment.parent_key,
+            comment.likes,
+            comment.dislikes,
             log.date,
             jsonb_build_object(
                 'key', "user".key,
@@ -240,7 +219,7 @@ def like(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     comment["user"]["photo"] = (
@@ -249,31 +228,23 @@ def like(key):
     )
 
     if request.json["like"]:
-        if user["key"] in comment["dislike"]:
-            comment["dislike"].remove(user["key"])
-        if user["key"] in comment["like"]:
-            comment["like"].remove(user["key"])
+        if user["key"] in comment["dislikes"]:
+            comment["dislikes"].remove(user["key"])
+        if user["key"] in comment["likes"]:
+            comment["likes"].remove(user["key"])
         else:
-            comment["like"].append(user["key"])
+            comment["likes"].append(user["key"])
     else:
-        if user["key"] in comment["like"]:
-            comment["like"].remove(user["key"])
-        if user["key"] in comment["dislike"]:
-            comment["dislike"].remove(user["key"])
+        if user["key"] in comment["likes"]:
+            comment["likes"].remove(user["key"])
+        if user["key"] in comment["dislikes"]:
+            comment["dislikes"].remove(user["key"])
         else:
-            comment["dislike"].append(user["key"])
+            comment["dislikes"].append(user["key"])
 
     cur.execute("""
-        UPDATE comment
-        SET
-            "like" = %s,
-            dislike = %s
-        WHERE key = %s;
-    """, (
-        comment["like"],
-        comment["dislike"],
-        comment["key"]
-    ))
+        UPDATE comment SET likes = %s, dislikes = %s WHERE key = %s;
+    """, (comment["likes"], comment["dislikes"], comment["key"]))
 
     log(
         cur=cur,
@@ -298,13 +269,11 @@ def like(key):
 def delete(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     cur.execute("""
         SELECT * FROM comment WHERE key = %s AND user_key = %s;
@@ -315,15 +284,11 @@ def delete(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
-    # cur.execute("""
-    #     DELETE FROM comment WHERE entity_type='comment' AND entity_key = %s;
-    # """, (comment["key"],))
-
     cur.execute("""
-        DELETE FROM comment WHERE key = %s OR %s = ANY(path);
+        DELETE FROM comment WHERE key = %s OR parent_key = %s;
     """, (comment["key"], comment["key"]))
 
     log(

@@ -3,7 +3,7 @@
 	let { user } = $props();
 </script>
 
-<a href="/@{user.key}">
+<a href="/@{user.username}">
 	<Avatar name={user.name} photo={user.photo} --avatar-border-radius="50%" />
 	<div class="details">
 		<div class="name">

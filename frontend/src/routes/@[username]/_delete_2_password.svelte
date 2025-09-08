@@ -6,7 +6,7 @@
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
 
-	let form = {};
+	let form = $state({});
 	let error = $state({});
 	let show_password = false;
 
@@ -14,13 +14,14 @@
 		error = {};
 
 		if (!form.password) {
-			error.password = 'cannot be empty';
+			error.password = 'This field is required';
 		}
 
 		Object.keys(error).length === 0 && submit();
 	};
 
 	const submit = async () => {
+		// TODO: alse send email
 		loading.open('deleting . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/deactivate`, {
 			method: 'delete',
@@ -35,6 +36,7 @@
 
 		if (resp.status == 200) {
 			app.token = resp.token;
+			app.login = false;
 			document.location = '/';
 		} else {
 			error = resp;

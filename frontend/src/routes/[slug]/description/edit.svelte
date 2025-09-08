@@ -14,7 +14,7 @@
 		error = {};
 
 		if (form.description == module.value.description) {
-			error.description = 'no change';
+			error.description = 'No changes were made';
 		}
 
 		Object.keys(error).length === 0 && submit();

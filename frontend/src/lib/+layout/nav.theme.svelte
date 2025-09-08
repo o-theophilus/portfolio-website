@@ -26,10 +26,10 @@
 		class:is_home={page.url.pathname == '/'}
 		onclick={() => {
 			submit();
-			app.user.setting_theme = app.user.setting_theme == 'dark' ? 'light' : 'dark';
+			app.user.theme = app.user.theme == 'dark' ? 'light' : 'dark';
 		}}
 	>
-		<div class="switch" class:dark={app.user.setting_theme == 'dark'}>
+		<div class="switch" class:dark={app.user.theme == 'dark'}>
 			<div class="state">
 				<Icon icon="sun" />
 			</div>
@@ -54,7 +54,7 @@
 		position: relative;
 		overflow: hidden;
 
-		color: var(--ft1);
+		color: var(--ft2);
 		border-radius: 50%;
 
 		height: var(--size);

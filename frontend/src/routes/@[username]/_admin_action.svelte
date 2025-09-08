@@ -6,16 +6,14 @@
 	import { Form } from '$lib/layout';
 	import { slide } from 'svelte/transition';
 
-	let form = {
-		actions: []
-	};
+	let form = $state({ actions: [] });
 	let error = $state({});
 
 	const validate = () => {
 		error = {};
 
 		if (!form.note) {
-			error.note = 'cannot be empty';
+			error.note = 'This field is required';
 		}
 
 		if (form.actions.length == 0) {
@@ -59,6 +57,12 @@
 			<label>
 				<input type="checkbox" bind:group={form.actions} value="reset_name" />
 				Reset Name
+			</label>
+		{/if}
+		{#if app.user.access.includes('user:reset_username')}
+			<label>
+				<input type="checkbox" bind:group={form.actions} value="reset_username" />
+				Reset Username
 			</label>
 		{/if}
 		{#if app.user.access.includes('user:reset_photo')}

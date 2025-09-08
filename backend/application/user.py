@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from .postgres import db_open, db_close
 from .tools import (
-    token_to_user, user_schema, send_mail,
-    generate_code, check_code)
+    get_session, user_schema, send_mail,
+    generate_code, check_code, reserved_words)
 from .log import log
 import re
 import os
@@ -17,16 +17,14 @@ bp = Blueprint("user", __name__)
 def theme():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     theme = "light"
-    if user["setting_theme"] == "light":
+    if user["theme"] == "light":
         theme = "dark"
 
     log(
@@ -34,15 +32,16 @@ def theme():
         user_key=user["key"],
         action="changed_theme",
         entity_type="user",
+        entity_key=user["key"],
         misc={
-            "from": user["setting_theme"],
+            "from": user["theme"],
             "to": theme
         }
     )
 
     cur.execute("""
         UPDATE "user"
-        SET setting_theme = %s
+        SET theme = %s
         WHERE key = %s
         RETURNING *
     ;""", (
@@ -62,42 +61,55 @@ def theme():
 def edit_user():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     error = {}
 
+    name = user["name"]
+    username = user["username"]
+    phone = user["phone"]
+
     if "name" in request.json:
-        name = ' '.join(request.json["name"].strip().split())
+        name = ' '.join(request.json.get("name", "").strip().split())
         if not name:
-            error['name'] = "cannot be empty"
+            error['name'] = "This field is required"
         elif name == user["name"]:
-            error['name'] = "no change"
+            error['name'] = "No changes were made"
+        elif len(name) > 100:
+            error["name"] = "This field cannot exceed 100 characters"
+
+    if "username" in request.json:
+        username = request.json.get("username", "").strip()
+        if not username:
+            error["username"] = "This field is required"
+        elif (
+                not re.match(r"^[A-Za-z][A-Za-z0-9_]*$", username)
+                or len(username) > 20
+        ):
+            error["name"] = """'Username can only contain letters,
+            numbers, or underscores, must start with a letter,
+            and be at most 20 characters"""
+        elif username == user["username"]:
+            error['username'] = "No changes were made"
+        elif username in reserved_words:
+            error["username"] = "Username is not allowed"
         else:
-            cur.execute("""
-                UPDATE "user" SET name = %s WHERE key = %s
-                RETURNING *;
-            """, (
-                name, user["key"]
-            ))
-            user = cur.fetchone()
+            cur.execute(
+                'SELECT * FROM "user" WHERE username = %s AND key != %s;',
+                (username, user["key"]))
+            if cur.fetchone():
+                error["username"] = "Username already in use"
 
     if "phone" in request.json:
-        if request.json["phone"] == user["phone"]:
-            error['phone'] = "no change"
-        else:
-            cur.execute("""
-                UPDATE "user" SET phone = %s WHERE key = %s
-                RETURNING *;
-            """, (
-                request.json["phone"], user["key"]
-            ))
-            user = cur.fetchone()
+        phone = request.json.get("phone", "").replace(" ", "")
+        if phone == user["phone"]:
+            error['phone'] = "No changes were made"
+        elif len(phone) > 20:
+            error["phone"] = "This field cannot exceed 20 characters"
 
     if error != {}:
         db_close(con, cur)
@@ -105,6 +117,13 @@ def edit_user():
             "status": 400,
             **error
         })
+
+    cur.execute("""
+        UPDATE "user"
+        SET name = %s, username = %s, phone = %s WHERE key = %s
+        RETURNING *;
+    """, (name, username, phone, user["key"]))
+    user = cur.fetchone()
 
     log(
         cur=cur,
@@ -126,13 +145,11 @@ def edit_user():
 def email_1_old_email():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if (
         "email_template" not in request.json
@@ -141,7 +158,7 @@ def email_1_old_email():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     send_mail(
@@ -163,13 +180,11 @@ def email_1_old_email():
 def email_2_old_code():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     error = check_code(cur, user["key"], user["email"], "code_1")
     if error:
@@ -189,20 +204,18 @@ def email_2_old_code():
 def email_3_new_email():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     error = check_code(cur, user["key"], user["email"], "code_1")
     if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     if (
@@ -212,14 +225,14 @@ def email_3_new_email():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     error = None
     if "email" not in request.json or not request.json["email"]:
-        error = "cannot be empty"
+        error = "This field is required"
     elif not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", request.json["email"]):
-        error = "invalid email"
+        error = "Invalid email address"
     if error:
         db_close(con, cur)
         return jsonify({
@@ -264,20 +277,18 @@ def email_3_new_email():
 def email_4_new_code():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     error = check_code(cur, user["key"], user["email"], "code_1")
     if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     if (
@@ -287,14 +298,14 @@ def email_4_new_code():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     if user["email"] == request.json["email"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     cur.execute('SELECT * FROM "user" WHERE email = %s;',
@@ -304,7 +315,7 @@ def email_4_new_code():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     error = check_code(cur, user["key"], request.json["email"], "code_2")
@@ -312,7 +323,7 @@ def email_4_new_code():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     if user["email"] == os.environ["MAIL_USERNAME"]:
@@ -328,6 +339,7 @@ def email_4_new_code():
         user_key=user["key"],
         action="changed_email",
         entity_type="user",
+        entity_key=user["key"],
         misc={
             "from": user['email'],
             "to": request.json['email']
@@ -353,13 +365,11 @@ def email_4_new_code():
 def password_1_email():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if (
         "email_template" not in request.json
@@ -368,7 +378,7 @@ def password_1_email():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     send_mail(
@@ -391,13 +401,11 @@ def password_1_email():
 def password_2_code():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     error = check_code(cur, user["key"], user["email"])
     if error:
@@ -417,25 +425,23 @@ def password_2_code():
 def password_3_password():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     error = check_code(cur, user["key"], user["email"])
     if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     error = {}
     if "password" not in request.json or not request.json["password"]:
-        error["password"] = "cannot be empty"
+        error["password"] = "This field is required"
     elif (
         not re.search("[a-z]", request.json["password"])
         or not re.search("[A-Z]", request.json["password"])
@@ -453,7 +459,7 @@ def password_3_password():
         "confirm_password" not in request.json
         or not request.json["confirm_password"]
     ):
-        error["confirm_password"] = "cannot be empty"
+        error["confirm_password"] = "This field is required"
     elif (
             request.json["password"]
             and request.json["confirm_password"] != request.json["password"]
@@ -477,7 +483,8 @@ def password_3_password():
         cur=cur,
         user_key=user["key"],
         action="changed_password",
-        entity_type="user"
+        entity_type="user",
+        entity_key=user["key"]
     )
 
     cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))
@@ -492,19 +499,17 @@ def password_3_password():
 def add_photo():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if 'file' not in request.files:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     file = request.files["file"]
@@ -556,12 +561,17 @@ def add_photo():
 def delete_photo():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user or not user["photo"]:
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
+
+    if not user["photo"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     storage("delete", user["photo"])

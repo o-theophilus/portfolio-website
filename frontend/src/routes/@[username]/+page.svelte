@@ -10,6 +10,7 @@
 	import Name from './_name.svelte';
 	import Phone from './_phone.svelte';
 	import Email from './_email_1.svelte';
+	import Username from './_username.svelte';
 	import Delete from './_delete_1_warning.svelte';
 	import Password from './_password_1_email.svelte';
 	import Access from './_access.svelte';
@@ -41,7 +42,7 @@
 	<div class="line">
 		<div class="page_title">Profile</div>
 
-		{#if app.user.login && (user.key == app.user.key || is_admin)}
+		{#if app.login && (user.key == app.user.key || is_admin)}
 			<Toggle
 				state_2="edit"
 				active={edit_mode}
@@ -82,19 +83,13 @@
 			{user.name}
 		</div>
 		{#if edit_mode && user.key == app.user.key}
-			<RoundButton
-				icon="square-pen"
-				onclick={() => {
-					module.open(Name, { user, update });
-				}}
-			/>
+			<RoundButton icon="square-pen" onclick={() => module.open(Name, { update })} />
 		{/if}
 	</div>
 
 	<div class="line center">
 		<Icon icon="mail" />
 		{user.email}
-
 		{#if edit_mode && user.key == app.user.key}
 			<RoundButton icon="square-pen" onclick={() => module.open(Email, { update })} />
 		{/if}
@@ -105,8 +100,22 @@
 			<Icon icon="phone" />
 			{user.phone || 'None'}
 			{#if edit_mode && user.key == app.user.key}
-				<RoundButton icon="square-pen" onclick={() => module.open(Phone, { ...user, update })} />
+				<RoundButton icon="square-pen" onclick={() => module.open(Phone, { update })} />
 			{/if}
+		</div>
+	{/if}
+
+	{#if edit_mode && user.key == app.user.key}
+		<div class="line center">
+			<Icon icon="at-sign" />
+			{user.username}
+			<RoundButton icon="square-pen" onclick={() => module.open(Username, { update })} />
+		</div>
+
+		<div class="line center">
+			<Icon icon="key-round" />
+			********
+			<RoundButton icon="square-pen" onclick={() => module.open(Password)} />
 		</div>
 	{/if}
 
@@ -114,28 +123,21 @@
 		<br />
 		<div class="line center wrap">
 			{#if user.key == app.user.key}
-				<Button --button-font-size="0.8rem" onclick={() => module.open(Password)}>
-					<Icon icon="key-round" />
-					Change Password
-				</Button>
-
 				<Button --button-font-size="0.8rem" onclick={() => module.open(Delete)}>
 					<Icon icon="trash-2" />
 					Delete Account
 				</Button>
 			{:else if is_admin}
 				{#if app.user.access.includes('user:set_access')}
-					<Button --button-font-size="0.8rem" onclick={() => module.open(Access, { ...user })}
-						>Access</Button
-					>
+					<Button --button-font-size="0.8rem" onclick={() => module.open(Access, { ...user })}>
+						Access
+					</Button>
 				{/if}
 
 				{#if app.user.access.some((x) => ['user:reset_name', 'user:reset_photo'].includes(x))}
 					<Button
 						--button-font-size="0.8rem"
-						onclick={() => {
-							module.open(Action, { ...user, update });
-						}}
+						onclick={() => module.open(Action, { ...user, update })}
 					>
 						Reset
 					</Button>
@@ -144,7 +146,7 @@
 				{#if app.user.access.includes('user:block')}
 					<Button
 						--button-font-size="0.8rem"
-						onclick={() => (module, open(Block, { ...user, update }))}
+						onclick={() => module.open(Block, { ...user, update })}
 					>
 						{#if user.status == 'blocked'}
 							Unblock

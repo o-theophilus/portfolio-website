@@ -7,7 +7,6 @@ export const load = async ({ parent, fetch, params }) => {
 		return { user: a.locals.user }
 	}
 
-
 	let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/${params.username}`, {
 		method: 'get',
 		headers: {
@@ -19,6 +18,6 @@ export const load = async ({ parent, fetch, params }) => {
 	if (resp.status == 200) {
 		return resp
 	} else {
-		throw error(404, resp.error)
+		throw error(resp.status, resp.error)
 	}
 }

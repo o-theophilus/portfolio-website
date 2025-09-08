@@ -8,9 +8,10 @@
 	let { data, children } = $props();
 	app.user = data.locals.user;
 	app.token = data.locals.token;
+	app.login = data.locals.login;
 </script>
 
-<main class:dark={app.user.setting_theme == 'dark'}>
+<main class:dark={app.user.theme == 'dark'}>
 	<Nav />
 	{@render children()}
 	<Footer />

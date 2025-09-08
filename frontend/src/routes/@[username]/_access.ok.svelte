@@ -7,16 +7,14 @@
 	import { Form } from '$lib/layout';
 	import Access from './_access.svelte';
 
-	let form = {
-		access: module.value.mods
-	};
+	let form = $state({ access: module.value.mods });
 	let error = $state({});
 
 	const validate = async () => {
 		error = {};
 
 		if (!form.password) {
-			error.password = 'cannot be empty';
+			error.password = 'This field is required';
 		}
 
 		Object.keys(error).length === 0 && submit();

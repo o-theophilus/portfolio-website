@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from .tools import token_to_user, user_schema
+from .tools import get_session, user_schema
 from math import ceil
 from .postgres import db_close, db_open
 from .admin import access
@@ -12,30 +12,17 @@ bp = Blueprint("user_get", __name__)
 def get(key):
     con, cur = db_open()
 
-    me = token_to_user(cur)
-    if not me:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
-
-    # user = None
-    # if "search" in request.args:
-    #     if request.args["search"]:
     cur.execute("""
-        SELECT * FROM "user" WHERE key = %s OR email = %s;
+        SELECT * FROM "user" WHERE key::TEXT = %s OR username = %s;
     """, (key, key))
     user = cur.fetchone()
 
     if not user:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
-            "error": "user not found"
+            "status": 404,
+            "error": "Oops! The user you’re looking for doesn’t exist"
         })
-    # else:
-        # user = me
 
     _access = {}
     for x in access:
@@ -58,15 +45,12 @@ def get(key):
 def get_many():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
 
-    if "user:view" not in user["access"]:
+    if "user:view" not in session["user"]["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -74,10 +58,10 @@ def get_many():
         })
 
     order_by = {
-        'latest': 'log.date',
-        'oldest': 'log.date',
-        'name (a-z)': '"user".name',
-        'name (z-a)': '"user".name'
+        'latest': 'date_created',
+        'oldest': 'date_created',
+        'name (a-z)': 'name',
+        'name (z-a)': 'name'
     }
 
     order_dir = {
@@ -105,23 +89,14 @@ def get_many():
         page_size = int(request.args["size"])
 
     cur.execute("""
-        SELECT
-            "user".*,
-            log.date AS date,
-            COUNT(*) OVER() AS _count
+        SELECT *, COUNT(*) OVER() AS _count
         FROM "user"
-        LEFT JOIN log ON
-            "user".key = log.user_key
-            AND log.action = 'created'
-            AND log.entity_type = 'account'
-        WHERE
-            (
-                %s = '' OR "user".status = %s
+        WHERE (
+                %s = '' OR status = %s
             ) AND (
                 %s = ''
-                OR CONCAT_WS(', ', "user".key, "user".name, "user".email
-                ) ILIKE %s
-            )
+                OR CONCAT_WS(', ', key, name, email) ILIKE %s
+        )
         ORDER BY {} {}
         LIMIT %s OFFSET %s;
     """.format(
@@ -147,13 +122,11 @@ def get_many():
 def get_admins():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "user:set_access" not in user["access"]:
         db_close(con, cur)

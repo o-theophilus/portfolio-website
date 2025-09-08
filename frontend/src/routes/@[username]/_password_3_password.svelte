@@ -5,22 +5,17 @@
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
 
-	let form = {
-		...module.value
-	};
-
+	let form = $state({ ...module.value });
 	let error = $state({});
-	let show_password = false;
+	let show_password = $state(false);
 
 	const validate = async () => {
 		error = {};
 
 		if (!form.password) {
-			error.password = 'cannot be empty';
+			error.password = 'This field is required';
 		} else if (
-			!/[a-z]/.test(form.password) ||
-			!/[A-Z]/.test(form.password) ||
-			!/[0-9]/.test(form.password) ||
+			!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$/.test(form.password) ||
 			form.password.length < 8 ||
 			form.password.length > 18
 		) {
@@ -29,7 +24,7 @@
 		}
 
 		if (!form.confirm_password) {
-			error.confirm_password = 'cannot be empty';
+			error.confirm_password = 'This field is required';
 		} else if (form.password && form.password != form.confirm_password) {
 			error.confirm_password = 'Password and confirm password does not match';
 		}
@@ -63,19 +58,20 @@
 	<IG
 		name="Password"
 		icon="key-round"
-		error={error.password}
 		bind:value={form.password}
-		type="password++"
+		error={error.password}
 		placeholder="Password here"
+		type="password++"
+		bind:show_password
 	></IG>
-
 	<IG
 		name="Confirm Password"
 		icon="key-round"
-		error={error.confirm_password}
 		bind:value={form.confirm_password}
-		type="password"
+		error={error.confirm_password}
 		placeholder="Password here"
+		type="password"
+		bind:show_password
 	/>
 
 	<Button primary onclick={validate}>Change Password</Button>

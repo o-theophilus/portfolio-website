@@ -18,11 +18,9 @@
 		error = {};
 
 		if (!form.password) {
-			error.password = 'cannot be empty';
+			error.password = 'This field is required';
 		} else if (
-			!/[a-z]/.test(form.password) ||
-			!/[A-Z]/.test(form.password) ||
-			!/[0-9]/.test(form.password) ||
+			!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$/.test(form.password) ||
 			form.password.length < 8 ||
 			form.password.length > 18
 		) {
@@ -31,7 +29,7 @@
 		}
 
 		if (!form.confirm_password) {
-			error.confirm_password = 'cannot be empty';
+			error.confirm_password = 'This field is required';
 		} else if (form.password && form.password != form.confirm_password) {
 			error.confirm_password = 'Password and confirm password does not match';
 		}

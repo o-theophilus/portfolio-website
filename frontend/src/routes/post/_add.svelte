@@ -14,7 +14,7 @@
 	const validate = () => {
 		error = {};
 		if (!form.title) {
-			error.title = 'cannot be empty';
+			error.title = 'This field is required';
 		}
 
 		Object.keys(error).length === 0 && submit();

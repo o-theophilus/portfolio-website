@@ -17,7 +17,7 @@
 		error = {};
 
 		if (!form.code) {
-			error.code = 'cannot be empty';
+			error.code = 'This field is required';
 		} else if (form.code.length != 6) {
 			error.code = 'invalid code';
 		}

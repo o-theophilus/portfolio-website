@@ -15,7 +15,7 @@
 		error = {};
 
 		if (!form.password) {
-			error.password = 'cannot be empty';
+			error.password = 'This field is required';
 		}
 
 		Object.keys(error).length === 0 && submit();

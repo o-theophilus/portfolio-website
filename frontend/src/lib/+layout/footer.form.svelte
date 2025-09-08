@@ -20,15 +20,15 @@
 	const validate = () => {
 		error = {};
 		if (!form.name) {
-			error.name = 'cannot be empty';
+			error.name = 'This field is required';
 		}
 		if (!form.email) {
-			error.email = 'cannot be empty';
+			error.email = 'This field is required';
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-			error.email = 'invalid email';
+			error.email = 'Invalid email address';
 		}
 		if (!form.message) {
-			error.message = 'cannot be empty';
+			error.message = 'This field is required';
 		}
 
 		Object.keys(error).length === 0 && submit();

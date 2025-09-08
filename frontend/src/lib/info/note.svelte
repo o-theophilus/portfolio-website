@@ -3,18 +3,6 @@
 	import { Icon } from '$lib/macro';
 
 	let { status, note, children } = $props();
-
-	let _status = $derived.by(() => {
-		if (status == 200) {
-			return '200';
-		} else if (status == 201) {
-			return '201';
-		} else if (status == 400) {
-			return '400';
-		} else {
-			return 'info';
-		}
-	});
 </script>
 
 {#if note || children}

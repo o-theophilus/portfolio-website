@@ -5,7 +5,6 @@ blocked user
 - cant use account
 cron to cleanup files from drive
 cron to clean anonymous users
-login time tracking
 
 
 

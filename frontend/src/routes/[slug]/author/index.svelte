@@ -24,7 +24,7 @@
 	};
 </script>
 
-{#if loading || author.key}
+{#if loading || author.username}
 	<hr />
 	{#if app.user.access.includes('post:edit_author') && edit_mode}
 		<Button onclick={() => module.open(Form, { post_key: post.key, update })}>Edit Author</Button>
@@ -34,10 +34,10 @@
 		{#if loading}
 			<Spinner active={loading} size="20" />
 		{:else}
-			<Link href="/@{author.key}">
+			<Link href="/@{author.username}">
 				<Avatar name={author.name} photo={author.photo} --avatar-border-radius="50%" />
 			</Link>
-			<Link href="/@{author.key}" --link-font-size="0.8rem">
+			<Link href="/@{author.username}" --link-font-size="0.8rem">
 				<div class="name">
 					{author.name}
 				</div>

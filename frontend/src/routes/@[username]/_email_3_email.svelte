@@ -9,19 +9,20 @@
 
 	import Code from './_email_4_code.svelte';
 
-	let form = {
-		...module.value
-	};
+	let form = $state({ ...module.value });
 	let error = $state({});
 	let email_template;
 
 	const validate = () => {
 		error = {};
 
+		form.email = form.email.trim();
 		if (!form.email) {
-			error.email = 'cannot be empty';
+			error.email = 'This field is required';
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-			error.email = 'Please enter a valid email';
+			error.email = 'Invalid email address';
+		} else if (form.email.length > 255) {
+			error.email = 'This field cannot exceed 255 characters';
 		} else if (form.email == app.user.email) {
 			error.email = 'please use a different email form your current email';
 		}

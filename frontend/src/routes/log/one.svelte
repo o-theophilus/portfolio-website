@@ -1,5 +1,5 @@
 <script>
-	import { app } from '$lib/store.svelte.js';
+	import { app, page_state } from '$lib/store.svelte.js';
 	import { Datetime, Icon } from '$lib/macro';
 
 	let { log, search = $bindable() } = $props();
@@ -21,23 +21,29 @@
 <section>
 	<div
 		class="status"
-		class:good={log.status == 200}
-		class:caution={![200, 400].includes(log.status)}
-		class:error={log.status == 400}
+		class:_200={log.status == '200'}
+		class:_201={!['200', '400'].includes(log.status)}
+		class:_400={log.status == '400'}
 	></div>
 
 	<span class="date">
-		<Datetime datetime={log.date} type="date_numeric" />
-		<Datetime datetime={log.date} type="time_12h" />
+		<Datetime datetime={log.date_created} type="date_numeric" />
+		<Datetime datetime={log.date_created} type="time_12h" />
 	</span>
 	<br />
 
-	<a href="/@{log.user.key}" class="break">
+	<a href="/@{log.user.username}" class="break">
 		{log.user.name}
 	</a>
 
 	{#if log.user.key && app.user.access.includes('log:view')}
-		<button onclick={() => (search.user_key = log.user.key)}>
+		<button
+			onclick={() => {
+				search.page_no = 1;
+				search.u_search = log.user.key;
+				page_state.set({ u_search: log.user.key });
+			}}
+		>
 			<Icon icon="square-chevron-up"></Icon>
 		</button>
 	{/if}
@@ -52,7 +58,9 @@
 
 		<button
 			onclick={() => {
-				search.entity_key = log.entity.key;
+				search.page_no = 1;
+				search.e_search = log.entity.key;
+				page_state.set({ e_search: log.entity.key });
 			}}
 		>
 			<Icon icon="square-chevron-up"></Icon>
@@ -79,6 +87,7 @@
 		margin: var(--sp2) 0;
 		padding-top: var(--sp2);
 		border-top: 2px solid var(--bg2);
+		color: var(--ft1);
 
 		font-size: 0.8rem;
 	}
@@ -90,22 +99,20 @@
 		height: var(--size);
 
 		border-radius: 50%;
-
-		background-color: #ef5a6f;
 		color: var(--ac6_);
 	}
-	.good {
+	._200 {
 		background-color: green;
 	}
-	.caution {
+	._201 {
 		background-color: var(--yellow);
 	}
-	.error {
+	._400 {
 		background-color: red;
 	}
 
 	.date {
-		font-size: 0.8rem;
+		font-size: 0.7rem;
 		color: var(--ft2);
 	}
 

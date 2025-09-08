@@ -8,17 +8,14 @@
 
 	import Email from './_email_3_email.svelte';
 
-	let form = {
-		...module.value
-	};
-
+	let form = $state({ ...module.value });
 	let error = $state({});
 
 	const validate = () => {
 		error = {};
 
 		if (!form.code_1) {
-			error.code_1 = 'cannot be empty';
+			error.code_1 = 'This field is required';
 		} else if (form.code_1.length != 6) {
 			error.code_1 = 'invalid code';
 		}

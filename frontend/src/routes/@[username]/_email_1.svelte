@@ -8,7 +8,7 @@
 
 	import Code from './_email_2_code.svelte';
 
-	let form = {};
+	let form = $state({});
 	let error = $state({});
 	let email_template;
 

@@ -50,25 +50,25 @@
 <hr />
 
 <div class="line">
-	{#if app.user.login}
+	{#if app.login}
 		<Like
-			like={post.like.length}
-			dislike={post.dislike.length}
+			like={post.likes.length}
+			dislike={post.dislikes.length}
 			onlike={() => {
-				post.dislike = post.dislike.filter((e) => e != app.user.key);
-				if (post.like.includes(app.user.key)) {
-					post.like = post.like.filter((e) => e != app.user.key);
+				post.dislikes = post.dislikes.filter((e) => e != app.user.key);
+				if (post.likes.includes(app.user.key)) {
+					post.likes = post.likes.filter((e) => e != app.user.key);
 				} else {
-					post.like.push(app.user.key);
+					post.likes.push(app.user.key);
 				}
 				submit_like(true);
 			}}
 			ondislike={() => {
-				post.like = post.like.filter((e) => e != app.user.key);
-				if (post.dislike.includes(app.user.key)) {
-					post.dislike = post.dislike.filter((e) => e != app.user.key);
+				post.likes = post.likes.filter((e) => e != app.user.key);
+				if (post.dislikes.includes(app.user.key)) {
+					post.dislikes = post.dislikes.filter((e) => e != app.user.key);
 				} else {
-					post.dislike.push(app.user.key);
+					post.dislikes.push(app.user.key);
 				}
 				submit_like(false);
 			}}

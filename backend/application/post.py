@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from .tools import reserved_words, token_to_user
+from .tools import reserved_words, get_session
 import re
 import os
 from uuid import uuid4
@@ -13,17 +13,23 @@ from werkzeug.security import check_password_hash
 bp = Blueprint("post", __name__)
 
 
+@bp.post("/test1")
+def test():
+    return jsonify({
+        "status": 200,
+        "message": "post endpoint"
+    })
+
+
 @bp.post("/post")
 def add():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "post:add" not in user["access"]:
         db_close(con, cur)
@@ -36,7 +42,7 @@ def add():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "cannot be empty"
+            "error": "This field is required"
         })
 
     slug = re.sub('-+', '-', re.sub(
@@ -88,13 +94,11 @@ def add():
 def edit(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
@@ -102,7 +106,7 @@ def edit(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     error = {}
@@ -111,9 +115,9 @@ def edit(key):
         if "post:edit_title" not in user["access"]:
             error["title"] = "unauthorized access"
         elif not request.json["title"]:
-            error["title"] = "cannot be empty"
+            error["title"] = "This field is required"
         elif request.json["title"] == post["title"]:
-            error["title"] = "no change"
+            error["title"] = "No changes were made"
         else:
             slug = re.sub('-+', '-', re.sub(
                 '[^a-zA-Z0-9]', '-', request.json["title"].lower()))
@@ -143,7 +147,7 @@ def edit(key):
                 date_obj = datetime.fromisoformat(
                     request.json["date"].replace("Z", "+00:00"))
             except Exception:
-                error["date"] = "invalid request"
+                error["date"] = "Invalid request"
             else:
                 cur.execute("""
                     UPDATE post
@@ -160,7 +164,7 @@ def edit(key):
         if "post:edit_description" not in user["access"]:
             error["description"] = "unauthorized access"
         elif request.json["description"] == post["description"]:
-            error["description"] = "no change"
+            error["description"] = "No changes were made"
         else:
             cur.execute("""
                 UPDATE post
@@ -177,7 +181,7 @@ def edit(key):
         if "post:edit_content" not in user["access"]:
             error["content"] = "unauthorized access"
         elif request.json["content"] == post["content"]:
-            error["content"] = "no change"
+            error["content"] = "No changes were made"
         else:
             cur.execute("""
                 UPDATE post
@@ -194,9 +198,9 @@ def edit(key):
         if "post:edit_tags" not in user["access"]:
             error["tags"] = "unauthorized access"
         elif type(request.json["tags"]) is not list:
-            error["tags"] = "cannot be empty"
+            error["tags"] = "This field is required"
         elif set(request.json["tags"]) == set(post["tags"]):
-            error["tags"] = "no change"
+            error["tags"] = "No changes were made"
         else:
             cur.execute("""
                     UPDATE post
@@ -213,7 +217,7 @@ def edit(key):
         if "post:edit_author" not in user["access"]:
             error["author_email"] = "unauthorized access"
         elif not request.json["author_email"]:
-            error["author_email"] = "cannot be empty"
+            error["author_email"] = "This field is required"
         elif (
             not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$",
                          request.json["author_email"])
@@ -231,7 +235,7 @@ def edit(key):
             if not author:
                 error["author_email"] = "no user found"
             elif author["key"] == post["author_key"]:
-                error["author_email"] = "no change"
+                error["author_email"] = "No changes were made"
             else:
                 cur.execute("""
                     UPDATE post
@@ -250,9 +254,9 @@ def edit(key):
             not request.json["status"]
             or request.json["status"] not in ['active', 'draft']
         ):
-            error["status"] = "invalid request"
+            error["status"] = "Invalid request"
         elif request.json["status"] == post["status"]:
-            error["status"] = "no change"
+            error["status"] = "No changes were made"
         elif request.json["status"] == "active" and not post["photo"]:
             error["status"] = "no title photo"
         elif request.json["status"] == "active" and not post["content"]:
@@ -296,19 +300,17 @@ def edit(key):
 def delete(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     error = None
     if "post:edit_status" not in user["access"]:
         error = "unauthorized access"
     elif "password" not in request.json:
-        error = "cannot be empty"
+        error = "This field is required"
     elif not check_password_hash(user["password"], request.json["password"]):
         error = "incorrect password"
 
@@ -325,16 +327,12 @@ def delete(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     cur.execute("""
         DELETE FROM comment WHERE post_key = %s;
     """, (post["key"],))
-
-    # cur.execute("""
-    #     DELETE FROM log WHERE entity_type='post' AND entity_key = %s;
-    # """, (post["key"],))
 
     cur.execute("""
         DELETE FROM post WHERE key = %s;
@@ -362,13 +360,11 @@ def delete(key):
 def add_photo(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "post:edit_photo" not in user["access"]:
         db_close(con, cur)
@@ -383,7 +379,7 @@ def add_photo(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     file = request.files["file"]
@@ -435,13 +431,11 @@ def add_photo(key):
 def delete_photo(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "post:edit_photo" not in user["access"]:
         db_close(con, cur)
@@ -456,7 +450,7 @@ def delete_photo(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     storage("delete", post["photo"])
@@ -502,13 +496,11 @@ def delete_photo(key):
 def add_file(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "post:edit_files" not in user["access"]:
         db_close(con, cur)
@@ -523,7 +515,7 @@ def add_file(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     error = ""
@@ -592,13 +584,11 @@ def add_file(key):
 def order_delete_file(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "post:edit_files" not in user["access"]:
         db_close(con, cur)
@@ -617,7 +607,7 @@ def order_delete_file(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     files = [p.split("/")[-1] for p in request.json["files"]]
@@ -626,7 +616,7 @@ def order_delete_file(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     for x in post["files"]:

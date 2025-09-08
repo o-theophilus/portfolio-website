@@ -4,7 +4,7 @@
 	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
-	import { Dialogue } from '$lib/info';
+	import { Dialogue, Note } from '$lib/info';
 	import Login from './login.svelte';
 
 	let form = {
@@ -16,7 +16,7 @@
 		error = {};
 
 		if (!form.code) {
-			error.code = 'cannot be empty';
+			error.code = 'This field is required';
 		} else if (form.code.length != 6) {
 			error.code = 'invalid Code';
 		}
@@ -43,7 +43,7 @@
 				buttons: [
 					{
 						name: 'Login',
-						icon: 'login',
+						icon: 'log-in',
 						fn: () => {
 							module.open(Login, { email: form.email });
 						}
@@ -57,14 +57,7 @@
 </script>
 
 <Form title="Confirm Email" error={error.error}>
-	<br />
-	Code has been sent to your email
-	<br />
-
+	<Note>To confirm your account, please check your email for the confirmation code.</Note>
 	<IG name="Code" error={error.code} bind:value={form.code} type="code"></IG>
-
 	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 </Form>
-
-<style>
-</style>

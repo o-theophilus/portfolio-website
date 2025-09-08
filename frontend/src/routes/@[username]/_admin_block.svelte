@@ -6,15 +6,17 @@
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
 
-	let user = { ...module.value.user };
-	let form = {};
+	let user = { key: module.value.key, status: module.value.status };
+	console.log(user);
+
+	let form = $state({});
 	let error = $state({});
 
 	const validate = () => {
 		error = {};
 
 		if (!form.note) {
-			error.note = 'cannot be empty';
+			error.note = 'This field is required';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -37,8 +39,8 @@
 
 		if (resp.status == 200) {
 			module.value.update(resp.user);
-			module.close();
 			notify.open(resp.user.status == 'blocked' ? 'User Blocked' : 'User Unblocked');
+			module.close();
 		} else {
 			error = resp;
 		}

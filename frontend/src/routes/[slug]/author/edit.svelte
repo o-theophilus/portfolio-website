@@ -12,9 +12,9 @@
 		error = {};
 
 		if (!form.author_email) {
-			error.author_email = 'cannot be empty';
+			error.author_email = 'This field is required';
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.author_email)) {
-			error.author_email = 'invalid email';
+			error.author_email = 'Invalid email address';
 		}
 
 		Object.keys(error).length === 0 && submit(form.author_email);

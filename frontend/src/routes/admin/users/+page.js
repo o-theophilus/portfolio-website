@@ -6,7 +6,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
 
 	let a = await parent();
 	if (!a.locals.user.access.includes("user:view")) {
-		throw error(400, "unauthorized access")
+		throw error(400, "Unauthorized access")
 	}
 
 	let page_name = "users"
@@ -42,5 +42,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
 		page_state.state[page_name].loaded = true
 
 		return resp
+	} else {
+		throw error(resp.status, resp.error)
 	}
 }

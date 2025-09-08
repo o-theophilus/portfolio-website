@@ -11,9 +11,9 @@
 	const validate = () => {
 		error = {};
 		if (!form.title) {
-			error.title = 'cannot be empty';
+			error.title = 'This field is required';
 		} else if (form.title == module.value.title) {
-			error.title = 'no change';
+			error.title = 'No changes were made';
 		}
 		Object.keys(error).length === 0 && submit();
 	};
@@ -34,8 +34,8 @@
 		if (resp.status == 200) {
 			window.history.replaceState(history.state, '', `/${resp.post.slug}`);
 			module.value.update(resp.post);
-			module.close();
 			notify.open('Title Saved');
+			module.close();
 		} else {
 			error = resp;
 		}

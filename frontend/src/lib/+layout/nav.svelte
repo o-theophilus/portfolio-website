@@ -31,7 +31,7 @@
 		<div class="line">
 			<Theme />
 			<Link {is_home} href="/post">Post</Link>
-			{#if app.user.login}
+			{#if app.login}
 				<User {is_home} />
 			{:else}
 				<Link {is_home} onclick={() => module.open(Login)}>Login</Link>

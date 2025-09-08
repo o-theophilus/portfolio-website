@@ -12,7 +12,7 @@
 
 {#if open}
 	<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
-		<a href="/@{app.user.key}" class="profile">
+		<a href="/@{app.user.username}" class="profile">
 			{@render children()}
 		</a>
 		{#if admin && page.url.pathname != '/admin'}

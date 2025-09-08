@@ -14,9 +14,9 @@
 		error = {};
 
 		if (!content) {
-			error.content = 'cannot be empty';
+			error.content = 'This field is required';
 		} else if (content == post.content) {
-			error.content = 'no change';
+			error.content = 'No changes were made';
 		}
 
 		Object.keys(error).length === 0 && submit();

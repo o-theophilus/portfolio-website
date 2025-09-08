@@ -8,9 +8,7 @@
 	import EmailTemplate from './confirm.template.svelte';
 	import Confirm from './confirm.svelte';
 
-	let form = {
-		email: module.value.email
-	};
+	let form = $state({ email: module.value.email });
 	let email_template;
 	let show_password = $state(false);
 	let error = $state({});
@@ -18,31 +16,37 @@
 	const validate = () => {
 		error = {};
 
+		form.name = form.name.trim().replace(/\s+/g, ' ');
 		if (!form.name) {
-			error.name = 'cannot be empty';
+			error.name = 'This field is required';
+		} else if (form.name.length > 100) {
+			error.name = 'This field cannot exceed 100 characters';
 		}
+
+		form.email = form.email.trim();
 		if (!form.email) {
-			error.email = 'cannot be empty';
+			error.email = 'This field is required';
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-			error.email = 'invalid email';
+			error.email = 'Invalid email address';
+		} else if (form.email.length > 255) {
+			error.email = 'This field cannot exceed 255 characters';
 		}
+
 		if (!form.password) {
-			error.password = 'cannot be empty';
+			error.password = 'This field is required';
 		} else if (
-			!/[a-z]/.test(form.password) ||
-			!/[A-Z]/.test(form.password) ||
-			!/[0-9]/.test(form.password) ||
+			!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$/.test(form.password) ||
 			form.password.length < 8 ||
 			form.password.length > 18
 		) {
 			error.password =
-				'must include at least 1 lowercase letter, 1 uppercase letter, 1 number and must contain 8 - 18 characters';
+				'Password must include at least 1 lowercase letter, 1 uppercase letter, 1 number and must contain 8 - 18 characters';
 		}
 
 		if (!form.confirm_password) {
-			error.confirm_password = 'cannot be empty';
+			error.confirm_password = 'This field is required';
 		} else if (form.password && form.password != form.confirm_password) {
-			error.confirm_password = 'does not match password';
+			error.confirm_password = 'Password and confirm password does not match';
 		}
 
 		Object.keys(error).length === 0 && submit();

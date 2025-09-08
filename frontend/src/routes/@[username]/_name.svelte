@@ -5,21 +5,18 @@
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
 
-	let form = {
-		name: module.value.user.name
-	};
-
+	let form = $state({ name: app.user.name });
 	let error = $state({});
 
 	const validate = () => {
 		error = {};
 		form.name = form.name.trim().replace(/\s+/g, ' ');
 		if (!form.name) {
-			error.name = 'cannot be empty';
+			error.name = 'This field is required';
 		} else if (form.name.length > 100) {
-			error.name = 'too long'; // TODO: validate all length
-		} else if (form.name == module.value.user.name) {
-			error.name = 'no change';
+			error.name = 'This field cannot exceed 100 characters';
+		} else if (form.name == app.user.name) {
+			error.name = 'No changes were made';
 		}
 
 		Object.keys(error).length === 0 && submit();

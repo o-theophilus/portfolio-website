@@ -28,7 +28,7 @@
 		error = {};
 
 		if (JSON.stringify(tags.sort()) === JSON.stringify(init.sort())) {
-			error.tags = 'no change';
+			error.tags = 'No changes were made';
 		}
 
 		Object.keys(error).length === 0 && submit();

@@ -88,7 +88,7 @@
 		<div class="content">
 			<div class="line space name_date">
 				<div class="name">{comment.user.name}</div>
-				<div class="date"><Datetime datetime={comment.date} type="ago" /></div>
+				<div class="date"><Datetime datetime={comment.created_at} type="ago" /></div>
 			</div>
 
 			<div class="comment">
@@ -101,7 +101,7 @@
 				</div>
 			{/if}
 
-			{#if app.user.login}
+			{#if app.login}
 				<div class="line space">
 					<div class="line">
 						<RoundButton
@@ -111,23 +111,23 @@
 
 						<Like
 							--like-height="32px"
-							like={comment.like.length}
-							dislike={comment.dislike.length}
+							like={comment.likes.length}
+							dislike={comment.dislikes.length}
 							onlike={() => {
-								comment.dislike = comment.dislike.filter((e) => e != app.user.key);
-								if (comment.like.includes(app.user.key)) {
-									comment.like = comment.like.filter((e) => e != app.user.key);
+								comment.dislikes = comment.dislikes.filter((e) => e != app.user.key);
+								if (comment.likes.includes(app.user.key)) {
+									comment.likes = comment.likes.filter((e) => e != app.user.key);
 								} else {
-									comment.like.push(app.user.key);
+									comment.likes.push(app.user.key);
 								}
 								submit_like(true);
 							}}
 							ondislike={() => {
-								comment.like = comment.like.filter((e) => e != app.user.key);
-								if (comment.dislike.includes(app.user.key)) {
-									comment.dislike = comment.dislike.filter((e) => e != app.user.key);
+								comment.likes = comment.likes.filter((e) => e != app.user.key);
+								if (comment.dislikes.includes(app.user.key)) {
+									comment.dislikes = comment.dislikes.filter((e) => e != app.user.key);
 								} else {
-									comment.dislike.push(app.user.key);
+									comment.dislikes.push(app.user.key);
 								}
 								submit_like(false);
 							}}

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from .tools import token_to_user
+from .tools import get_session
 from .postgres import db_close, db_open
 from .log import log
 from .post_get import post_schema
@@ -21,7 +21,7 @@ def get_engagements(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     cur.execute("""
@@ -29,8 +29,8 @@ def get_engagements(key):
         _like AS (
             SELECT
                 key,
-                COALESCE(array_length("like", 1), 0) -
-                COALESCE(array_length(dislike, 1), 0) AS _count
+                COALESCE(array_length(likes, 1), 0) -
+                COALESCE(array_length(dislikes, 1), 0) AS _count
             FROM post
         ),
 
@@ -121,13 +121,11 @@ def get_engagements(key):
 def like(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     cur.execute("""
         SELECT * FROM post WHERE post.key = %s;
@@ -142,32 +140,32 @@ def like(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     if request.json["like"]:
-        if user["key"] in post["dislike"]:
-            post["dislike"].remove(user["key"])
-        if user["key"] in post["like"]:
-            post["like"].remove(user["key"])
+        if user["key"] in post["dislikes"]:
+            post["dislikes"].remove(user["key"])
+        if user["key"] in post["likes"]:
+            post["likes"].remove(user["key"])
         else:
-            post["like"].append(user["key"])
+            post["likes"].append(user["key"])
     else:
-        if user["key"] in post["like"]:
-            post["like"].remove(user["key"])
-        if user["key"] in post["dislike"]:
-            post["dislike"].remove(user["key"])
+        if user["key"] in post["likes"]:
+            post["likes"].remove(user["key"])
+        if user["key"] in post["dislikes"]:
+            post["dislikes"].remove(user["key"])
         else:
-            post["dislike"].append(user["key"])
+            post["dislikes"].append(user["key"])
 
     cur.execute("""
         UPDATE post
-        SET "like" = %s, dislike = %s
+        SET likes = %s, dislikes = %s
         WHERE key = %s
         RETURNING *;
     """, (
-        post["like"],
-        post["dislike"],
+        post["likes"],
+        post["dislikes"],
         post["key"]
     ))
     post = cur.fetchone()
@@ -191,13 +189,11 @@ def like(key):
 def rating(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     cur.execute("""
         SELECT * FROM post WHERE key = %s;
@@ -208,13 +204,13 @@ def rating(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     error = None
     if "rating" not in request.json or (
             not request.json["rating"] and request.json["rating"] != 0):
-        error = "cannot be empty"
+        error = "This field is required"
     elif (
         type(request.json["rating"]) is not int
         or request.json["rating"] not in range(-5, 6)

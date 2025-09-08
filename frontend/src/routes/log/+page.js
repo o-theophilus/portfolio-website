@@ -1,15 +1,10 @@
 import { page_state, loading } from "$lib/store.svelte.js"
-import { redirect } from "@sveltejs/kit";
+import { error } from "@sveltejs/kit";
 
 export const load = async ({ fetch, url, parent, depends }) => {
 	let a = await parent();
-	if (!a.locals.user.login || !a.locals.user.access.includes('log:view')) {
-		throw redirect(307, `/?${new URLSearchParams({
-			"module": "dialogue",
-			"title": "Warning",
-			"status": 201,
-			"message": "Unauthorized Access",
-		})}`);
+	if (!a.locals.login || !a.locals.user.access.includes('log:view')) {
+		throw error(400, "Unauthorized access")
 	}
 
 	depends(true)
@@ -47,5 +42,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
 		page_state.state[page_name].loaded = true
 
 		return resp
+	} else {
+		throw error(resp.status, resp.error)
 	}
 }

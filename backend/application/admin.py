@@ -5,7 +5,7 @@ from psycopg2.extras import Json
 from .postgres import db_open, db_close
 from werkzeug.security import generate_password_hash, check_password_hash
 from .log import log
-from .tools import token_to_user, user_schema
+from .tools import get_session, user_schema
 from .storage import storage
 from .post import post_schema
 
@@ -17,6 +17,7 @@ access = {
     "user": [
         ['view', 1],
         ['reset_name', 2],
+        ['reset_username', 2],
         ['reset_photo', 2],
         ['block', 2],
         ['set_access', 3]
@@ -54,36 +55,36 @@ def default_admin():
 
     cur.execute('SELECT * FROM "user" WHERE email = %s;', (email,))
     if not cur.fetchone():
-        key = uuid4().hex
         cur.execute("""
-                INSERT INTO "user" ( key, status, name, email,
-                    password, access)
-                VALUES (%s, %s, %s, %s, %s, %s);
+                INSERT INTO "user"
+                (status, name, username, email, password, access)
+                VALUES (%s, %s, %s, %s, %s, %s) RETURNING *;
             """, (
-            key,
             "confirmed",
             "Theophilus",
+            "omni",
             email,
             generate_password_hash(
                 os.environ["MAIL_PASSWORD"], method="scrypt"),
             [f"{x}:{y[0]}" for x in access for y in access[x]]
         ))
+        user = cur.fetchone()
 
         log(
             cur=cur,
-            user_key=key,
+            user_key=user["key"],
             action="created",
             entity_type="account"
         )
         log(
             cur=cur,
-            user_key=key,
+            user_key=user["key"],
             action="signedup",
             entity_type="account"
         )
         log(
             cur=cur,
-            user_key=key,
+            user_key=user["key"],
             action="confirmed",
             entity_type="account"
         )
@@ -111,7 +112,12 @@ def get_access(search=None):
 def user_access(key):
     con, cur = db_open()
 
-    me = token_to_user(cur)
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    me = session["user"]
+
     cur.execute('SELECT * FROM "user" WHERE key = %s;', (key,))
     user = cur.fetchone()
 
@@ -119,7 +125,7 @@ def user_access(key):
     if not me or "user:set_access" not in me["access"]:
         error = "unauthorized access"
     elif "password" not in request.json:
-        error = "cannot be empty"
+        error = "This field is required"
     elif not check_password_hash(me["password"], request.json["password"]):
         error = "incorrect password"
     elif (
@@ -130,7 +136,7 @@ def user_access(key):
         or user["email"] == os.environ["MAIL_USERNAME"]
         or user["status"] != "confirmed"
     ):
-        error = "invalid request"
+        error = "Invalid request"
 
     if error:
         db_close(con, cur)
@@ -171,13 +177,11 @@ def user_access(key):
 def user_actions(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
     e_user = cur.fetchone()
@@ -188,7 +192,7 @@ def user_actions(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     error = {}
@@ -199,7 +203,7 @@ def user_actions(key):
     ):
         error["actions"] = "select action"
     if "note" not in request.json or not request.json["note"]:
-        error["note"] = "cannot be empty"
+        error["note"] = "This field is required"
     if error != {}:
         db_close(con, cur)
         return jsonify({
@@ -214,6 +218,11 @@ def user_actions(key):
             actions.append("name")
         else:
             error = "unauthorized access"
+    if "reset_username" in request.json["actions"]:
+        if "user:reset_username" in user["access"]:
+            actions.append("name")
+        else:
+            error = "unauthorized access"
     if "reset_photo" in request.json["actions"]:
         if "user:reset_photo" in user["access"]:
             actions.append("photo")
@@ -221,7 +230,7 @@ def user_actions(key):
             error = "unauthorized access"
 
     if actions == []:
-        error = "invalid request"
+        error = "Invalid request"
     if error:
         db_close(con, cur)
         return jsonify({
@@ -229,14 +238,13 @@ def user_actions(key):
             "error": error
         })
 
+    _key = uuid4().hex
     cur.execute("""
-        UPDATE "user"
-        SET name = %s, photo = %s
-        WHERE key = %s
-        RETURNING *;
+        UPDATE "user" SET name = %s, username = %s, photo = %s
+        WHERE key = %s RETURNING *;
     """, (
-        f"user_{uuid4(
-        ).hex[-4:]}" if "name" in actions else e_user["name"],
+        f"user {_key[-8:]}" if "name" in actions else e_user["name"],
+        f"user_{_key[:8]}" if "username" in actions else e_user["username"],
         None if "photo" in actions else e_user["photo"],
         e_user["key"]
     ))
@@ -265,13 +273,11 @@ def user_actions(key):
 def user_block(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
     e_user = cur.fetchone()
@@ -282,14 +288,14 @@ def user_block(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     if "note" not in request.json or not request.json["note"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "note": "cannot be empty"
+            "note": "This field is required"
         })
 
     log(
@@ -302,8 +308,12 @@ def user_block(key):
     )
 
     cur.execute("""
-        UPDATE "user" SET status = %s WHERE key = %s
-        RETURNING *;
+        DELETE FROM session WHERE user_key = %s;
+    """, (e_user["key"],))
+
+    cur.execute("""
+        UPDATE "user" SET status = %s
+        WHERE key = %s RETURNING *;
     """, (
         "signedup" if e_user["status"] == "blocked" else "blocked",
         e_user["key"]
@@ -321,13 +331,11 @@ def user_block(key):
 def file_error():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "admin:manage_files" not in user["access"]:
         db_close(con, cur)
@@ -384,13 +392,11 @@ def file_error():
 def delete_file():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "admin:manage_files" not in user["access"]:
         db_close(con, cur)
@@ -406,7 +412,7 @@ def delete_file():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     for x in request.json["files"]:
@@ -434,16 +440,16 @@ def get_highlight(cur=None):
     if not cur:
         con, cur = db_open()
 
-    cur.execute("SELECT * FROM setting WHERE key = 'highlight';",)
+    cur.execute("SELECT * FROM setting WHERE alias = 'highlight';",)
     highlight = cur.fetchone()
     if not highlight:
         cur.execute("""
-            INSERT INTO setting (key, misc)
+            INSERT INTO setting (alias, value)
             VALUES ('highlight', %s)
             RETURNING *;
-        """, (Json({"highlight": []}),))
+        """, (Json({"post_keys": []}),))
         highlight = cur.fetchone()
-    keys = highlight["misc"]["highlight"]
+    keys = highlight["value"]["post_keys"]
 
     cur.execute("""
         SELECT * FROM post WHERE status = 'active' AND key = ANY(%s);
@@ -463,13 +469,11 @@ def get_highlight(cur=None):
 def set_highlight():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "post:edit_highlight" not in user["access"]:
         db_close(con, cur)
@@ -482,15 +486,12 @@ def set_highlight():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "cannot be empty"
+            "error": "This field is required"
         })
 
     cur.execute("""
-        SELECT * FROM post
-        WHERE LOWER(key) = LOWER(%s) OR LOWER(slug) = LOWER(%s);
-    """, (
-        request.json["key"], request.json["key"])
-    )
+        SELECT * FROM post WHERE key = %s OR slug = %s;
+    """, (request.json["key"], request.json["key"]))
     post = cur.fetchone()
     if not post:
         db_close(con, cur)
@@ -506,8 +507,8 @@ def set_highlight():
             "error": "not active"
         })
 
-    cur.execute("SELECT * FROM setting WHERE key = 'highlight';",)
-    keys = cur.fetchone()["misc"]["highlight"]
+    cur.execute("SELECT * FROM setting WHERE alias = 'highlight';",)
+    keys = cur.fetchone()["value"]["post_keys"]
     _from = [*keys]
 
     if post["key"] in keys:
@@ -515,8 +516,8 @@ def set_highlight():
     else:
         keys.append(post["key"])
 
-    cur.execute("UPDATE setting SET misc = %s WHERE key = 'highlight';",
-                (Json({"highlight": keys}),))
+    cur.execute("UPDATE setting SET value = %s WHERE alias = 'highlight';",
+                (Json({"post_keys": keys}),))
 
     log(
         cur=cur,
@@ -542,13 +543,11 @@ def set_highlight():
 def edit_highlight():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "post:edit_highlight" not in user["access"]:
         db_close(con, cur)
@@ -564,21 +563,21 @@ def edit_highlight():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
-    cur.execute("SELECT * FROM setting WHERE key = 'highlight';",)
-    keys = cur.fetchone()["misc"]["highlight"]
+    cur.execute("SELECT * FROM setting WHERE alias = 'highlight';",)
+    keys = cur.fetchone()["value"]["post_keys"]
 
     if request.json["keys"] == keys:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error":  "no change"
+            "error":  "No changes were made"
         })
 
-    cur.execute("UPDATE setting SET misc = %s WHERE key = 'highlight';",
-                (Json({"highlight": request.json["keys"]}),))
+    cur.execute("UPDATE setting SET value = %s WHERE alias = 'highlight';",
+                (Json({"post_keys": request.json["keys"]}),))
 
     log(
         cur=cur,

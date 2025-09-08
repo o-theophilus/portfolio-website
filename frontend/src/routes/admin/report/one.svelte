@@ -22,7 +22,7 @@
 		</span>
 	</div>
 
-	<a href="/@{one.reporter.key}">
+	<a href="/@{one.reporter.username}">
 		{one.reporter.name}
 	</a>
 	<div class="small">

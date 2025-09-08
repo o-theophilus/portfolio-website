@@ -16,6 +16,7 @@
 
 		if (resp.status == 200) {
 			app.token = resp.token;
+			app.login = false;
 			document.location = '/';
 		}
 	};

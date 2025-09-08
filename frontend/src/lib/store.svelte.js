@@ -4,6 +4,7 @@ import { page } from '$app/state';
 
 export const app = $state({
 	user: {},
+	login: false,
 	highlight: null,
 	tags: null,
 	post: {},

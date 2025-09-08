@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from .tools import token_to_user
+from .tools import get_session
 from uuid import uuid4
 from .postgres import db_close, db_open
 from .log import log
@@ -12,13 +12,11 @@ bp = Blueprint("report", __name__)
 def get_reports():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "report:view" not in user["access"]:
         db_close(con, cur)
@@ -67,15 +65,9 @@ def get_reports():
             log.date,
 
             jsonb_build_object(
-                'key', reporter.key,
-                'name', reporter.name
-            ) AS reporter,
-
-            jsonb_build_object(
-                'key', reported.key,
-                'name', reported.name,
-                'photo', reported.photo
-            ) AS reported,
+                'key', "user".key,
+                'name', "user".name
+            ) AS "user",
 
             jsonb_build_object(
                 'type', report.entity_type,
@@ -88,9 +80,7 @@ def get_reports():
 
         FROM report
         LEFT JOIN
-            "user" reporter ON report.user_key = reporter.key
-        LEFT JOIN
-            "user" reported ON report.reported_key = reported.key
+            "user" ON report.user_key = "user".key
         LEFT JOIN
             comment ON report.entity_key = comment.key
             AND report.entity_type = 'comment'
@@ -102,8 +92,7 @@ def get_reports():
         WHERE
             (%s = '' OR CONCAT_WS(', ',
                 report.key, report.report, report.tags,
-                reporter.key, reporter.name, reporter.email,
-                reported.key, reported.name, reported.email,
+                "user".key, "user".name, "user".email,
                 report.entity_key, comment.comment
             ) ILIKE %s)
             AND (%s = '' OR report.entity_type = %s)
@@ -142,16 +131,15 @@ def get_reports():
 def create():
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user or not user["login"]:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if (
-        "entity_key" not in request.json
+        not session["login"]
+        or "entity_key" not in request.json
         or not request.json["entity_key"]
         or "entity_type" not in request.json
         or not request.json["entity_type"]
@@ -162,14 +150,14 @@ def create():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     if "report" not in request.json or not request.json["report"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "report": "cannot be empty"
+            "report": "This field is required"
         })
 
     cur.execute(f"""
@@ -179,7 +167,7 @@ def create():
     if not entity:
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     cur.execute("""
@@ -219,13 +207,11 @@ def create():
 def status(key):
     con, cur = db_open()
 
-    user = token_to_user(cur)
-    if not user:
+    session = get_session(cur, True)
+    if session["status"] != 200:
         db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "invalid token"
-        })
+        return jsonify(session)
+    user = session["user"]
 
     if "report:edit_status" not in user["access"]:
         db_close(con, cur)
@@ -238,7 +224,7 @@ def status(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "note": "cannot be empty"
+            "note": "This field is required"
         })
 
     cur.execute("""
@@ -255,7 +241,7 @@ def status(key):
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "invalid request"
+            "error": "Invalid request"
         })
 
     log(
