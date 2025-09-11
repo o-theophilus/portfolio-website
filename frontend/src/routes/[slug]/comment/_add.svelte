@@ -6,10 +6,10 @@
 	import { Marked } from '$lib/macro';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
-	import One from './one.mini.svelte';
+	import Item from './item.mini.svelte';
 
 	let post = module.value.post;
-	let parent = module.value.comment;
+	let parent = module.value.item;
 
 	let form = $state({
 		comment: '',
@@ -59,7 +59,7 @@
 
 <Form title="{parent ? 'Reply' : 'Add'} Comment" error={error.error}>
 	{#if parent}
-		<One comment={parent}></One>
+		<Item item={parent}></Item>
 	{/if}
 
 	<IG

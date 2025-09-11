@@ -12,9 +12,9 @@ def get(key):
     cur.execute("""
         SELECT * FROM post WHERE post.slug = %s OR post.key = %s;
     """, (key, key))
-    post = cur.fetchone()
+    item = cur.fetchone()
 
-    if not post:
+    if not item:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -103,11 +103,11 @@ def get(key):
             post.description, post.files, post.tags,
             _like._count, comment._count, view._count, share._count,
             rating.rating
-    ;""", (post["key"],))
-    post = cur.fetchone()
+    ;""", (item["key"],))
+    item = cur.fetchone()
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post_schema(post)
+        "item": post_schema(item)
     })

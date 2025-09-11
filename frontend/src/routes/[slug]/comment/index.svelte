@@ -9,7 +9,7 @@
 	import { Icon, Spinner } from '$lib/macro';
 	import { Dropdown } from '$lib/input';
 	import { PageNote } from '$lib/info';
-	import Item from './one.svelte';
+	import Item from './item.svelte';
 	import Add from './_add.svelte';
 
 	let { post } = $props();

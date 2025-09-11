@@ -1,15 +1,15 @@
 <script>
 	import { Marked, Avatar } from '$lib/macro';
-	let { comment } = $props();
+	let { item } = $props();
 </script>
 
 <section>
 	<div class="avatar_content">
-		<Avatar name={comment.user.name} photo={comment.user.photo} --avatar-border-radius="50%" />
+		<Avatar name={item.user.name} photo={item.user.photo} --avatar-border-radius="50%" />
 		<div class="content">
-			<div class="name">{comment.user.name}</div>
+			<div class="name">{item.user.name}</div>
 			<div class="comment">
-				{comment.comment}
+				{item.comment}
 			</div>
 		</div>
 	</div>

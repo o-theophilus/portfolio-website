@@ -5,21 +5,21 @@
 	import { Datetime } from '$lib/macro';
 	import Edit from './edit.svelte';
 
-	let { post, edit_mode, update, children } = $props();
+	let { item, edit_mode, update, children } = $props();
 </script>
 
 {#if app.user.access.includes('post:edit_date') && edit_mode}
 	<Button
 		onclick={() =>
 			module.open(Edit, {
-				key: post.key,
-				date: post.date,
+				key: item.key,
+				date: item.date,
 				update
 			})}>Edit Date</Button
 	>
 {/if}
 <span class="date">
-	<Datetime datetime={post.date_created} />
+	<Datetime datetime={item.date_created} />
 	{@render children()}
 </span>
 

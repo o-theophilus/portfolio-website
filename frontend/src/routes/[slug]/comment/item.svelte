@@ -8,9 +8,9 @@
 	import { Datetime, Marked, Avatar, Icon } from '$lib/macro';
 	import { Link, RoundButton, Like } from '$lib/button';
 	import Add from './_add.svelte';
-	import One from './one.mini.svelte';
-	import Delete from './one.delete.svelte';
-	import Report from './one.report.svelte';
+	import Item from './item.mini.svelte';
+	import Delete from './_delete.svelte';
+	import Report from './_report.svelte';
 
 	let { post, item, items = [], update, search } = $props();
 	let parent = $derived.by(() => {
@@ -82,12 +82,10 @@
 {#snippet menu()}
 	<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
 		{#if item.user.key == app.user.key}
-			{@render button('Delete', 'trash-2', () =>
-				module.open(Delete, { comment: item, update, search })
-			)}
+			{@render button('Delete', 'trash-2', () => module.open(Delete, { item, update, search }))}
 		{:else}
 			{@render button('Report', 'flag-triangle-right', () => {
-				module.open(Report, { comment: item });
+				module.open(Report, { item });
 			})}
 		{/if}
 	</div>
@@ -95,7 +93,7 @@
 
 <section bind:this={_this}>
 	{#if parent}
-		<One comment={parent}></One>
+		<Item item={parent}></Item>
 		<br />
 	{/if}
 	<div class="avatar_content">
@@ -121,7 +119,7 @@
 					<div class="line">
 						<RoundButton
 							icon="reply"
-							onclick={() => module.open(Add, { post, comment: item, update, search })}
+							onclick={() => module.open(Add, { post, item, update, search })}
 						/>
 
 						<Like

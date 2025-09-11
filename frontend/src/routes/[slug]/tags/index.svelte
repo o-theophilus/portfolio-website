@@ -1,15 +1,15 @@
 <script>
-	import { module, app,  page_state } from '$lib/store.svelte.js';
+	import { module, app, page_state } from '$lib/store.svelte.js';
 	import { goto } from '$app/navigation';
 
 	import Button from '../button.svelte';
 	import { Tag } from '$lib/button';
 	import Edit from './edit.svelte';
 
-	let { post, edit_mode, update } = $props();
+	let { item, edit_mode, update } = $props();
 </script>
 
-{#if post.tags.length > 0 || (app.user.access.includes('post:edit_tags') && edit_mode)}
+{#if item.tags.length > 0 || (app.user.access.includes('post:edit_tags') && edit_mode)}
 	<hr />
 {/if}
 
@@ -17,19 +17,20 @@
 	<Button
 		onclick={() =>
 			module.open(Edit, {
-				key: post.key,
-				title: post.title,
-				tags: post.tags,
+				key: item.key,
+				title: item.title,
+				tags: item.tags,
 				update
 			})}>Edit Tags</Button
 	>
 {/if}
 
-{#if post.tags.length > 0}
+{#if item.tags.length > 0}
 	<div class="line">
-		{#each post.tags as x}
+		{#each item.tags as x}
 			<Tag
 				onclick={() => {
+					// TODO: fix this
 					delete page_state.state.post;
 					goto(`/post?tag=${[x]}`);
 				}}

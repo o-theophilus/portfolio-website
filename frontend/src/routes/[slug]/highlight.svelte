@@ -2,12 +2,12 @@
 	import { loading, app, notify } from '$lib/store.svelte.js';
 	import { Toggle } from '$lib/button';
 	import { onMount } from 'svelte';
-	let { post } = $props();
+	let { item } = $props();
 
 	let is_highlighted = $derived.by(() => {
 		if (app.highlight) {
 			for (const x of app.highlight) {
-				if (x.key == post.key) return true;
+				if (x.key == item.key) return true;
 			}
 		}
 		return false;
@@ -28,9 +28,9 @@
 		loading.open('Adding Highlight . . .');
 
 		if (is_highlighted) {
-			app.highlight = app.highlight.filter((x) => x.key != post.key);
+			app.highlight = app.highlight.filter((x) => x.key != item.key);
 		} else {
-			app.highlight.push(post);
+			app.highlight.push(item);
 		}
 
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight`, {
@@ -39,7 +39,7 @@
 				'Content-Type': 'application/json',
 				Authorization: app.token
 			},
-			body: JSON.stringify({ key: post.key })
+			body: JSON.stringify({ key: item.key })
 		});
 		resp = await resp.json();
 		loading.close();

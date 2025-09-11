@@ -6,13 +6,13 @@
 	import { FoldButton, Link } from '$lib/button';
 	import { Spinner, Avatar } from '$lib/macro';
 
-	let { post_key, refresh } = $props();
+	let { key, refresh } = $props();
 	let items = $state([]);
 	let open = $state(true);
 	let loading = $state(true);
 
 	export const load = async () => {
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/similar/${post_key}`);
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/similar/${key}`);
 		resp = await resp.json();
 		loading = false;
 

@@ -1,16 +1,16 @@
 <script>
 	import { Icon, Spinner } from '$lib/macro';
 
-	let { post_key } = $props();
-	let post = $state();
+	let { key } = $props();
+	let item = $state();
 	let loading = $state(true);
 
 	export const load = async () => {
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/engagements/${post_key}`);
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/engagements/${key}`);
 		resp = await resp.json();
 		loading = false;
 		if (resp.status == 200) {
-			post = resp.post;
+			item = resp.item;
 		}
 	};
 </script>
@@ -19,25 +19,25 @@
 	<Spinner active={loading} size="20" />
 {:else}
 	<div class="line info">
-		<div class="line" title="view{post.view > 1 ? 's' : ''}">
+		<div class="line" title="view{item.view > 1 ? 's' : ''}">
 			<Icon icon="eye" size="12" />
-			{post.view}
+			{item.view}
 		</div>
-		<div class="line" title="comment{post.comment > 1 ? 's' : ''}">
+		<div class="line" title="comment{item.comment > 1 ? 's' : ''}">
 			<Icon icon="message-circle" size="12" />
-			{post.comment}
+			{item.comment}
 		</div>
-		<div class="line" title="like{post._like > 1 ? 's' : ''}">
+		<div class="line" title="like{item._like > 1 ? 's' : ''}">
 			<Icon icon="thumbs-up" size="12" />
-			{post._like}
+			{item._like}
 		</div>
-		<div class="line" title="rating{post.ratings.length > 1 ? 's' : ''}">
+		<div class="line" title="rating{item.ratings.length > 1 ? 's' : ''}">
 			<Icon icon="star" size="12" />
-			{parseFloat(post.rating)}{#if post.ratings.length != 0}|{post.ratings.length}{/if}
+			{parseFloat(item.rating)}{#if item.ratings.length != 0}|{item.ratings.length}{/if}
 		</div>
-		<div class="line" title="share{post.share > 1 ? 's' : ''}">
+		<div class="line" title="share{item.share > 1 ? 's' : ''}">
 			<Icon icon="share-2" size="12" />
-			{post.share}
+			{item.share}
 		</div>
 	</div>
 {/if}

@@ -50,9 +50,9 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.post);
+			module.value.update(resp.item);
 			module.close();
-			notify.open(`Tag${resp.post.tags.length > 1 ? 's' : ''} Saved`);
+			notify.open(`Tag${resp.item.tags.length > 1 ? 's' : ''} Saved`);
 		} else {
 			error = resp;
 		}

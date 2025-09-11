@@ -32,7 +32,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.post);
+			module.value.update(resp.item);
 			module.close();
 			notify.open('Date Saved');
 		} else {

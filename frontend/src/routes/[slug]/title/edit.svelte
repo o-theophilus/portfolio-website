@@ -32,8 +32,8 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			window.history.replaceState(history.state, '', `/${resp.post.slug}`);
-			module.value.update(resp.post);
+			window.history.replaceState(history.state, '', `/${resp.item.slug}`);
+			module.value.update(resp.item);
 			notify.open('Title Saved');
 			module.close();
 		} else {

@@ -42,7 +42,7 @@
 						name: 'OK',
 						icon: 'check',
 						fn: () => {
-							goto(`/${resp.post.slug}?edit=true`);
+							goto(`/${resp.item.slug}?edit=true`);
 							module.close();
 						}
 					}

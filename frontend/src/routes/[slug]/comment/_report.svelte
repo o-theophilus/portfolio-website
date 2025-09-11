@@ -5,13 +5,13 @@
 	import { Form } from '$lib/layout';
 	import { IG, Dropdown } from '$lib/input';
 	import { Avatar } from '$lib/macro';
-	import { template, tags } from './one.report.template.js';
-	import One from './one.mini.svelte';
+	import { template, tags } from './_report.template.js';
+	import Item from './item.mini.svelte';
 
-	let comment = { ...module.value.comment };
+	let item = { ...module.value.item };
 
 	let form = $state({
-		entity_key: comment.key,
+		entity_key: item.key,
 		entity_type: 'comment',
 		comment: '',
 		tags: []
@@ -55,7 +55,7 @@
 </script>
 
 <Form title="Report" error={error.error}>
-	<One {comment}></One>
+	<Item {item}></Item>
 
 	<IG
 		bind:value={form.comment}

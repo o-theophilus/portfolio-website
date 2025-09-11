@@ -26,13 +26,12 @@
 	import ToTop from './to_top.svelte';
 
 	let { data } = $props();
-	// TODO: rename to item
-	let post = $derived(data.item);
+	let item = $derived(data.item);
 	let edit_mode = $state(false);
 	let is_admin = $state(false);
 
 	const update = (data) => {
-		post = data;
+		item = data;
 	};
 
 	let author = $state();
@@ -65,10 +64,10 @@
 	});
 </script>
 
-{#key post.key}
-	<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
+{#key item.key}
+	<Log action={'viewed'} entity_key={item.key} entity_type={'post'} />
 {/key}
-<Meta title={post.title} description={post.description} image={post.photo} />
+<Meta title={item.title} description={item.description} image={item.photo} />
 
 <Content>
 	{#if is_admin}
@@ -76,41 +75,41 @@
 		<br />
 	{/if}
 
-	{#if edit_mode && (app.user.access.includes('post:edit_status') || (app.user.access.includes('post:edit_highlight') && post.status == 'active'))}
+	{#if edit_mode && (app.user.access.includes('post:edit_status') || (app.user.access.includes('post:edit_highlight') && item.status == 'active'))}
 		<hr />
 		<div class="line">
 			{#if app.user.access.includes('post:edit_status') && edit_mode}
 				<Button
 					onclick={() =>
 						module.open(Status, {
-							key: post.key,
-							status: post.status,
-							photo: post.photo,
+							key: item.key,
+							status: item.status,
+							photo: item.photo,
 							update
 						})}
 				>
-					Edit Status: <span class="status {post.status}">{post.status}</span>
+					Edit Status: <span class="status {item.status}">{item.status}</span>
 				</Button>
 			{/if}
-			{#if app.user.access.includes('post:edit_highlight') && edit_mode && post.status == 'active'}
-				<Highlight {post} />
+			{#if app.user.access.includes('post:edit_highlight') && edit_mode && item.status == 'active'}
+				<Highlight {item} />
 			{/if}
 		</div>
 		<br />
 	{/if}
 
-	<Photo bind:post {edit_mode} {update} />
-	<Title {post} {edit_mode} {update} />
-	<Description {post} {edit_mode} {update} />
-	<Date {post} {edit_mode} {update}>
-		<Engagement post_key={post.key} bind:this={engagement} />
+	<Photo bind:item {edit_mode} {update} />
+	<Title {item} {edit_mode} {update} />
+	<Description {item} {edit_mode} {update} />
+	<Date {item} {edit_mode} {update}>
+		<Engagement key={item.key} bind:this={engagement} />
 	</Date>
-	<Content_ {post} {edit_mode} {update} />
-	<Tags {post} {edit_mode} {update} />
-	<Author {post} {edit_mode} bind:this={author} />
-	<Engage {post} {update} />
-	<Comment {post} bind:this={comment} />
-	<Similar post_key={post.key} bind:this={similar} {refresh} />
+	<Content_ {item} {edit_mode} {update} />
+	<Tags {item} {edit_mode} {update} />
+	<Author {item} {edit_mode} bind:this={author} />
+	<Engage {item} {update} />
+	<Comment post={item} bind:this={comment} />
+	<Similar key={item.key} bind:this={similar} {refresh} />
 	<ToTop />
 </Content>
 

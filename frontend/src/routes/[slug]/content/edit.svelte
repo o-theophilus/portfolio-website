@@ -6,8 +6,8 @@
 	import { Marked } from '$lib/macro';
 	import { Form } from '$lib/layout';
 
-	let post = module.value.post;
-	let content = $state(post.content);
+	let item = module.value.item;
+	let content = $state(item.content);
 	let error = $state({});
 
 	const validate = () => {
@@ -15,7 +15,7 @@
 
 		if (!content) {
 			error.content = 'This field is required';
-		} else if (content == post.content) {
+		} else if (content == item.content) {
 			error.content = 'No changes were made';
 		}
 
@@ -24,7 +24,7 @@
 
 	const submit = async () => {
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${item.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -47,7 +47,7 @@
 
 <Form title="Edit Content" error={error.error}>
 	<div class="marked">
-		<Marked content={module.value.process({ ...post, content })} />
+		<Marked content={module.value.process({ ...item, content })} />
 	</div>
 
 	<IG

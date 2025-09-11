@@ -7,7 +7,7 @@
 	import File from './file.svelte';
 	import { PageNote } from '$lib/info';
 
-	let { post, edit_mode, update } = $props();
+	let { item, edit_mode, update } = $props();
 
 	const process = (x) => {
 		let temp = x.content;
@@ -57,18 +57,18 @@
 {#if edit_mode}
 	<div class="line">
 		{#if app.user.access.includes('post:edit_content')}
-			<Button onclick={() => module.open(Edit, { post, update, process })}>Edit Content</Button>
+			<Button onclick={() => module.open(Edit, { item, update, process })}>Edit Content</Button>
 		{/if}
 
-		{#if app.user.access.includes('post:edit_files') && post.content && post.content.includes('@[file]')}
-			<Button icon="image" onclick={() => module.open(File, { post, update })}>Manage Files</Button>
+		{#if app.user.access.includes('post:edit_files') && item.content && item.content.includes('@[file]')}
+			<Button icon="image" onclick={() => module.open(File, { item, update })}>Manage Files</Button>
 		{/if}
 	</div>
 {/if}
 
-{#if post.content}
+{#if item.content}
 	<br />
-	<Marked content={process(post)} />
+	<Marked content={process(item)} />
 	<br />
 {:else if edit_mode}
 	<PageNote>No content</PageNote>

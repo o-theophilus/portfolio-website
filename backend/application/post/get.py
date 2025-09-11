@@ -286,27 +286,27 @@ def get_author(key):
         LEFT JOIN "user" ON post.author_key = "user".key
         WHERE post.key = %s;
     """, (key,))
-    user = cur.fetchone()
-    if not user:
+    item = cur.fetchone()
+    if not item:
         cur.execute("""
             SELECT key, name, photo FROM "user" WHERE email = %s;
         """, (os.environ["MAIL_USERNAME"],))
-        user = cur.fetchone()
-    if not user:
+        item = cur.fetchone()
+    if not item:
         db_close(con, cur)
         return jsonify({
             "status": 400
         })
 
-    user["photo"] = (
-        f"{request.host_url}file/{user['photo']}"
-        if user["photo"] else None
+    item["photo"] = (
+        f"{request.host_url}file/{item['photo']}"
+        if item["photo"] else None
     )
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "user": user
+        "item": item
     })
 
 

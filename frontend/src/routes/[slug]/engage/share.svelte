@@ -6,7 +6,7 @@
 	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
 
-	let text = `Check Out: ${module.value.title}`;
+	let text = `Check Out: ${module.value.post.title}`;
 
 	let platforms = [
 		{

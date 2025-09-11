@@ -4,9 +4,9 @@
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
-	import One from './one.mini.svelte';
+	import Item from './item.mini.svelte';
 
-	let comment = { ...module.value.comment };
+	let item = { ...module.value.item };
 	let error = $state({});
 
 	const submit = async () => {
@@ -15,7 +15,7 @@
 		loading.open(`Deleting comment . . .`);
 
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/comment/${comment.key}?${new URLSearchParams(
+			`${import.meta.env.VITE_BACKEND}/comment/${item.key}?${new URLSearchParams(
 				module.value.search
 			).toString()}`,
 			{
@@ -40,7 +40,7 @@
 </script>
 
 <Form title="Delete Comment" error={error.error}>
-	<One {comment}></One>
+	<Item {item}></Item>
 
 	<Note --note-margin-top="16px" status="400" note="Are you sure you want to delete this comment"
 	></Note>

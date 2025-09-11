@@ -58,14 +58,14 @@ def add():
         slug,
         datetime.now(timezone.utc)
     ))
-    post = cur.fetchone()
-    post["ratings"] = []
+    item = cur.fetchone()
+    item["ratings"] = []
 
     log(
         cur=cur,
         user_key=user["key"],
         action="created",
-        entity_key=post["key"],
+        entity_key=item["key"],
         entity_type="post"
     )
 
@@ -74,7 +74,7 @@ def add():
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post,
+        "item": item,
         "items": items.json["items"],
         "total_page": items.json["total_page"]
     })
@@ -209,13 +209,13 @@ def edit(key):
         title, slug, date_created, description, content, tags,
         author_key, status, post["key"]
     ))
-    post = cur.fetchone()
+    item = cur.fetchone()
 
     log(
         cur=cur,
         user_key=user["key"],
         action="edited",
-        entity_key=post["key"],
+        entity_key=item["key"],
         entity_type="post",
         misc=request.json
     )
@@ -223,7 +223,7 @@ def edit(key):
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post_schema(post)
+        "item": post_schema(item)
     })
 
 

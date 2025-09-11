@@ -6,7 +6,7 @@
 
 	let rating = $state(0);
 	let error = $state({});
-	for (const x of module.value.post.ratings) {
+	for (const x of module.value.item.ratings) {
 		if (x.user_key == app.user.key) {
 			rating = x.rating;
 			break;
@@ -27,7 +27,7 @@
 		error = {};
 
 		loading.open('Saving . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/rating/${module.value.post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/rating/${module.value.item.key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -39,8 +39,8 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.post);
-			module.value.set_rating(resp.post);
+			module.value.update(resp.item);
+			module.value.set_rating(resp.item);
 			module.close();
 			notify.open('Rating Saved');
 		} else {

@@ -6,20 +6,20 @@
 	import { Avatar, Spinner } from '$lib/macro';
 	import Form from './edit.svelte';
 
-	let { post, edit_mode } = $props();
+	let { item, edit_mode } = $props();
 	let author = $state({});
 	let loading = $state(true);
 
 	const update = async (data) => {
-		post = data;
+		item = data;
 	};
 
 	export const load = async () => {
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/author/${post.key}`);
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/author/${item.key}`);
 		resp = await resp.json();
 		loading = false;
 		if (resp.status == 200) {
-			author = resp.user;
+			author = resp.item;
 		}
 	};
 </script>
@@ -27,7 +27,7 @@
 {#if loading || author.username}
 	<hr />
 	{#if app.user.access.includes('post:edit_author') && edit_mode}
-		<Button onclick={() => module.open(Form, { post_key: post.key, update })}>Edit Author</Button>
+		<Button onclick={() => module.open(Form, { key: item.key, update })}>Edit Author</Button>
 	{/if}
 
 	<div class="line">
