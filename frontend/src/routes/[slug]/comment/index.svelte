@@ -9,11 +9,11 @@
 	import { Icon, Spinner } from '$lib/macro';
 	import { Dropdown } from '$lib/input';
 	import { PageNote } from '$lib/info';
-	import One from './one.svelte';
+	import Item from './one.svelte';
 	import Add from './_add.svelte';
 
 	let { post } = $props();
-	let comments = $state([]);
+	let items = $state([]);
 	let order_by = $state([]);
 	let open = $state(false);
 	let loading = $state(true);
@@ -23,21 +23,20 @@
 	});
 
 	const update = (data) => {
-		comments = data;
+		items = data;
 		open = true;
 	};
 
 	export const load = async () => {
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/comment/${post.key}?${new URLSearchParams(search).toString()}`
+			`${import.meta.env.VITE_BACKEND}/${post.key}/comments?${new URLSearchParams(search).toString()}`
 		);
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			comments = resp.comments;
-			console.log(comments);
+			items = resp.items;
 			order_by = resp.order_by;
-			if (comments.length) open = true;
+			if (items.length) open = true;
 		}
 
 		loading = false;
@@ -49,10 +48,10 @@
 <div class="line space">
 	<div class="line">
 		<span class="page_title">
-			{#if comments.length > 0}
-				{comments.length}
+			{#if items.length > 0}
+				{items.length}
 			{/if}
-			Comment{#if comments.length > 1}s{/if}
+			Comment{#if items.length > 1}s{/if}
 		</span>
 		<Spinner active={loading} size="20" />
 	</div>
@@ -69,7 +68,7 @@
 
 {#if open && !loading}
 	<div class="margin" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
-		{#if comments.length > 1}
+		{#if items.length > 1}
 			<Dropdown
 				--select-height="10"
 				--select-padding-x="0"
@@ -89,9 +88,9 @@
 			/>
 		{/if}
 
-		{#each comments as comment (comment.key)}
+		{#each items as item (item.key)}
 			<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-				<One {post} {comment} {comments} {update} {search} />
+				<Item {post} {item} {items} {update} {search} />
 			</div>
 		{:else}
 			<PageNote>

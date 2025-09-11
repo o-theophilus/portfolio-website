@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from ...tools import get_session
 from ...postgres import db_close, db_open
 from ...log import log
-from .get import get_comments
+from .get import get_many
 
 bp = Blueprint("comment", __name__)
 
@@ -66,9 +66,9 @@ def create(key):
         misc={"post_key": post["key"]}
     )
 
-    comments = get_comments(post["key"], cur)
+    items = get_many(post["key"], cur)
     db_close(con, cur)
-    return comments
+    return items
 
 
 @bp.delete("/comment/<key>")
@@ -119,6 +119,6 @@ def delete(key):
         # TODO: add children comment keys
     )
 
-    comments = get_comments(comment["post_key"], cur)
+    items = get_many(comment["post_key"], cur)
     db_close(con, cur)
-    return comments
+    return items

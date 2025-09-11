@@ -4,24 +4,24 @@
 	import { Datetime } from '$lib/macro';
 	import { FoldButton, Button } from '$lib/button';
 	import { slide } from 'svelte/transition';
-	import Unblock from './_unblock.svelte';
+	import Form from './_form.svelte';
 
-	let { one, update } = $props();
+	let { item, update } = $props();
 	let open = $state(false);
 </script>
 
 <div class="one">
 	<div class="user">
-		<a href="/@{one.user.username}">
-			<Avatar name={one.user.name} photo={one.user.photo} --avatar-border-radius="50%" />
+		<a href="/@{item.user.username}">
+			<Avatar name={item.user.name} photo={item.user.photo} --avatar-border-radius="50%" />
 		</a>
 		<div class="right">
-			<a href="/@{one.user.username}" class="name">
-				{one.user.name}
+			<a href="/@{item.user.username}" class="name">
+				{item.user.name}
 			</a>
 
 			<div class="email">
-				{one.user.email}
+				{item.user.email}
 			</div>
 		</div>
 		<FoldButton {open} onclick={() => (open = !open)}></FoldButton>
@@ -29,34 +29,38 @@
 
 	{#if open}
 		<div class="report" transition:slide>
-			<a href="/@{one.admin.username}">
-				<Avatar name={one.admin.name} photo={one.admin.photo} --avatar-border-radius="50%" />
+			<a href="/@{item.admin.username}">
+				<Avatar name={item.admin.name} photo={item.admin.photo} --avatar-border-radius="50%" />
 			</a>
 			<div class="right">
-				<a href="/@{one.admin.username}" class="name">
-					{one.admin.name}
+				<a href="/@{item.admin.username}" class="name">
+					{item.admin.name}
 				</a>
 
 				<div class="email">
-					{one.admin.email}
+					{item.admin.email}
 				</div>
 
 				<div class="comment_area">
 					<div class="date">
-						<Datetime datetime={one.date_created} type="date_numeric"></Datetime>
-						<Datetime datetime={one.date_created} type="time_12h"></Datetime>
+						<Datetime datetime={item.date_created} type="date_numeric"></Datetime>
+						<Datetime datetime={item.date_created} type="time_12h"></Datetime>
 					</div>
 					<div class="comment">
-						{one.comment}
+						{item.comment}
 					</div>
 				</div>
 
-				<Button
-					icon="lock-open"
-					--button-font-size="0.8rem"
-					--button-height="32px"
-					onclick={() => module.open(Unblock, { key: one.user.key, update })}>Unblock</Button
-				>
+				{#if app.user.access.includes('block:unblock')}
+					<Button
+						icon="lock-open"
+						--button-font-size="0.8rem"
+						--button-height="32px"
+						onclick={() => module.open(Form, { key: item.user.key, update })}
+					>
+						Unblock
+					</Button>
+				{/if}
 			</div>
 		</div>
 	{/if}

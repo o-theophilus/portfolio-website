@@ -94,9 +94,9 @@ def get_many():
         e_search, f"%{e_search}%",
         page_size, (page_no - 1) * page_size
     ))
-    logs = cur.fetchall()
+    items = cur.fetchall()
 
-    for x in logs:
+    for x in items:
         if x["entity"]["type"] == "page":
             x["action"] = "viewed"
 
@@ -120,7 +120,7 @@ def get_many():
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "logs": logs,
+        "items": items,
         "search_query": sq,
-        "total_page": ceil(logs[0]["_count"] / page_size) if logs else 0
+        "total_page": ceil(items[0]["_count"] / page_size) if items else 0
     })

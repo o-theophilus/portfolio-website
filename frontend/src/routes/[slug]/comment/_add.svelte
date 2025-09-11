@@ -48,7 +48,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.comments);
+			module.value.update(resp.items);
 			module.close();
 			notify.open('Comment Added');
 		} else {

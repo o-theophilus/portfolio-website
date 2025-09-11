@@ -10,10 +10,10 @@
 	import { Content } from '$lib/layout';
 	import { PageNote } from '$lib/info';
 	import { Meta, Icon } from '$lib/macro';
-	import One from './one.svelte';
+	import Item from './item.svelte';
 
 	let { data } = $props();
-	let logs = $derived(data.logs);
+	let items = $derived(data.items);
 	let total_page = $derived(data.total_page);
 	let search_query = $derived(data.search_query);
 
@@ -103,9 +103,9 @@
 		}}
 	></Search>
 
-	{#each logs as log (log.key)}
+	{#each items as item (item.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<One {log} bind:search />
+			<Item {item} bind:search />
 		</div>
 	{:else}
 		<PageNote>

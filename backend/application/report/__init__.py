@@ -76,7 +76,7 @@ def create():
     })
 
 
-@bp.post("/report/resolve/<key>")
+@bp.delete("/report/<key>")
 def resolve(key):
     con, cur = db_open()
 
@@ -93,30 +93,29 @@ def resolve(key):
             "error": "unauthorized access"
         })
 
-    note = request.json.get("note")
-    if not note:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "note": "This field is required"
-        })
-    elif len(note) > 500:
-        return jsonify({
-            "status": 400,
-            "note": "This field cannot exceed 500 characters"
-        })
-
-    # TODO: prevent from resolving self
-    cur.execute("""
-        SELECT * FROM report WHERE key = %s;
-    """, (key,))
+    cur.execute("SELECT * FROM report WHERE key = %s;", (key,))
     report = cur.fetchone()
-    if not report:
+    if not report or report["entity_key"] == user["key"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
         })
+
+    comment = request.json.get("comment")
+    error = {}
+    if not comment:
+        error["comment"] = "This field is required"
+    elif len(comment) > 500:
+        error["comment"] = "This field cannot exceed 500 characters"
+    if error != {}:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            **error
+        })
+
+    cur.execute("DELETE FROM report WHERE key = %s;", (report["key"],))
 
     log(
         cur=cur,
@@ -126,17 +125,14 @@ def resolve(key):
         entity_type="report",
         misc={
             "user_key": report["user_key"],
+            "entity_key": report["entity_key"],
             "entity_type": report["entity_type"],
-            "report": report["report"],
-            "tags": report["tags"],
-            "resolve":  resolve,
+            "comment": report["comment"],
+            "tags": report["tags"]
         }
     )
 
-    cur.execute("DELETE FROM report key = %s;", (report["key"]))
-
     db_close(con, cur)
     return jsonify({
-        "status": 200,
-        "report": report
+        "status": 200
     })

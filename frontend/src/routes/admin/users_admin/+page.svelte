@@ -10,10 +10,10 @@
 	import { BackButton } from '$lib/button';
 	import { PageNote } from '$lib/info';
 	import { Meta, Log, Icon } from '$lib/macro';
-	import One from '../users/one.svelte';
+	import Item from '../users/item.svelte';
 
 	let { data } = $props();
-	let users = $derived(data.users);
+	let items = $derived(data.items);
 	let total_page = $derived(data.total_page);
 	let { search_query } = data;
 	let { order_by } = data;
@@ -54,7 +54,7 @@
 	<div class="line">
 		<BackButton />
 		<div class="page_title">
-			Admin{users.length > 1 ? 's' : ''}
+			Admin{items.length > 1 ? 's' : ''}
 		</div>
 	</div>
 
@@ -111,9 +111,9 @@
 		}}
 	/>
 
-	{#each users as x (x.key)}
+	{#each items as item (item.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<One user={x} />
+			<Item {item} />
 		</div>
 	{:else}
 		<PageNote>

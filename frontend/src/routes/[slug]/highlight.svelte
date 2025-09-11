@@ -15,11 +15,11 @@
 
 	onMount(async () => {
 		if (!app.highlight) {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight`);
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlights`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {
-				app.highlight = resp.posts;
+				app.highlight = resp.items;
 			}
 		}
 	});
@@ -45,7 +45,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			app.highlight = resp.posts;
+			app.highlight = resp.items;
 			notify.open(`${is_highlighted ? 'Added' : 'Removed'} as Highlight`);
 		} else {
 			notify.open(resp.error, 400);

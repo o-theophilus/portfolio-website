@@ -33,11 +33,11 @@
 
 	onMount(async () => {
 		if (!app.highlight) {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlight`);
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlights`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {
-				app.highlight = resp.posts;
+				app.highlight = resp.items;
 			}
 		}
 	});

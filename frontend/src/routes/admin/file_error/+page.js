@@ -6,7 +6,7 @@ export const load = async ({ parent, fetch }) => {
 		throw error(404, "Unauthorized access")
 	}
 
-	let resp = await fetch(`${import.meta.env.VITE_BACKEND}/file/error`, {
+	let resp = await fetch(`${import.meta.env.VITE_BACKEND}/file_error`, {
 		method: 'get',
 		headers: {
 			'Content-Type': 'application/json',

@@ -8,7 +8,7 @@ from ..tools import reserved_words, get_session
 from ..postgres import db_open, db_close
 from ..storage import storage
 from ..log import log
-from .get import get_all, post_schema
+from .get import get_many, post_schema
 
 bp = Blueprint("post", __name__)
 
@@ -69,14 +69,14 @@ def add():
         entity_type="post"
     )
 
-    posts = get_all(cur)
+    items = get_many(cur)
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post,
-        "posts": posts.json["posts"],
-        "total_page": posts.json["total_page"]
+        "items": items.json["items"],
+        "total_page": items.json["total_page"]
     })
 
 

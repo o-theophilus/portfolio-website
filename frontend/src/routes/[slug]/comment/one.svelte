@@ -12,11 +12,11 @@
 	import Delete from './one.delete.svelte';
 	import Report from './one.report.svelte';
 
-	let { post, comment, comments = [], update, search } = $props();
+	let { post, item, items = [], update, search } = $props();
 	let parent = $derived.by(() => {
-		if (comment.parent_key) {
-			for (const x of comments) {
-				if (x.key == comment.parent_key) {
+		if (item.parent_key) {
+			for (const x of items) {
+				if (x.key == item.parent_key) {
 					return x;
 				}
 			}
@@ -30,7 +30,9 @@
 
 	let _this;
 	onMount(() => {
-		if (`#${comment.key}` == page.url.hash) {
+		console.log(page.url.hash);
+
+		if (page.url.hash == `#${item.key}`) {
 			_this.scrollIntoView({ behavior: 'smooth' });
 		}
 	});
@@ -38,7 +40,7 @@
 	const submit_like = async (liked) => {
 		error = {};
 
-		let url = `${import.meta.env.VITE_BACKEND}/comment/like/${comment.key}`;
+		let url = `${import.meta.env.VITE_BACKEND}/comment/like/${item.key}`;
 		if (Object.keys(search).length != 0) {
 			url = `${url}?${new URLSearchParams(search).toString()}`;
 		}
@@ -54,7 +56,7 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			comment = resp.comment;
+			item = resp.comment;
 		} else {
 			error = resp;
 		}
@@ -79,11 +81,13 @@
 
 {#snippet menu()}
 	<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
-		{#if comment.user.key == app.user.key}
-			{@render button('Delete', 'trash-2', () => module.open(Delete, { comment, update, search }))}
+		{#if item.user.key == app.user.key}
+			{@render button('Delete', 'trash-2', () =>
+				module.open(Delete, { comment: item, update, search })
+			)}
 		{:else}
 			{@render button('Report', 'flag-triangle-right', () => {
-				module.open(Report, { comment });
+				module.open(Report, { comment: item });
 			})}
 		{/if}
 	</div>
@@ -95,15 +99,15 @@
 		<br />
 	{/if}
 	<div class="avatar_content">
-		<Avatar name={comment.user.name} photo={comment.user.photo} --avatar-border-radius="50%" />
+		<Avatar name={item.user.name} photo={item.user.photo} --avatar-border-radius="50%" />
 		<div class="content">
 			<div class="line space name_date">
-				<div class="name">{comment.user.name}</div>
-				<div class="date"><Datetime datetime={comment.date_created} type="ago" /></div>
+				<div class="name">{item.user.name}</div>
+				<div class="date"><Datetime datetime={item.date_created} type="ago" /></div>
 			</div>
 
 			<div class="comment">
-				{comment.comment}
+				{item.comment}
 			</div>
 
 			{#if error.error}
@@ -117,28 +121,28 @@
 					<div class="line">
 						<RoundButton
 							icon="reply"
-							onclick={() => module.open(Add, { post, comment, update, search })}
+							onclick={() => module.open(Add, { post, comment: item, update, search })}
 						/>
 
 						<Like
 							--like-height="32px"
-							like={comment.likes.length}
-							dislike={comment.dislikes.length}
+							like={item.likes.length}
+							dislike={item.dislikes.length}
 							onlike={() => {
-								comment.dislikes = comment.dislikes.filter((e) => e != app.user.key);
-								if (comment.likes.includes(app.user.key)) {
-									comment.likes = comment.likes.filter((e) => e != app.user.key);
+								item.dislikes = item.dislikes.filter((e) => e != app.user.key);
+								if (item.likes.includes(app.user.key)) {
+									item.likes = item.likes.filter((e) => e != app.user.key);
 								} else {
-									comment.likes.push(app.user.key);
+									item.likes.push(app.user.key);
 								}
 								submit_like(true);
 							}}
 							ondislike={() => {
-								comment.likes = comment.likes.filter((e) => e != app.user.key);
-								if (comment.dislikes.includes(app.user.key)) {
-									comment.dislikes = comment.dislikes.filter((e) => e != app.user.key);
+								item.likes = item.likes.filter((e) => e != app.user.key);
+								if (item.dislikes.includes(app.user.key)) {
+									item.dislikes = item.dislikes.filter((e) => e != app.user.key);
 								} else {
-									comment.dislikes.push(app.user.key);
+									item.dislikes.push(app.user.key);
 								}
 								submit_like(false);
 							}}

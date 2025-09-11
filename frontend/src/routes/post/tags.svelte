@@ -8,7 +8,7 @@
 	let loading = $state(true);
 	onMount(async () => {
 		if (!app.tags) {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tag`);
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tags`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {
@@ -38,8 +38,10 @@
 				--tag-outline-color={active_tags.includes(x) ? 'transparent' : 'unset'}
 				onclick={() => {
 					page_state.set({ tag: [x] });
-				}}>{x}</Tag
+				}}
 			>
+				{x}
+			</Tag>
 		{/each}
 	</div>
 {/if}

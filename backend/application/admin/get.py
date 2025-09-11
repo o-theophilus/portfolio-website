@@ -69,7 +69,7 @@ def get_admins():
         action, f"%{entity_type}:{action}%",
         page_size, (page_no - 1) * page_size
     ))
-    users = cur.fetchall()
+    items = cur.fetchall()
 
     _access = {
         "all": ['all']
@@ -83,8 +83,8 @@ def get_admins():
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "users": [user_schema(x) for x in users],
+        "items": [user_schema(x) for x in items],
         "search_query": _access,
         "order_by": list(order_by.keys()),
-        "total_page": ceil(users[0]["_count"] / page_size) if users else 0
+        "total_page": ceil(items[0]["_count"] / page_size) if items else 0
     })

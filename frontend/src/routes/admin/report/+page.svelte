@@ -10,10 +10,10 @@
 	import { Pagination, Dropdown, Search } from '$lib/input';
 	import { PageNote } from '$lib/info';
 	import { Meta, Log, Icon } from '$lib/macro';
-	import One from './one.svelte';
+	import Item from './item.svelte';
 
 	let { data } = $props();
-	let reports = $derived(data.reports);
+	let items = $derived(data.items);
 	let total_page = $derived(data.total_page);
 	let { order_by } = data;
 	let { _type } = data;
@@ -46,17 +46,27 @@
 		page.url.search = new URLSearchParams(page_state.searchParams);
 		window.history.replaceState(history.state, '', page.url.href);
 	});
+
+	const update = (key) => {
+		let temp = [];
+		for (const x of items) {
+			if (x.user.key == key) continue;
+			temp.push(x);
+		}
+		items = temp;
+		page_state.refresh();
+	};
 </script>
 
 <Log entity_type={'page'} />
 <Meta title="All Users" />
 
-<Content>
+<Content --content-background-color="var(--bg2)">
 	<div class="line space">
 		<div class="line">
 			<BackButton />
 			<div class="page_title">
-				Report{reports.length > 1 ? 's' : ''}
+				Report{items.length > 1 ? 's' : ''}
 			</div>
 		</div>
 
@@ -99,9 +109,9 @@
 		}}
 	/>
 
-	{#each reports as x (x.key)}
+	{#each items as item (item.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<One one={x} />
+			<Item {item} {update} />
 		</div>
 	{:else}
 		<PageNote>

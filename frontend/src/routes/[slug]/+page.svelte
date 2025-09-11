@@ -26,7 +26,8 @@
 	import ToTop from './to_top.svelte';
 
 	let { data } = $props();
-	let post = $derived(data.post);
+	// TODO: rename to item
+	let post = $derived(data.item);
 	let edit_mode = $state(false);
 	let is_admin = $state(false);
 

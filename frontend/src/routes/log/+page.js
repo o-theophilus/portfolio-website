@@ -9,7 +9,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
 
 	depends(true)
 
-	let page_name = "logs"
+	let page_name = "log"
 	if (!page_state.state[page_name]) {
 		let sp = {}
 		for (let [key, value] of url.searchParams) {

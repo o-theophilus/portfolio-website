@@ -10,21 +10,21 @@
 	import { Dropdown, Search, Pagination } from '$lib/input';
 	import { PageNote } from '$lib/info';
 	import { Meta, Icon, Log } from '$lib/macro';
-	import One from './one.svelte';
+	import Item from './item.svelte';
 
 	import Add from './_add.svelte';
 	import Tags from './tags.svelte';
 	import FilterNote from './filter_note.svelte';
 
 	let { data } = $props();
-	let posts = $derived(data.posts);
+	let items = $derived(data.items);
 	let total_page = $derived(data.total_page);
 	let order_by = $derived(data.order_by);
 	let _status = $derived(data._status);
 	let search = $state({ order: 'latest', search: '', status: 'active', page_no: 1 });
 
 	const update = (a, b) => {
-		posts = a;
+		items = a;
 		total_page = b;
 	};
 
@@ -56,7 +56,7 @@
 <Content --content-background-color="var(--bg2)">
 	<div class="line space">
 		<div class="page_title">
-			Post{posts.length > 1 ? 's' : ''}
+			Post{items.length > 1 ? 's' : ''}
 		</div>
 		{#if app.user.access.includes('post:add')}
 			<div class="line">
@@ -112,11 +112,11 @@
 		}}
 	/>
 
-	{#if posts.length}
+	{#if items.length}
 		<section class="items">
-			{#each posts as post (post.key)}
+			{#each items as item (item.key)}
 				<div animate:flip={{ delay: 0, duration: 500, easing: cubicInOut }}>
-					<One {post} />
+					<Item {item} />
 				</div>
 			{/each}
 		</section>

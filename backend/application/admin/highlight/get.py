@@ -7,8 +7,8 @@ from ...post import post_schema
 bp = Blueprint("highlight_get", __name__)
 
 
-@bp.get("/highlight")
-def get_highlight(cur=None):
+@bp.get("/highlights")
+def get_many(cur=None):
     close_conn = not cur
     if not cur:
         con, cur = db_open()
@@ -25,14 +25,14 @@ def get_highlight(cur=None):
     keys = highlight["value"]["post_keys"]
 
     cur.execute("""
-        SELECT * FROM post WHERE status = 'active' AND key = ANY(%s);
+        SELECT * FROM post WHERE status = 'active' AND key::TEXT = ANY(%s);
     """, (keys,))
-    posts = cur.fetchall()
-    posts = sorted(posts, key=lambda d: keys.index(d['key']))
+    items = cur.fetchall()
+    items = sorted(items, key=lambda d: keys.index(d['key']))
 
     if close_conn:
         db_close(con, cur)
     return jsonify({
         "status": 200,
-        "posts": [post_schema(x) for x in posts]
+        "items": [post_schema(x) for x in items]
     })

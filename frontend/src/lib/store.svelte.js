@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { goto, invalidate, replaceState } from '$app/navigation';
+import { goto, invalidate } from '$app/navigation';
 import { page } from '$app/state';
 
 export const app = $state({
@@ -91,7 +91,16 @@ export const page_state = $state({
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	},
 	clear(page_name) {
-		this.state[page_name].loaded = false
+		this.state[page_name] = {
+			searchParams: {},
+			data: [],
+			loaded: false
+		}
+	},
+	goto(page_name, obj) {
+		this.clear(page_name);
+		this.state[page_name].searchParams = obj;
+		goto(`/${page_name}`);
 	},
 	set(obj) {
 		for (const [key, val] of Object.entries(obj)) {

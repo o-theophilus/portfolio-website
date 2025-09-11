@@ -7,7 +7,7 @@ bp = Blueprint("report_get", __name__)
 
 
 @bp.get("/reports")
-def get_reports():
+def get_many():
     con, cur = db_open()
 
     session = get_session(cur, True)
@@ -51,33 +51,39 @@ def get_reports():
             jsonb_build_object(
                 'name', "user".name,
                 'username', "user".username,
-                'photo', "user".photo
+                'photo', "user".photo,
+                'email', "user".email
+            ) AS reporter,
+
+            jsonb_build_object(
+                'name', COALESCE(user_1.name, user_2.name),
+                'username', COALESCE(user_1.username, user_2.username),
+                'photo', COALESCE(user_1.photo, user_2.photo),
+                'email', COALESCE(user_1.email, user_2.email)
             ) AS "user",
 
             jsonb_build_object(
+                'date_created', comment.date_created,
                 'comment', comment.comment,
                 'post_key', comment.post_key
-            ) AS comment,
-            jsonb_build_object(
-                'name', usr.name,
-                'username', usr.username,
-                'photo', usr.photo
-            ) AS reported_user,
+            ) AS user_comment,
 
             COUNT(*) OVER() AS _count
 
         FROM report
         LEFT JOIN "user" ON report.user_key = "user".key
+        LEFT JOIN "user" user_1 ON report.entity_key = user_1.key
+            AND report.entity_type = 'user'
+
         LEFT JOIN comment ON report.entity_key = comment.key
             AND report.entity_type = 'comment'
-        LEFT JOIN "user" usr ON report.entity_key = usr.key
-            AND report.entity_type = 'user'
+        LEFT JOIN "user" user_2 ON comment.user_key = user_2.key
+            AND report.entity_type = 'comment'
 
         WHERE
             (%s = '' OR CONCAT_WS(', ',
-                report.key, report.comment, report.tags,
-                "user".key, "user".name, "user".email,
-                report.entity_key, comment.comment
+                report.key, report.comment, report.tags, report.entity_key,
+                "user".key, "user".name, "user".username, "user".email
             ) ILIKE %s)
             AND (%s = '' OR report.entity_type = %s)
         ORDER BY {} {}
@@ -88,22 +94,25 @@ def get_reports():
         _type, _type,
         page_size, (page_no - 1) * page_size
     ))
+    items = cur.fetchall()
 
-    # TODO: include user as json if entity_type != "user"
-    reports = cur.fetchall()
-    # for x in reports:
-    #     x["reported"]["photo"] = (
-    #         f"{request.host_url}file/{x['reported']['photo']}"
-    #         if x["reported"]["photo"] else None
-    #     )
+    for x in items:
+        x["reporter"]["photo"] = (
+            f"{request.host_url}file/{x['reporter']['photo']}"
+            if x["reporter"]["photo"] else None
+        )
+        x["user"]["photo"] = (
+            f"{request.host_url}file/{x['user']['photo']}"
+            if x["user"]["photo"] else None
+        )
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "reports": reports,
+        "items": items,
         "order_by": list(order_by.keys()),
         "_type": ["user", "comment"],
         "_status": ["unresolved", "resolved"],
-        "total_page": ceil(reports[0]["_count"] / page_size
-                           ) if reports else 0
+        "total_page": ceil(items[0]["_count"] / page_size
+                           ) if items else 0
     })

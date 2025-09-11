@@ -70,7 +70,7 @@
 		}
 
 		if (!app.tags) {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tag`);
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tags`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {

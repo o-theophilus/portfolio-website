@@ -34,7 +34,7 @@
 		let pn = 'tags';
 		let i = $state.findIndex((x) => x.name == pn);
 		if (i == -1) {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tag`);
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tags`);
 			resp = await resp.json();
 			loading_tags = false;
 

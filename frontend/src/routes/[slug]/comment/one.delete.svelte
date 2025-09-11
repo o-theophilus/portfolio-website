@@ -30,7 +30,7 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			module.value.update(resp.comments);
+			module.value.update(resp.items);
 			module.close();
 			notify.open('Comment Deleted');
 		} else {

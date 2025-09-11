@@ -3,52 +3,52 @@
 
 	import { Datetime, Icon } from '$lib/macro';
 
-	let { post } = $props();
+	let { item } = $props();
 
 	const prerender = () => {
-		app.post = post;
+		app.post = item;
 	};
-	let src = $state(post.photo || '/no_photo.png');
+	let src = $state(item.photo || '/no_photo.png');
 </script>
 
-<a href="/{post.slug}" onclick={prerender} onmouseenter={prerender}>
-	<img {src} loading="lazy" alt={post.title} onerror={() => (src = '/file_error.png')} />
+<a href="/{item.slug}" onclick={prerender} onmouseenter={prerender}>
+	<img {src} loading="lazy" alt={item.title} onerror={() => (src = '/file_error.png')} />
 
 	<div class="details">
 		<div class="title">
-			{post.title}
+			{item.title}
 		</div>
 
-		{#if post.description}
+		{#if item.description}
 			<div class="description">
 				<div>
-					{post.description}
+					{item.description}
 				</div>
 			</div>
 		{/if}
 
 		<div class="bottom line">
-			<Datetime datetime={post.date} type="ago" />
+			<Datetime datetime={item.date} type="ago" />
 			<div class="line info">
 				<div class="line">
 					<Icon icon="eye" size="12" />
-					{post.view}
+					{item.view}
 				</div>
 
 				<div class="line">
 					<Icon icon="message-circle" size="12" />
-					{post.comment}
+					{item.comment}
 				</div>
 
 				<div class="line">
 					<Icon icon="thumbs-up" size="12" />
-					{post._like}
+					{item._like}
 				</div>
 
-				{#if post.rating != 0}
+				{#if item.rating != 0}
 					<div class="line">
 						<Icon icon="star" size="12" />
-						{parseFloat(post.rating)}
+						{parseFloat(item.rating)}
 					</div>
 				{/if}
 			</div>

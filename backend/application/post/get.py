@@ -28,16 +28,16 @@ def get_post(key):
     cur.execute("""
         SELECT * FROM post WHERE post.slug = %s OR post.key::TEXT = %s;
     """, (key, key))
-    post = cur.fetchone()
+    item = cur.fetchone()
 
-    if not post:
+    if not item:
         db_close(con, cur)
         return jsonify({
             "status": 404,
             "error": "Oops! The post you’re looking for doesn’t exist"
         })
 
-    if post["status"] != "active":
+    if item["status"] != "active":
         session = get_session(cur, True)
         if session["status"] != 200:
             db_close(con, cur)
@@ -57,12 +57,12 @@ def get_post(key):
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post_schema(post)
+        "item": post_schema(item)
     })
 
 
-@bp.get("/post")
-def get_all(cur=None):
+@bp.get("/posts")
+def get_many(cur=None):
     close_conn = not cur
     if not cur:
         con, cur = db_open()
@@ -218,16 +218,16 @@ def get_all(cur=None):
         search, f"%{search}%",
         page_size, (page_no - 1) * page_size
     ))
-    posts = cur.fetchall()
+    items = cur.fetchall()
 
     if close_conn:
         db_close(con, cur)
     return jsonify({
         "status": 200,
-        "posts": [post_schema(x) for x in posts],
+        "items": [post_schema(x) for x in items],
         "order_by": list(order_by.keys()),
         "_status": ['active', 'draft'],
-        "total_page": ceil(posts[0]["_count"] / page_size) if posts else 0
+        "total_page": ceil(items[0]["_count"] / page_size) if items else 0
     })
 
 
@@ -244,7 +244,7 @@ def similar_posts(key):
         db_close(con, cur)
         return jsonify({
             "status": 200,
-            "posts": []
+            "items": []
         })
 
     keywords = list(set(
@@ -267,12 +267,12 @@ def similar_posts(key):
         ORDER BY likeness.score DESC
         LIMIT 4;
     """, (keywords, key))
-    posts = cur.fetchall()
+    items = cur.fetchall()
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "posts": [post_schema(x) for x in posts]
+        "items": [post_schema(x) for x in items]
     })
 
 
@@ -310,7 +310,7 @@ def get_author(key):
     })
 
 
-@bp.get("/tag")
+@bp.get("/tags")
 def all_tags():
     con, cur = db_open()
 

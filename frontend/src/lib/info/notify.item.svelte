@@ -3,7 +3,7 @@
 
 	import { Icon } from '$lib/macro';
 
-	let { one } = $props();
+	let { item } = $props();
 
 	let isDrawn = $state(false);
 	const radius = 50;
@@ -11,7 +11,7 @@
 	const time = 5;
 
 	setTimeout(() => {
-		notify.close(one.key);
+		notify.close(item.key);
 	}, time * 1000);
 
 	setTimeout(() => {
@@ -19,15 +19,19 @@
 	});
 </script>
 
-<div class="notify" class:bad={one.status == 400} class:caution={one.status == 201}>
+<div class="notify" class:bad={item.status == 400} class:caution={item.status == 201}>
 	<div class="line nowrap">
 		<Icon
 			size="24"
-			icon={one.status == 201 ? 'triangle-alert' : one.status == 400 ? 'circle-x' : 'square-check'}
+			icon={item.status == 201
+				? 'triangle-alert'
+				: item.status == 400
+					? 'circle-x'
+					: 'square-check'}
 		/>
-		{one.message || 'no message'}
+		{item.message || 'no message'}
 
-		<button onclick={() => notify.close(one.key)}>
+		<button onclick={() => notify.close(item.key)}>
 			<Icon icon="x" size="16"></Icon>
 			<svg viewBox="0 0 120 120">
 				<circle

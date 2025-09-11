@@ -7,7 +7,7 @@
 	import { Spinner, Avatar } from '$lib/macro';
 
 	let { post_key, refresh } = $props();
-	let posts = $state([]);
+	let items = $state([]);
 	let open = $state(true);
 	let loading = $state(true);
 
@@ -17,7 +17,7 @@
 		loading = false;
 
 		if (resp.status == 200) {
-			posts = resp.posts;
+			items = resp.items;
 		}
 	};
 
@@ -26,11 +26,11 @@
 	};
 </script>
 
-{#if loading || posts.length > 0}
+{#if loading || items.length > 0}
 	<hr />
 	<div class="title line">
 		<div class="page_title line">
-			Similar Post{#if posts.length > 1}s{/if}
+			Similar Post{#if items.length > 1}s{/if}
 			<Spinner active={loading} size="20" />
 		</div>
 
@@ -46,7 +46,7 @@
 
 	{#if open && !loading}
 		<div class="area" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
-			{#each posts as x}
+			{#each items as x}
 				<div class="post">
 					<a
 						href="/{x.slug}"

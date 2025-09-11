@@ -31,7 +31,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			app.highlight = resp.posts;
+			app.highlight = resp.items;
 			module.value.reset_index();
 
 			let is_added = false;

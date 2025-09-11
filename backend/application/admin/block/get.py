@@ -6,8 +6,8 @@ from ...postgres import db_close, db_open
 bp = Blueprint("block_get", __name__)
 
 
-@bp.get("/block")
-def get_all():
+@bp.get("/blocks")
+def get_many():
     con, cur = db_open()
 
     session = get_session(cur, True)
@@ -79,9 +79,9 @@ def get_all():
         search, f"%{search}%",
         page_size, (page_no - 1) * page_size
     ))
-    blocks = cur.fetchall()
+    items = cur.fetchall()
 
-    for x in blocks:
+    for x in items:
         x["admin"]["photo"] = (
             f"{request.host_url}file/{x['admin']['photo']}"
             if x["admin"]["photo"] else None
@@ -94,10 +94,10 @@ def get_all():
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "blocks": blocks,
+        "items": items,
         "order_by": list(order_by.keys()),
         "total_page": ceil(
-            blocks[0]["_count"] / page_size) if blocks else 0
+            items[0]["_count"] / page_size) if items else 0
     })
 
 

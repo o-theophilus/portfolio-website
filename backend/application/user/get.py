@@ -21,9 +21,9 @@ def get(key):
     cur.execute("""
         SELECT * FROM "user" WHERE key::TEXT = %s OR username = %s;
     """, (key, key))
-    user = cur.fetchone()
+    item = cur.fetchone()
 
-    if not user:
+    if not item:
         db_close(con, cur)
         return jsonify({
             "status": 404,
@@ -42,7 +42,7 @@ def get(key):
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "user": user_schema(user),
+        "item": user_schema(item),
         "access": _access
     })
 
@@ -102,13 +102,13 @@ def get_many():
         search, f"%{search}%",
         page_size, (page_no - 1) * page_size
     ))
-    users = cur.fetchall()
+    items = cur.fetchall()
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "users": [user_schema(x) for x in users],
+        "items": [user_schema(x) for x in items],
         "order_by": list(order_by.keys()),
         "_status": ['anonymous', 'signedup', 'confirmed'],
-        "total_page": ceil(users[0]["_count"] / page_size) if users else 0
+        "total_page": ceil(items[0]["_count"] / page_size) if items else 0
     })

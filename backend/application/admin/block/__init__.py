@@ -16,7 +16,13 @@ def block(key):
         return jsonify(session)
     user = session["user"]
 
-    if "block:block" not in user["access"]:
+    comment = request.json.get("comment")
+    blocked = request.json.get("blocked")
+
+    if (
+        block and "block:block" not in user["access"]
+        or not block and "block:unblock" not in user["access"]
+    ):
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -32,9 +38,6 @@ def block(key):
             "status": 400,
             "error": "Invalid request"
         })
-
-    comment = request.json.get("comment")
-    blocked = request.json.get("blocked")
 
     error = {}
     if not comment:

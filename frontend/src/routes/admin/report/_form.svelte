@@ -7,8 +7,8 @@
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
 
-	let blocked = $state(module.value.blocked);
-	let form = $state({ comment: '', blocked: false });
+	// TODO: add option to delete comment
+	let form = $state({ comment: '' });
 	let error = $state({});
 
 	const validate = () => {
@@ -26,9 +26,9 @@
 	const submit = async () => {
 		error = {};
 
-		loading.open('Unblocking User . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/block/${module.value.key}`, {
-			method: 'post',
+		loading.open('Resolving Report . . .');
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/report/${module.value.key}`, {
+			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: app.token
@@ -40,7 +40,7 @@
 
 		if (resp.status == 200) {
 			module.value.update(module.value.key);
-			notify.open('User Unblocked');
+			notify.open('Report Resolved');
 			module.close();
 		} else {
 			error = resp;
@@ -48,7 +48,7 @@
 	};
 </script>
 
-<Form title="Unblock User" error={error.error}>
+<Form title="Resolve Report" error={error.error}>
 	<IG
 		name="Comment ({500 - form.comment.length})"
 		error={error.comment}

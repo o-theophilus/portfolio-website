@@ -10,10 +10,10 @@
 	import { Pagination, Dropdown, Search } from '$lib/input';
 	import { Meta, Log, Icon, Datetime } from '$lib/macro';
 	import { PageNote } from '$lib/info';
-	import One from './one.svelte';
+	import Item from './item.svelte';
 
 	let { data } = $props();
-	let blocks = $derived(data.blocks);
+	let items = $derived(data.items);
 
 	let total_page = $derived(data.total_page);
 	let { order_by } = data;
@@ -39,25 +39,25 @@
 	});
 
 	const update = (key) => {
-		let _blocks = [];
-		for (const x of blocks) {
+		let temp = [];
+		for (const x of items) {
 			if (x.user.key == key) continue;
-			_blocks.push(x);
+			temp.push(x);
 		}
-		blocks = _blocks;
+		items = temp;
 		page_state.refresh();
 	};
 </script>
 
 <Log entity_type={'page'} />
-<Meta title="Blocked User{blocks.length > 1 ? 's' : ''}" />
+<Meta title="Blocked User{items.length > 1 ? 's' : ''}" />
 
 <Content --content-background-color="var(--bg2)">
 	<div class="line space">
 		<div class="line">
 			<BackButton />
 			<div class="page_title">
-				Blocked User{blocks.length > 1 ? 's' : ''}
+				Blocked User{items.length > 1 ? 's' : ''}
 			</div>
 		</div>
 	</div>
@@ -88,11 +88,9 @@
 		}}
 	/>
 
-	{#each blocks as one (one.key)}
+	{#each items as item (item.key)}
 		<div class="report" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<One {one} {update} />
-			<One {one} {update} />
-			<One {one} {update} />
+			<Item {item} {update} />
 		</div>
 	{:else}
 		<PageNote>

@@ -1,5 +1,6 @@
 <script>
 	import { page } from '$app/state';
+
 	import { app, module, page_state } from '$lib/store.svelte.js';
 
 	import { Content } from '$lib/layout';
@@ -19,13 +20,13 @@
 	import { onMount } from 'svelte';
 
 	let { data } = $props();
-	let user = $derived(data.user);
+	let item = $derived(data.item);
 	let edit_mode = $state(false);
 	let blocked = $state(true);
 
 	onMount(async () => {
 		if (app.user.access.includes('block:block')) {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/blocked/${user.key}`);
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/blocked/${item.key}`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {
@@ -35,25 +36,24 @@
 	});
 	const udate_blocked = () => {
 		blocked = true;
-		page_state.clear("block")
 	};
 
 	const update = (data) => {
-		user = data;
-		if (user.key == app.user.key) {
+		item = data;
+		if (item.key == app.user.key) {
 			app.user = data;
 		}
 	};
 </script>
 
-<Meta title={user.name} />
-<Log action={'viewed'} entity_key={user.key} entity_type={'user'} />
+<Meta title={item.name} />
+<Log action={'viewed'} entity_key={item.key} entity_type={'user'} />
 
 <Content>
 	<div class="line">
 		<div class="page_title">Profile</div>
 
-		{#if app.login && (user.key == app.user.key || app.user.access.some( (x) => ['user:set_access', 'user:reset_name', 'user:reset_username', 'user:reset_photo', 'block:block', 'block:unblock'].includes(x) ))}
+		{#if app.login && (item.key == app.user.key || app.user.access.some( (x) => ['user:set_access', 'user:reset_name', 'user:reset_username', 'user:reset_photo', 'block:block', 'block:unblock'].includes(x) ))}
 			<Toggle
 				state_2="edit"
 				active={edit_mode}
@@ -67,16 +67,16 @@
 	<br /><br /><br />
 
 	<div class="line center">
-		<Avatar name={user.name} photo={user.photo} size="120" --avatar-border-radius="50%" />
+		<Avatar name={item.name} photo={item.photo} size="120" --avatar-border-radius="50%" />
 
-		{#if edit_mode && user.key == app.user.key}
+		{#if edit_mode && item.key == app.user.key}
 			<RoundButton
 				icon="square-pen"
 				onclick={() => {
 					module.open(Photo, {
-						key: user.key,
-						name: user.name,
-						photo: user.photo,
+						key: item.key,
+						name: item.name,
+						photo: item.photo,
 						type: 'user',
 						slug: '/user/photo',
 						update
@@ -91,35 +91,35 @@
 	<div class="line center">
 		<Icon icon="user" />
 		<div class="name">
-			{user.name}
+			{item.name}
 		</div>
-		{#if edit_mode && user.key == app.user.key}
+		{#if edit_mode && item.key == app.user.key}
 			<RoundButton icon="square-pen" onclick={() => module.open(Name, { update })} />
 		{/if}
 	</div>
 
 	<div class="line center">
 		<Icon icon="mail" />
-		{user.email}
-		{#if edit_mode && user.key == app.user.key}
+		{item.email}
+		{#if edit_mode && item.key == app.user.key}
 			<RoundButton icon="square-pen" onclick={() => module.open(Email, { update })} />
 		{/if}
 	</div>
 
-	{#if (edit_mode && user.key == app.user.key) || user.phone}
+	{#if (edit_mode && item.key == app.user.key) || item.phone}
 		<div class="line center">
 			<Icon icon="phone" />
-			{user.phone || 'None'}
-			{#if edit_mode && user.key == app.user.key}
+			{item.phone || 'None'}
+			{#if edit_mode && item.key == app.user.key}
 				<RoundButton icon="square-pen" onclick={() => module.open(Phone, { update })} />
 			{/if}
 		</div>
 	{/if}
 
-	{#if edit_mode && user.key == app.user.key}
+	{#if edit_mode && item.key == app.user.key}
 		<div class="line center">
 			<Icon icon="at-sign" />
-			{user.username}
+			{item.username}
 			<RoundButton icon="square-pen" onclick={() => module.open(Username, { update })} />
 		</div>
 
@@ -133,14 +133,14 @@
 	{#if edit_mode}
 		<br />
 		<div class="line center wrap">
-			{#if user.key == app.user.key}
+			{#if item.key == app.user.key}
 				<Button --button-font-size="0.8rem" onclick={() => module.open(Delete)}>
 					<Icon icon="trash-2" />
 					Delete Account
 				</Button>
 			{:else}
 				{#if app.user.access.includes('user:set_access')}
-					<Button --button-font-size="0.8rem" onclick={() => module.open(Access, { ...user })}>
+					<Button --button-font-size="0.8rem" onclick={() => module.open(Access, { ...item })}>
 						Access
 					</Button>
 				{/if}
@@ -148,7 +148,7 @@
 				{#if app.user.access.some( (x) => ['user:reset_name', 'user:reset_username', 'user:reset_photo'].includes(x) )}
 					<Button
 						--button-font-size="0.8rem"
-						onclick={() => module.open(Action, { ...user, update })}
+						onclick={() => module.open(Action, { ...item, update })}
 					>
 						Reset
 					</Button>
@@ -156,10 +156,10 @@
 
 				{#if app.user.access.includes('block:block')}
 					<Button
-					icon="lock-keyhole"
+						icon="lock-keyhole"
 						--button-font-size="0.8rem"
 						disabled={blocked}
-						onclick={() => module.open(Block, { key: user.key, update: udate_blocked })}
+						onclick={() => module.open(Block, { key: item.key, update: udate_blocked })}
 					>
 						Block{#if blocked}ed{/if}
 					</Button>
@@ -173,8 +173,8 @@
 		<hr />
 		<div class="pad">
 			<LinkArrow
-				href="/log?{new URLSearchParams(`search=${user.email}:all:all:`).toString()}"
 				--link-font-size="0.8rem"
+				onclick={() => page_state.goto('log', { u_search: item.key })}
 			>
 				View Logs
 			</LinkArrow>

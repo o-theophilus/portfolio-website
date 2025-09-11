@@ -1,5 +1,5 @@
 <script>
-	import { loading, module, notify, app } from '$lib/store.svelte.js';
+	import { loading, module, notify, app, page_state } from '$lib/store.svelte.js';
 
 	import { Button, Tag } from '$lib/button';
 	import { Form } from '$lib/layout';
@@ -45,8 +45,9 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.close();
 			notify.open('Report Submitted');
+			page_state.clear('report');
+			module.close();
 		} else {
 			error = resp;
 		}

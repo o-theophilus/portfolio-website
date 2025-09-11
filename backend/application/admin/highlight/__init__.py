@@ -3,7 +3,7 @@ from psycopg2.extras import Json
 from ...postgres import db_open, db_close
 from ...log import log
 from ...tools import get_session
-from .get import get_highlight
+from .get import get_many
 
 
 bp = Blueprint("highlight", __name__)
@@ -67,6 +67,7 @@ def set_highlight():
         cur=cur,
         user_key=user["key"],
         action="edited_highlight",
+        entity_key="app",
         entity_type="app",
         misc={
             "from": ", ".join(_from),
@@ -74,12 +75,12 @@ def set_highlight():
         }
     )
 
-    posts = get_highlight(cur).json["posts"]
+    items = get_many(cur).json["items"]
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "posts": posts
+        "items": items
     })
 
 
@@ -133,10 +134,10 @@ def edit_highlight():
         }
     )
 
-    posts = get_highlight(cur).json["posts"]
+    items = get_many(cur).json["items"]
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "posts": posts
+        "items": items
     })

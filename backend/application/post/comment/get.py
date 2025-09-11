@@ -4,8 +4,8 @@ from ...postgres import db_close, db_open
 bp = Blueprint("comment_get", __name__)
 
 
-@bp.get("/comment/<key>")
-def get_comments(key, cur=None):
+@bp.get("/<key>/comments")
+def get_many(key, cur=None):
     close_conn = not cur
     if not cur:
         con, cur = db_open()
@@ -81,8 +81,8 @@ def get_comments(key, cur=None):
         ORDER BY {order_by[order]} {order_dir[order]};
     """, (key, key, key))
 
-    comments = cur.fetchall()
-    for x in comments:
+    items = cur.fetchall()
+    for x in items:
         x["user"]["photo"] = (
             f"{request.host_url}file/{x['user']['photo']}"
             if x["user"]["photo"] else None
@@ -92,6 +92,6 @@ def get_comments(key, cur=None):
         db_close(con, cur)
     return jsonify({
         "status": 200,
-        "comments": comments,
+        "items": items,
         "order_by": list(order_by.keys()),
     })

@@ -6,15 +6,15 @@
 	import { Button, RoundButton } from '$lib/button';
 	import { slide } from 'svelte/transition';
 
-	let posts = $state([...app.highlight]);
+	let items = $state([...app.highlight]);
 	let init = $state([...app.highlight]);
 	let error = $state({});
 
 	const order = (key, down = true) => {
-		const index = posts.findIndex((x) => x.key == key);
+		const index = items.findIndex((x) => x.key == key);
 
 		if (index == -1) {
-			return posts;
+			return items;
 		}
 
 		let newIndex = index - 1;
@@ -22,21 +22,21 @@
 			newIndex = index + 1;
 		}
 
-		if (newIndex < 0 || newIndex >= posts.length) {
-			return posts;
+		if (newIndex < 0 || newIndex >= items.length) {
+			return items;
 		}
 
-		const temp = posts[newIndex];
-		posts[newIndex] = posts[index];
-		posts[index] = temp;
+		const temp = items[newIndex];
+		items[newIndex] = items[index];
+		items[index] = temp;
 	};
 
 	const remove = (key) => {
-		posts = posts.filter((i) => i.key != key);
+		items = items.filter((i) => i.key != key);
 	};
 
 	export const reset = () => {
-		posts = [...app.highlight];
+		items = [...app.highlight];
 		init = [...app.highlight];
 	};
 
@@ -51,15 +51,15 @@
 				Authorization: app.token
 			},
 			body: JSON.stringify({
-				keys: posts.map((x) => x.key)
+				keys: items.map((x) => x.key)
 			})
 		});
 		resp = await resp.json();
 		loading.close();
 
 		if (resp.status == 200) {
-			app.highlight = resp.posts;
-			posts = [...app.highlight];
+			app.highlight = resp.items;
+			items = [...app.highlight];
 			init = [...app.highlight];
 			module.value.reset_index();
 			notify.open('Highlight updated');
@@ -69,7 +69,7 @@
 	};
 </script>
 
-{#each posts as x, i (x.key)}
+{#each items as x, i (x.key)}
 	<div class="line space" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
 		<div class="post_name">
 			{x.title}
@@ -85,7 +85,7 @@
 			/>
 			<RoundButton
 				icon="chevron-down"
-				disabled={i == posts.length - 1}
+				disabled={i == items.length - 1}
 				onclick={() => {
 					order(x.key);
 				}}
@@ -108,10 +108,10 @@
 {/if}
 
 <div class="line">
-	<Button icon="save" onclick={submit} disabled={JSON.stringify(posts) === JSON.stringify(init)}>
+	<Button icon="save" onclick={submit} disabled={JSON.stringify(items) === JSON.stringify(init)}>
 		Save
 	</Button>
-	<Button icon="history" onclick={reset} disabled={JSON.stringify(posts) === JSON.stringify(init)}>
+	<Button icon="history" onclick={reset} disabled={JSON.stringify(items) === JSON.stringify(init)}>
 		Reset
 	</Button>
 </div>

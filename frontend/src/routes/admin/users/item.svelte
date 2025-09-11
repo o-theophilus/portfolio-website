@@ -1,17 +1,17 @@
 <script>
 	import { Avatar } from '$lib/macro';
-	let { user } = $props();
+	let { item } = $props();
 </script>
 
-<a href="/@{user.username}">
-	<Avatar name={user.name} photo={user.photo} --avatar-border-radius="50%" />
+<a href="/@{item.username}">
+	<Avatar name={item.name} photo={item.photo} --avatar-border-radius="50%" />
 	<div class="details">
 		<div class="name">
-			{user.name}
+			{item.name}
 		</div>
 
 		<span class="email">
-			{user.email}
+			{item.email}
 		</span>
 	</div>
 </a>

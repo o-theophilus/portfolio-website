@@ -2,76 +2,76 @@
 	import { app, page_state } from '$lib/store.svelte.js';
 	import { Datetime, Icon } from '$lib/macro';
 
-	let { log, search = $bindable() } = $props();
+	let { item, search = $bindable() } = $props();
 
 	let href = $state('');
-	if (log.entity.type == 'post') {
-		href = `/${log.entity.key}`;
-	} else if (log.entity.type == 'report') {
-		href = `/admin/report?search=${log.entity.key}`;
-	} else if (log.entity.type == 'page') {
-		href = log.entity.key;
-	} else if (['user', 'admin'].includes(log.entity.type) && log.entity.key) {
-		href = `/@${log.entity.key}`;
-	} else if (log.entity.type == 'comment') {
-		href = `/${log.misc.post_key}#${log.entity.key}`;
+	if (item.entity.type == 'post') {
+		href = `/${item.entity.key}`;
+	} else if (item.entity.type == 'report') {
+		href = `/admin/report?search=${item.entity.key}`;
+	} else if (item.entity.type == 'page') {
+		href = item.entity.key;
+	} else if (['user', 'admin'].includes(item.entity.type) && item.entity.key) {
+		href = `/@${item.entity.key}`;
+	} else if (item.entity.type == 'comment') {
+		href = `/${item.misc.post_key}#${item.entity.key}`;
 	}
 </script>
 
 <section>
 	<div
 		class="status"
-		class:_200={log.status == '200'}
-		class:_201={!['200', '400'].includes(log.status)}
-		class:_400={log.status == '400'}
+		class:_200={item.status == '200'}
+		class:_201={!['200', '400'].includes(item.status)}
+		class:_400={item.status == '400'}
 	></div>
 
 	<span class="date">
-		<Datetime datetime={log.date_created} type="date_numeric" />
-		<Datetime datetime={log.date_created} type="time_12h" />
+		<Datetime datetime={item.date_created} type="date_numeric" />
+		<Datetime datetime={item.date_created} type="time_12h" />
 	</span>
 	<br />
 
-	<a href="/@{log.user.username}" class="break">
-		{log.user.name}
+	<a href="/@{item.user.username}" class="break">
+		{item.user.name}
 	</a>
 
-	{#if log.user.key && app.user.access.includes('log:view')}
+	{#if item.user.key && app.user.access.includes('log:view')}
 		<button
 			onclick={() => {
 				search.page_no = 1;
-				search.u_search = log.user.key;
-				page_state.set({ u_search: log.user.key });
+				search.u_search = item.user.key;
+				page_state.set({ u_search: item.user.key });
 			}}
 		>
 			<Icon icon="square-chevron-up"></Icon>
 		</button>
 	{/if}
 
-	{log.action}
-	{log.entity.type}
+	{item.action}
+	{item.entity.type}
 
 	{#if href}
 		<a class="break" {href} data-sveltekit-preload-data="off">
-			{log.entity.name}
+			{item.entity.name}
 		</a>
 
 		<button
 			onclick={() => {
 				search.page_no = 1;
-				search.e_search = log.entity.key;
-				page_state.set({ e_search: log.entity.key });
+				search.e_search = item.entity.key;
+				page_state.set({ e_search: item.entity.key });
 			}}
 		>
 			<Icon icon="square-chevron-up"></Icon>
 		</button>
 	{/if}
 
-	{#if log.misc}
-		{#each Object.entries(log.misc) as [key, val]}
+	{#if item.misc}
+		{#each Object.entries(item.misc) as [key, val]}
 			,
 			{key}:
-			{#if log.entity.type == 'voucher' && key == 'validity'}
+			{#if item.entity.type == 'voucher' && key == 'validity'}
 				<Datetime datetime={val} type="date" />
 			{:else}
 				<span class="break">
