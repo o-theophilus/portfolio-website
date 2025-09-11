@@ -25,6 +25,10 @@
 			<Button href="/admin/report" size="wide">Reports</Button>
 		{/if}
 
+		{#if app.user.access.includes('block:view')}
+			<Button href="/admin/block" size="wide">Blocked Users</Button>
+		{/if}
+
 		{#if app.user.access.includes('admin:manage_files')}
 			<Button href="/admin/file_error" size="wide">File Error</Button>
 		{/if}

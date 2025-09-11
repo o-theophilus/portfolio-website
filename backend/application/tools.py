@@ -11,8 +11,6 @@ reserved_words = [
     "terms", "admin", "omni", "user", "users", "store", "stores", "item",
     "items", "all"]
 
-# TODO: restrict access of blocked users
-
 
 def get_session(cur, login=False):
     token = request.headers.get("Authorization")
@@ -71,15 +69,16 @@ def generate_code(cur, key, email, _from, clear=True):
 
 
 def check_code(cur, user_key, email, n="code"):
+    pin = request.json.get(n)
     error = None
-    if n not in request.json or not request.json[n]:
+    if not pin:
         error = "This field is required"
-    elif len(request.json[n]) != 6:
+    elif len(pin) != 6:
         error = "invalid code"
 
     cur.execute("""
         SELECT * FROM code WHERE user_key = %s AND pin = %s AND email = %s;
-    """, (user_key, request.json[n], email))
+    """, (user_key, pin, email))
     code = cur.fetchone()
 
     if not code:

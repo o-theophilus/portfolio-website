@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/state';
-	import { app, module } from '$lib/store.svelte.js';
+	import { app, module, page_state } from '$lib/store.svelte.js';
 
 	import { Content } from '$lib/layout';
 	import { Meta, Icon, Avatar, Log } from '$lib/macro';
@@ -9,23 +9,34 @@
 	import Photo from '../[slug]/photo/edit.svelte';
 	import Name from './_name.svelte';
 	import Phone from './_phone.svelte';
-	import Email from './_email_1.svelte';
 	import Username from './_username.svelte';
-	import Delete from './_delete_1_warning.svelte';
-	import Password from './_password_1_email.svelte';
-	import Access from './_access.svelte';
+	import Email from './email/1_email.svelte';
+	import Password from './password/1_email.svelte';
+	import Delete from './delete/form.svelte';
+	import Access from './access/form.svelte';
 	import Action from './_admin_action.svelte';
-	import Block from './_admin_block.svelte';
+	import Block from './_block.svelte';
+	import { onMount } from 'svelte';
 
 	let { data } = $props();
 	let user = $derived(data.user);
 	let edit_mode = $state(false);
+	let blocked = $state(true);
 
-	const ppt = ['user:set_access', 'user:reset_name', 'user:reset_photo', 'user:block'];
-	let is_admin = $derived.by(() => {
-		for (const x of ppt) if (app.user.access.includes(x)) return true;
-		return false;
+	onMount(async () => {
+		if (app.user.access.includes('block:block')) {
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/blocked/${user.key}`);
+			resp = await resp.json();
+
+			if (resp.status == 200) {
+				blocked = resp.blocked;
+			}
+		}
 	});
+	const udate_blocked = () => {
+		blocked = true;
+		page_state.clear("block")
+	};
 
 	const update = (data) => {
 		user = data;
@@ -42,7 +53,7 @@
 	<div class="line">
 		<div class="page_title">Profile</div>
 
-		{#if app.login && (user.key == app.user.key || is_admin)}
+		{#if app.login && (user.key == app.user.key || app.user.access.some( (x) => ['user:set_access', 'user:reset_name', 'user:reset_username', 'user:reset_photo', 'block:block', 'block:unblock'].includes(x) ))}
 			<Toggle
 				state_2="edit"
 				active={edit_mode}
@@ -127,14 +138,14 @@
 					<Icon icon="trash-2" />
 					Delete Account
 				</Button>
-			{:else if is_admin}
+			{:else}
 				{#if app.user.access.includes('user:set_access')}
 					<Button --button-font-size="0.8rem" onclick={() => module.open(Access, { ...user })}>
 						Access
 					</Button>
 				{/if}
 
-				{#if app.user.access.some((x) => ['user:reset_name', 'user:reset_photo'].includes(x))}
+				{#if app.user.access.some( (x) => ['user:reset_name', 'user:reset_username', 'user:reset_photo'].includes(x) )}
 					<Button
 						--button-font-size="0.8rem"
 						onclick={() => module.open(Action, { ...user, update })}
@@ -143,16 +154,14 @@
 					</Button>
 				{/if}
 
-				{#if app.user.access.includes('user:block')}
+				{#if app.user.access.includes('block:block')}
 					<Button
+					icon="lock-keyhole"
 						--button-font-size="0.8rem"
-						onclick={() => module.open(Block, { ...user, update })}
+						disabled={blocked}
+						onclick={() => module.open(Block, { key: user.key, update: udate_blocked })}
 					>
-						{#if user.status == 'blocked'}
-							Unblock
-						{:else}
-							Block
-						{/if}
+						Block{#if blocked}ed{/if}
 					</Button>
 				{/if}
 			{/if}

@@ -9,12 +9,12 @@
 	import One from './one.mini.svelte';
 
 	let post = module.value.post;
-	let comment = module.value.comment;
+	let parent = module.value.comment;
 
-	let form = {
-		path: comment ? [...comment.path, comment.key] : []
-	};
-
+	let form = $state({
+		comment: '',
+		parent_key: parent ? parent.key : null
+	});
 	let error = $state({});
 
 	const validate = () => {
@@ -22,6 +22,8 @@
 
 		if (!form.comment) {
 			error.comment = 'This field is required';
+		} else if (form.comment.length > 500) {
+			error.comment = 'This field cannot exceed 500 characters';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -55,13 +57,13 @@
 	};
 </script>
 
-<Form title="{comment ? 'Reply' : 'Add'} Comment" error={error.error}>
-	{#if comment}
-		<One {comment}></One>
+<Form title="{parent ? 'Reply' : 'Add'} Comment" error={error.error}>
+	{#if parent}
+		<One comment={parent}></One>
 	{/if}
 
 	<IG
-		name="Comment"
+		name="Comment ({500 - form.comment.length})"
 		error={error.comment}
 		type="textarea"
 		placeholder="Comment here"

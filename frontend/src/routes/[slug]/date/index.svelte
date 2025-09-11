@@ -19,7 +19,7 @@
 	>
 {/if}
 <span class="date">
-	<Datetime datetime={post.date} />
+	<Datetime datetime={post.date_created} />
 	{@render children()}
 </span>
 

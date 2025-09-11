@@ -52,16 +52,14 @@
 <Meta title="All Users" />
 
 <Content>
-	<div class="line">
-		<BackButton />
-		<div class="page_title">
-			Report{reports.length > 1 ? 's' : ''}
+	<div class="line space">
+		<div class="line">
+			<BackButton />
+			<div class="page_title">
+				Report{reports.length > 1 ? 's' : ''}
+			</div>
 		</div>
-	</div>
 
-	<br />
-
-	<div class="line nowrap">
 		<Dropdown
 			icon2="chevron-down"
 			list={['all', ..._type]}
@@ -72,18 +70,6 @@
 				search.page_no = 1;
 				page_state.set({ type: v });
 			}}
-			--select-width="100%"
-		/>
-		<Dropdown
-			icon2="chevron-down"
-			list={_status}
-			bind:value={search.status}
-			onchange={(v) => {
-				v = v == _status[0] ? '' : v;
-				search.page_no = 1;
-				page_state.set({ status: v });
-			}}
-			--select-width="100%"
 		/>
 	</div>
 

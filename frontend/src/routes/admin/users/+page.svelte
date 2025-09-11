@@ -19,7 +19,7 @@
 	let { _status } = data;
 	let search = $state({
 		search: '',
-		status: 'all',
+		status: 'confirmed',
 		order: 'latest',
 		page_no: 1
 	});
@@ -56,11 +56,11 @@
 		</div>
 
 		<Dropdown
-			list={['all', ..._status]}
 			icon2="chevron-down"
+			list={['all', ..._status]}
 			bind:value={search.status}
 			onchange={(v) => {
-				v = v == 'all' ? '' : v;
+				v = v == 'confirmed' ? '' : v;
 				page_state.set({ status: v });
 			}}
 		/>

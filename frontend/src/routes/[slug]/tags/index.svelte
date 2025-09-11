@@ -1,5 +1,5 @@
 <script>
-	import { module, app, memory, page_state } from '$lib/store.svelte.js';
+	import { module, app,  page_state } from '$lib/store.svelte.js';
 	import { goto } from '$app/navigation';
 
 	import Button from '../button.svelte';

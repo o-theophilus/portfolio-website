@@ -140,6 +140,7 @@ schema = {
         },
         "comment": {
             "type": "text",
+            "max_length": 500,
         },
         "likes": {
             "type": "array_text",
@@ -167,11 +168,32 @@ schema = {
             "type": "text",
             "max_length": 20,
         },
-        "report": {
+        "comment": {
             "type": "text",
+            "max_length": 500,
         },
         "tags": {
             "type": "array_text",
+        },
+    },
+
+    "block": {
+        "key": {
+            "type": "uuid",
+        },
+        "date_created": {
+            "type": "datetime",
+        },
+        "admin_key": {
+            "type": "uuid",
+            "foreign_key": ["user", "key"]
+        },
+        "user_key": {
+            "type": "uuid",
+        },
+        "comment": {
+            "type": "text",
+            "max_length": 500,
         },
     },
 
@@ -251,7 +273,7 @@ schema = {
         },
     },
 
-    "setting": {
+    "app": {
         "key": {
             "type": "uuid",
         },

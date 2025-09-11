@@ -8,75 +8,74 @@
 	import Resolve from './one_resolve.svelte';
 </script>
 
-<div class="item">
+<div class="one">
 	<div class="small line gap">
-		<div class="date">
-			<Datetime datetime={one.date} type="date" />
-			<Datetime datetime={one.date} type="time" />
-		</div>
+		<!-- <div class="date">
+			<Datetime datetime={one.date_created} type="date" />
+			<Datetime datetime={one.date_created} type="time" />
+		</div> -->
 		<span>
-			id:
-			<span class="caps">
-				{one.key.slice(-10)}
-			</span>
+			id: <span class="caps"> {one.key.slice(-10)} </span>
 		</span>
-	</div>
-
-	<a href="/@{one.reporter.username}">
-		{one.reporter.name}
-	</a>
-	<div class="small">
-		{one.report}{#each one.tags as x}&nbsp; #{x}{/each}
-	</div>
-
-	<div class="highlight">
-		<Avatar name={one.reported.name} photo={one.reported.photo} --avatar-border-radius="50%" />
-		<Link href="/@{one.reported.key}" blank>
-			{one.reported.name}
-		</Link>
-		<div></div>
-		<Link href="/{one.entity.extra_2}#{one.entity.key}" blank>
-			{one.entity.extra_1}
-		</Link>
-	</div>
-
-	{#if one.status != 'resolved'}
 		<Link small onclick={() => module.open(Resolve, { report_key: one.key })}>Resolve</Link>
-	{:else if one.status == 'resolved'}
-		<div class="small">
-			{one.resolve}
+	</div>
+
+	<div class="user">
+		<Avatar name={one.user.name} photo={one.user.photo} --avatar-border-radius="50%" />
+		<div class="details">
+			<Link href="/@{one.user.username}" blank>
+				{one.user.name}
+			</Link>
+			<div class="small">
+				{one.comment}
+				<br />
+				{#each one.tags as x}
+					#{x}{/each}
+			</div>
 		</div>
-	{/if}
+	</div>
+	<!-- <div></div> -->
+	<!-- <Link href="/{one.entity.extra_2}#{one.entity.key}" blank>
+			{one.entity.extra_1}
+		</Link> -->
+
+	<br />
+	Reported
+	<br />
+	<br />
+
+	<div class="entity">
+		{#if one.entity_type == 'comment'}
+			<a href="/{one.comment.post_key}">
+				{one.comment.comment}
+			</a>
+		{:else if one.entity_type == 'user'}
+			<div class="user">
+				<Avatar
+					name={one.reporter_user.name}
+					photo={one.reporter_user.photo}
+					--avatar-border-radius="50%"
+				/>
+				<div class="details">
+					<Link href="/@{one.reporter_user.username}" blank>
+						{one.reporter_user.name}
+					</Link>
+				</div>
+			</div>
+		{/if}
+	</div>
 </div>
 
 <style>
-	.item {
+	.one {
 		margin: var(--sp2) 0;
 		padding-top: var(--sp2);
 		border-top: 2px solid var(--input);
-
-		color: var(--ft2);
 	}
 
-	.highlight {
-		display: grid;
-		grid-template-columns: 1fr 100%;
-		gap: 0 var(--sp1);
-		align-items: center;
-
-		background-color: var(--bg2);
-		padding: var(--sp2);
-		border-radius: var(--sp0);
-		margin: var(--sp2) 0;
-	}
-
-	.line {
+	.user {
 		display: flex;
-		gap: var(--sp2);
-	}
-
-	.gap {
-		justify-content: space-between;
+		gap: 16px;
 	}
 
 	.small {

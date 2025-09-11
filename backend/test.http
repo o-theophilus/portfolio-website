@@ -9,3 +9,8 @@ get {{host}}/fix HTTP/1.1
 content-type: application/json
 ###
 
+### fix
+get {{host}}/admin/default_access HTTP/1.1
+content-type: application/json
+###
+

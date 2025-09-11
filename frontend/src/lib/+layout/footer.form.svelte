@@ -21,12 +21,18 @@
 		error = {};
 		if (!form.name) {
 			error.name = 'This field is required';
+		} else if (form.name.length > 100) {
+			error.name = 'This field cannot exceed 100 characters';
 		}
+
 		if (!form.email) {
 			error.email = 'This field is required';
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
 			error.email = 'Invalid email address';
+		} else if (form.email.length > 255) {
+			error.email = 'This field cannot exceed 255 characters';
 		}
+
 		if (!form.message) {
 			error.message = 'This field is required';
 		}

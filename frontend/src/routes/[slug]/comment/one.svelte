@@ -8,15 +8,22 @@
 	import { Datetime, Marked, Avatar, Icon } from '$lib/macro';
 	import { Link, RoundButton, Like } from '$lib/button';
 	import Add from './_add.svelte';
-	import One from './one.svelte';
+	import One from './one.mini.svelte';
 	import Delete from './one.delete.svelte';
 	import Report from './one.report.svelte';
 
 	let { post, comment, comments = [], update, search } = $props();
-
+	let parent = $derived.by(() => {
+		if (comment.parent_key) {
+			for (const x of comments) {
+				if (x.key == comment.parent_key) {
+					return x;
+				}
+			}
+		}
+		return null;
+	});
 	let error = $state({});
-	let path = [...comment.path];
-	path.push(comment.key);
 
 	let open_menu = $state(false);
 	let self = false;
@@ -83,12 +90,16 @@
 {/snippet}
 
 <section bind:this={_this}>
+	{#if parent}
+		<One comment={parent}></One>
+		<br />
+	{/if}
 	<div class="avatar_content">
 		<Avatar name={comment.user.name} photo={comment.user.photo} --avatar-border-radius="50%" />
 		<div class="content">
 			<div class="line space name_date">
 				<div class="name">{comment.user.name}</div>
-				<div class="date"><Datetime datetime={comment.created_at} type="ago" /></div>
+				<div class="date"><Datetime datetime={comment.date_created} type="ago" /></div>
 			</div>
 
 			<div class="comment">
@@ -151,12 +162,6 @@
 			{/if}
 		</div>
 	</div>
-
-	{#each comments as comm}
-		{#if comm.path[comm.path.length - 1] == comment.key}
-			<One {post} comment={comm} {comments} {update} {search} />
-		{/if}
-	{/each}
 </section>
 
 <style>
@@ -186,15 +191,17 @@
 		color: var(--ft1);
 		font-size: 0.8rem;
 		font-weight: 800;
+		line-height: 100%;
 	}
 
 	.date {
 		font-size: 0.7rem;
+		line-height: 100%;
 	}
 
 	.comment {
 		font-size: 0.8rem;
-		margin-top: 4px;
+		margin: 8px 0;
 	}
 
 	.error {

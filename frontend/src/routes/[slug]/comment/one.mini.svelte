@@ -9,7 +9,7 @@
 		<div class="content">
 			<div class="name">{comment.user.name}</div>
 			<div class="comment">
-				<Marked content={comment.comment} />
+				{comment.comment}
 			</div>
 		</div>
 	</div>
@@ -18,11 +18,8 @@
 <style>
 	section {
 		padding: var(--sp2);
-		padding-right: 0;
 		border: 2px solid var(--bg2);
-		border-right-width: 0;
-		margin-top: var(--sp2);
-		border-top-left-radius: var(--sp0);
+		border-radius: var(--sp0);
 	}
 
 	.avatar_content {
@@ -38,9 +35,11 @@
 		color: var(--ft1);
 		font-size: 0.8rem;
 		font-weight: 800;
+		line-height: 100%;
 	}
 
 	.comment {
 		font-size: 0.8rem;
+		margin-top: 8px;
 	}
 </style>

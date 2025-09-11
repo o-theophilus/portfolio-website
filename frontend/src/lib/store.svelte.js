@@ -79,18 +79,10 @@ export let notify = $state({
 
 
 
-export let memory = $state([]);
-
 export const page_state = $state({
 	state: {},
-	set(obj) {
-		for (const [key, val] of Object.entries(obj)) {
-			this.state[page.data.page_name].searchParams[key] = val
-			if (!val) delete this.state[page.data.page_name].searchParams[key]
-			if (key != "page_no") delete this.state[page.data.page_name].searchParams["page_no"]
-			this.state[page.data.page_name].loaded = false
-		}
-
+	refresh() {
+		this.state[page.data.page_name].loaded = false
 		let ss = new URLSearchParams(this.state[page.data.page_name].searchParams);
 		page.url.search = ss.toString()
 		window.history.replaceState(history.state, '', page.url.href);
@@ -98,9 +90,18 @@ export const page_state = $state({
 		invalidate(true)
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	},
+	clear(page_name) {
+		this.state[page_name].loaded = false
+	},
+	set(obj) {
+		for (const [key, val] of Object.entries(obj)) {
+			this.state[page.data.page_name].searchParams[key] = val
+			if (!val) delete this.state[page.data.page_name].searchParams[key]
+			if (key != "page_no") delete this.state[page.data.page_name].searchParams["page_no"]
+		}
+		this.refresh();
+	},
 	get searchParams() { return this.state[page.data.page_name].searchParams }
-
-
 })
 
 

@@ -18,7 +18,7 @@
 	let open = $state(false);
 	let loading = $state(true);
 	let search = $state({
-		order: 'latest',
+		order: 'oldest',
 		page_no: 1
 	});
 
@@ -35,6 +35,7 @@
 
 		if (resp.status == 200) {
 			comments = resp.comments;
+			console.log(comments);
 			order_by = resp.order_by;
 			if (comments.length) open = true;
 		}
@@ -90,9 +91,7 @@
 
 		{#each comments as comment (comment.key)}
 			<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-				{#if comment.path.length == 0}
-					<One {post} {comment} {comments} {update} {search} />
-				{/if}
+				<One {post} {comment} {comments} {update} {search} />
 			</div>
 		{:else}
 			<PageNote>

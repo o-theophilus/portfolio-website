@@ -51,7 +51,9 @@
 		PencilRuler,
 		SquareTerminal,
 		Lightbulb,
-		AtSign
+		AtSign,
+		LockKeyhole,
+		LockOpen
 	} from 'lucide';
 	import { onMount } from 'svelte';
 	onMount(() => {
@@ -107,7 +109,9 @@
 				PencilRuler,
 				SquareTerminal,
 				Lightbulb,
-				AtSign
+				AtSign,
+				LockKeyhole,
+				LockOpen
 			},
 			attrs: {
 				width: 16,

@@ -13,6 +13,7 @@
 	let form = $state({
 		entity_key: comment.key,
 		entity_type: 'comment',
+		comment: '',
 		tags: []
 	});
 	let error = $state({});
@@ -20,8 +21,10 @@
 	const validate = () => {
 		error = {};
 
-		if (!form.report) {
-			error.report = 'This field is required';
+		if (!form.comment) {
+			error.comment = 'This field is required';
+		} else if (form.comment.length > 500) {
+			error.comment = 'This field cannot exceed 500 characters';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -54,8 +57,8 @@
 	<One {comment}></One>
 
 	<IG
-		bind:value={form.report}
-		error={error.report}
+		bind:value={form.comment}
+		error={error.comment}
 		type="textarea"
 		placeholder="Reason for reporting"
 	>
@@ -73,9 +76,13 @@
 				label="Message"
 				icon2="chevron-down"
 				onchange={(e) => {
-					form.report = template[e];
+					form.comment = template[e];
 				}}
 			/>
+
+			<span class="label">
+				({500 - form.comment.length})
+			</span>
 		{/snippet}
 	</IG>
 
