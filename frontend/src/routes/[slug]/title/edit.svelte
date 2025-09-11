@@ -12,6 +12,8 @@
 		error = {};
 		if (!form.title) {
 			error.title = 'This field is required';
+		} else if (form.title.length > 100) {
+			error.title = 'This field cannot exceed 100 characters';
 		} else if (form.title == module.value.title) {
 			error.title = 'No changes were made';
 		}

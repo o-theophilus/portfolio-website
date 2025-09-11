@@ -15,6 +15,8 @@
 
 		if (form.description == module.value.description) {
 			error.description = 'No changes were made';
+		} else if (form.description.length > 500) {
+			error.description = 'This field cannot exceed 500 characters';
 		}
 
 		Object.keys(error).length === 0 && submit();

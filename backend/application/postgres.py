@@ -94,6 +94,7 @@ schema = {
             "nullable": True
         },
         "description": {
+            "max_length": 500,
             "type": "text",
             "nullable": True
         },

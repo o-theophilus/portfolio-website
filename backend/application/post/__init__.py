@@ -31,11 +31,16 @@ def add():
         })
 
     title = request.json.get("title")
+
+    error = {}
     if not title:
+        error["title"] = "This field is required"
+    elif len(title) > 100:
+        error["title"] = "This field cannot exceed 100 characters"
+    if error != {}:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "This field is required"
         })
 
     slug = re.sub('-+', '-', re.sub('[^a-zA-Z0-9]', '-', title.lower()))
@@ -117,6 +122,8 @@ def edit(key):
             error["title"] = "This field is required"
         elif title == post["title"]:
             error["title"] = "No changes were made"
+        elif len(title) > 100:
+            error["name"] = "This field cannot exceed 100 characters"
 
     if "date_created" in request.json:
         date_created = request.json.get("date_created")
@@ -133,6 +140,8 @@ def edit(key):
             error["description"] = "unauthorized access"
         elif description == post["description"]:
             error["description"] = "No changes were made"
+        elif len(description) > 500:
+            error["description"] = "This field cannot exceed 500 characters"
 
     if "content" in request.json:
         content = request.json.get("content")
@@ -193,6 +202,7 @@ def edit(key):
             **error
         })
 
+    # TODO: max length = 100
     slug = re.sub('-+', '-', re.sub('[^a-zA-Z0-9]', '-', title.lower()))
     cur.execute('SELECT * FROM post WHERE key != %s AND slug = %s;',
                 (post["key"], slug))

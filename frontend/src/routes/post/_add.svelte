@@ -15,6 +15,8 @@
 		error = {};
 		if (!form.title) {
 			error.title = 'This field is required';
+		} else if (form.title.length > 100) {
+			error.title = 'This field cannot exceed 100 characters';
 		}
 
 		Object.keys(error).length === 0 && submit();
