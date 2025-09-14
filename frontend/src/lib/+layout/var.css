@@ -31,6 +31,9 @@ main.dark {
 
 	--button-outline-color:hsl(0, 0%, 20%);
 	--select-outline-color:hsl(0, 0%, 20%);
+
+	--cl2: hsl(0, 0%, 20%);
+	--cl3: hsl(0, 0%, 20%);
 }
 
 
@@ -44,14 +47,16 @@ main{
 	--button-color:hsl(0, 0%, 60%);
 	--button-background-color-hover:var(--cl1);
 	--button-color-hover:white;
-
+	
 	--select-background-color:hsl(0, 0%, 5%);
 	--select-color:hsl(0, 0%, 60%);
 	--select-background-color-hover:var(--cl1);
 	--select-color-hover:white;
-
+	
 	--link-color:var(--ft2);
 	--link-color-hover:var(--cl1);
-
+	
 	/* TODO: pagination */
+	--cl2: hsl(0, 0%, 75%);
+	--cl3: transparent;
 }

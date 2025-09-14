@@ -6,7 +6,7 @@
 	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
-	import Status from './index.svelte';
+	import Status from './edit.svelte';
 
 	let form = $state({});
 	let error = $state({});

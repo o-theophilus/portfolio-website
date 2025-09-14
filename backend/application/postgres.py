@@ -40,7 +40,6 @@ schema = {
             "type": "text",
             "max_length": 18,
             "min_length": 8,
-            # TODO: use this to validate password
             "validate": r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$"
         },
         "phone": {
@@ -108,15 +107,6 @@ schema = {
         "tags": {
             "type": "array_text",
         },
-        "likes": {
-            "type": "array_text",
-        },
-        "dislikes": {
-            "type": "array_text",
-        },
-        "ratings": {
-            "type": "array_dict",
-        },
     },
 
     "comment": {
@@ -142,12 +132,6 @@ schema = {
         "comment": {
             "type": "text",
             "max_length": 500,
-        },
-        "likes": {
-            "type": "array_text",
-        },
-        "dislikes": {
-            "type": "array_text",
         },
     },
 
@@ -195,6 +179,30 @@ schema = {
         "comment": {
             "type": "text",
             "max_length": 500,
+        },
+    },
+
+    "like": {
+        "key": {
+            "type": "uuid",
+        },
+        "date_created": {
+            "type": "datetime",
+        },
+        "user_key": {
+            "type": "uuid",
+            "foreign_key": ["user", "key"]
+        },
+        "entity_type": {
+            "type": "text",
+            "max_length": 100,
+        },
+        "entity_key": {
+            "type": "uuid",
+        },
+        "reaction": {
+            "type": "text",
+            "values": ["like", "dislike"]
         },
     },
 
@@ -288,6 +296,8 @@ schema = {
     }
 }
 
+keywords = ["user", "like"]
+
 
 def get_col(name, ppt):
     column = []
@@ -308,6 +318,8 @@ def get_col(name, ppt):
         column.append("JSONB")
     elif _type == "dict":
         column.append("JSONB")
+    elif _type == "number":
+        column.append("INT")
     else:
         column.append("TEXT")
 
@@ -336,11 +348,13 @@ def get_col(name, ppt):
         column.append("DEFAULT '{}'::TEXT[]")
     elif _type == "array_dict":
         column.append("DEFAULT '[]'::jsonb")
+    elif _type == "number":
+        column.append("DEFAULT 0")
     elif default is not None and _type == "text":
         column.append(f"DEFAULT '{default}'")
 
     if fk:
-        ref_table = fk[0] if fk[0] != "user" else '"user"'
+        ref_table = fk[0] if fk[0] not in keywords else f'"{fk[0]}"'
         ref_col = fk[1]
         column.append(f"REFERENCES {ref_table}({ref_col})")
 
@@ -350,7 +364,7 @@ def get_col(name, ppt):
 def create_tables_query():
     tables = []
     for tn, cols in schema.items():
-        tn = tn if tn != "user" else '"user"'
+        tn = tn if tn not in keywords else f'"{tn}"'
         table = [f"CREATE TABLE IF NOT EXISTS {tn} ("]
         cols_ = [f"    {get_col(cn, p)}" for cn, p in cols.items()]
         table.append(",\n".join(cols_))

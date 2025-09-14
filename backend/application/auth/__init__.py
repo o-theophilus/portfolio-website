@@ -50,21 +50,6 @@ def delete_user(cur, user):
     """, (user["key"], user["key"], user["key"], user["key"]))
 
     cur.execute("""
-        UPDATE post
-        SET ratings = (
-            SELECT COALESCE(
-                jsonb_agg(elem), '[]'::jsonb
-            )
-            FROM jsonb_array_elements(ratings) elem
-            WHERE elem->>'user_key' <> %s
-        )
-        WHERE EXISTS (
-            SELECT 1 FROM jsonb_array_elements(ratings) elem
-            WHERE elem->>'user_key' = %s
-        );
-    """, (user["key"], user["key"]))
-
-    cur.execute("""
         WITH RECURSIVE to_delete AS (
             SELECT key
             FROM comment

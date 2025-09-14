@@ -1,5 +1,5 @@
 <script>
-	import { module } from '$lib/store.svelte.js';
+	import { app, module } from '$lib/store.svelte.js';
 	import { Avatar } from '$lib/macro';
 	import { Datetime } from '$lib/macro';
 	import { FoldButton, Button } from '$lib/button';
@@ -20,8 +20,8 @@
 				{item.user.name}
 			</a>
 
-			<div class="email">
-				{item.user.email}
+			<div class="username">
+				@{item.user.username}
 			</div>
 		</div>
 		<FoldButton {open} onclick={() => (open = !open)}></FoldButton>
@@ -37,8 +37,8 @@
 					{item.admin.name}
 				</a>
 
-				<div class="email">
-					{item.admin.email}
+				<div class="username">
+					@{item.admin.username}
 				</div>
 
 				<div class="comment_area">
@@ -99,10 +99,8 @@
 		font-weight: 700;
 		color: var(--ft1);
 	}
-	.email {
-		font-size: 0.8em;
-		word-wrap: break-word;
-		word-break: break-all;
+	.username {
+		font-size: 0.7em;
 	}
 
 	.date {

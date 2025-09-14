@@ -28,29 +28,22 @@
 		{/if}
 
 		<div class="bottom line">
-			<Datetime datetime={item.date} type="ago" />
+			<Datetime datetime={item.date_created} type="ago" />
 			<div class="line info">
 				<div class="line">
 					<Icon icon="eye" size="12" />
-					{item.view}
+					{item.engagement.view}
 				</div>
 
 				<div class="line">
 					<Icon icon="message-circle" size="12" />
-					{item.comment}
+					{item.engagement.comment}
 				</div>
 
 				<div class="line">
 					<Icon icon="thumbs-up" size="12" />
-					{item._like}
+					{item.engagement.like}
 				</div>
-
-				{#if item.rating != 0}
-					<div class="line">
-						<Icon icon="star" size="12" />
-						{parseFloat(item.rating)}
-					</div>
-				{/if}
 			</div>
 		</div>
 	</div>

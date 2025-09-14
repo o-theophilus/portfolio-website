@@ -2,7 +2,6 @@ from flask import Blueprint, jsonify, request
 import re
 import os
 from uuid import uuid4
-from datetime import datetime, timezone
 from werkzeug.security import check_password_hash
 from ..tools import reserved_words, get_session
 from ..postgres import db_open, db_close
@@ -46,6 +45,7 @@ def add():
     slug = re.sub('-+', '-', re.sub('[^a-zA-Z0-9]', '-', title.lower()))
     cur.execute('SELECT * FROM post WHERE slug = %s;', (slug,))
     post = cur.fetchone()
+    # TODO: max slug = 100
     if post or slug in reserved_words:
         slug = f"{slug}-{str(uuid4().hex)[:10]}"
 
@@ -55,16 +55,14 @@ def add():
     author = cur.fetchone()
 
     cur.execute("""
-        INSERT INTO post (author_key, title, slug, date)
+        INSERT INTO post (title, slug, author_key)
         VALUES (%s, %s, %s, %s) RETURNING *;
     """, (
-        author["key"] if author else None,
         title,
         slug,
-        datetime.now(timezone.utc)
+        author["key"] if author else None,
     ))
     item = cur.fetchone()
-    item["ratings"] = []
 
     log(
         cur=cur,

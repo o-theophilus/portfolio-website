@@ -60,6 +60,7 @@ def get_many(key, cur=None):
             jsonb_build_object(
                 'key', "user".key,
                 'name', "user".name,
+                'username', "user".username,
                 'photo', "user".photo
             ) AS user,
 

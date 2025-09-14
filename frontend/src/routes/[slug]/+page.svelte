@@ -8,19 +8,10 @@
 	import { Meta, Log } from '$lib/macro';
 	import Button from './button.svelte';
 
-	import {
-		Status,
-		Photo,
-		Title,
-		Date,
-		Description,
-		Content_,
-		Tags,
-		Author,
-		Engage,
-		Comment
-	} from '.';
-	import Engagement from './engagement.svelte';
+	import { Status, Photo, Title, Date, Description, Content_, Tags, Author, Comment } from '.';
+	import Engagament from './engage/engagement.svelte';
+	import Like from './engage/like.svelte';
+	import Share from './engage/share.svelte';
 	import Highlight from './highlight.svelte';
 	import Similar from './similar.svelte';
 	import ToTop from './to_top.svelte';
@@ -34,15 +25,18 @@
 		item = data;
 	};
 
+	let engagament = $state();
 	let author = $state();
-	let engagement = $state();
+	let like = $state();
 	let comment = $state();
 	let similar = $state();
 
-	const refresh = async () => {
+	const refresh = async (data) => {
+		item = data;
 		edit_mode = false;
+		await engagament.load();
 		await author.load();
-		await engagement.load();
+		await like.load();
 		await comment.load();
 		await similar.load();
 	};
@@ -54,7 +48,7 @@
 			is_admin = app.user.access.some((x) => resp.access.includes(x));
 		}
 
-		refresh();
+		refresh(item);
 
 		if (page.url.searchParams.has('edit') && is_admin) {
 			page.url.searchParams.delete('edit');
@@ -75,62 +69,51 @@
 		<br />
 	{/if}
 
-	{#if edit_mode && (app.user.access.includes('post:edit_status') || (app.user.access.includes('post:edit_highlight') && item.status == 'active'))}
-		<hr />
-		<div class="line">
-			{#if app.user.access.includes('post:edit_status') && edit_mode}
-				<Button
-					onclick={() =>
-						module.open(Status, {
-							key: item.key,
-							status: item.status,
-							photo: item.photo,
-							update
-						})}
-				>
-					Edit Status: <span class="status {item.status}">{item.status}</span>
-				</Button>
-			{/if}
-			{#if app.user.access.includes('post:edit_highlight') && edit_mode && item.status == 'active'}
-				<Highlight {item} />
-			{/if}
+	{#if edit_mode && (app.user.access.includes('post:edit_status') || app.user.access.includes('post:edit_highlight'))}
+		<div class="line status">
+			<Status {item} {update}></Status>
+			<Highlight {item} />
 		</div>
-		<br />
 	{/if}
-
 	<Photo bind:item {edit_mode} {update} />
 	<Title {item} {edit_mode} {update} />
 	<Description {item} {edit_mode} {update} />
-	<Date {item} {edit_mode} {update}>
-		<Engagement key={item.key} bind:this={engagement} />
-	</Date>
+	<div class="line space date">
+		<Date {item} {edit_mode} {update}></Date>
+		<Engagament {item} bind:this={engagament} />
+	</div>
 	<Content_ {item} {edit_mode} {update} />
 	<Tags {item} {edit_mode} {update} />
 	<Author {item} {edit_mode} bind:this={author} />
-	<Engage {item} {update} />
+</Content>
+
+<Content --content-background-color="var(--bg2)" --content-height>
+	<div class="line engage">
+		<Like
+			--like-background-color="var(--button-background-color)"
+			--like-outline-color="var(--button-outline-color)"
+			{item}
+			{engagament}
+			bind:this={like}
+		/>
+		<Share {item} />
+	</div>
 	<Comment post={item} bind:this={comment} />
+</Content>
+
+<Content --content-height>
 	<Similar key={item.key} bind:this={similar} {refresh} />
 	<ToTop />
 </Content>
 
 <style>
-	hr {
-		margin-bottom: var(--sp2);
+	.line.status {
+		margin-bottom: 8px;
 	}
-
-	.line {
-		display: flex;
-		align-items: center;
-		gap: var(--sp1);
+	.line.date {
+		align-items: flex-end;
 	}
-	.status {
-		font-weight: 800;
-	}
-
-	.status.active {
-		color: green;
-	}
-	.status.draft {
-		color: red;
+	.line.engage {
+		gap: 16px;
 	}
 </style>

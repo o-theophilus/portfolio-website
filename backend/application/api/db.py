@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify
 import os
 import psycopg2
-from psycopg2.extras import Json
 from werkzeug.security import generate_password_hash
 from ..postgres import db_open, db_close, create_tables_query
 from ..admin.access import access_pass
@@ -70,8 +69,7 @@ def copy_post_table():
                 files,
                 tags,
                 likes,
-                dislikes,
-                ratings
+                dislikes
             )
             VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """, (
@@ -88,7 +86,6 @@ def copy_post_table():
             x["tags"],
             x["like"],
             x["dislike"],
-            Json(x["ratings"]),
         ))
 
     con.commit()

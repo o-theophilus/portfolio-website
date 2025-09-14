@@ -47,16 +47,14 @@ def get_many():
                 'key', admin.key,
                 'name', admin.name,
                 'username', admin.username,
-                'photo', admin.photo,
-                'email', admin.email
+                'photo', admin.photo
             ) AS admin,
 
             jsonb_build_object(
                 'key', "user".key,
                 'name', "user".name,
                 'username', "user".username,
-                'photo', "user".photo,
-                'email', "user".email
+                'photo', "user".photo
             ) AS "user",
 
 

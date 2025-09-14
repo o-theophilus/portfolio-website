@@ -9,6 +9,6 @@
 	--button-width="32px"
 	--button-height="32px"
 	--button-border-radius="50%"
-	--button-color="var(--ft1)"
+	--button-color="var(--ft2)"
 	--button-background-color="var(--bg2)"
 ></Button>

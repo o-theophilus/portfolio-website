@@ -12,6 +12,8 @@
 	let loading = $state(true);
 
 	export const load = async () => {
+		loading = true;
+
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/similar/${key}`);
 		resp = await resp.json();
 		loading = false;
@@ -27,7 +29,6 @@
 </script>
 
 {#if loading || items.length > 0}
-	<hr />
 	<div class="title line">
 		<div class="page_title line">
 			Similar Post{#if items.length > 1}s{/if}
@@ -46,35 +47,35 @@
 
 	{#if open && !loading}
 		<div class="area" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
-			{#each items as x}
+			{#each items as item}
 				<div class="post">
 					<a
-						href="/{x.slug}"
+						href="/{item.slug}"
 						onclick={() => {
-							prerender(x);
-							refresh();
+							prerender(item);
+							refresh(item);
 						}}
-						onmouseenter={() => prerender(x)}
+						onmouseenter={() => prerender(item)}
 					>
-						<Avatar size="58" photo={x.photo} no_photo="/no_photo.png" name={x.title}></Avatar>
+						<Avatar size="58" photo={item.photo} no_photo="/no_photo.png" name={item.title}></Avatar>
 					</a>
 					<div class="details">
 						<a
 							class="link"
-							href="/{x.slug}"
+							href="/{item.slug}"
 							onclick={() => {
-								prerender(x);
-								refresh();
+								prerender(item);
+								refresh(item);
 							}}
-							onmouseenter={() => prerender(x)}
+							onmouseenter={() => prerender(item)}
 						>
-							{x.title}
+							{item.title}
 						</a>
 
-						{#if x.description}
+						{#if item.description}
 							<br />
 							<div class="desc">
-								{x.description}
+								{item.description}
 							</div>
 						{/if}
 					</div>
@@ -93,14 +94,11 @@
 	.area {
 		display: grid;
 		gap: var(--sp3);
-		/* margin: var(--sp2) 0; */
 	}
 
 	.post {
 		display: flex;
 		gap: var(--sp2);
-
-		/* margin-bottom: var(--sp2); */
 	}
 
 	.link {

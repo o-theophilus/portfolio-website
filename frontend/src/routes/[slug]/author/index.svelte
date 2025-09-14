@@ -15,6 +15,7 @@
 	};
 
 	export const load = async () => {
+		loading = true;
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/author/${item.key}`);
 		resp = await resp.json();
 		loading = false;
@@ -33,19 +34,25 @@
 	<div class="line">
 		{#if loading}
 			<Spinner active={loading} size="20" />
+			<span class="small"> | </span>
+			<span class="small"> Author </span>
 		{:else}
 			<Link href="/@{author.username}">
 				<Avatar name={author.name} photo={author.photo} --avatar-border-radius="50%" />
 			</Link>
-			<Link href="/@{author.username}" --link-font-size="0.8rem">
-				<div class="name">
-					{author.name}
+			<div class="details">
+				<div class="line">
+					<Link href="/@{author.username}" --link-font-size="0.8rem">
+						{author.name}
+					</Link>
+					<span class="small"> | </span>
+					<span class="small"> Author </span>
 				</div>
-			</Link>
+				<div class="username">
+					@{author.username}
+				</div>
+			</div>
 		{/if}
-
-		<span class="author"> | </span>
-		<span class="author"> Author </span>
 	</div>
 {/if}
 
@@ -54,7 +61,14 @@
 		margin: var(--sp2) 0;
 	}
 
-	.author {
+	.line {
+		gap: 16px;
+	}
+
+	.small {
 		font-size: 0.8rem;
+	}
+	.username {
+		font-size: 0.7rem;
 	}
 </style>

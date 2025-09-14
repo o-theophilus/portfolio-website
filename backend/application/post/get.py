@@ -16,17 +16,17 @@ def post_schema(post):
 
 
 @bp.get("/post/<key>")
-def get_post(key):
+def get(key):
     con, cur = db_open()
 
-    # NOTE: validate session only
     session = get_session(cur)
     if session["status"] != 200:
         db_close(con, cur)
         return jsonify(session)
+    user = session["user"]
 
     cur.execute("""
-        SELECT * FROM post WHERE post.slug = %s OR post.key::TEXT = %s;
+        SELECT * FROM post WHERE slug = %s OR key::TEXT = %s
     """, (key, key))
     item = cur.fetchone()
 
@@ -34,25 +34,19 @@ def get_post(key):
         db_close(con, cur)
         return jsonify({
             "status": 404,
-            "error": "Oops! The post you’re looking for doesn’t exist"
+            "error": "Oops! The post you're looking for doesn't exist"
         })
 
-    if item["status"] != "active":
-        session = get_session(cur, True)
-        if session["status"] != 200:
-            db_close(con, cur)
-            return jsonify(session)
-        user = session["user"]
-
-        if (
-            "post:add" not in user["access"]
-            and "post:edit_status" not in user["access"]
-        ):
-            db_close(con, cur)
-            return jsonify({
-                "status": 400,
-                "error": "unauthorized access"
-            })
+    if (
+        item["status"] != "active"
+        and "post:add" not in user["access"]
+        and "post:edit_status" not in user["access"]
+    ):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
 
     db_close(con, cur)
     return jsonify({
@@ -98,10 +92,9 @@ def get_many(cur=None):
         'oldest': 'post.date_created',
         'title (a-z)': 'post.title',
         'title (z-a)': 'post.title',
-        'rating': 'rating',
-        'comment': 'comment',
-        'view': 'view',
-        'like': '_like'
+        'comment': "COALESCE(comment._count, 0)",
+        'view': "COALESCE(view._count, 0)",
+        'like': "COALESCE(_like._count, 0)"
 
     }
 
@@ -110,114 +103,77 @@ def get_many(cur=None):
         'oldest': 'ASC',
         'title (a-z)': 'ASC',
         'title (z-a)': 'DESC',
-        'rating': 'DESC',
         'comment': 'DESC',
         'view': 'DESC',
         'like': 'DESC'
     }
 
-    query = ""
+    params = [status, search, f"%{search}%"]
+    tag_query = ""
     if tags != []:
-        query = f"""
-            AND cardinality(post.tags) > 0
-            AND post.tags {"@>" if multiply else "&&"} ARRAY[{tags}]
-        """
+        op = "@>" if multiply else "&&"
+        tag_query = f"AND cardinality(post.tags) > 0 AND post.tags {op} %s"
+        params.append(tags)
+    params.append(page_size)
+    params.append((page_no - 1) * page_size)
 
-    cur.execute("""
+    cur.execute(f"""
         WITH
-        _like AS (
+        "like" AS (
             SELECT
-                key,
-                COALESCE(array_length(likes, 1), 0) -
-                COALESCE(array_length(dislikes, 1), 0) AS _count
-            FROM post
-        ),
-
-        ratings AS (
-            SELECT key,
-            (jsonb_array_elements(ratings) ->> 'rating')::INTEGER AS ratings
-            FROM post
-        ),
-        rating AS (
-            SELECT key, AVG(ratings) AS rating
-            FROM ratings
-            GROUP BY key
+                entity_key AS key,
+                COUNT(*) FILTER (WHERE reaction = 'like') -
+                COUNT(*) FILTER (WHERE reaction = 'dislike') AS _count
+            FROM "like"
+            WHERE entity_type = 'post'
+            GROUP BY entity_key
         ),
 
         comment AS (
-            SELECT
-                post_key AS key,
-                COUNT(*) AS _count
+            SELECT post_key AS key, COUNT(*) AS _count
             FROM comment
             GROUP BY post_key
         ),
 
-        view1 AS (
-            SELECT
-                DISTINCT ON (user_key, entity_key)
-                entity_key::UUID
-            FROM log
-            WHERE
-                entity_type = 'post'
-                AND action = 'viewed'
-        ),
         view AS (
-            SELECT
-                entity_key AS key,
-                COUNT(*) AS _count
-            FROM view1
+            SELECT entity_key::UUID AS key, COUNT(DISTINCT user_key) AS _count
+            FROM log
+            WHERE entity_type = 'post' AND action = 'viewed'
             GROUP BY entity_key
         ),
 
-        share1 AS (
-            SELECT entity_key::UUID
-            FROM log
-            WHERE
-                entity_type = 'post'
-                AND action = 'shared'
-        ),
         share AS (
-            SELECT
-                entity_key AS key,
-                COUNT(*) AS _count
-            FROM share1
+            SELECT entity_key::UUID AS key, COUNT(*) AS _count
+            FROM log
+            WHERE entity_type = 'post' AND action = 'shared'
             GROUP BY entity_key
         )
 
         SELECT
             post.*,
-            COALESCE(rating.rating, 0) AS rating,
-            COALESCE(comment._count, 0) AS comment,
-            COALESCE(view._count, 0) AS view,
-            COALESCE(share._count, 0) AS share,
-            COALESCE(_like._count, 0) AS _like,
-            COUNT(*) OVER() AS _count
+            COUNT(*) OVER() AS _count,
+            jsonb_build_object(
+                'comment', COALESCE(comment._count, 0),
+                'view', COALESCE(view._count, 0),
+                'share', COALESCE(share._count, 0),
+                'like', COALESCE("like"._count, 0)
+            ) AS engagement
         FROM post
-        LEFT JOIN _like ON post.key = _like.key
-        LEFT JOIN rating ON post.key = rating.key
+        LEFT JOIN "like" ON post.key = "like".key
         LEFT JOIN comment ON post.key = comment.key
         LEFT JOIN view ON post.key = view.key
         LEFT JOIN share ON post.key = share.key
 
         WHERE
             post.status = %s
-            AND (%s = '' OR post.title ILIKE %s) {}
+            AND (%s = '' OR post.title ILIKE %s) {tag_query}
         GROUP BY
             post.key, post.status, post.title, post.slug, post.content,
             post.description, post.files, post.tags,
-            _like._count, comment._count, view._count, share._count,
-            rating.rating
-        ORDER BY {} {}
+            "like"._count, comment._count, view._count, share._count
+        ORDER BY {order_by[order]} {order_dir[order]}
         LIMIT %s OFFSET %s;
-    """.format(
-        query,
-        order_by[order],
-        order_dir[order]
-    ), (
-        status,
-        search, f"%{search}%",
-        page_size, (page_no - 1) * page_size
-    ))
+    """, (params))
     items = cur.fetchall()
 
     if close_conn:
@@ -262,8 +218,8 @@ def similar_posts(key):
         FROM post
         JOIN likeness ON post.key = likeness.key
         WHERE post.status = 'active'
-        AND post.key != %s
-        AND likeness.score > 0
+            AND post.key != %s
+            AND likeness.score > 0
         ORDER BY likeness.score DESC
         LIMIT 4;
     """, (keywords, key))
@@ -281,7 +237,7 @@ def get_author(key):
     con, cur = db_open()
 
     cur.execute("""
-        SELECT "user".key, "user".name, "user".photo
+        SELECT "user".key, "user".name,  "user".username, "user".photo
         FROM post
         LEFT JOIN "user" ON post.author_key = "user".key
         WHERE post.key = %s;

@@ -6,7 +6,7 @@
 	import { Marked } from '$lib/macro';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
-	import Item from './item.mini.svelte';
+	import Item from './item.svelte';
 
 	let post = module.value.post;
 	let parent = module.value.item;

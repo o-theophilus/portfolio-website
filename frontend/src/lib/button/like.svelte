@@ -30,15 +30,18 @@
 
 		height: var(--like-height, 48px);
 		padding: var(--sp0) var(--sp2);
-		font-size: 0.8rem;
+		font-size: 0.7rem;
 
-		color: var(--ft2);
-		background-color: var(--bg2);
+		color: var(--like-color, var(--ft2));
+		background-color: var(--like-background-color, var(--bg2));
+		outline: 2px solid var(--like-outline-color, transparent);
+		outline-offset: -2px;
 		border: none;
 		cursor: pointer;
 
 		transition:
 			background-color var(--trans),
+			outline-color var(--trans),
 			color var(--trans);
 	}
 	.like {
@@ -48,8 +51,10 @@
 		border-radius: 0 var(--like-height, 48px) var(--like-height, 48px) 0;
 	}
 
+	.active,
 	button:hover {
-		background-color: var(--cl1);
+		background-color: var(--like-background-color-hover, var(--cl1));
+		outline-color: var(--like-outline-color-hover, transparent);
 		color: white;
 	}
 </style>

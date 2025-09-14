@@ -51,15 +51,13 @@ def get_many():
             jsonb_build_object(
                 'name', "user".name,
                 'username', "user".username,
-                'photo', "user".photo,
-                'email', "user".email
+                'photo', "user".photo
             ) AS reporter,
 
             jsonb_build_object(
                 'name', COALESCE(user_1.name, user_2.name),
                 'username', COALESCE(user_1.username, user_2.username),
-                'photo', COALESCE(user_1.photo, user_2.photo),
-                'email', COALESCE(user_1.email, user_2.email)
+                'photo', COALESCE(user_1.photo, user_2.photo)
             ) AS "user",
 
             jsonb_build_object(

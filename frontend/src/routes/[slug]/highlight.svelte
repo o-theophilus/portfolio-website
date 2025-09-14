@@ -53,4 +53,6 @@
 	};
 </script>
 
-<Toggle state_2="highlight" active={is_highlighted} onclick={submit} />
+{#if app.user.access.includes('post:edit_highlight') && item.status == 'active'}
+	<Toggle state_2="highlight" active={is_highlighted} onclick={submit} />
+{/if}

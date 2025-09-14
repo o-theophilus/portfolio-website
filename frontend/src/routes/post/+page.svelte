@@ -18,6 +18,7 @@
 
 	let { data } = $props();
 	let items = $derived(data.items);
+
 	let total_page = $derived(data.total_page);
 	let order_by = $derived(data.order_by);
 	let _status = $derived(data._status);

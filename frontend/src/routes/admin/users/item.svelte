@@ -10,8 +10,8 @@
 			{item.name}
 		</div>
 
-		<span class="email">
-			{item.email}
+		<span class="username">
+			@{item.username}
 		</span>
 	</div>
 </a>
@@ -42,8 +42,8 @@
 		font-weight: 700;
 		color: var(--ft1);
 	}
-	.email {
-		font-size: 0.8em;
+	.username {
+		font-size: 0.7em;
 	}
 
 	span {

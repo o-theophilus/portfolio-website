@@ -11,9 +11,11 @@
 	import { PageNote } from '$lib/info';
 	import Item from './item.svelte';
 	import Add from './_add.svelte';
+	import Control from './control.svelte';
 
 	let { post } = $props();
 	let items = $state([]);
+
 	let order_by = $state([]);
 	let open = $state(false);
 	let loading = $state(true);
@@ -28,6 +30,8 @@
 	};
 
 	export const load = async () => {
+		loading = true;
+
 		let resp = await fetch(
 			`${import.meta.env.VITE_BACKEND}/${post.key}/comments?${new URLSearchParams(search).toString()}`
 		);
@@ -58,6 +62,7 @@
 
 	{#if !loading}
 		<FoldButton
+			--button-outline-color="var(--cl2)"
 			{open}
 			onclick={() => {
 				open = !open;
@@ -90,7 +95,18 @@
 
 		{#each items as item (item.key)}
 			<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-				<Item {post} {item} {items} {update} {search} />
+				<Item {item}>
+					{#snippet parent()}
+						{#each items as x}
+							{#if item.parent_key == x.key}
+								<Item item={x}></Item>
+							{/if}
+						{/each}
+					{/snippet}
+					{#snippet control()}
+						<Control {post} {item} {items} {update} {search}></Control>
+					{/snippet}
+				</Item>
 			</div>
 		{:else}
 			<PageNote>

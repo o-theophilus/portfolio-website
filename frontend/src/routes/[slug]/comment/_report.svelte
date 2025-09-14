@@ -6,7 +6,7 @@
 	import { IG, Dropdown } from '$lib/input';
 	import { Avatar } from '$lib/macro';
 	import { template, tags } from './_report.template.js';
-	import Item from './item.mini.svelte';
+	import Item from './item.svelte';
 
 	let item = { ...module.value.item };
 

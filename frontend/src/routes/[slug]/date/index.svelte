@@ -5,33 +5,32 @@
 	import { Datetime } from '$lib/macro';
 	import Edit from './edit.svelte';
 
-	let { item, edit_mode, update, children } = $props();
+	let { item, edit_mode, update } = $props();
 </script>
 
-{#if app.user.access.includes('post:edit_date') && edit_mode}
-	<Button
-		onclick={() =>
-			module.open(Edit, {
-				key: item.key,
-				date: item.date,
-				update
-			})}>Edit Date</Button
-	>
-{/if}
-<span class="date">
-	<Datetime datetime={item.date_created} />
-	{@render children()}
-</span>
+<div class="kkk">
+	{#if app.user.access.includes('post:edit_date') && edit_mode}
+		<Button
+			onclick={() =>
+				module.open(Edit, {
+					key: item.key,
+					date: item.date,
+					update
+				})}
+		>
+			Edit Date
+		</Button>
+	{/if}
+	<div class="date">
+		<Datetime datetime={item.date_created} />
+	</div>
+</div>
 
 <style>
+	.kkk{
+		align-self: flex-end;
+	}
 	.date {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--sp1);
-		flex-wrap: wrap;
-
 		font-size: 0.8rem;
-		margin-bottom: var(--sp3);
 	}
 </style>

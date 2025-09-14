@@ -22,8 +22,8 @@
 						{item.user.name}
 					</a>
 
-					<div class="email">
-						{item.user.email}
+					<div class="username">
+						@{item.user.username}
 					</div>
 				</div>
 				<FoldButton {open} onclick={() => (open = !open)}></FoldButton>
@@ -63,8 +63,8 @@
 					{item.reporter.name}
 				</a>
 
-				<div class="email">
-					{item.reporter.email}
+				<div class="username">
+					@{item.reporter.username}
 				</div>
 
 				<div class="comment_area">
@@ -131,10 +131,8 @@
 		font-weight: 700;
 		color: var(--ft1);
 	}
-	.email {
-		font-size: 0.8em;
-		word-wrap: break-word;
-		word-break: break-all;
+	.username {
+		font-size: 0.7em;
 	}
 
 	.date {
