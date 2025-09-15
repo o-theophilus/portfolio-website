@@ -17,26 +17,37 @@
 	let open_menu = $state(false);
 	let self = false;
 
-	const submit_like = async (liked) => {
-		error = {};
+	const submit = async (reaction) => {
+		console.log("here");
+		
+		// if (
+		// 	!user_like ||
+		// 	(reaction == 'like' && user_like == 'dislike') ||
+		// 	(reaction == 'dislike' && user_like == 'like')
+		// ) {
+		// 	user_like = reaction;
+		// } else {
+		// 	user_like = null;
+		// }
 
-		let url = `${import.meta.env.VITE_BACKEND}/comment/like/${item.key}`;
-		if (Object.keys(search).length != 0) {
-			url = `${url}?${new URLSearchParams(search).toString()}`;
-		}
+		// engagament.update({ like: _like - _dislike });
 
-		let resp = await fetch(url, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/like`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: app.token
 			},
-			body: JSON.stringify({ like: liked })
+			body: JSON.stringify({ entity_type: 'comment', entity_key: item.key, reaction })
 		});
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			item = resp.comment;
+			// like = resp.like;
+			// dislike = resp.dislike;
+			// user_like = resp.user_like;
+
+			// engagament.update({ like: _like - _dislike });
 		} else {
 			error = resp;
 		}
@@ -85,26 +96,10 @@
 			<Like
 				--like-outline-color="var(--cl3)"
 				--like-height="32px"
-				like={item.likes.length}
-				dislike={item.dislikes.length}
-				onlike={() => {
-					item.dislikes = item.dislikes.filter((e) => e != app.user.key);
-					if (item.likes.includes(app.user.key)) {
-						item.likes = item.likes.filter((e) => e != app.user.key);
-					} else {
-						item.likes.push(app.user.key);
-					}
-					submit_like(true);
-				}}
-				ondislike={() => {
-					item.likes = item.likes.filter((e) => e != app.user.key);
-					if (item.dislikes.includes(app.user.key)) {
-						item.dislikes = item.dislikes.filter((e) => e != app.user.key);
-					} else {
-						item.dislikes.push(app.user.key);
-					}
-					submit_like(false);
-				}}
+				like={item.engagement.like}
+				dislike={item.engagement.dislike}
+				onlike={() => submit('like')}
+				ondislike={() => submit('dislike')}
 			/>
 		</div>
 

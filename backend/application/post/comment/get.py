@@ -15,74 +15,86 @@ def get_many(key, cur=None):
     order_by = {
         'latest': 'comment.date_created',
         'oldest': 'comment.date_created',
-        'likes': 'likes_count',
-        'dislikes': 'dislikes_count',
-        'most_liked': 'most_liked',
-        'reply': 'reply_count',
-        'most_reaction': 'total_reactions',
+        'like': 'engagement."like"',
+        'dislike': 'engagement.dislike',
+        'most_like': 'engagement.most_like',
+        'reply': 'engagement.reply',
+        'most_engaged': 'engagement.total',
     }
 
     order_dir = {
         'latest': 'DESC',
         'oldest': 'ASC',
-        'likes': 'DESC',
-        'dislikes': 'DESC',
-        'most_liked': 'DESC',
+        'like': 'DESC',
+        'dislike': 'DESC',
+        'most_like': 'DESC',
         'reply': 'DESC',
-        'most_reaction': 'DESC',
+        'most_engaged': 'DESC',
     }
 
     cur.execute(f"""
-        WITH stats AS (
+        WITH
+        _like AS (
             SELECT
-                key,
-                COALESCE(array_length(likes, 1), 0) AS likes_count,
-                COALESCE(array_length(dislikes, 1), 0) AS dislikes_count,
-                COALESCE(array_length(likes, 1), 0)
-                    - COALESCE(array_length(dislikes, 1), 0) AS most_liked
-            FROM comment
-            WHERE post_key = %s
+                entity_key AS key,
+                COUNT(*) FILTER (WHERE reaction = 'like') AS "like",
+                COUNT(*) FILTER (WHERE reaction = 'dislike') AS dislike
+            FROM "like"
+            WHERE entity_type = 'comment'
+            GROUP BY entity_key
         ),
         reply AS (
-            SELECT parent_key AS key, COUNT(*) AS reply_count
+            SELECT
+                parent_key AS key,
+                COUNT(*) AS reply_count
             FROM comment
-            WHERE parent_key IS NOT NULL AND post_key = %s
+            WHERE parent_key IS NOT NULL
             GROUP BY parent_key
+        ),
+
+        engagement AS (
+            SELECT
+                comment.key,
+                COALESCE(_like."like", 0) AS "like",
+                COALESCE(_like.dislike, 0) AS dislike,
+                COALESCE(_like."like", 0)
+                - COALESCE(_like.dislike, 0) AS most_like,
+                COALESCE(reply.reply_count, 0) AS reply,
+                COALESCE(_like."like", 0)
+                + COALESCE(_like.dislike, 0)
+                + COALESCE(reply.reply_count, 0) AS total
+            FROM comment
+            LEFT JOIN _like ON comment.key = _like.key
+            LEFT JOIN reply ON comment.key = reply.key
         )
 
         SELECT
             comment.key,
+            comment.date_created,
             comment.comment,
             comment.parent_key,
-            comment.likes,
-            comment.dislikes,
-            comment.date_created,
             jsonb_build_object(
                 'key', "user".key,
                 'name', "user".name,
                 'username', "user".username,
                 'photo', "user".photo
             ) AS user,
-
-            stats.likes_count AS likes_count,
-            stats.dislikes_count AS dislikes_count,
-            stats.most_liked AS most_liked,
-            COALESCE(reply.reply_count, 0) AS reply_count,
-            (stats.likes_count + stats.dislikes_count
-                + COALESCE(reply.reply_count, 0)) AS total_reactions
-
-
+            jsonb_build_object(
+                'like', COALESCE(engagement."like", 0),
+                'dislike', COALESCE(engagement.dislike, 0),
+                'most_like', COALESCE(engagement.most_like, 0),
+                'reply', COALESCE(engagement.reply, 0),
+                'most_engaged', COALESCE(engagement.total, 0)
+            ) AS engagement
         FROM comment
-        LEFT JOIN stats ON comment.key = stats.key
-        LEFT JOIN reply ON comment.key = reply.key
+        LEFT JOIN engagement ON comment.key = engagement.key
         LEFT JOIN "user" ON comment.user_key = "user".key
-
         WHERE comment.post_key = %s
-
         ORDER BY {order_by[order]} {order_dir[order]};
-    """, (key, key, key))
+    """, (key,))
 
     items = cur.fetchall()
+
     for x in items:
         x["user"]["photo"] = (
             f"{request.host_url}file/{x['user']['photo']}"

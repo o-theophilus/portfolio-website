@@ -12,8 +12,6 @@
 	let loading = $state(true);
 
 	export const update = (data) => {
-		console.log(data);
-
 		if ('like' in data) {
 			engagement.like = data.like;
 		}

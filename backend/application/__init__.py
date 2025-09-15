@@ -29,7 +29,6 @@ from .post import photo as post_photo
 from .post import engage
 from .post.engage import get as post_engage_get
 from .post import comment
-from .post.comment import engage as comment_engage
 from .post.comment import get as comment_get
 from . import api
 from .api import db
@@ -79,7 +78,6 @@ def create_app(conf=None):
     app.register_blueprint(engage.bp)
     app.register_blueprint(post_engage_get.bp)
     app.register_blueprint(comment.bp)
-    app.register_blueprint(comment_engage.bp)
     app.register_blueprint(comment_get.bp)
     app.register_blueprint(api.bp)
     app.register_blueprint(db.bp)
