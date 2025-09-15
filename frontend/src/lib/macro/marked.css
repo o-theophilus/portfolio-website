@@ -22,6 +22,7 @@ blockquote {
 	margin: 8px;
 }
 
+/*TODO: wrap markdown link */
 .markdown a {
 	color: var(--ft2);
 	font-weight: 800;

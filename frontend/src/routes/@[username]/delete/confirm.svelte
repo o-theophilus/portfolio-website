@@ -5,10 +5,12 @@
 	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
+	import EmailTemplate from './template.svelte';
 
 	let form = $state({});
 	let error = $state({});
 	let show_password = false;
+	let email_template;
 
 	const validate = () => {
 		error = {};
@@ -21,7 +23,8 @@
 	};
 
 	const submit = async () => {
-		// TODO: alse send email
+		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
+
 		loading.open('deleting . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/deactivate`, {
 			method: 'delete',
@@ -84,3 +87,7 @@
 		Cancel
 	</Button>
 </Form>
+
+<div bind:this={email_template} style="display: none;">
+	<EmailTemplate />
+</div>

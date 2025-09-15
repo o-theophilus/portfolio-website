@@ -21,10 +21,10 @@ def create():
     comment = request.json.get("comment")
     tags = request.json.get("tags")
 
-    # TODO: prevent from reporting self
     if (
         not session["login"]
         or not entity_key
+        or entity_key == user["key"]
         or not entity_type
         or entity_type not in ["user", "comment"]
         or type(tags) is not list

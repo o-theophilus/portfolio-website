@@ -124,6 +124,3 @@
 <div bind:this={email_template} style="display: none;">
 	<EmailTemplate />
 </div>
-
-<style>
-</style>

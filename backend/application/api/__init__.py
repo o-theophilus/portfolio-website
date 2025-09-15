@@ -3,6 +3,7 @@ import re
 import os
 from ..tools import send_mail
 from ..postgres import db_open, db_close
+from ..log import log
 
 bp = Blueprint("api", __name__)
 
@@ -10,18 +11,34 @@ bp = Blueprint("api", __name__)
 @bp.get("/cron")
 def cron():
     con, cur = db_open()
-    print("cron is running")
+
+    # TODO: cron to cleanup files from drive
+    # TODO: cron to clean anonymous users
+
+    # cur.execute("""
+    #     DELETE FROM session
+    #     WHERE (
+    #             stay_loggedin = FALSE
+    #             AND updated_at <= NOW() - INTERVAL '1 day'
+    #         ) OR (
+    #             stay_loggedin = TRUE
+    #             AND updated_at <= NOW() - INTERVAL '3 days'
+    #         );
+    # """)
 
     cur.execute("""
-        DELETE FROM session
-        WHERE (
-                stay_loggedin = FALSE
-                AND updated_at <= NOW() - INTERVAL '1 day'
-            ) OR (
-                stay_loggedin = TRUE
-                AND updated_at <= NOW() - INTERVAL '3 days'
-            );
-    """)
+        SELECT * FROM "user" WHERE email = %s;
+    """, (os.environ["MAIL_USERNAME"],))
+    user = cur.fetchone()
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="run cron",
+        entity_key="app",
+        entity_type="app",
+        misc={}
+    )
 
     db_close(con, cur)
     return jsonify({

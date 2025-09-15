@@ -94,7 +94,7 @@ def get_many(cur=None):
         'title (z-a)': 'post.title',
         'comment': "COALESCE(comment._count, 0)",
         'view': "COALESCE(view._count, 0)",
-        'like': "COALESCE(_like._count, 0)"
+        'like': 'COALESCE("like"._count, 0)'
 
     }
 

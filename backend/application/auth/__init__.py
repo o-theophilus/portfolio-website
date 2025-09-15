@@ -460,6 +460,14 @@ def deactivate():
 
     password = request.json.get("password")
     note = request.json.get("note")
+    email_template = request.json.get("email_template")
+
+    if not email_template:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
 
     error = {}
     if not password:
@@ -495,6 +503,12 @@ def deactivate():
             "from": user["key"],
             "name": user["name"]
         }
+    )
+
+    send_mail(
+        user["email"],
+        "Welcome to my portfolio website! Complete your signup with this Code",
+        email_template.format(name=user["name"])
     )
 
     db_close(con, cur)
