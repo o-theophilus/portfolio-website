@@ -15,7 +15,7 @@
 
 	let { post } = $props();
 	let items = $state([]);
-	
+
 	let order_by = $state([]);
 	let open = $state(false);
 	let loading = $state(true);
@@ -23,20 +23,26 @@
 		order: 'oldest',
 		page_no: 1
 	});
-	
+
 	const update = (data) => {
 		items = data;
 		open = true;
 	};
-	
+
 	export const load = async () => {
 		loading = true;
-		
+
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/${post.key}/comments?${new URLSearchParams(search).toString()}`
+			`${import.meta.env.VITE_BACKEND}/${post.key}/comments?${new URLSearchParams(search).toString()}`,
+			{
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: app.token
+				}
+			}
 		);
 		resp = await resp.json();
-		
+
 		if (resp.status == 200) {
 			items = resp.items;
 			order_by = resp.order_by;

@@ -2,30 +2,33 @@
 	import { Icon, Spinner } from '$lib/macro';
 	import { app } from '$lib/store.svelte.js';
 
-	let { item } = $props();
-	let engagement = $state({
-		comment: 0,
-		like: 0,
-		share: 0,
-		view: 0
-	});
+	let { item, edata = $bindable() } = $props();
 	let loading = $state(true);
-
-	export const update = (data) => {
-		if ('like' in data) {
-			engagement.like = data.like;
-		}
-	};
+	let like = $derived.by(() => {
+		if (edata.user_like == 'like') return edata.like - edata.dislike + 1;
+		if (edata.user_like == 'dislike') return edata.like - edata.dislike - 1;
+		return edata.like - edata.dislike;
+	});
 
 	export const load = async () => {
 		loading = true;
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/engagement/${item.key}`);
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/engagement/${item.key}`, {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: app.token
+			}
+		});
 		loading = false;
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			engagement = resp;
+			edata.comment = resp.comment;
+			edata.like = resp.like;
+			edata.dislike = resp.dislike;
+			edata.share = resp.share;
+			edata.view = resp.view;
+			edata.user_like = resp.user_like;
 		}
 	};
 </script>
@@ -34,21 +37,21 @@
 	<Spinner active={loading} size="20" />
 {:else}
 	<div class="line info">
-		<div class="line" title="view{engagement.view > 1 ? 's' : ''}">
+		<div class="line" title="view{edata.view > 1 ? 's' : ''}">
 			<Icon icon="eye" size="12" />
-			{engagement.view}
+			{edata.view}
 		</div>
-		<div class="line" title="comment{engagement.comment > 1 ? 's' : ''}">
+		<div class="line" title="comment{edata.comment > 1 ? 's' : ''}">
 			<Icon icon="message-circle" size="12" />
-			{engagement.comment}
+			{edata.comment}
 		</div>
-		<div class="line" title="like{engagement.like > 1 ? 's' : ''}">
+		<div class="line" title="like{like > 1 ? 's' : ''}">
 			<Icon icon="thumbs-up" size="12" />
-			{engagement.like}
+			{like}
 		</div>
-		<div class="line" title="share{engagement.share > 1 ? 's' : ''}">
+		<div class="line" title="share{edata.share > 1 ? 's' : ''}">
 			<Icon icon="share-2" size="12" />
-			{engagement.share}
+			{edata.share}
 		</div>
 	</div>
 {/if}

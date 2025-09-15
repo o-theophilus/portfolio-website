@@ -17,20 +17,28 @@
 	let open_menu = $state(false);
 	let self = false;
 
-	const submit = async (reaction) => {
-		console.log("here");
-		
-		// if (
-		// 	!user_like ||
-		// 	(reaction == 'like' && user_like == 'dislike') ||
-		// 	(reaction == 'dislike' && user_like == 'like')
-		// ) {
-		// 	user_like = reaction;
-		// } else {
-		// 	user_like = null;
-		// }
+	let _like = $state(item.engagement.like);
+	let _dislike = $state(item.engagement.dislike);
+	let user_like = $state(item.engagement.user_like);
+	let like = $derived.by(() => {
+		if (user_like == 'like') return _like + 1;
+		return _like;
+	});
+	let dislike = $derived.by(() => {
+		if (user_like == 'dislike') return _dislike + 1;
+		return _dislike;
+	});
 
-		// engagament.update({ like: _like - _dislike });
+	const submit = async (reaction) => {
+		if (
+			!user_like ||
+			(reaction == 'like' && user_like == 'dislike') ||
+			(reaction == 'dislike' && user_like == 'like')
+		) {
+			user_like = reaction;
+		} else {
+			user_like = null;
+		}
 
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/like`, {
 			method: 'post',
@@ -43,11 +51,9 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			// like = resp.like;
-			// dislike = resp.dislike;
-			// user_like = resp.user_like;
-
-			// engagament.update({ like: _like - _dislike });
+			_like = resp.like;
+			_dislike = resp.dislike;
+			user_like = resp.user_like;
 		} else {
 			error = resp;
 		}
@@ -96,8 +102,9 @@
 			<Like
 				--like-outline-color="var(--cl3)"
 				--like-height="32px"
-				like={item.engagement.like}
-				dislike={item.engagement.dislike}
+				{like}
+				{dislike}
+				active={user_like}
 				onlike={() => submit('like')}
 				ondislike={() => submit('dislike')}
 			/>

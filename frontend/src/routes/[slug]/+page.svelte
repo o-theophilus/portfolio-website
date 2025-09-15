@@ -27,7 +27,6 @@
 
 	let engagament = $state();
 	let author = $state();
-	let like = $state();
 	let comment = $state();
 	let similar = $state();
 
@@ -36,7 +35,6 @@
 		edit_mode = false;
 		await engagament.load();
 		await author.load();
-		await like.load();
 		await comment.load();
 		await similar.load();
 	};
@@ -55,6 +53,15 @@
 			edit_mode = true;
 			window.history.replaceState(history.state, '', page.url.href);
 		}
+	});
+
+	let edata = $state({
+		comment: 0,
+		like: 0,
+		dislike: 0,
+		share: 0,
+		view: 0,
+		user_like: null
 	});
 </script>
 
@@ -80,7 +87,7 @@
 	<Description {item} {edit_mode} {update} />
 	<div class="line space date">
 		<Date {item} {edit_mode} {update}></Date>
-		<Engagament {item} bind:this={engagament} />
+		<Engagament {item} bind:edata bind:this={engagament} />
 	</div>
 	<Content_ {item} {edit_mode} {update} />
 	<Tags {item} {edit_mode} {update} />
@@ -89,13 +96,7 @@
 
 <Content --content-background-color="var(--bg2)" --content-height>
 	<div class="line engage">
-		<Like
-			--like-background-color="var(--button-background-color)"
-			--like-outline-color="var(--button-outline-color)"
-			{item}
-			{engagament}
-			bind:this={like}
-		/>
+		<Like {item} bind:edata />
 		<Share {item} />
 	</div>
 	<Comment post={item} bind:this={comment} />

@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from ...postgres import db_close, db_open
+from ...tools import get_session
 
 bp = Blueprint("comment_get", __name__)
 
@@ -9,6 +10,12 @@ def get_many(key, cur=None):
     close_conn = not cur
     if not cur:
         con, cur = db_open()
+
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
 
     order = request.args.get("order", "oldest")
 
@@ -40,8 +47,14 @@ def get_many(key, cur=None):
                 COUNT(*) FILTER (WHERE reaction = 'like') AS "like",
                 COUNT(*) FILTER (WHERE reaction = 'dislike') AS dislike
             FROM "like"
-            WHERE entity_type = 'comment'
+            WHERE entity_type = 'comment' AND user_key != %s
             GROUP BY entity_key
+        ),
+        user_like AS (
+            SELECT
+                entity_key AS key, reaction
+            FROM "like"
+            WHERE entity_type = 'comment' AND user_key = %s
         ),
         reply AS (
             SELECT
@@ -84,14 +97,17 @@ def get_many(key, cur=None):
                 'dislike', COALESCE(engagement.dislike, 0),
                 'most_like', COALESCE(engagement.most_like, 0),
                 'reply', COALESCE(engagement.reply, 0),
-                'most_engaged', COALESCE(engagement.total, 0)
+                'most_engaged', COALESCE(engagement.total, 0),
+
+                'user_like', user_like.reaction
             ) AS engagement
         FROM comment
         LEFT JOIN engagement ON comment.key = engagement.key
         LEFT JOIN "user" ON comment.user_key = "user".key
+        LEFT JOIN user_like ON comment.key = user_like.key
         WHERE comment.post_key = %s
         ORDER BY {order_by[order]} {order_dir[order]};
-    """, (key,))
+    """, (user["key"], user["key"], key))
 
     items = cur.fetchall()
 
