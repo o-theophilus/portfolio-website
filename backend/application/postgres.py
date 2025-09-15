@@ -8,6 +8,19 @@ bp = Blueprint("postgres", __name__)
 
 
 schema = {
+    "app": {
+        "key": {
+            "type": "uuid",
+        },
+        "alias": {
+            "type": "text",
+            "unique": True,
+        },
+        "value": {
+            "type": "dict",
+        },
+    },
+
     "user": {
         "key": {
             "type": "uuid",
@@ -282,18 +295,7 @@ schema = {
         },
     },
 
-    "app": {
-        "key": {
-            "type": "uuid",
-        },
-        "alias": {
-            "type": "text",
-            "unique": True,
-        },
-        "value": {
-            "type": "dict",
-        },
-    }
+
 }
 
 keywords = ["user", "like"]

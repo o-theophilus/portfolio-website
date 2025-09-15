@@ -20,23 +20,24 @@ def log(
     if not cur:
         con, cur = db_open()
 
-    if not user_key:
-        session = get_session(cur)
-        if session["status"] != 200:
-            if close_conn:
-                db_close(con, cur)
-            return jsonify(session)
-        user_key = session["user"]["key"]
-    if not action:
-        action = request.json.get("action")
-    if not entity_type:
-        entity_type = request.json.get("entity_type")
-    if not entity_key:
-        entity_key = request.json.get("entity_key")
-    if status == 200:
-        status = request.json.get("status", 200)
-    if misc == {}:
-        misc = request.json.get("misc", {})
+    if request.get_json(silent=True):
+        if not user_key:
+            session = get_session(cur)
+            if session["status"] != 200:
+                if close_conn:
+                    db_close(con, cur)
+                return jsonify(session)
+            user_key = session["user"]["key"]
+        if not action:
+            action = request.json.get("action")
+        if not entity_type:
+            entity_type = request.json.get("entity_type")
+        if not entity_key:
+            entity_key = request.json.get("entity_key")
+        if status == 200:
+            status = request.json.get("status", 200)
+        if misc == {}:
+            misc = request.json.get("misc", {})
 
     cur.execute("""
         INSERT INTO log (

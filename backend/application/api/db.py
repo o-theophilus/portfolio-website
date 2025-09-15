@@ -2,31 +2,36 @@ from flask import Blueprint, jsonify
 import os
 import psycopg2
 from werkzeug.security import generate_password_hash
-from ..postgres import db_open, db_close, create_tables_query
+from ..postgres import create_tables_query
 from ..admin.access import access_pass
 
 bp = Blueprint("api_db", __name__)
 
 
+@bp.get("/fix1")
 def create_tables():
-    con, cur = db_open()
+    con = psycopg2.connect(os.environ["ONLINE_DB"])
+    cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-    tables = ['app', '"user"', 'post', 'comment',
-              'report', 'block', 'code', 'log', 'session']
+    tables = ['app', '"user"', 'post', 'comment', 'report',
+              'block', '"like"', 'code', 'log', 'session']
     tables = [f"DROP TABLE IF EXISTS {x} CASCADE;" for x in tables]
     query = "\n".join(tables) + "\n\n" + create_tables_query()
 
     cur.execute('CREATE EXTENSION IF NOT EXISTS "pgcrypto";')
     cur.execute(query)
 
-    db_close(con, cur)
+    con.commit()
+    cur.close()
+    con.close()
     return jsonify({
         "status": 200
     })
 
 
+@bp.get("/fix2")
 def copy_post_table():
-    con = psycopg2.connect(os.environ["ONLINE_DB"])
+    con = psycopg2.connect(os.environ["LOCAL_DB"])
     cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     cur.execute("SELECT * FROM post;")
@@ -35,7 +40,7 @@ def copy_post_table():
     cur.close()
     con.close()
 
-    con = psycopg2.connect(os.environ["LOCAL_DB"])
+    con = psycopg2.connect(os.environ["ONLINE_DB"])
     cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     cur.execute("""
@@ -67,15 +72,13 @@ def copy_post_table():
                 description,
                 photo,
                 files,
-                tags,
-                likes,
-                dislikes
+                tags
             )
-            VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+            VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """, (
             x["key"],
             x["status"],
-            x["date"],
+            x["date_created"],
             user["key"],
             x["title"],
             x["slug"],
@@ -83,9 +86,7 @@ def copy_post_table():
             x["description"],
             x["photo"],
             x["files"],
-            x["tags"],
-            x["like"],
-            x["dislike"],
+            x["tags"]
         ))
 
     con.commit()
