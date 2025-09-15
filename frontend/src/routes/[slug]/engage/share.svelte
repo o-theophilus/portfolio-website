@@ -8,7 +8,7 @@
 	let { item } = $props();
 </script>
 
-<Button onclick={() => module.open(Form, { item })}>
+<Button onclick={() => module.open(Form, item)}>
 	<Icon icon="share-2" />
 	Share
 </Button>

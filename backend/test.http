@@ -8,16 +8,3 @@
 get {{host}}/fix HTTP/1.1
 content-type: application/json
 ###
-
-
-
-### fix
-get {{host}}/fix1 HTTP/1.1
-content-type: application/json
-###
-
-
-### fix
-get {{host}}/fix2 HTTP/1.1
-content-type: application/json
-###

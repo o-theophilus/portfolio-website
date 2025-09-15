@@ -6,7 +6,7 @@
 	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
 
-	let text = `Check Out: ${module.value.title}`;
+	let title = `Check Out: ${module.value.title}`;
 
 	let platforms = [
 		{
@@ -15,15 +15,15 @@
 		},
 		{
 			name: 'twitter',
-			href: `http://twitter.com/share?text=${text}&url=${page.url.href}&hashtags=portfolio,website`
+			href: `http://twitter.com/share?text=${title}&url=${page.url.href}&hashtags=portfolio,website`
 		},
 		{
 			name: 'whatsapp',
-			href: `whatsapp://send?text=${text}%20${page.url.href}`
+			href: `whatsapp://send?text=${title}%20${page.url.href}`
 		},
 		{
 			name: 'telegram',
-			href: `https://telegram.me/share/url?url=${page.url.href}&text=${text}`
+			href: `https://telegram.me/share/url?url=${page.url.href}&text=${title}`
 		}
 	];
 

@@ -57,7 +57,8 @@
 						}}
 						onmouseenter={() => prerender(item)}
 					>
-						<Avatar size="58" photo={item.photo} no_photo="/no_photo.png" name={item.title}></Avatar>
+						<Avatar size="58" photo={item.photo} no_photo="/no_photo.png" name={item.title}
+						></Avatar>
 					</a>
 					<div class="details">
 						<a
@@ -88,12 +89,13 @@
 <style>
 	.title {
 		justify-content: space-between;
-		margin: var(--sp2) 0;
+		margin: 48px 0;
 	}
 
 	.area {
 		display: grid;
 		gap: var(--sp3);
+		margin: 48px 0;
 	}
 
 	.post {

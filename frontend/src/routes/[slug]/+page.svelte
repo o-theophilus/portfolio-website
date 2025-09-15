@@ -102,7 +102,7 @@
 	<Comment post={item} bind:this={comment} />
 </Content>
 
-<Content --content-height>
+<Content --content-height --content-padding-top="0" --content-padding-bottom="0">
 	<Similar key={item.key} bind:this={similar} {refresh} />
 	<ToTop />
 </Content>

@@ -8,7 +8,6 @@ from ..admin.access import access_pass
 bp = Blueprint("api_db", __name__)
 
 
-@bp.get("/fix1")
 def create_tables():
     con = psycopg2.connect(os.environ["ONLINE_DB"])
     cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -29,7 +28,6 @@ def create_tables():
     })
 
 
-@bp.get("/fix2")
 def copy_post_table():
     con = psycopg2.connect(os.environ["LOCAL_DB"])
     cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
