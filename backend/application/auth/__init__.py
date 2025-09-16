@@ -507,7 +507,7 @@ def deactivate():
 
     send_mail(
         user["email"],
-        "Welcome to my portfolio website! Complete your signup with this Code",
+        "You've Successfully Deleted Your Account",
         email_template.format(name=user["name"])
     )
 
