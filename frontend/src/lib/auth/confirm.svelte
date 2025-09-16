@@ -7,9 +7,9 @@
 	import { Dialogue, Note } from '$lib/info';
 	import Login from './login.svelte';
 
-	let form = {
+	let form = $state({
 		email: module.value.email
-	};
+	});
 	let error = $state({});
 
 	const validate = () => {

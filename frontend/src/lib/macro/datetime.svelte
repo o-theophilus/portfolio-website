@@ -3,7 +3,7 @@
 
 	let { datetime, type = 'date_medium' } = $props();
 
-	let dateObj = datetime ? new Date(datetime) : null;
+	let dateObj = $derived(datetime ? new Date(datetime) : null);
 	let timeAgo = $state('');
 
 	function updateTimeAgo() {

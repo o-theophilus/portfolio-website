@@ -5,7 +5,7 @@
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
 
-	let form = {};
+	let form = $state({});
 	let error = $state({});
 
 	const validate = () => {

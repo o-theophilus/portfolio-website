@@ -8,9 +8,7 @@
 	import { Dialogue } from '$lib/info';
 	import Login from './login.svelte';
 
-	let form = {
-		...module.value
-	};
+	let form = $state({ ...module.value });
 	let error = $state({});
 	let show_password = false;
 

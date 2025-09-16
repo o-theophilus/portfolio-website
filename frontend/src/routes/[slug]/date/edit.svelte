@@ -5,14 +5,16 @@
 	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
-	let form = { date: new Date(module.value.date).toISOString().slice(0, 19) };
+	let form = $state({
+		date_created: new Date(module.value.date_created).toISOString().slice(0, 19)
+	});
 	let error = $state({});
 
 	const validate = async () => {
 		error = {};
 
-		if (!form.date) {
-			error.date = 'This field is required';
+		if (!form.date_created) {
+			error.date_created = 'This field is required';
 		}
 
 		Object.keys(error).length === 0 && submit();
@@ -44,9 +46,9 @@
 <Form title="Edit Date & Time" error={error.error}>
 	<IG
 		name="Date"
-		error={error.date}
+		error={error.date_created}
 		type="datetime"
-		bind:value={form.date}
+		bind:value={form.date_created}
 		placeholder="Date here"
 	/>
 

@@ -36,7 +36,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.post);
+			module.value.update(resp.item);
 			module.close();
 			notify.open('Content Saved');
 		} else {
@@ -74,9 +74,10 @@
 </Form>
 
 <style>
-	.marked,
 	.marked {
 		overflow: auto;
+		max-height: 300px;
+		width: 100%;
 		/* display: none; */
 	}
 

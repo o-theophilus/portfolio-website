@@ -14,7 +14,7 @@
 			onclick={() =>
 				module.open(Edit, {
 					key: item.key,
-					date: item.date,
+					date_created: item.date_created,
 					update
 				})}
 		>

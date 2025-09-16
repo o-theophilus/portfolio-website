@@ -8,9 +8,7 @@
 
 	import Password from './forgot_3.password.svelte';
 
-	let form = {
-		...module.value
-	};
+	let form = $state({ ...module.value });
 	let error = $state({});
 
 	const validate_submit = async () => {

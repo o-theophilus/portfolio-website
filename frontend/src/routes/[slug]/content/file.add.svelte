@@ -13,14 +13,14 @@
 			let file = input.files[i];
 
 			let err = '';
-			if (!['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
+			if (!['image/jpeg', 'image/png'].includes(file.type)) {
 				err = `${file.name} => invalid file`;
 			} else if (files.length + ops.files.length >= ops.count) {
 				err = `${file.name} => excess file`;
 			}
 
 			if (err) {
-				ops.error.error = ops.error.error ? `${ops.error.error}, ${err}` : err;
+				ops.error.error = ops.error.error ? `${ops.error.error} <br/> ${err}` : err;
 			} else {
 				files.push(file);
 			}
@@ -49,8 +49,8 @@
 		input.value = '';
 
 		if (resp.status == 200) {
-			ops.files = resp.post.files;
-			module.value.update(resp.post);
+			ops.files = resp.item.files;
+			module.value.update(resp.item);
 			notify.open('Photo added');
 
 			if (resp.error) ops.error = resp;
@@ -64,21 +64,6 @@
 	};
 
 	let dim = $state([1, 1]);
-	export const active = (data) => {
-		ops.active = data;
-		dim = [1, 1];
-
-		if (!ops.active) {
-			ops.active = '/select_file.png';
-		} else if (ops.active.slice(-4) == '.jpg') {
-			let match = ops.active.match(/_(\d+)x(\d+)\./);
-			if (match) {
-				dim = [parseInt(match[1]), parseInt(match[2])];
-			}
-		} else {
-			ops.active = '/no_preview.png';
-		}
-	};
 </script>
 
 <img
@@ -109,12 +94,13 @@
 			on_input();
 		}
 	}}
+	onerror={(e) => (e.target.src = '/file_error.png')}
 	role="presentation"
 />
 <input
 	style:display="none"
 	type="file"
-	accept="image/jpeg, image/png, application/pdf"
+	accept="image/jpeg, image/png"
 	multiple
 	bind:this={input}
 	onchange={on_input}

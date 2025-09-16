@@ -8,7 +8,7 @@
 	import { Dialogue } from '$lib/info';
 	import { Form } from '$lib/layout';
 
-	let form = {};
+	let form = $state({});
 	let error = $state({});
 
 	const validate = () => {
@@ -22,10 +22,9 @@
 		Object.keys(error).length === 0 && submit();
 	};
 
-	
 	const submit = async () => {
 		loading.open('Creating Post . . .');
-		
+
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post${page.url.search}`, {
 			method: 'post',
 			headers: {

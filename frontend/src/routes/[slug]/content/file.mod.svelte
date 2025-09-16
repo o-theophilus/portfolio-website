@@ -57,18 +57,14 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			ops.files = resp.post.files;
-			module.value.update(resp.post);
+			ops.files = resp.item.files;
+			module.value.update(resp.item);
 			notify.open('Order Saved');
 		} else {
 			ops.error = resp;
 		}
 	};
 </script>
-
-<div>
-	{files.join('<br/>')}
-</div>
 
 <div class="line">
 	{#each files as x, i (x)}
@@ -84,7 +80,7 @@
 			role="presentation"
 		>
 			{#if x.slice(-4) == '.jpg'}
-				<img src="{x}/200" alt={ops.title} />
+				<img src="{x}/200" alt={ops.title} onerror={(e) => (e.target.src = '/file_error.png')} />
 			{:else}
 				{x.slice(-3)}
 			{/if}

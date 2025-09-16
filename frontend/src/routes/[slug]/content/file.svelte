@@ -13,7 +13,7 @@
 		title: item.title,
 
 		count: item.content.split('@[file]').length - 1,
-		active: item.files[0] || null,
+		active: item.files[0] || '/no_photo.png',
 		error: {}
 	});
 
@@ -21,6 +21,6 @@
 </script>
 
 <Form title="Manage File" error={ops.error.error}>
-	<Add bind:this={add} bind:ops />
+	<Add bind:ops bind:this={add} />
 	<Mod bind:ops onadd={() => add.add()} />
 </Form>
