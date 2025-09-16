@@ -133,7 +133,7 @@
 		margin: 8px 0;
 	}
 	.control {
-		margin-top: 8px;
+		margin-top: 16px;
 	}
 
 	.menu_area {
