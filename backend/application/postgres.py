@@ -294,8 +294,6 @@ schema = {
             "values": ["false", "true", "persist"]
         },
     },
-
-
 }
 
 keywords = ["user", "like"]

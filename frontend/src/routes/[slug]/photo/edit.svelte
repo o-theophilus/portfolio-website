@@ -31,7 +31,7 @@
 		formData.append('file', file);
 
 		loading.open('uploading . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/${item.slug}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}${item.slug}`, {
 			method: 'put',
 			headers: {
 				Authorization: app.token
