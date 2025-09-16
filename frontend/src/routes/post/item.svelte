@@ -8,7 +8,7 @@
 	const prerender = () => {
 		app.post = item;
 	};
-	let src = $state(item.photo || '/no_photo.png');
+	let src = $state(item.photo ? `${item.photo}/500`: '/no_photo.png');
 </script>
 
 <a href="/{item.slug}" onclick={prerender} onmouseenter={prerender}>

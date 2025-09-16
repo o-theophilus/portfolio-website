@@ -78,7 +78,7 @@ def edit_user():
             error["name"] = "This field cannot exceed 100 characters"
 
     if "username" in request.json:
-        username = request.json.get("username", "").strip()
+        username = request.json.get("username", "").strip().lower()
         if not username:
             error["username"] = "This field is required"
         elif (

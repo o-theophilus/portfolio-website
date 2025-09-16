@@ -204,7 +204,7 @@ def signup():
         RETURNING *;
     """, (
         name,
-        f"{name.split()[0][:11]}_{uuid4().hex[:8]}",
+        f"{name.split()[0][:11]}_{uuid4().hex[:8]}".lower(),
         email,
         generate_password_hash(password, method="scrypt"),
         user["key"]
