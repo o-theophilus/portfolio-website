@@ -87,7 +87,7 @@ export const page_state = $state({
 		page.url.search = ss.toString()
 		window.history.replaceState(history.state, '', page.url.href);
 		loading.open()
-		invalidate(true)
+		goto(page.url.href, { replaceState: true, invalidate: [true] });
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	},
 	clear(page_name) {

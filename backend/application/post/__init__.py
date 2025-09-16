@@ -56,7 +56,7 @@ def add():
 
     cur.execute("""
         INSERT INTO post (title, slug, author_key)
-        VALUES (%s, %s, %s, %s) RETURNING *;
+        VALUES (%s, %s, %s) RETURNING *;
     """, (
         title,
         slug,
