@@ -56,7 +56,7 @@
 		error = {};
 
 		loading.open('removing . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/${item.slug}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}${item.slug}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
