@@ -85,7 +85,7 @@ export const page_state = $state({
 		this.state[page.data.page_name].loaded = false
 		let ss = new URLSearchParams(this.state[page.data.page_name].searchParams);
 		page.url.search = ss.toString()
-		window.history.replaceState(history.state, '', page.url.href);
+		// window.history.replaceState(history.state, '', page.url.href);
 		loading.open()
 		goto(page.url.href, { replaceState: true, invalidate: [true] });
 		window.scrollTo({ top: 0, behavior: 'smooth' });
