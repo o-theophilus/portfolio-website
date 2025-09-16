@@ -11,7 +11,7 @@
 		return [bg, fg];
 	}
 
-	let color = get_color(name);
+	let color = $derived(get_color(name));
 
 	let src = $derived.by(() => {
 		if (photo) {
