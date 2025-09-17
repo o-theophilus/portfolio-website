@@ -194,12 +194,13 @@
 
 	.nav {
 		position: absolute;
+		bottom: 0;
+		left: 0;
 
 		display: flex;
-		justify-content: space-between;
+		padding: 6px;
+		gap: 4px;
 		pointer-events: none;
-
-		width: calc(100% - var(--sp1) * 2);
 	}
 
 	.nav button {
@@ -210,7 +211,7 @@
 
 		border: none;
 		width: 40px;
-		aspect-ratio: 1/2;
+		height: 40px;
 		border-radius: var(--sp0);
 
 		background-color: black;
@@ -230,7 +231,7 @@
 
 		position: absolute;
 		bottom: 0;
-		left: 0;
+		right: 0;
 
 		display: flex;
 		gap: var(--gap);

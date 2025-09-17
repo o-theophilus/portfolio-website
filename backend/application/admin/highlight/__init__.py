@@ -35,7 +35,9 @@ def set_highlight():
             "key": "This field is required"
         })
 
-    cur.execute("SELECT * FROM post WHERE key = %s OR slug = %s;", (key, key))
+    cur.execute("""
+        SELECT * FROM post WHERE key::TEXT = %s OR slug = %s;
+    """, (key, key))
     post = cur.fetchone()
     if not post:
         db_close(con, cur)
@@ -127,6 +129,7 @@ def edit_highlight():
         cur=cur,
         user_key=user["key"],
         action="edited_highlight",
+        entity_key="app",
         entity_type="app",
         misc={
             "from": ", ".join(keys),

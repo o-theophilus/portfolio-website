@@ -75,7 +75,7 @@
 			{x.title}
 		</div>
 
-		<div>
+		<div class="buttons">
 			<RoundButton
 				icon="chevron-up"
 				disabled={i == 0}
@@ -119,9 +119,15 @@
 <style>
 	.line {
 		margin-top: var(--sp1);
+		flex-wrap: nowrap;
+	}
+
+	.buttons {
+		flex-shrink: 0;
 	}
 
 	.post_name {
+		width: 100%;
 		font-size: 0.8rem;
 	}
 
