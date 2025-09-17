@@ -22,17 +22,36 @@ blockquote {
 	margin: 8px;
 }
 
-/*TODO: wrap markdown link */
 .markdown a {
-	color: var(--ft2);
+	color: var(--cl1);
 	font-weight: 800;
 }
 
 .markdown a:hover {
-	color: var(--cl1);
+	color: color-mix(in srgb, var(--cl1), black 30%)
 }
 
-.markdown .embed {
+.markdown a.button {
+	display: flex;
+	align-items: center;
+	width: fit-content;
+	height: 40px;
+	padding: 0 24px;
+	border-radius: 8px;
+	
+	font-weight: 800;
+	background-color: var(--cl1);
+	color: white;
+	text-decoration: none;
+
+	transition: background-color var(--trans);
+}
+
+.markdown a.button:hover {
+	background-color: color-mix(in srgb, var(--cl1), black 30%)
+}
+
+/* .markdown .embed {
 	position: relative;
 	line-height: 0;
 }
@@ -62,7 +81,7 @@ blockquote {
 .markdown .embed a:hover {
 	background-color: var(--cl1);
 	fill: white;
-}
+} */
 
 h1,
 h2,
