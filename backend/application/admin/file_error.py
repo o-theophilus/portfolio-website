@@ -102,6 +102,7 @@ def delete_file():
         cur=cur,
         user_key=user["key"],
         action="deleted",
+        entity_key="app",
         entity_type="file",
         misc={
             "file(s)": files

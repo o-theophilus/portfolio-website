@@ -34,6 +34,8 @@
 			body: JSON.stringify({ files })
 		});
 		resp = await resp.json();
+		console.log(resp);
+		
 		loading.close();
 
 		if (resp.status == 200) {
