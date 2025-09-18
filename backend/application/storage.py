@@ -100,6 +100,7 @@ def get_all(path):
     except Exception as e:
         abort(400, description=str(e))
 
+    print(files)
     return [x["name"] for x in files]
 
 
