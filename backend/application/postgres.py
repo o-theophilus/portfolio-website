@@ -293,6 +293,10 @@ schema = {
             "default": "false",
             "values": ["false", "true", "persist"]
         },
+        "remember": {
+            "type": "bool",
+            "default": False,
+        },
     },
 }
 
@@ -320,6 +324,8 @@ def get_col(name, ppt):
         column.append("JSONB")
     elif _type == "number":
         column.append("INT")
+    elif _type == "bool":
+        column.append("BOOL")
     else:
         column.append("TEXT")
 
@@ -350,6 +356,8 @@ def get_col(name, ppt):
         column.append("DEFAULT '[]'::jsonb")
     elif _type == "number":
         column.append("DEFAULT 0")
+    elif _type == "bool":
+        column.append("DEFAULT FALSE")
     elif default is not None and _type == "text":
         column.append(f"DEFAULT '{default}'")
 

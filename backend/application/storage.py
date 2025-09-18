@@ -100,7 +100,7 @@ def get_all(path):
     except Exception as e:
         abort(400, description=str(e))
 
-    return files
+    return [x["name"] for x in files]
 
 
 def delete(x, path):

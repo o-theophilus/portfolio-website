@@ -15,14 +15,27 @@ def cron():
     # TODO: cron to clean anonymous users
     # TODO: cron to cleanup files from drive
 
+    cur.execute("""
+        SELECT * FROM session
+        WHERE (
+                remember = FALSE
+                AND date_updated <= NOW() - INTERVAL '3 days'
+            ) OR (
+                remember = TRUE
+                AND date_updated <= NOW() - INTERVAL '14 days'
+            );
+    """)
+    to_delete = cur.fetchall()
+    print(to_delete)
+
     # cur.execute("""
     #     DELETE FROM session
     #     WHERE (
-    #             stay_loggedin = FALSE
-    #             AND updated_at <= NOW() - INTERVAL '3 days'
+    #             remember = FALSE
+    #             AND date_updated <= NOW() - INTERVAL '3 days'
     #         ) OR (
-    #             stay_loggedin = TRUE
-    #             AND updated_at <= NOW() - INTERVAL '14 days'
+    #             remember = TRUE
+    #             AND date_updated <= NOW() - INTERVAL '14 days'
     #         );
     # """)
 

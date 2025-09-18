@@ -39,8 +39,6 @@ def get_file_error():
 
     all_used_files = users_photo + posts_files
     all_stored_files = storage("get_all")
-    print(all_stored_files)
-    print(type(all_stored_files))
 
     cur.execute("""
         SELECT key, name

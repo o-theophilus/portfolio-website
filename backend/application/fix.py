@@ -9,15 +9,15 @@ bp = Blueprint("fix", __name__)
 def quick_fix():
     con, cur = db_open()
 
-    # print(create_tables_query())
-    # cur.execute("""
-    #     ALTER TABLE block RENAME COLUMN blocked_user_key TO admin_key;
-    # """)
-
-    cur.execute(f"""
-        DROP TABLE IF EXISTS "like" CASCADE;
-        {create_tables_query()}
+    print(create_tables_query())
+    cur.execute("""
+        ALTER TABLE session ADD COLUMN remember BOOL DEFAULT FALSE;
     """)
+
+    # cur.execute(f"""
+    #     DROP TABLE IF EXISTS "like" CASCADE;
+    #     {create_tables_query()}
+    # """)
     # cur.execute(create_tables_query())
 
     db_close(con, cur)

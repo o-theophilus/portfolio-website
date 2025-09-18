@@ -8,3 +8,8 @@
 get {{host}}/fix HTTP/1.1
 content-type: application/json
 ###
+
+### cron
+get {{host}}/cron HTTP/1.1
+content-type: application/json
+###
