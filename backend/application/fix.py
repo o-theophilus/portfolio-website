@@ -17,7 +17,7 @@ def quick_fix():
     #     DROP TABLE IF EXISTS "like" CASCADE;
     #     {create_tables_query()}
     # """)
-    # cur.execute(create_tables_query())
+    cur.execute(create_tables_query())
 
     db_close(con, cur)
     return jsonify({
