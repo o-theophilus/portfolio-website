@@ -37,10 +37,7 @@ def notification():
             posts_files += x["files"]
 
     all_used_files = users_photo + posts_files
-    print(1)
     all_stored_files = storage("get_all")
-    print(all_stored_files)
-    print(2)
 
     unused_photos = [x for x in all_stored_files if x not in all_used_files]
 

@@ -9,7 +9,6 @@ bp = Blueprint("fix", __name__)
 def quick_fix():
     con, cur = db_open()
 
-    print(create_tables_query())
     cur.execute("""
         ALTER TABLE session ADD COLUMN remember BOOL DEFAULT FALSE;
     """)
