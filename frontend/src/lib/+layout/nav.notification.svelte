@@ -18,17 +18,17 @@
 	};
 
 	onMount(async () => {
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/notification`, {
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: app.token
-			}
-		});
-		resp = await resp.json();
+		// let resp = await fetch(`${import.meta.env.VITE_BACKEND}/notification`, {
+		// 	headers: {
+		// 		'Content-Type': 'application/json',
+		// 		Authorization: app.token
+		// 	}
+		// });
+		// resp = await resp.json();
 
-		if (resp.status == 200) {
-			nots = resp.nots.map((x) => format(x));
-		}
+		// if (resp.status == 200) {
+		// 	nots = resp.nots.map((x) => format(x));
+		// }
 	});
 
 	let open = $state(false);
