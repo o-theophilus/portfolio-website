@@ -12,17 +12,17 @@ bp = Blueprint("api", __name__)
 def cron():
     con, cur = db_open()
 
-    # TODO: cron to cleanup files from drive
     # TODO: cron to clean anonymous users
+    # TODO: cron to cleanup files from drive
 
     # cur.execute("""
     #     DELETE FROM session
     #     WHERE (
     #             stay_loggedin = FALSE
-    #             AND updated_at <= NOW() - INTERVAL '1 day'
+    #             AND updated_at <= NOW() - INTERVAL '3 days'
     #         ) OR (
     #             stay_loggedin = TRUE
-    #             AND updated_at <= NOW() - INTERVAL '3 days'
+    #             AND updated_at <= NOW() - INTERVAL '14 days'
     #         );
     # """)
 

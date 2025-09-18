@@ -88,6 +88,8 @@
 	<br />
 	<br />
 
+	<!-- TODO: implement remember me -->
+
 	<div class="line">
 		<Link onclick={() => module.open(Signup, { email: form.email })} --link-font-size="0.8rem">
 			Signup
