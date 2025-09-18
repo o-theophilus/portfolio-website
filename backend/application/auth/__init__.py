@@ -26,11 +26,11 @@ def anon(cur):
     return cur.fetchone()
 
 
-def new_token(cur, user_key, login=False):
+def new_token(cur, user_key, login=False, remember=False):
     cur.execute("""
-        INSERT INTO session (user_key, login) VALUES (%s, %s)
+        INSERT INTO session (user_key, login, remember) VALUES (%s, %s, %s)
         RETURNING *;
-    """, (user_key, login))
+    """, (user_key, login, remember))
 
     return cur.fetchone()["key"]
 
@@ -305,6 +305,7 @@ def login():
 
     email = request.json.get("email")
     password = request.json.get("password")
+    remember = request.json.get("remember", False)
 
     error = {}
     if not email:
@@ -368,7 +369,7 @@ def login():
         DELETE FROM "user" WHERE key = %s AND status = 'anonymous';
     """, (out_user["key"], out_user["key"]))
 
-    token = new_token(cur, in_user["key"], True)
+    token = new_token(cur, in_user["key"], True, remember)
 
     log(
         cur=cur,

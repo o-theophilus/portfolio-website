@@ -4,6 +4,8 @@ import os
 from ..tools import send_mail
 from ..postgres import db_open, db_close
 from ..log import log
+from ..auth import delete_user
+
 
 bp = Blueprint("api", __name__)
 
@@ -11,9 +13,6 @@ bp = Blueprint("api", __name__)
 @bp.get("/cron")
 def cron():
     con, cur = db_open()
-
-    # TODO: cron to clean anonymous users
-    # TODO: cron to cleanup files from drive
 
     cur.execute("""
         SELECT * FROM session
@@ -25,37 +24,44 @@ def cron():
                 AND date_updated <= NOW() - INTERVAL '14 days'
             );
     """)
-    to_delete = cur.fetchall()
-    print(to_delete)
+    sessions = cur.fetchall()
+    session_keys = [x["key"] for x in sessions]
+    cur.execute("""
+        DELETE FROM session WHERE key = ANY(%s);
+    """, (session_keys,))
 
-    # cur.execute("""
-    #     DELETE FROM session
-    #     WHERE (
-    #             remember = FALSE
-    #             AND date_updated <= NOW() - INTERVAL '3 days'
-    #         ) OR (
-    #             remember = TRUE
-    #             AND date_updated <= NOW() - INTERVAL '14 days'
-    #         );
-    # """)
+    cur.execute("""
+        SELECT * FROM "user"
+        WHERE status = 'anonymous'
+            AND date_created <= NOW() - INTERVAL '30 days';
+    """)
+    users = cur.fetchall()
+    user_keys = [x["key"] for x in users]
+
+    for x in user_keys:
+        delete_user(cur, x)
 
     cur.execute("""
         SELECT * FROM "user" WHERE email = %s;
     """, (os.environ["MAIL_USERNAME"],))
     user = cur.fetchone()
-
     log(
         cur=cur,
         user_key=user["key"],
         action="run cron",
         entity_key="app",
         entity_type="app",
-        misc={}
+        misc={
+            "deleted_sessions": session_keys,
+            "deleted_users": user_keys,
+        }
     )
 
     db_close(con, cur)
     return jsonify({
-        "status": 200
+        "status": 200,
+        "deleted_sessions": session_keys,
+        "deleted_users": user_keys,
     })
 
 

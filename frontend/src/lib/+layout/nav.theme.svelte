@@ -60,7 +60,6 @@
 		height: var(--size);
 		width: var(--size);
 
-		margin: auto;
 		background-color: transparent;
 		border: none;
 		cursor: pointer;

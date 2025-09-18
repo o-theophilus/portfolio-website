@@ -41,7 +41,7 @@ def get_file_error():
     all_stored_files = storage("get_all")
 
     cur.execute("""
-        SELECT key, name
+        SELECT username, name
         FROM "user"
         WHERE
             photo IS NOT NULL
@@ -50,7 +50,7 @@ def get_file_error():
     _users = cur.fetchall()
 
     cur.execute("""
-        SELECT key, title
+        SELECT slug, title
         FROM post
         WHERE
             photo IS NOT NULL

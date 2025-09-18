@@ -28,8 +28,8 @@
 <style>
 	.menu {
 		position: absolute;
-		right: 0;
 		top: 40px;
+		right: 0;
 		z-index: 1;
 
 		width: max-content;

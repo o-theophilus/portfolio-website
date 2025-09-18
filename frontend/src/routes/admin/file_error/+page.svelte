@@ -165,7 +165,7 @@
 		{#if open_posts}
 			<div transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 				{#each posts as x}
-					<a href="/{x.key}">{x.title}</a>
+					<a href="/{x.slug}">{x.title}</a>
 
 					<br />
 				{:else}

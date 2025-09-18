@@ -53,7 +53,8 @@
 		Lightbulb,
 		AtSign,
 		LockKeyhole,
-		LockOpen
+		LockOpen,
+		Bell
 	} from 'lucide';
 	import { onMount } from 'svelte';
 	onMount(() => {
@@ -111,7 +112,8 @@
 				Lightbulb,
 				AtSign,
 				LockKeyhole,
-				LockOpen
+				LockOpen,
+				Bell
 			},
 			attrs: {
 				width: 16,

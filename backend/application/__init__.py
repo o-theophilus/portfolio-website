@@ -22,6 +22,7 @@ from .user import get as user_get
 from .user import email
 from .user import password
 from .user import photo as user_photo
+from .user import notification
 from . import post
 from .post import file
 from .post import get as post_get
@@ -71,6 +72,7 @@ def create_app(conf=None):
     app.register_blueprint(email.bp)
     app.register_blueprint(password.bp)
     app.register_blueprint(user_photo.bp)
+    app.register_blueprint(notification.bp)
     app.register_blueprint(post.bp)
     app.register_blueprint(post_get.bp)
     app.register_blueprint(file.bp)

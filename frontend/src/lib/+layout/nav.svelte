@@ -6,6 +6,7 @@
 	import { Login } from '$lib/auth';
 	import Link from './nav.btn.svelte';
 	import Theme from './nav.theme.svelte';
+	import Notification from './nav.notification.svelte';
 	import User from './nav.user.svelte';
 
 	let is_home = $derived(page.url.pathname == '/');
@@ -29,6 +30,7 @@
 			{/if}
 		</a>
 		<div class="line">
+			<Notification />
 			<Theme />
 			<Link {is_home} href="/post">Post</Link>
 			{#if app.login}
