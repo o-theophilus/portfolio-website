@@ -37,17 +37,26 @@ def new_token(cur, user_key, login=False, remember=False):
 
 def delete_user(cur, user):
     cur.execute("""
-        UPDATE post
-        SET author_key = (SELECT key FROM "user" WHERE email = %s)
-        WHERE key = %s
+        DELETE FROM report WHERE user_key = %s OR entity_key = %s;
+    """, (user["key"], user["key"]))
+
+    cur.execute("""
+        UPDATE block
+        SET admin_key = (SELECT key FROM "user" WHERE email = %s)
+        WHERE admin_key = %s
     ;""", (os.environ["MAIL_USERNAME"], user["key"]))
 
     cur.execute("""
-        UPDATE post
-        SET likes = array_remove(likes, %s),
-            dislikes = array_remove(dislikes, %s)
-        WHERE %s = ANY(likes) OR %s = ANY(dislikes);
-    """, (user["key"], user["key"], user["key"], user["key"]))
+        DELETE FROM "like" WHERE user_key = %s;
+    """, (user["key"],))
+
+    cur.execute("""
+        DELETE FROM code WHERE user_key = %s;
+    """, (user["key"],))
+
+    cur.execute("""
+        DELETE FROM session WHERE user_key = %s;
+    """, (user["key"],))
 
     cur.execute("""
         WITH RECURSIVE to_delete AS (
@@ -66,24 +75,10 @@ def delete_user(cur, user):
     """, (user["key"],))
 
     cur.execute("""
-        UPDATE comment
-        SET likes = array_remove(likes, %s),
-            dislikes = array_remove(dislikes, %s)
-        WHERE %s = ANY(likes) OR %s = ANY(dislikes);
-    """, (user["key"], user["key"], user["key"], user["key"]))
-
-    cur.execute("""
-        DELETE FROM report
-        WHERE user_key = %s OR entity_key = %s;
-    """, (user["key"], user["key"]))
-
-    cur.execute("""
-        DELETE FROM code WHERE user_key = %s;
-    """, (user["key"],))
-
-    cur.execute("""
-        DELETE FROM session WHERE user_key = %s;
-    """, (user["key"],))
+        UPDATE post
+        SET author_key = (SELECT key FROM "user" WHERE email = %s)
+        WHERE key = %s
+    ;""", (os.environ["MAIL_USERNAME"], user["key"]))
 
     cur.execute("""
         DELETE FROM "user" WHERE key = %s;

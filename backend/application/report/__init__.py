@@ -103,6 +103,8 @@ def resolve(key):
         })
 
     comment = request.json.get("comment")
+    delete_comment = request.json.get("delete_comment", False)
+
     error = {}
     if not comment:
         error["comment"] = "This field is required"
@@ -115,7 +117,19 @@ def resolve(key):
             **error
         })
 
+    misc = {
+        "user_key": report["user_key"],
+        "entity_key": report["entity_key"],
+        "entity_type": report["entity_type"],
+        "comment": report["comment"],
+        "tags": report["tags"]
+    }
+
     cur.execute("DELETE FROM report WHERE key = %s;", (report["key"],))
+    if report["entity_type"] == "comment" and delete_comment:
+        cur.execute("DELETE FROM comment WHERE key = %s;",
+                    (report["entity_key"],))
+        misc["deleted_comment"] = report["entity_key"]
 
     log(
         cur=cur,
@@ -123,13 +137,7 @@ def resolve(key):
         action="resolved",
         entity_key=report["key"],
         entity_type="report",
-        misc={
-            "user_key": report["user_key"],
-            "entity_key": report["entity_key"],
-            "entity_type": report["entity_type"],
-            "comment": report["comment"],
-            "tags": report["tags"]
-        }
+        misc=misc
     )
 
     db_close(con, cur)

@@ -85,7 +85,12 @@
 						icon="check"
 						--button-font-size="0.8rem"
 						--button-height="32px"
-						onclick={() => module.open(Form, { key: item.key, update })}
+						onclick={() =>
+							module.open(Form, {
+								key: item.key,
+								entity_type: item.entity_type,
+								update
+							})}
 					>
 						Resolve
 					</Button>

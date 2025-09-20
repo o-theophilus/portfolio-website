@@ -43,11 +43,11 @@ def add():
         })
 
     slug = re.sub('-+', '-', re.sub('[^a-zA-Z0-9]', '-', title.lower()))
+    slug = slug[:100]
     cur.execute('SELECT * FROM post WHERE slug = %s;', (slug,))
     post = cur.fetchone()
-    # TODO: max slug = 100
     if post or slug in reserved_words:
-        slug = f"{slug}-{str(uuid4().hex)[:10]}"
+        slug = f"{slug[:89]}-{str(uuid4().hex)[:10]}"
 
     cur.execute("""
         SELECT key FROM "user" WHERE email = %s;
@@ -200,13 +200,13 @@ def edit(key):
             **error
         })
 
-    # TODO: max length = 100
     slug = re.sub('-+', '-', re.sub('[^a-zA-Z0-9]', '-', title.lower()))
+    slug = slug[:100]
     cur.execute('SELECT * FROM post WHERE key != %s AND slug = %s;',
                 (post["key"], slug))
     slug_in_use = cur.fetchone()
     if (slug_in_use or slug in reserved_words):
-        slug = f"{slug}-{str(uuid4().hex)[:10]}"
+        slug = f"{slug[:89]}-{str(uuid4().hex)[:10]}"
 
     cur.execute("""
         UPDATE post
@@ -269,6 +269,11 @@ def delete(key):
             "status": 400,
             "error": "Invalid request"
         })
+
+    cur.execute("""
+        DELETE FROM "like"
+        WHERE entity_type = 'post' entity_key = %s;
+    """, (post["key"],))
 
     cur.execute("""
         WITH RECURSIVE to_delete AS (

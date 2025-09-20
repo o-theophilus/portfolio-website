@@ -94,6 +94,11 @@ def delete(key):
         })
 
     cur.execute("""
+        DELETE FROM "like"
+        WHERE entity_type = 'comment' entity_key = %s;
+    """, (comment["key"],))
+
+    cur.execute("""
         WITH RECURSIVE to_delete AS (
             SELECT key
             FROM comment
@@ -116,7 +121,6 @@ def delete(key):
         entity_key=comment["key"],
         entity_type="comment",
         misc={"post_key": comment["post_key"]}
-        # TODO: add children comment keys
     )
 
     items = get_many(comment["post_key"], cur)

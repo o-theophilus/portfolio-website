@@ -6,9 +6,9 @@
 	import { Note } from '$lib/info';
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
+	import { Icon } from '$lib/macro';
 
-	// TODO: add option to delete comment
-	let form = $state({ comment: '' });
+	let form = $state({ comment: '', delete_comment: false });
 	let error = $state({});
 
 	const validate = () => {
@@ -56,6 +56,30 @@
 		placeholder="Comment here"
 		bind:value={form.comment}
 	/>
+
+	{#if module.value.entity_type == 'comment'}
+		<Note>
+			Resolving this report will not delete the comment. If you want to delete the comment, please
+			check the box below.
+		</Note>
+
+		<IG>
+			{#snippet input()}
+				<button
+					class="custom-checkbox"
+					onclick={() => (form.delete_comment = !form.delete_comment)}
+				>
+					<div class="checkbox" class:active={form.delete_comment}>
+						<div class="icon">
+							<Icon icon="check"></Icon>
+						</div>
+					</div>
+
+					Delete Comment
+				</button>
+			{/snippet}
+		</IG>
+	{/if}
 
 	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 </Form>
