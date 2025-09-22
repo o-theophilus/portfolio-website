@@ -9,7 +9,7 @@ from ..auth import delete_user
 
 bp = Blueprint("api", __name__)
 
-
+# This
 @bp.get("/cron")
 def cron():
     con, cur = db_open()
