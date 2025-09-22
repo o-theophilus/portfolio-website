@@ -89,15 +89,19 @@
 
 	<IG>
 		{#snippet input()}
-			<button class="custom-checkbox" onclick={() => (form.remember = !form.remember)}>
+			<div
+				class="custom-checkbox"
+				onclick={() => (form.remember = !form.remember)}
+				role="presentation"
+
+			>
 				<div class="checkbox" class:active={form.remember}>
 					<div class="icon">
 						<Icon icon="check"></Icon>
 					</div>
 				</div>
-
 				Remember me
-			</button>
+			</div>
 		{/snippet}
 	</IG>
 
@@ -127,7 +131,6 @@
 	}
 
 	.custom-checkbox {
-		all: unset;
 		display: flex;
 		align-items: center;
 		gap: 16px;
@@ -136,7 +139,7 @@
 	}
 
 	.checkbox {
-		--size: 24px;
+		--size: 20px;
 		position: relative;
 
 		width: var(--size);
@@ -149,6 +152,10 @@
 		cursor: pointer;
 
 		transition: background-color var(--trans);
+	}
+
+	.checkbox:hover{
+		outline-color: var(--ft1);
 	}
 	.active {
 		background-color: var(--cl1);

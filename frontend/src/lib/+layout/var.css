@@ -56,7 +56,10 @@ main{
 	--link-color:var(--ft2);
 	--link-color-hover:var(--cl1);
 	
-	/* TODO: pagination */
+	--pagination-background-color:var(--input);
+	--pagination-outline-color:var(--input);
+	--pagination-outline-color-hover:var(--ft1);
+
 	--cl2: hsl(0, 0%, 75%);
 	--cl3: transparent;
 }

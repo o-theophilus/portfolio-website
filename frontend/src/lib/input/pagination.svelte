@@ -73,15 +73,15 @@
 
 		width: fit-content;
 		border-radius: 4px;
-		background-color: var(--input);
-		outline: 2px solid transparent;
+		background-color: var(--pagination-background-color, hsl(0, 0%, 90%));
+		outline: 2px solid var(--pagination-outline-color, transparent);
 		outline-offset: -2px;
 
 		transition: outline-color var(--trans);
 	}
 	section:hover,
 	section:has(input:focus) {
-		outline-color: var(--ft1);
+		outline-color: var(--pagination-outline-color-hover, transparent);
 	}
 
 	.input {
