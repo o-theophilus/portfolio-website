@@ -27,7 +27,7 @@ def cron():
     sessions = cur.fetchall()
     session_keys = [x["key"] for x in sessions]
     cur.execute("""
-        DELETE FROM session WHERE key = ANY(%s);
+        DELETE FROM session WHERE key::TEXT = ANY(%s);
     """, (session_keys,))
 
     cur.execute("""
