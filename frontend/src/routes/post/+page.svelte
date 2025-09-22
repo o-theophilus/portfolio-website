@@ -22,7 +22,7 @@
 	let total_page = $derived(data.total_page);
 	let order_by = $derived(data.order_by);
 	let _status = $derived(data._status);
-	let search = $state({ order: 'latest', search: '', status: 'active', page_no: 1 });
+	let search = $state({ order: 'latest', search: '', tag: '', status: 'active', page_no: 1 });
 
 	const update = (a, b) => {
 		items = a;
@@ -35,6 +35,9 @@
 		}
 		if (page_state.searchParams.search) {
 			search.search = page_state.searchParams.search;
+		}
+		if (page_state.searchParams.tag) {
+			search.tag = page_state.searchParams.tag;
 		}
 		if (page_state.searchParams.status) {
 			search.status = page_state.searchParams.status;
@@ -78,13 +81,23 @@
 		{/if}
 	</div>
 
-	<Search
-		bind:value={search.search}
-		ondone={(v) => {
-			search.page_no = 1;
-			page_state.set({ search: v });
-		}}
-	></Search>
+	<div class="line nowrap">
+		<Search
+			bind:value={search.search}
+			ondone={(v) => {
+				search.page_no = 1;
+				page_state.set({ search: v });
+			}}
+		></Search>
+
+		<Tags
+			bind:value={search.tag}
+			ondone={(v) => {
+				search.page_no = 1;
+				page_state.set({ tag: v });
+			}}
+		/>
+	</div>
 
 	<Dropdown
 		--select-height="10"
@@ -109,6 +122,7 @@
 		onclick={() => {
 			search.page_no = 1;
 			search.search = '';
+			search.tag = '';
 			page_state.set({ search: '', tag: '' });
 		}}
 	/>
@@ -136,7 +150,6 @@
 			page_state.set({ page_no: v });
 		}}
 	></Pagination>
-	<Tags />
 </Content>
 
 <style>

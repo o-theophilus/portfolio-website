@@ -8,14 +8,25 @@
 		let text = '';
 		const sp = page_state.searchParams;
 
-		if (sp.search || (sp.tag && sp.tag.length)) text = 'Showing result';
+		if (sp.search || sp.tag) text = 'Showing result';
 		if (sp.search) text += ` for [${sp.search}]`;
-		if (sp.tag && sp.tag.length) {
-			text += ' with';
-			if (sp.tag.length > 1 && sp.tag_ops) text += sp.tag_ops == 'and' ? ' all' : ' any';
-			text += ' tag';
-			if (sp.tag.length > 1 && sp.tag_ops && sp.tag_ops == 'and') text += 's';
-			text += ` [${sp.tag.join(', ')}]`;
+		if (sp.tag) {
+			let tags = sp.tag;
+			let multiply = false;
+
+			if (tags.endsWith(':all')) {
+				multiply = true;
+				tags = tags.slice(0, -4);
+			}
+			tags = tags.split(',').filter(Boolean);
+
+			if (tags.length) {
+				text += ' with';
+				if (tags.length > 1 && multiply) text += multiply ? ' all' : ' any';
+				text += ' tag';
+				if (tags.length > 1 && multiply) text += 's';
+				text += ` [${tags.join(', ')}]`;
+			}
 		}
 
 		return text;

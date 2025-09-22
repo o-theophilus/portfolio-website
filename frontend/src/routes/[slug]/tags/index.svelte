@@ -28,7 +28,7 @@
 {#if item.tags.length > 0}
 	<div class="line">
 		{#each item.tags as x}
-			<Tag onclick={() => page_state.goto('post', { tag: [x] })}>
+			<Tag onclick={() => page_state.goto('post', { tag: x })}>
 				{x}
 			</Tag>
 		{/each}

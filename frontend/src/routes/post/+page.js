@@ -7,7 +7,6 @@ export const load = async ({ fetch, url, parent, depends }) => {
 	if (!page_state.state[page_name]) {
 		let sp = {}
 		for (let [key, value] of url.searchParams) {
-			if (key == "tag") value = value.split(",")
 			sp[key] = value
 		}
 		page_state.state[page_name] = {

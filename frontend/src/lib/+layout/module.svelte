@@ -31,6 +31,8 @@
 
 <style>
 	section {
+		z-index: 1;
+		
 		display: grid;
 		align-items: center;
 		grid-template-columns: 1fr min(400px, 100%) 1fr;

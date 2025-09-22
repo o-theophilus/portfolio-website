@@ -54,7 +54,8 @@
 		AtSign,
 		LockKeyhole,
 		LockOpen,
-		Bell
+		Bell,
+		ListFilter
 	} from 'lucide';
 	import { onMount } from 'svelte';
 	onMount(() => {
@@ -113,7 +114,8 @@
 				AtSign,
 				LockKeyhole,
 				LockOpen,
-				Bell
+				Bell,
+				ListFilter
 			},
 			attrs: {
 				width: 16,

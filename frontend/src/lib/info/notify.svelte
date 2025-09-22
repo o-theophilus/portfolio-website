@@ -21,6 +21,8 @@
 
 <style>
 	section {
+		z-index: 1;
+		
 		position: fixed;
 		top: var(--headerHeight);
 		right: 0;

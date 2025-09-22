@@ -46,6 +46,8 @@
 
 <style>
 	section {
+		z-index: 1;
+		
 		display: flex;
 		justify-content: center;
 		align-items: center;

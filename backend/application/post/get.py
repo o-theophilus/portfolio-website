@@ -80,10 +80,11 @@ def get_many(cur=None):
     ):
         status = "active"
 
+    print(tag)
     multiply = False
-    if tag[-2:] == ":x":
+    if tag[-4:] == ":all":
         multiply = True
-        tag = tag[:-2]
+        tag = tag[:-4]
     tags = tag.split(",")
     tags = [] if not tags[0] else tags
 
