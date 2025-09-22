@@ -13,7 +13,7 @@
 	let multiply = $state(false);
 	let filter = $state('');
 	let loading = $state(true);
-	let open = $state(false);
+	let open = $state(true);
 
 	let _selected = $state([]);
 	let _multiply = $state(false);
@@ -46,6 +46,24 @@
 
 		_selected = [...selected];
 		_multiply = multiply;
+	};
+
+	export const clear = () => {
+		multiply = false;
+		selected = [];
+		filter = '';
+	};
+
+	const _clear = () => {
+		clear();
+		if (_selected.length) submit();
+		open = false;
+	};
+
+	const ok = () => {
+		filter = '';
+		submit();
+		open = false;
 	};
 </script>
 
@@ -118,13 +136,7 @@
 					--button-background-color-hover="red"
 					--button-height="32px"
 					icon="x"
-					onclick={() => {
-						multiply = false;
-						selected = [];
-						filter = '';
-						if (_selected.length) submit();
-						open = false;
-					}}
+					onclick={_clear}
 					disabled={selected.length == 0 && _selected.length == 0}
 				></Button>
 				<div class="wide">
@@ -133,11 +145,7 @@
 						--button-height="32px"
 						--button-font-size="0.8rem"
 						icon="check"
-						onclick={() => {
-							filter = '';
-							submit();
-							open = false;
-						}}
+						onclick={ok}
 						disabled={JSON.stringify([...selected].sort()) ==
 							JSON.stringify([..._selected].sort()) && multiply == _multiply}
 					>

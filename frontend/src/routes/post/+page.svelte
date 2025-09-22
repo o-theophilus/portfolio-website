@@ -49,6 +49,8 @@
 		page.url.search = new URLSearchParams(page_state.searchParams);
 		window.history.replaceState(history.state, '', page.url.href);
 	});
+
+	let tags = $state();
 </script>
 
 <Log entity_type={'page'} />
@@ -91,6 +93,7 @@
 		></Search>
 
 		<Tags
+			bind:this={tags}
 			bind:value={search.tag}
 			ondone={(v) => {
 				search.page_no = 1;
@@ -123,6 +126,7 @@
 			search.page_no = 1;
 			search.search = '';
 			search.tag = '';
+			tags.clear();
 			page_state.set({ search: '', tag: '' });
 		}}
 	/>
