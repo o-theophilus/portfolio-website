@@ -13,7 +13,7 @@
 	let multiply = $state(false);
 	let filter = $state('');
 	let loading = $state(true);
-	let open = $state(f);
+	let open = $state(false);
 
 	let _selected = $state([]);
 	let _multiply = $state(false);
