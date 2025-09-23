@@ -13,7 +13,7 @@
 	let multiply = $state(false);
 	let filter = $state('');
 	let loading = $state(true);
-	let open = $state(true);
+	let open = $state(f);
 
 	let _selected = $state([]);
 	let _multiply = $state(false);
@@ -75,6 +75,7 @@
 		--button-height="48px"
 		onclick={() => {
 			open = !open;
+			filter = '';
 		}}
 		disabled={loading}
 	></Button>
