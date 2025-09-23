@@ -4,6 +4,7 @@
 
 	import { Content } from '$lib/layout';
 	import { LinkArrow, Tag } from '$lib/button';
+	import { Icon } from '$lib/macro';
 
 	let exp = [
 		{
@@ -109,27 +110,27 @@
 	<div class="page_title dark">Where I've Worked</div>
 	<br />
 
-	<div class="tabs">
+	<div class="h_tab">
 		{#each exp as x, i}
 			{#if i != 0}
 				<div class="hline"></div>
 			{/if}
 			<div
-				class="tab2"
+				class="tab"
 				role="presentation"
 				class:active={active == i}
 				onclick={() => {
 					active = i;
 				}}
 			>
-				<div></div>
+				<Icon icon={x.key.toLowerCase()} size="24"></Icon>
 				{x.key}
 			</div>
 		{/each}
 	</div>
 
 	<div class="block">
-		<div class="left">
+		<div class="v_tab">
 			<div class="indicator">
 				<div
 					class="pos"
@@ -147,13 +148,14 @@
 							active = i;
 						}}
 					>
+						<Icon icon={x.key.toLowerCase()} size="24"></Icon>
 						{x.key}
 					</div>
 				{/each}
 			</div>
 		</div>
 
-		<div class="right">
+		<div class="details">
 			{#key active}
 				<div class="details" in:fade={{ duration: 1000, easing: cubicInOut }}>
 					<div class="name">{exp[active].name}</div>
@@ -169,7 +171,18 @@
 
 					<div class="line">
 						{#each exp[active].tags as x}
-							<Tag --tag-color="var(--ft2)">{x}</Tag>
+							<Tag --tag-color="var(--ft2)">
+								<img
+									class="tag"
+									src="/logo/{x.toLowerCase()}.png"
+									alt={x}
+									onerror={(event) => {
+										const imgEl = event.currentTarget;
+										imgEl.parentNode && imgEl.parentNode.removeChild(imgEl);
+									}}
+								/>
+								{x}
+							</Tag>
 						{/each}
 					</div>
 				</div>
@@ -183,18 +196,74 @@
 </Content>
 
 <style>
+	.h_tab {
+		--size: 32px;
+		display: flex;
+		align-items: center;
+
+		height: 40px;
+		margin-bottom: var(--sp3);
+	}
+
+	.h_tab .hline {
+		background-color: gray;
+		height: 1px;
+		width: 100%;
+	}
+
+	.h_tab .tab {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 0px;
+
+		flex-shrink: 0;
+		width: var(--size);
+		height: var(--size);
+		border-radius: 50%;
+		overflow: hidden;
+
+		cursor: pointer;
+		outline: 1px solid gray;
+		color: transparent;
+		font-size: 0;
+
+		transition:
+			width var(--trans),
+			height var(--trans),
+			gap var(--trans),
+			border-radius var(--trans),
+			padding var(--trans),
+			color var(--trans);
+	}
+
+	.h_tab .tab.active {
+		gap: 4px;
+
+		width: unset;
+		height: unset;
+		padding: var(--sp1) var(--sp3);
+		border-radius: var(--sp0);
+		font-size: 0.8rem;
+		color: var(--ft1);
+
+		cursor: unset;
+	}
+
+	.h_tab .tab:not(.active):hover {
+		width: calc(1.2 * var(--size));
+		height: calc(1.2 * var(--size));
+	}
+
 	.block {
 		display: flex;
 		gap: var(--sp3);
 	}
 
-	.left {
+	.v_tab {
 		display: none;
 		height: fit-content;
 		flex-shrink: 0;
-	}
-	.right {
-		width: 100%;
 	}
 
 	.indicator {
@@ -215,7 +284,11 @@
 		transition: top var(--trans);
 	}
 
-	.tab {
+	.v_tab .tab {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
 		padding: var(--sp2);
 		cursor: pointer;
 		font-size: 0.8rem;
@@ -225,14 +298,32 @@
 			background-color var(--trans);
 	}
 
-	.tab.active {
+	.v_tab .tab.active {
 		color: var(--ft1);
 		background-color: var(--bg2);
 	}
 
-	.tab:hover {
+	.v_tab .tab:hover {
 		color: var(--ft1);
 		background-color: color-mix(in srgb, var(--cl1), transparent 90%);
+	}
+
+	.tab {
+		fill: var(--ft1);
+	}
+
+	@media screen and (min-width: 500px) {
+		.h_tab {
+			display: none;
+		}
+
+		.v_tab {
+			display: flex;
+		}
+	}
+
+	.details {
+		width: 100%;
 	}
 
 	.name {
@@ -258,89 +349,12 @@
 		color: var(--cl1);
 	}
 
-	.tabs {
-		--size: 20px;
-		display: flex;
-		align-items: center;
-
-		height: 40px;
-		margin-bottom: var(--sp3);
-	}
-
-	.tabs .hline {
-		background-color: gray;
-		height: 1px;
-		width: 100%;
-	}
-
-	.tabs .tab2 {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		flex-shrink: 0;
-		width: var(--size);
-		height: var(--size);
-		border-radius: 50%;
-		overflow: hidden;
-
-		cursor: pointer;
-		outline: 1px solid gray;
-		color: transparent;
-		font-size: 0;
-
-		transition:
-			width var(--trans),
-			height var(--trans),
-			border-radius var(--trans),
-			padding var(--trans),
-			color var(--trans);
-	}
-
-	.tabs .tab2 div {
-		border-radius: 50%;
-		width: 0;
-		height: 0;
-		background-color: transparent;
-		transition:
-			width var(--trans),
-			height var(--trans),
-			background-color var(--trans);
-	}
-
-	.tabs .tab2.active {
-		width: unset;
-		height: unset;
-		padding: var(--sp1) var(--sp3);
-		border-radius: var(--sp0);
-		font-size: 0.8rem;
-		color: var(--ft1);
-
-		cursor: unset;
-	}
-
-	.tabs .tab2:not(.active):hover {
-		width: calc(1.2 * var(--size));
-		height: calc(1.2 * var(--size));
-	}
-	.tabs .tab2:not(.active):hover div {
-		width: calc(0.5 * var(--size));
-		height: calc(0.5 * var(--size));
-		background-color: gray;
-	}
-
-	@media screen and (min-width: 500px) {
-		.tabs {
-			display: none;
-		}
-
-		.left {
-			display: flex;
-		}
-	}
-
 	.line {
 		margin-top: 16px;
 		gap: 4px;
+	}
+
+	.tag {
+		height: 16px;
 	}
 </style>
