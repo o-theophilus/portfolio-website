@@ -137,12 +137,7 @@
 					{#if app.highlight[index].tags.length > 0}
 						<div class="line tag">
 							{#each app.highlight[index].tags as x}
-								<Tag
-									onclick={() => {
-										delete page_state.state.post;
-										goto(`/post?tag=${[x]}`);
-									}}>{x}</Tag
-								>
+								<Tag onclick={() => page_state.goto('post', { tag: x })}>{x}</Tag>
 							{/each}
 						</div>
 					{/if}
