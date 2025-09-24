@@ -15,20 +15,18 @@ def cron():
     con, cur = db_open()
 
     cur.execute("""
-        SELECT * FROM session
+        DELETE FROM session
         WHERE (
                 remember = FALSE
                 AND date_updated <= NOW() - INTERVAL '3 days'
             ) OR (
                 remember = TRUE
                 AND date_updated <= NOW() - INTERVAL '14 days'
-            );
+            )
+        RETURNING *;
     """)
     sessions = cur.fetchall()
     session_keys = [x["key"] for x in sessions]
-    cur.execute("""
-        DELETE FROM session WHERE key::TEXT = ANY(%s);
-    """, (session_keys,))
 
     cur.execute("""
         SELECT * FROM "user"
