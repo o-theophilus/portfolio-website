@@ -80,7 +80,6 @@ def get_many(cur=None):
     ):
         status = "active"
 
-    print(tag)
     multiply = False
     if tag[-4:] == ":all":
         multiply = True

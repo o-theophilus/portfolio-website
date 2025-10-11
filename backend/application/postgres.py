@@ -41,7 +41,7 @@ schema = {
             "type": "text",
             "max_length": 20,
             "unique": True,
-            "validate": r"^[A-Za-z][A-Za-z0-9_]*$"
+            "validate": r"^[A-Za-z][A-Za-z0-9-]*$"
         },
         "email": {
             "type": "text",

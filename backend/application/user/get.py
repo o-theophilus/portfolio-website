@@ -27,7 +27,7 @@ def get(key):
         db_close(con, cur)
         return jsonify({
             "status": 404,
-            "error": "Oops! The user you’re looking for doesn’t exist"
+            "error": "Oops! The user you're looking for doesn't exist"
         })
 
     _access = {}

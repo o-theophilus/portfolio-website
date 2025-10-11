@@ -40,6 +40,7 @@ def add():
         db_close(con, cur)
         return jsonify({
             "status": 400,
+            **error
         })
 
     slug = re.sub('-+', '-', re.sub('[^a-zA-Z0-9]', '-', title.lower()))
@@ -77,7 +78,7 @@ def add():
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "item": item,
+        "item": post_schema(item),
         "items": items.json["items"],
         "total_page": items.json["total_page"]
     })

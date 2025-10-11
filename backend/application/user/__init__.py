@@ -82,11 +82,11 @@ def edit_user():
         if not username:
             error["username"] = "This field is required"
         elif (
-                not re.match(r"^[A-Za-z][A-Za-z0-9_]*$", username)
+                not re.match(r"^[A-Za-z][A-Za-z0-9-]*$", username)
                 or len(username) > 20
         ):
-            error["name"] = """'Username can only contain letters,
-            numbers, or underscores, must start with a letter,
+            error["username"] = """'Username can only contain letters,
+            numbers, or dash, must start with a letter,
             and be at most 20 characters"""
         elif username == user["username"]:
             error['username'] = "No changes were made"

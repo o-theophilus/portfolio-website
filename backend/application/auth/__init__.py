@@ -4,7 +4,8 @@ import re
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..tools import (
-    get_session, user_schema, send_mail, generate_code, check_code)
+    get_session, user_schema, send_mail, generate_code,
+    reserved_words, check_code)
 from ..postgres import db_open, db_close
 from ..log import log
 from ..storage import storage
@@ -157,8 +158,7 @@ def signup():
     elif len(email) > 255:
         error["email"] = "This field cannot exceed 255 characters"
     else:
-        cur.execute('SELECT * FROM "user" WHERE email = %s;', (
-            email,))
+        cur.execute('SELECT * FROM "user" WHERE email = %s;', (email,))
         email_user = cur.fetchone()
         if email_user and email_user["status"] == "confirmed":
             error["email"] = "Email already in use"
@@ -191,6 +191,14 @@ def signup():
     elif user["status"] != "anonymous":
         user = anon(cur)
 
+    username = re.sub(
+        '-+', '-', re.sub('[^a-zA-Z0-9]', '-', name.lower()))[:20]
+    cur.execute(
+        """SELECT * FROM "user" WHERE email != %s AND username = %s;""",
+        (email, username))
+    if cur.fetchone() or username in reserved_words:
+        username = f"{username[:11]}-{str(uuid4().hex)[:8]}"
+
     cur.execute("""
         UPDATE "user"
         SET name = %s, username = %s, email = %s,
@@ -199,7 +207,7 @@ def signup():
         RETURNING *;
     """, (
         name,
-        f"{name.split()[0][:11]}_{uuid4().hex[:8]}".lower(),
+        username,
         email,
         generate_password_hash(password, method="scrypt"),
         user["key"]
