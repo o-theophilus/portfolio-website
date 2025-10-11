@@ -12,7 +12,6 @@ bp = Blueprint("user_get", __name__)
 def get(key):
     con, cur = db_open()
 
-    # NOTE: validate session only
     session = get_session(cur)
     if session["status"] != 200:
         db_close(con, cur)
