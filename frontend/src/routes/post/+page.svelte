@@ -59,7 +59,11 @@
 	description="This page showcases a collection of interesting blogs and projects that I have worked on"
 />
 
-<Content --content-background-color="var(--bg2)">
+<Content
+	--content-background-color="var(--bg2)"
+	--content-height="auto"
+	--content-padding-bottom="0"
+>
 	<div class="line space">
 		<div class="page_title">
 			Post{items.length > 1 ? 's' : ''}
@@ -130,7 +134,9 @@
 			page_state.set({ search: '', tag: '' });
 		}}
 	/>
+</Content>
 
+<Content --content-background-color="var(--bg2)" --content-padding-top="1px" --content-width="1500px">
 	{#if items.length}
 		<section class="items">
 			{#each items as item (item.key)}
@@ -165,7 +171,19 @@
 
 	@media screen and (min-width: 550px) {
 		.items {
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media screen and (min-width: 850px) {
+		.items {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	@media screen and (min-width: 1200px) {
+		.items {
+			grid-template-columns: repeat(4, 1fr);
 		}
 	}
 </style>

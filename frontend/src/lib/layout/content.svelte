@@ -10,7 +10,7 @@
 
 <style>
 	section {
-		max-width: var(--mobileWidth);
+		max-width: var(--content-width, var(--mobileWidth));
 		width: 100%;
 		margin: auto;
 		padding: 0 24px;

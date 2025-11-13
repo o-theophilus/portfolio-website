@@ -322,7 +322,7 @@ def get_col(name, ppt):
         column.append("JSONB")
     elif _type == "dict":
         column.append("JSONB")
-    elif _type == "number":
+    elif _type == "int":
         column.append("INT")
     elif _type == "bool":
         column.append("BOOL")
@@ -354,7 +354,7 @@ def get_col(name, ppt):
         column.append("DEFAULT '{}'::TEXT[]")
     elif _type == "array_dict":
         column.append("DEFAULT '[]'::jsonb")
-    elif _type == "number":
+    elif _type == "int":
         column.append("DEFAULT 0")
     elif _type == "bool":
         column.append("DEFAULT FALSE")
