@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 
 from . import storage
+from . import postgres
 from . import log
 from .log import get as log_get
 from . import auth
@@ -32,7 +33,6 @@ from .post.engage import get as post_engage_get
 from .post import comment
 from .post.comment import get as comment_get
 from . import api
-from .api import db
 from . import fix
 
 
@@ -52,6 +52,7 @@ def create_app(conf=None):
         })
 
     app.register_blueprint(storage.bp)
+    app.register_blueprint(postgres.bp)
     app.register_blueprint(log.bp)
     app.register_blueprint(log_get.bp)
     app.register_blueprint(auth.bp)
@@ -82,7 +83,6 @@ def create_app(conf=None):
     app.register_blueprint(comment.bp)
     app.register_blueprint(comment_get.bp)
     app.register_blueprint(api.bp)
-    app.register_blueprint(db.bp)
     app.register_blueprint(fix.bp)
 
     return app

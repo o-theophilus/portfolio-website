@@ -1,8 +1,7 @@
 from flask import Blueprint, request, jsonify
 from math import ceil
-from ..tools import get_session, user_schema
+from ..tools import get_session, user_schema, access_pass
 from ..postgres import db_close, db_open
-from ..admin.access import access_pass
 
 
 bp = Blueprint("admin_get", __name__)

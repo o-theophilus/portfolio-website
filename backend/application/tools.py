@@ -11,6 +11,45 @@ reserved_words = [
     "terms", "admin", "omni", "user", "users", "store", "stores", "item",
     "items", "all"]
 
+access_pass = {
+    "user": [
+        ['view', 1],
+        ['reset_name', 2],
+        ['reset_username', 2],
+        ['reset_photo', 2],
+        ['block', 2],
+        ['set_access', 3]
+    ],
+    "admin": [
+        ['manage_files', 3]
+    ],
+    "post": [
+        ['add', 2],
+        ['edit_photo', 2],
+        ['edit_title', 2],
+        ['edit_date', 2],
+        ['edit_description', 2],
+        ['edit_content', 2],
+        ['edit_files', 2],
+        ['edit_tags', 2],
+        ['edit_status', 2],
+        ['edit_author', 2],
+        ['edit_highlight', 2]
+    ],
+    "report": [
+        ['view', 1],
+        ['resolve', 3]
+    ],
+    "block": [
+        ['view', 1],
+        ['block', 3],
+        ['unblock', 3]
+    ],
+    "log": [
+        ['view', 1]
+    ]
+}
+
 
 def get_session(cur, login=False):
     token = request.headers.get("Authorization")

@@ -3,7 +3,7 @@ import os
 from werkzeug.security import generate_password_hash
 from ..postgres import db_open, db_close
 from ..log import log
-from .access import access_pass
+from ..tools import access_pass
 
 
 bp = Blueprint("admin", __name__)

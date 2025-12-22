@@ -14,7 +14,3 @@ get {{host}}/cron HTTP/1.1
 content-type: application/json
 ###
 
-### notification
-get {{host}}/notification HTTP/1.1
-content-type: application/json
-###
