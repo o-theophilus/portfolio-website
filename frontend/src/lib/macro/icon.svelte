@@ -243,14 +243,19 @@
 		/>
 	</svg>
 {:else}
-	<svg data-lucide={icon} style:--sz="{size}px"></svg>
+	<svg class="lucide" data-lucide={icon} style:--size="{size}px"></svg>
 {/if}
 
 <style>
 	svg {
-		width: var(--sz);
-		height: var(--sz);
-
 		flex-shrink: 0;
+	}
+
+	.lucide {
+		width: var(--size);
+		height: var(--size);
+
+		stroke: var(--icon-stroke, currentColor);
+		fill: var(--icon-fill, none);
 	}
 </style>

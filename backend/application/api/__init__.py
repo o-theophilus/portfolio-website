@@ -34,10 +34,11 @@ def cron():
             AND date_created <= NOW() - INTERVAL '30 days';
     """)
     users = cur.fetchall()
-    user_keys = [x["key"] for x in users]
 
-    for x in user_keys:
+    for x in users:
         delete_user(cur, x)
+
+    user_keys = [x["key"] for x in users]
 
     cur.execute("""
         SELECT * FROM "user" WHERE email = %s;

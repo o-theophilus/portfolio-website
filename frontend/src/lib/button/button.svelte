@@ -23,7 +23,7 @@
 		{/if}
 		{@render children?.()}
 		{#if icon2}
-			<div data-lucide={icon2}></div>
+			<Icon icon={icon2} size={icon_size}></Icon>
 		{/if}
 	</a>
 {:else if onclick}
@@ -33,7 +33,7 @@
 		{/if}
 		{@render children?.()}
 		{#if icon2}
-			<div data-lucide={icon2}></div>
+			<Icon icon={icon2} size={icon_size}></Icon>
 		{/if}
 	</button>
 {:else}
@@ -43,7 +43,7 @@
 		{/if}
 		{@render children?.()}
 		{#if icon2}
-			<div data-lucide={icon2}></div>
+			<Icon icon={icon2} size={icon_size}></Icon>
 		{/if}
 	</div>
 {/if}

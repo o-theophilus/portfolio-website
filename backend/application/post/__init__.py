@@ -106,6 +106,7 @@ def edit(key):
     error = {}
 
     title = post["title"]
+    slug = post["slug"]
     date_created = post["date_created"]
     description = post["description"]
     content = post["content"]
@@ -123,6 +124,15 @@ def edit(key):
             error["title"] = "No changes were made"
         elif len(title) > 100:
             error["name"] = "This field cannot exceed 100 characters"
+        else:
+            slug = re.sub(
+                '-+', '-', re.sub('[^a-zA-Z0-9]', '-', title.lower()))
+            slug = slug[:100]
+            cur.execute('SELECT * FROM post WHERE key != %s AND slug = %s;',
+                        (post["key"], slug))
+            slug_in_use = cur.fetchone()
+            if (slug_in_use or slug in reserved_words):
+                slug = f"{slug[:89]}-{str(uuid4().hex)[:10]}"
 
     if "date_created" in request.json:
         date_created = request.json.get("date_created")
@@ -200,14 +210,6 @@ def edit(key):
             "status": 400,
             **error
         })
-
-    slug = re.sub('-+', '-', re.sub('[^a-zA-Z0-9]', '-', title.lower()))
-    slug = slug[:100]
-    cur.execute('SELECT * FROM post WHERE key != %s AND slug = %s;',
-                (post["key"], slug))
-    slug_in_use = cur.fetchone()
-    if (slug_in_use or slug in reserved_words):
-        slug = f"{slug[:89]}-{str(uuid4().hex)[:10]}"
 
     cur.execute("""
         UPDATE post

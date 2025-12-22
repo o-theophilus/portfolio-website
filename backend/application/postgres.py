@@ -188,6 +188,7 @@ schema = {
         },
         "user_key": {
             "type": "uuid",
+            "foreign_key": ["user", "key"]
         },
         "comment": {
             "type": "text",

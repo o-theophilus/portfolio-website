@@ -200,13 +200,19 @@
 		display: flex;
 		align-items: center;
 		gap: 16px;
-		font-size: 0.8rem;
+
 		width: 100%;
+		margin: 4px 0;
+
+		font-size: 0.8rem;
+		line-height: 100%;
 	}
 
 	.checkbox {
 		--size: 20px;
 		position: relative;
+
+		flex-shrink: 0;
 
 		width: var(--size);
 		height: var(--size);

@@ -35,19 +35,22 @@ def default():
             cur=cur,
             user_key=user["key"],
             action="created",
-            entity_type="account"
+            entity_type="account",
+            entity_key=user["key"]
         )
         log(
             cur=cur,
             user_key=user["key"],
             action="signedup",
-            entity_type="account"
+            entity_type="account",
+            entity_key=user["key"]
         )
         log(
             cur=cur,
             user_key=user["key"],
             action="confirmed",
-            entity_type="account"
+            entity_type="account",
+            entity_key=user["key"]
         )
 
     db_close(con, cur)
