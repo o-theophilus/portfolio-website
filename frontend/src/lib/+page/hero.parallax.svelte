@@ -31,6 +31,7 @@
 
 	<div class="block">
 		<div class="icon">
+			<div class="icon_bg"></div>
 			<Icon icon="logo" size="96" />
 		</div>
 		<div class="details">
@@ -136,9 +137,24 @@
 	}
 
 	.icon {
+		position: relative;
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
 		border-radius: 50%;
 		line-height: 0;
 		fill: var(--cl1);
+	}
+
+	.icon_bg {
+		position: absolute;
+		z-index: -1;
+
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
 		background-color: white;
 	}
 

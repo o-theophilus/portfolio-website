@@ -117,12 +117,12 @@
 	}
 
 	a {
-		color: var(--cl1);
+		color: var(--link-color);
 		text-decoration: none;
 		font-weight: 700;
 	}
 	button {
-		color: var(--cl1);
+		color: var(--link-color);
 		border: none;
 		background-color: transparent;
 		cursor: pointer;

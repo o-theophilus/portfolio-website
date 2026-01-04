@@ -21,7 +21,8 @@ def db_close(con, cur):
 
 
 def create_tables():
-    con, cur = db_open()
+    con = psycopg2.connect(os.environ["LOCAL_DB"])
+    cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     cur.execute('CREATE EXTENSION IF NOT EXISTS "pgcrypto";')
     cur.execute("""
@@ -135,12 +136,15 @@ def create_tables():
         );
     """)
 
-    db_close(con, cur)
+    con.commit()
+    cur.close()
+    con.close()
     return jsonify({
         "status": 200
     })
 
 
+# @bp.get("/fix")
 def copy_db():
     def copy_table(from_cur, to_cur, table_name):
         from_cur.execute(f"""SELECT * FROM "{table_name}";""")
@@ -168,9 +172,9 @@ def copy_db():
             VALUES ({', '.join(['%s'] * len(columns))});
         """, values_list)
 
-    from_con = psycopg2.connect(os.environ["LOCAL_DB"])
+    from_con = psycopg2.connect(os.environ["ONLINE_DB"])
     from_cur = from_con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    to_con = psycopg2.connect(os.environ["ONLINE_DB"])
+    to_con = psycopg2.connect(os.environ["LOCAL_DB"])
     to_cur = to_con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     copy_table(from_cur, to_cur, "app")

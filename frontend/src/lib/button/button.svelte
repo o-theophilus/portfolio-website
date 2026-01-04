@@ -10,6 +10,7 @@
 		onmouseenter,
 		href = null,
 		tabindex = null,
+		target = '',
 		icon = null,
 		icon2 = null,
 		icon_size = 16
@@ -17,7 +18,7 @@
 </script>
 
 {#if href}
-	<a {href} class:caps {onmouseenter} title={tooltip} tabindex={null}>
+	<a {href} class:caps {onmouseenter} title={tooltip} tabindex={null} {target}>
 		{#if icon}
 			<Icon {icon} size={icon_size}></Icon>
 		{/if}
@@ -67,8 +68,8 @@
 
 		font-size: var(--button-font-size, 1rem);
 		font-weight: var(--button-font-weight, 700);
-		background-color: var(--button-background-color, hsl(0, 0%, 90%));
-		color: var(--button-color, hsl(0, 0%, 0%));
+		background-color: var(--button-background-color, var(--cl1));
+		color: var(--button-color, white);
 		outline: 2px solid var(--button-outline-color, transparent);
 		outline-offset: -2px;
 		fill: currentColor;
@@ -94,8 +95,11 @@
 	/* button:focus, */
 	a:hover,
 	button:hover {
-		background-color: var(--button-background-color-hover, hsl(0, 0%, 85%));
-		color: var(--button-color-hover, hsl(0, 0%, 0%));
+		background-color: var(
+			--button-background-color-hover,
+			color-mix(in srgb, var(--cl1), black 30%)
+		);
+		color: var(--button-color-hover, white);
 		outline-color: var(--button-outline-color-hover, transparent);
 	}
 

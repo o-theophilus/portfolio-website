@@ -43,11 +43,11 @@
 	section {
 		display: flex;
 		flex-direction: column;
-		gap: var(--sp4);
+		gap: 64px;
 		margin: var(--sp3) 0;
 	}
 	.copyright {
-		margin-top: var(--sp5);
+		margin-top: 80px;
 		font-size: 0.8rem;
 	}
 	@media screen and (min-width: 600px) {

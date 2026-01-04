@@ -14,7 +14,9 @@
 			<div class="close">
 				<RoundButton
 					icon="x"
-					--button-background-color-hover="red"
+					--round-background-color="var(--button-background-color)"
+					--round-background-color-hover="red"
+					--round-outline-color="hsl(0, 0%, 20%)"
 					onclick={() => {
 						module.close();
 					}}
@@ -32,7 +34,7 @@
 <style>
 	section {
 		z-index: 1;
-		
+
 		display: grid;
 		align-items: center;
 		grid-template-columns: 1fr min(400px, 100%) 1fr;
@@ -40,7 +42,7 @@
 		position: fixed;
 		inset: 0;
 
-		padding: var(--sp4) var(--sp3);
+		padding: 64px var(--sp3);
 		overflow-y: auto;
 
 		background-color: var(--overlay);

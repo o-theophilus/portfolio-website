@@ -33,7 +33,7 @@
 <Content --content-height="100%" --content-padding-top="80px">
 	<Observe let:intersecting>
 		<div class="observe">
-			<div class="page_title">What I Can Do</div>
+			<div class="page_title" id="about">What I Can Do</div>
 		</div>
 	</Observe>
 

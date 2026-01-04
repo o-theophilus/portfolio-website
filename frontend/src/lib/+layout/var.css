@@ -2,14 +2,11 @@
 	--trans: 0.2s ease-in-out;
 	--mobileWidth: 800px;
 	--headerHeight: 80px;
-	--aTime: 1s;
 
 	--sp0: 4px;
 	--sp1: 8px;
 	--sp2: 16px;
 	--sp3: 24px;
-	--sp4: 64px;
-	--sp5: 80px;
 
 	--cl1: rgb(0, 0, 204);
 	--yellow: rgb(255, 162, 0);
@@ -28,38 +25,38 @@ main.dark {
 	--ft2: hsl(0, 0%, 60%);
 	--bg2: hsl(0, 0%, 10%);
 	--bg1: hsl(0, 0%, 5%);
-
-	--button-outline-color:hsl(0, 0%, 20%);
-	--select-outline-color:hsl(0, 0%, 20%);
-
-	--cl2: hsl(0, 0%, 20%);
-	--cl3: hsl(0, 0%, 20%);
 }
 
 
-
-
 main{
-	--input-color:var(--ft1);
-	--group-background-color:var(--input);
-	
+	--link-color:#4495d8;
+	--link-color-hover: color-mix(in srgb, #4495d8, black 30%);
+
+	--like-background-color:hsl(0, 0%, 5%);
+	--like-color:hsl(0, 0%, 60%);
+	--like-background-color-hover:var(--cl1);
+
 	--button-background-color:hsl(0, 0%, 5%);
 	--button-color:hsl(0, 0%, 60%);
 	--button-background-color-hover:var(--cl1);
-	--button-color-hover:white;
-	
+
 	--select-background-color:hsl(0, 0%, 5%);
 	--select-color:hsl(0, 0%, 60%);
 	--select-background-color-hover:var(--cl1);
-	--select-color-hover:white;
-	
-	--link-color:var(--ft2);
-	--link-color-hover:var(--cl1);
-	
+
+
+
+
+	--input-color:var(--ft1);
+	--group-background-color:var(--input);
+
 	--pagination-background-color:var(--input);
 	--pagination-outline-color:var(--input);
 	--pagination-outline-color-hover:var(--ft1);
+}
 
-	--cl2: hsl(0, 0%, 75%);
-	--cl3: transparent;
+main.dark {
+	--button-outline-color:hsl(0, 0%, 20%);
+	--select-outline-color:hsl(0, 0%, 20%);
+	--like-outline-color:hsl(0, 0%, 20%);
 }

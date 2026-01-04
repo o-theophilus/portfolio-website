@@ -32,8 +32,8 @@
 		padding: var(--sp0) var(--sp2);
 		font-size: 0.7rem;
 
-		color: var(--like-color, var(--ft2));
-		background-color: var(--like-background-color, var(--bg2));
+		color: var(--like-color, white);
+		background-color: var(--like-background-color, var(--cl1));
 		outline: 2px solid var(--like-outline-color, transparent);
 		outline-offset: -2px;
 		border: none;
@@ -53,8 +53,8 @@
 
 	.active,
 	button:hover {
-		background-color: var(--like-background-color-hover, var(--cl1));
+		background-color: var(--like-background-color-hover, color-mix(in srgb, var(--cl1), black 30%));
 		outline-color: var(--like-outline-color-hover, transparent);
-		color: white;
+		color: var(--like-color-hover, white);
 	}
 </style>

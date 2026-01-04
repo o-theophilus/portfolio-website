@@ -46,8 +46,6 @@
 
 {#if app.login}
 	<Like
-		--like-background-color="var(--button-background-color)"
-		--like-outline-color="var(--button-outline-color)"
 		active={edata.user_like}
 		{like}
 		{dislike}

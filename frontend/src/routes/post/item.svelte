@@ -70,7 +70,7 @@
 		aspect-ratio: 3/4;
 		background-color: var(--bg1);
 
-		transition: transform var(--aTime);
+		transition: transform 1s;
 		transition-timing-function: ease-in-out;
 	}
 

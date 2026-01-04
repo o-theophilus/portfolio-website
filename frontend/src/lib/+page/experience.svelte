@@ -123,7 +123,7 @@
 					active = i;
 				}}
 			>
-				<Icon icon={x.key.toLowerCase()} size="24"></Icon>
+				<Icon icon={x.key.toLowerCase()} size={active == i ? '24' : '20'}></Icon>
 				{x.key}
 			</div>
 		{/each}
@@ -345,9 +345,9 @@
 		margin: var(--sp1) 0;
 	}
 
-	li::marker {
+	/* li::marker {
 		color: var(--cl1);
-	}
+	} */
 
 	.line {
 		margin-top: 16px;

@@ -68,7 +68,6 @@
 
 	{#if !loading}
 		<FoldButton
-			--button-outline-color="var(--cl2)"
 			{open}
 			onclick={() => {
 				open = !open;

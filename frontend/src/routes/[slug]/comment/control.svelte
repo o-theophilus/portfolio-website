@@ -100,7 +100,6 @@
 			<RoundButton icon="reply" onclick={() => module.open(Add, { post, item, update, search })} />
 
 			<Like
-				--like-outline-color="var(--cl3)"
 				--like-height="32px"
 				{like}
 				{dislike}

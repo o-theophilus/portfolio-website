@@ -105,14 +105,14 @@
 
 	.link {
 		text-decoration: none;
-		color: var(--ft1);
+		color: var(--link-color);
 		font-weight: 700;
 
 		transition: color var(--trans);
 	}
 
 	.link:hover {
-		color: var(--cl1);
+		color: var(--link-color-hover);
 	}
 
 	@media screen and (min-width: 600px) {
