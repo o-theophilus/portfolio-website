@@ -31,8 +31,8 @@ def cron():
     cur.execute("""
         SELECT * FROM "user"
         WHERE status = 'anonymous'
-            AND date_created <= NOW() - INTERVAL '30 days';
-    """)
+            AND date_created <= NOW() - INTERVAL '30 days'
+    ;""")
     users = cur.fetchall()
 
     for x in users:
@@ -59,8 +59,8 @@ def cron():
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "deleted_sessions": session_keys,
-        "deleted_users": user_keys,
+        "deleted_sessions": len(session_keys),
+        "deleted_users": len(user_keys),
     })
 
 

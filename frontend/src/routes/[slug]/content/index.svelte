@@ -11,6 +11,8 @@
 
 	const process = (x) => {
 		let temp = x.content;
+		if (!temp) return '';
+
 		let exist = temp.search(/@\[file\]/) >= 0;
 		let i = 0;
 
