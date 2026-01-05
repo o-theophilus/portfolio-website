@@ -46,8 +46,7 @@
 		gap: var(--sp2);
 
 		padding: var(--sp2);
-		padding-right: 64px;
-		/* TODO: check the padding-right value */
+		padding-right: 32px;
 
 		color: white;
 		fill: currentColor;

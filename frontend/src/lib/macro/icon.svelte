@@ -55,7 +55,8 @@
 		LockKeyhole,
 		LockOpen,
 		Bell,
-		ListFilter
+		ListFilter,
+		ImageOff
 	} from 'lucide';
 	import { onMount } from 'svelte';
 	onMount(() => {
@@ -115,7 +116,8 @@
 				LockKeyhole,
 				LockOpen,
 				Bell,
-				ListFilter
+				ListFilter,
+				ImageOff
 			},
 			attrs: {
 				width: 16,

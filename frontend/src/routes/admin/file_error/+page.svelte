@@ -7,7 +7,8 @@
 
 	import { Content } from '$lib/layout';
 	import { FoldButton, Button, BackButton } from '$lib/button';
-	import { Meta, Log } from '$lib/macro';
+	import { Meta, Log, Icon } from '$lib/macro';
+	import { PageNote, Note } from '$lib/info';
 
 	let { data } = $props();
 	let unused = $state(data.unused);
@@ -34,8 +35,6 @@
 			body: JSON.stringify({ files })
 		});
 		resp = await resp.json();
-		console.log(resp);
-		
 		loading.close();
 
 		if (resp.status == 200) {
@@ -69,59 +68,66 @@
 		</div>
 
 		{#if open_unused}
-			<div class="unused" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
-				{#each unused as x (x)}
-					<img
-						animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
-						class:selected={files.includes(x)}
-						src={x.slice(-4) == '.jpg' ? `${x}/100` : '/no_preview.png'}
-						loading="lazy"
-						alt="unused file"
-						onclick={() => {
-							if (files.includes(x)) {
-								files = files.filter((y) => y != x);
-							} else {
-								files.push(x);
-								files = files;
-							}
-						}}
-						role="presentation"
-					/>
+			<div transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
+				{#if unused.length > 0}
+					<div class="unused">
+						{#each unused as x (x)}
+							<img
+								animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
+								class:selected={files.includes(x)}
+								src={x.slice(-4) == '.jpg' ? `${x}/100` : '/no_preview.png'}
+								loading="lazy"
+								alt="unused file"
+								onclick={() => {
+									if (files.includes(x)) {
+										files = files.filter((y) => y != x);
+									} else {
+										files.push(x);
+										files = files;
+									}
+								}}
+								role="presentation"
+							/>
+						{/each}
+					</div>
 				{:else}
-					<div class="none">no photo here</div>
-				{/each}
+					<PageNote>
+						<Icon icon="image-off" size="50" />
+						No photo here
+					</PageNote>
+				{/if}
+				
+				<Note note={error.error} status="400" --note-margin-top="16px"></Note>
+
+				{#if unused.length > 0}
+					<div class="line btns">
+						<Button
+							onclick={() => {
+								if (files.length != unused.length) {
+									files = unused;
+								} else {
+									files = [];
+								}
+							}}
+						>
+							Select
+							{#if files.length != unused.length}
+								All
+							{:else}
+								None
+							{/if}
+						</Button>
+						<Button
+							--button-background-color-hover="red"
+							--button-background-color="darkred"
+							onclick={remove}
+							disabled={files.length == 0}
+						>
+							Delete ({files.length})
+						</Button>
+					</div>
+				{/if}
 			</div>
-
-			{#if error.error}
-				<div class="error" transition:slide>
-					{error.error}
-				</div>
-			{/if}
-
-			{#if unused.length > 0}
-				<br />
-				<div class="line">
-					<Button
-						onclick={() => {
-							if (files.length != unused.length) {
-								files = unused;
-							} else {
-								files = [];
-							}
-						}}
-					>
-						Select
-						{#if files.length != unused.length}
-							All
-						{:else}
-							None
-						{/if}
-					</Button>
-					<Button extra="hover_red" onclick={remove} disabled={files.length == 0}>
-						Delete ({files.length})
-					</Button>
-				</div>
-			{/if}
 		{/if}
 	</div>
 
@@ -139,13 +145,16 @@
 		</div>
 
 		{#if open_users}
-			<div transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
+			<div transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
 				{#each users as x}
 					<a href="/@{x.username}">{x.name}</a>
 
 					<br />
 				{:else}
-					<div class="none">no user here</div>
+					<PageNote>
+						<Icon icon="x" size="50" />
+						No user here
+					</PageNote>
 				{/each}
 			</div>
 		{/if}
@@ -165,13 +174,16 @@
 		</div>
 
 		{#if open_posts}
-			<div transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
+			<div transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
 				{#each posts as x}
 					<a href="/{x.slug}">{x.title}</a>
 
 					<br />
 				{:else}
-					<div class="none">no post here</div>
+					<PageNote>
+						<Icon icon="x" size="50" />
+						No post here
+					</PageNote>
 				{/each}
 			</div>
 		{/if}
@@ -194,7 +206,7 @@
 	.unused {
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--sp1);
+		gap: 4px;
 	}
 
 	img {
@@ -204,21 +216,11 @@
 		background-color: var(--bg2);
 	}
 	img.selected {
-		outline: 2px solid var(--cl1);
+		outline: 4px solid red;
+		outline-offset: -4px;
 	}
 
-	.line {
-		display: flex;
-		gap: var(--sp1);
-	}
-
-	.error {
-		margin: var(--sp2) 0;
-		color: red;
-		font-size: 0.8rem;
-	}
-
-	.none {
-		font-size: 0.8rem;
+	.btns {
+		margin-top: var(--sp2);
 	}
 </style>
