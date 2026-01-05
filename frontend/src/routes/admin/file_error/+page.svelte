@@ -59,7 +59,7 @@
 
 	<div class="fold">
 		<div class="group_title">
-			Unused Photo{unused.length > 1 ? 's' : ''} / Fils{unused.length > 1 ? 's' : ''} ({unused.length})
+			Unused Photo{unused.length > 1 ? 's' : ''} / File{unused.length > 1 ? 's' : ''} ({unused.length})
 			<FoldButton
 				open={open_unused}
 				onclick={() => {
