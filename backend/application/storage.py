@@ -96,7 +96,18 @@ def get(x, path, thumbnail):
 
 def get_all(path):
     try:
-        files = drive().list(path)
+        offset = 0
+        limit = 100
+        files = []
+
+        while True:
+            resp = drive().list(path, {"limit": limit, "offset": offset})
+            files += resp
+            offset += limit
+
+            if len(resp) < limit:
+                break
+
     except Exception as e:
         abort(400, description=str(e))
     return [x["name"] for x in files]
