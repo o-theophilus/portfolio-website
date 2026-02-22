@@ -1,8 +1,9 @@
-from flask import Blueprint, request, jsonify
 from math import ceil
-from ..tools import get_session, user_schema, access_pass
-from ..postgres import db_close, db_open
 
+from flask import Blueprint, jsonify, request
+
+from ..postgres import db_close, db_open
+from ..tools import access_pass, get_session, user_schema
 
 bp = Blueprint("user_get", __name__)
 
@@ -17,11 +18,17 @@ def get(key):
         return jsonify(session)
 
     cur.execute("""
-        SELECT * FROM "user" WHERE key::TEXT = %s OR username = %s;
+        SELECT
+            "user".*,
+            CASE WHEN block.user_key IS NOT NULL
+                THEN true ELSE false END AS blocked
+        FROM "user"
+        LEFT JOIN block ON "user".key = block.user_key
+        WHERE "user".key::TEXT = %s OR "user".username = %s;
     """, (key, key))
-    item = cur.fetchone()
+    user = cur.fetchone()
 
-    if not item:
+    if not user:
         db_close(con, cur)
         return jsonify({
             "status": 404,
@@ -40,7 +47,7 @@ def get(key):
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "item": user_schema(item),
+        "user": user_schema(user),
         "access": _access
     })
 
@@ -75,38 +82,141 @@ def get_many():
         'name (z-a)': 'DESC'
     }
 
-    status = request.args.get("status", "confirmed")
-    search = request.args.get("search", "").strip()
-    order = request.args.get("order", "latest")
-    page_no = int(request.args.get("page_no", 1))
-    page_size = int(request.args.get("size", 24))
+    searchParams = {
+        "search": "",
+        "status": "confirmed",
+        "order": "latest",
+        "page_no": 1,
+        "page_size": 24
+    }
+    search = request.args.get("search", searchParams["search"]).strip()
+    status = request.args.get("status", searchParams["status"])
+    order = request.args.get("order", searchParams["order"])
+    page_no = int(request.args.get("page_no", searchParams["page_no"]))
+    page_size = int(request.args.get("page_size", searchParams["page_size"]))
+    page_size = min(page_size, 100)
 
-    cur.execute("""
-        SELECT *, COUNT(*) OVER() AS _count
+    cur.execute(f"""
+        SELECT
+            "user".*,
+            CASE WHEN block.user_key IS NOT NULL
+                THEN true ELSE false END AS blocked,
+            COUNT(*) OVER() AS _count
         FROM "user"
+        LEFT JOIN block ON "user".key = block.user_key
         WHERE (
-                %s = 'all' OR status = %s
+                %s = 'all' OR "user".status = %s
             ) AND (
                 %s = ''
-                OR CONCAT_WS(', ', key, name, email
+                OR CONCAT_WS(', ', "user".key, "user".name, "user".email
             ) ILIKE %s
         )
-        ORDER BY {} {}
+        ORDER BY {order_by[order]} {order_dir[order]}, "user".key DESC
         LIMIT %s OFFSET %s;
-    """.format(
-        order_by[order], order_dir[order]
-    ), (
+    """, (
         status, status,
         search, f"%{search}%",
         page_size, (page_no - 1) * page_size
     ))
-    items = cur.fetchall()
+    users = cur.fetchall()
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "items": [user_schema(x) for x in items],
+        "users": [user_schema(x) for x in users],
         "order_by": list(order_by.keys()),
         "_status": ['anonymous', 'signedup', 'confirmed'],
-        "total_page": ceil(items[0]["_count"] / page_size) if items else 0
+        "total_page": ceil(users[0]["_count"] / page_size) if users else 0,
+        "searchParams": searchParams
+    })
+
+
+@bp.get("/admin/user")
+def get_admins():
+    con, cur = db_open()
+
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
+
+    if "user:set_access" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    order_by = {
+        'latest': 'date_created',
+        'oldest': 'date_created',
+        'name (a-z)': 'name',
+        'name (z-a)': 'name'
+    }
+
+    order_dir = {
+        'latest': 'DESC',
+        'oldest': 'ASC',
+        'name (a-z)': 'ASC',
+        'name (z-a)': 'DESC'
+    }
+
+    searchParams = {
+        "entity_type": "all",
+        "action": "all",
+        "search": "",
+        "order": "latest",
+        "page_no": 1,
+        "page_size": 24
+    }
+    entity_type = request.args.get("entity_type", searchParams["entity_type"])
+    action = request.args.get("action", searchParams["action"])
+    search = request.args.get("search", searchParams["search"]).strip()
+    order = request.args.get("order", searchParams["order"])
+    page_no = int(request.args.get("page_no", searchParams["page_no"]))
+    page_size = int(request.args.get("page_size", searchParams["page_size"]))
+    page_size = min(page_size, 100)
+
+    cur.execute(f"""
+        SELECT
+            "user".*,
+            CASE WHEN block.user_key IS NOT NULL
+                THEN true ELSE false END AS blocked,
+            COUNT(*) OVER() AS _count
+        FROM "user"
+        LEFT JOIN block ON "user".key = block.user_key
+        WHERE
+            array_length("user".access, 1) IS NOT NULL
+            AND (%s = '' OR CONCAT_WS(
+                ', ', "user".key, "user".name, "user".email) ILIKE %s)
+            AND (%s = 'all' OR ARRAY_TO_STRING("user".access, ',') ILIKE %s)
+            AND (%s = 'all' OR ARRAY_TO_STRING("user".access, ',') ILIKE %s)
+        ORDER BY {order_by[order]} {order_dir[order]}, "user".key DESC
+        LIMIT %s OFFSET %s;
+    """, (
+        search, f"%{search}%",
+        entity_type, f"%{entity_type}:%",
+        action, f"%{entity_type}:{action}%",
+        page_size, (page_no - 1) * page_size
+    ))
+    users = cur.fetchall()
+
+    access = {
+        "all": ['all']
+    }
+    for x in access_pass:
+        if x not in access:
+            access[x] = ["all"]
+            for y in access_pass[x]:
+                access[x].append(y[0])
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "users": [user_schema(x) for x in users],
+        "search_query": access,
+        "order_by": list(order_by.keys()),
+        "total_page": ceil(users[0]["_count"] / page_size) if users else 0,
+        "searchParams": searchParams
     })

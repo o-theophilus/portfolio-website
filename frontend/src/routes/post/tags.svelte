@@ -1,11 +1,11 @@
 <script>
-	import { slide } from 'svelte/transition';
-	import { onMount } from 'svelte';
 	import { app } from '$lib/store.svelte.js';
+	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
 
-	import { Toggle, Button, RoundButton } from '$lib/button';
-	import { Icon } from '$lib/macro';
+	import { Button, RoundButton, Toggle } from '$lib/button';
 	import { IG } from '$lib/input';
+	import { Icon } from '$lib/macro';
 
 	let { value = $bindable(), ondone } = $props();
 
@@ -177,7 +177,7 @@
 		padding: 0 8px;
 
 		background-color: var(--bg1);
-		border-radius: var(--sp0);
+		border-radius: 4px;
 		outline: 2px solid var(--bg2);
 	}
 
@@ -223,7 +223,7 @@
 		background-color: var(--input);
 		cursor: pointer;
 
-		transition: background-color var(--trans);
+		transition: background-color 0.2s ease-in-out;
 	}
 
 	.checkbox:hover {
@@ -242,7 +242,7 @@
 		justify-content: center;
 		color: transparent;
 
-		transition: color var(--trans);
+		transition: color 0.2s ease-in-out;
 	}
 	.active .icon {
 		color: white;

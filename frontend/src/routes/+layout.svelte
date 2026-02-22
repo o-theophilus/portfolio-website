@@ -1,9 +1,8 @@
 <script>
-	import '$lib/+layout/var.css';
-	import '$lib/+layout/main.css';
-	import { app } from '$lib/store.svelte.js';
-	import { Nav, Footer, Module, Loading } from '$lib/+layout';
 	import { Notify } from '$lib/info';
+	import { app } from '$lib/store.svelte.js';
+	import { Footer, Loading, Module, Nav } from './_layout';
+	import './_layout/main.css';
 
 	let { data, children } = $props();
 	app.user = data.locals.user;
@@ -11,7 +10,7 @@
 	app.login = data.locals.login;
 </script>
 
-<main class:dark={app.user.theme == 'dark'}>
+<main class="{app.user.theme}_theme">
 	<Nav />
 	{@render children()}
 	<Footer />
@@ -28,7 +27,7 @@
 		background-color: var(--bg1);
 		color: var(--ft2);
 		transition:
-			background-color var(--trans),
-			color var(--trans);
+			background-color 0.2s ease-in-out,
+			color 0.2s ease-in-out;
 	}
 </style>

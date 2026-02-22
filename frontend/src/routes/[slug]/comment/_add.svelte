@@ -1,15 +1,13 @@
 <script>
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Marked } from '$lib/macro';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
-	import { Note } from '$lib/info';
-	import Item from './item.svelte';
+	import One from './one.svelte';
 
 	let post = module.value.post;
-	let parent = module.value.item;
+	let parent = module.value.comment;
 
 	let form = $state({
 		comment: '',
@@ -48,7 +46,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.items);
+			module.value.update(resp.comments);
 			module.close();
 			notify.open('Comment Added');
 		} else {
@@ -59,7 +57,7 @@
 
 <Form title="{parent ? 'Reply' : 'Add'} Comment" error={error.error}>
 	{#if parent}
-		<Item item={parent}></Item>
+		<One comment={parent}></One>
 	{/if}
 
 	<IG

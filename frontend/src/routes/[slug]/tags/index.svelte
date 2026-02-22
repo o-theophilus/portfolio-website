@@ -1,9 +1,8 @@
 <script>
-	import { module, app, page_state } from '$lib/store.svelte.js';
-	import { goto } from '$app/navigation';
+	import { app, module, page_state } from '$lib/store.svelte.js';
 
-	import Button from '../button.svelte';
 	import { Tag } from '$lib/button';
+	import Button from '../button.svelte';
 	import Edit from './edit.svelte';
 
 	let { item, edit_mode, update } = $props();
@@ -48,6 +47,6 @@
 	}
 
 	hr {
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 	}
 </style>

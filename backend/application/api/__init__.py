@@ -1,19 +1,16 @@
-from flask import Blueprint, jsonify, request
-import re
 import os
-from ..tools import send_mail
-from ..postgres import db_open, db_close
-from ..log import log
-from ..auth import delete_user
+import re
 
+from flask import Blueprint, jsonify, request
+
+from ..log import log
+from ..postgres import db_close, db_open
+from ..tools import get_session, send_mail
 
 bp = Blueprint("api", __name__)
 
 
-@bp.get("/cron")
-def cron():
-    con, cur = db_open()
-
+def delete_session(cur, user_key):
     cur.execute("""
         DELETE FROM session
         WHERE (
@@ -23,44 +20,106 @@ def cron():
                 remember = TRUE
                 AND date_updated <= NOW() - INTERVAL '14 days'
             )
-        RETURNING *;
+        RETURNING key;
     """)
     sessions = cur.fetchall()
-    session_keys = [x["key"] for x in sessions]
-
-    cur.execute("""
-        SELECT * FROM "user"
-        WHERE status = 'anonymous'
-            AND date_created <= NOW() - INTERVAL '30 days'
-    ;""")
-    users = cur.fetchall()
-
-    for x in users:
-        delete_user(cur, x)
-
-    user_keys = [x["key"] for x in users]
-
-    cur.execute("""
-        SELECT * FROM "user" WHERE email = %s;
-    """, (os.environ["MAIL_USERNAME"],))
-    user = cur.fetchone()
     log(
         cur=cur,
-        user_key=user["key"],
-        action="run cron",
-        entity_key="app",
+        user_key=user_key,
+        action="cleaned up expired sessions",
+        entity_key="maintenance",
         entity_type="app",
         misc={
-            "deleted_sessions": session_keys,
-            "deleted_users": user_keys,
+            "deleted_sessions": [x["key"] for x in sessions],
         }
     )
 
+
+def delete_anonymous(cur, user_key):
+    cur.execute("""
+        DELETE FROM "user"
+        WHERE status = 'anonymous'
+            AND date_created <= NOW() - INTERVAL '30 days'
+        RETURNING key;
+    """)
+    users = cur.fetchall()
+    log(
+        cur=cur,
+        user_key=user_key,
+        action="cleaned up anonymous users",
+        entity_key="maintenance",
+        entity_type="app",
+        misc={
+            "deleted_users": [x["key"] for x in users],
+        }
+    )
+
+
+@bp.post("/maintenance/session")
+def user_delete_session():
+    con, cur = db_open()
+
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
+
+    if "maintenance:session" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    delete_session(cur, user["key"])
+
     db_close(con, cur)
     return jsonify({
-        "status": 200,
-        "deleted_sessions": len(session_keys),
-        "deleted_users": len(user_keys),
+        "status": 200
+    })
+
+
+@bp.post("/maintenance/anonymous")
+def user_delete_anonymous():
+    con, cur = db_open()
+
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
+
+    if "maintenance:anonymous" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    delete_session(cur, user["key"])
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
+@bp.get("/cron")
+def cron():
+    con, cur = db_open()
+
+    cur.execute("""
+        SELECT key FROM "user" WHERE email = %s;
+    """, (os.environ["MAIL_USERNAME"],))
+    user = cur.fetchone()
+
+    delete_session(cur, user["key"])
+    delete_anonymous(cur, user["key"])
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
     })
 
 
@@ -93,7 +152,7 @@ def footer_send_email():
 
     if not message:
         error["message"] = "This field is required"
-    if error != {}:
+    if error:
         return jsonify({
             "status": 400,
             **error

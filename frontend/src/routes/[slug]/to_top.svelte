@@ -46,8 +46,8 @@
 		--stroke_width: 10px;
 
 		position: fixed;
-		bottom: var(--sp3);
-		right: var(--sp3);
+		bottom: 24px;
+		right: 24px;
 		z-index: 1;
 
 		display: flex;
@@ -62,7 +62,7 @@
 		opacity: 0;
 		pointer-events: none;
 
-		transition: opacity var(--trans);
+		transition: opacity 0.2s ease-in-out;
 	}
 	.show {
 		opacity: 0.5;

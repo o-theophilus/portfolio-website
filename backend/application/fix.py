@@ -1,51 +1,86 @@
-from flask import Blueprint, jsonify
-from .postgres import db_open, db_close
+import os
 
+from flask import Blueprint, jsonify
+
+from .postgres import db_close, db_open
+from .tools import access_pass
 
 bp = Blueprint("fix", __name__)
 
 
+# TODO: update live app
 # @bp.get("/fix")
 def quick_fix():
     con, cur = db_open()
 
+    # cur.execute("""
+    #     ALTER TABLE "like"
+    #     ADD COLUMN IF NOT EXISTS post_key UUID REFERENCES post(key)
+    #         ON DELETE CASCADE,
+    #     ADD COLUMN IF NOT EXISTS comment_key UUID REFERENCES comment(key)
+    #         ON DELETE CASCADE;
+    # """)
+
+    # cur.execute("""
+    #     UPDATE "like"
+    #     SET post_key = entity_key::UUID
+    #     WHERE entity_type = 'post';
+    # """)
+
+    # cur.execute("""
+    #     UPDATE "like"
+    #     SET comment_key = entity_key::UUID
+    #     WHERE entity_type = 'comment';
+    # """)
+
+    # cur.execute("""
+    #     ALTER TABLE "like"
+    #     DROP COLUMN IF EXISTS entity_type,
+    #     DROP COLUMN IF EXISTS entity_key;
+    # """)
+
+    # cur.execute("""
+    #     DROP TABLE IF EXISTS report CASCADE;
+
+    #      CREATE TABLE IF NOT EXISTS report (
+    #         key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    #         date_created TIMESTAMPTZ DEFAULT now(),
+    #         status TEXT NOT NULL DEFAULT 'active',
+
+    #         reporter_key UUID NOT NULL REFERENCES "user"(key),
+
+    #         reported_key UUID REFERENCES "user"(key) ON DELETE CASCADE,
+    #         comment_key UUID REFERENCES comment(key) ON DELETE CASCADE,
+
+    #         comment TEXT NOT NULL,
+    #         tags TEXT[] DEFAULT '{}'::TEXT[],
+
+    #         resolver_key UUID REFERENCES "user"(key),
+    #         resolve_comment TEXT,
+    #         date_resolved TIMESTAMPTZ
+    #     );
+    # """)
+
     cur.execute("""
-        ALTER TABLE comment
-        DROP CONSTRAINT IF EXISTS comment_user_key_fkey,
-        DROP CONSTRAINT IF EXISTS comment_post_key_fkey,
-        DROP CONSTRAINT IF EXISTS comment_parent_key_fkey;
-        ALTER TABLE comment
-        ADD FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE,
-        ADD FOREIGN KEY (post_key) REFERENCES post(key) ON DELETE CASCADE,
-        ADD FOREIGN KEY (parent_key) REFERENCES comment(key) ON DELETE CASCADE;
-
-        ALTER TABLE report
-        DROP CONSTRAINT IF EXISTS report_user_key_fkey;
-        ALTER TABLE report
-        ADD FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE;
-
-        ALTER TABLE block
-        DROP CONSTRAINT IF EXISTS block_admin_key_fkey,
-        DROP CONSTRAINT IF EXISTS block_user_key_fkey;
-        ALTER TABLE block
-        ADD FOREIGN KEY (admin_key) REFERENCES "user"(key) ON DELETE CASCADE,
-        ADD FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE;
-
-        ALTER TABLE "like"
-        DROP CONSTRAINT IF EXISTS like_user_key_fkey;
-        ALTER TABLE "like"
-        ADD FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE;
-
-        ALTER TABLE code
-        DROP CONSTRAINT IF EXISTS code_user_key_fkey;
-        ALTER TABLE code
-        ADD FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE;
-
-        ALTER TABLE session
-        DROP CONSTRAINT IF EXISTS session_user_key_fkey;
-        ALTER TABLE session
-        ADD FOREIGN KEY (user_key) REFERENCES "user"(key) ON DELETE CASCADE;
+        ALTER TABLE "user"
+        ALTER COLUMN theme SET DEFAULT 'system';
     """)
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
+
+
+def fix_access():
+    con, cur = db_open()
+
+    cur.execute("""
+        UPDATE "user" SET access=%s WHERE email = %s;
+    """, (
+        [f"{x}:{y[0]}" for x in access_pass for y in access_pass[x]],
+        os.environ["MAIL_USERNAME"]
+    ))
 
     db_close(con, cur)
     return jsonify({

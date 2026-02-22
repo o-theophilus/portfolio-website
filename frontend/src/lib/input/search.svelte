@@ -59,6 +59,6 @@
 		gap: 2px;
 	}
 	.close {
-		margin-right: var(--sp1);
+		margin-right: 8px;
 	}
 </style>

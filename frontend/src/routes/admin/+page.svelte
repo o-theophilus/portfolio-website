@@ -1,9 +1,9 @@
 <script>
 	import { app } from '$lib/store.svelte.js';
 
-	import { Meta, Log } from '$lib/macro';
-	import { Content } from '$lib/layout';
 	import { Button } from '$lib/button';
+	import { Content } from '$lib/layout';
+	import { Log, Meta } from '$lib/macro';
 </script>
 
 <Log entity_type={'page'} />
@@ -39,9 +39,9 @@
 	.btns {
 		display: flex;
 		flex-direction: column;
-		gap: var(--sp1);
+		gap: 8px;
 
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 		max-width: 400px;
 	}
 </style>

@@ -1,14 +1,12 @@
 <script>
 	import { page } from '$app/state';
-	import { onMount } from 'svelte';
 	import { module } from '$lib/store.svelte.js';
+	import { onMount } from 'svelte';
 
-	import { Hero, About, Skill, Experience, Contact, Highlight, ACD } from '$lib/+page';
-	import { Meta, Log } from '$lib/macro';
-	import { Dialogue } from '$lib/info';
 	import { Login } from '$lib/auth';
-
-	import Carousel from '$lib/+page/carousel.svelte';
+	import { Dialogue } from '$lib/info';
+	import { Log, Meta } from '$lib/macro';
+	import { About, ACD, Contact, Experience, Hero, Highlight, Skill } from './_home';
 
 	const get_module = (x) => {
 		if (x == 'login') {
@@ -48,4 +46,3 @@
 <Contact />
 <Experience />
 <Highlight />
-<!-- <Carousel></Carousel> -->

@@ -18,7 +18,7 @@
 		if (!form.password) {
 			error.password = 'This field is required';
 		} else if (
-			!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$/.test(form.password) ||
+			!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^\s]+$/.test(form.password) ||
 			form.password.length < 8 ||
 			form.password.length > 18
 		) {

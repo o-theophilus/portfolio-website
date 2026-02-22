@@ -12,11 +12,11 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		gap: var(--sp2);
+		gap: 16px;
 
 		height: 200px;
-		border-radius: var(--sp0);
-		padding: var(--sp2);
+		border-radius: 4px;
+		padding: 16px;
 
 		color: var(--ft2);
 		text-align: center;

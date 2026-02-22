@@ -1,6 +1,6 @@
 <script>
-	import { slide } from 'svelte/transition';
 	import { Icon } from '$lib/macro';
+	import { slide } from 'svelte/transition';
 
 	let { status, note, children } = $props();
 </script>
@@ -33,13 +33,13 @@
 
 <style>
 	.block {
-		padding: var(--sp2);
+		padding: 16px;
 		margin-top: var(--note-margin-top, 0);
 		margin-bottom: var(--note-margin-bottom, 16px);
 		max-width: var(--note-width, 100%);
 
 		background-color: color-mix(in srgb, var(--cl1), transparent 90%);
-		border-radius: var(--sp0);
+		border-radius: 4px;
 		font-size: 0.8rem;
 	}
 

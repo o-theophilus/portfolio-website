@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from psycopg2.extras import Json
-from ..tools import get_session
+
 from ..postgres import db_close, db_open
+from ..tools import get_session
 
 bp = Blueprint("log", __name__)
 

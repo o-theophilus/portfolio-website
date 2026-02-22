@@ -1,0 +1,109 @@
+@media(prefers-color-scheme: dark){
+	:root:has(main.system_theme){
+		color-scheme: light dark;
+	}
+}
+:root:has(main.light_theme){
+	color-scheme: light;
+}
+:root:has(main.dark_theme){
+	color-scheme: dark;
+}
+
+:root {
+	--cl1: rgb(0, 0, 204);
+	--yellow: rgb(255, 162, 0);
+	--overlay: rgba(128, 128, 128, 0.5);
+	--input: hsla(230, 30%, 41%, 0.1);
+	
+	--ft1: light-dark( black, white);
+	--ft2: light-dark( hsl(0, 0%, 40%), hsl(0, 0%, 60%));
+	--bg2: light-dark( hsl(233, 10%, 89%), hsl(0, 0%, 10%));
+	--bg1: light-dark( white, hsl(0, 0%, 5%));
+	
+
+	--mobileWidth: 800px;
+	--headerHeight: 80px;
+}
+
+
+/* TODO: remove the below */
+main{
+	--link-color:#4495d8;
+	--link-color-hover: color-mix(in srgb, #4495d8, black 30%);
+	
+	--like-background-color:hsl(0, 0%, 5%);
+	--like-color:hsl(0, 0%, 60%);
+	--like-background-color-hover:var(--cl1);
+
+	--button-background-color:hsl(0, 0%, 5%);
+	--button-color:hsl(0, 0%, 60%);
+	--button-background-color-hover:var(--cl1);
+
+	--select-background-color:hsl(0, 0%, 5%);
+	--select-color:hsl(0, 0%, 60%);
+	--select-background-color-hover:var(--cl1);
+
+	
+
+	--input-color:var(--ft1);
+	--group-background-color:var(--input);
+	
+	--pagination-background-color:var(--input);
+	--pagination-outline-color:var(--input);
+	--pagination-outline-color-hover:var(--ft1);
+}
+
+:root,
+textarea,
+select,
+input,
+button {
+	font-family:"Lexend", sans-serif;
+	font-size: 1em;
+
+}
+
+* {
+	line-height: 150%;
+	margin: 0;
+	padding: 0;
+	
+	box-sizing: border-box;
+	outline: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	transition: background-color 9999s;
+	-webkit-text-fill-color: var(--ft1);
+}
+
+
+
+hr {
+	border: none;
+	border-top: 2px solid var(--input);
+}
+
+.page_title {
+	color: var(--ft1);
+	font-size: 1.5rem;
+	font-weight: 800;
+}
+
+.line {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.line.space{
+	justify-content: space-between;
+}
+.line.nowrap{
+	flex-wrap: nowrap;
+}

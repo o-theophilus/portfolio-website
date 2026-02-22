@@ -1,9 +1,10 @@
-from flask import Blueprint, jsonify, request
 import re
-from ..postgres import db_open, db_close
-from ..tools import get_session, user_schema,  reserved_words
-from ..log import log
 
+from flask import Blueprint, jsonify, request
+
+from ..log import log
+from ..postgres import db_close, db_open
+from ..tools import get_session, reserved_words, user_schema
 
 bp = Blueprint("user", __name__)
 
@@ -18,14 +19,18 @@ def theme():
         return jsonify(session)
     user = session["user"]
 
-    theme = "light"
-    if user["theme"] == "light":
-        theme = "dark"
+    theme = request.json.get("theme")
+    if theme not in ["light", "dark", "system"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
 
     log(
         cur=cur,
         user_key=user["key"],
-        action="changed_theme",
+        action="changed theme",
         entity_type="user",
         entity_key=user["key"],
         misc={
@@ -35,14 +40,8 @@ def theme():
     )
 
     cur.execute("""
-        UPDATE "user"
-        SET theme = %s
-        WHERE key = %s
-        RETURNING *
-    ;""", (
-        theme,
-        user["key"]
-    ))
+        UPDATE "user" SET theme = %s WHERE key = %s RETURNING *
+    ;""", (theme, user["key"]))
     user = cur.fetchone()
 
     db_close(con, cur)
@@ -106,7 +105,7 @@ def edit_user():
         elif len(phone) > 20:
             error["phone"] = "This field cannot exceed 20 characters"
 
-    if error != {}:
+    if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,

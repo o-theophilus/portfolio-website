@@ -1,9 +1,9 @@
 <script>
-	import Input from './input.svelte';
 	import { Icon } from '$lib/macro';
+	import { slide } from 'svelte/transition';
+	import Input from './input.svelte';
 	import Check from './password.checker.svelte';
 	import Show from './password.show.svelte';
-	import { slide } from 'svelte/transition';
 
 	let {
 		value = $bindable(),
@@ -116,7 +116,7 @@
 		width: 100%;
 	}
 	.inputGroup:not(.no_pad) {
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 	}
 
 	.input {
@@ -126,9 +126,9 @@
 
 		width: 100%;
 
-		border-radius: var(--sp0);
+		border-radius: 4px;
 		border: none;
-		margin: var(--sp1) 0;
+		margin: 8px 0;
 
 		outline: 2px solid var(--input);
 		outline-offset: -2px;
@@ -136,7 +136,7 @@
 		fill: currentColor;
 
 		background-color: var(--group-background-color, transparent);
-		transition: outline-color var(--trans);
+		transition: outline-color 0.2s ease-in-out;
 	}
 
 	.input.disabled {
@@ -151,7 +151,7 @@
 
 	.label {
 		font-size: 0.8rem;
-		transition: color var(--trans);
+		transition: color 0.2s ease-in-out;
 	}
 	:global(.inputGroup:has(.input:hover:not(.disabled))),
 	:global(.inputGroup:has(:focus) .label) {
@@ -169,7 +169,7 @@
 	}
 
 	.left_pad {
-		padding-left: var(--sp2);
+		padding-left: 16px;
 	}
 
 	.show_password {

@@ -1,16 +1,16 @@
 <script>
 	import { page } from '$app/state';
 
-	import { module, loading, app } from '$lib/store.svelte.js';
+	import { app, loading, module } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button, Link } from '$lib/button';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 	import { Icon } from '$lib/macro';
-	import Signup from './signup.svelte';
-	import Forgot from './forgot_1.email.svelte';
-	import EmailTemplate from './confirm.template.svelte';
 	import Confirm from './confirm.svelte';
+	import EmailTemplate from './confirm.template.svelte';
+	import Forgot from './forgot_1.email.svelte';
+	import Signup from './signup.svelte';
 
 	let email_template;
 
@@ -93,7 +93,6 @@
 				class="custom-checkbox"
 				onclick={() => (form.remember = !form.remember)}
 				role="presentation"
-
 			>
 				<div class="checkbox" class:active={form.remember}>
 					<div class="icon">
@@ -151,10 +150,10 @@
 		background-color: var(--input);
 		cursor: pointer;
 
-		transition: background-color var(--trans);
+		transition: background-color 0.2s ease-in-out;
 	}
 
-	.checkbox:hover{
+	.checkbox:hover {
 		outline-color: var(--ft1);
 	}
 	.active {
@@ -170,7 +169,7 @@
 		justify-content: center;
 		color: transparent;
 
-		transition: color var(--trans);
+		transition: color 0.2s ease-in-out;
 	}
 	.active .icon {
 		color: white;

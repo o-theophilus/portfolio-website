@@ -8,7 +8,7 @@
 	const prerender = () => {
 		app.post = item;
 	};
-	let src = $state(item.photo ? `${item.photo}/500`: '/no_photo.png');
+	let src = $state(item.photo ? `${item.photo}/500` : '/no_photo.png');
 </script>
 
 <a href="/{item.slug}" onclick={prerender} onmouseenter={prerender}>
@@ -56,9 +56,9 @@
 		text-decoration: none;
 
 		outline: 2px solid transparent;
-		transition: outline-color var(--trans);
+		transition: outline-color 0.2s ease-in-out;
 
-		border-radius: var(--sp0);
+		border-radius: 4px;
 		overflow: hidden;
 	}
 
@@ -84,7 +84,7 @@
 
 	a:hover .description {
 		grid-template-rows: 1fr;
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 	}
 
 	.details {
@@ -92,17 +92,17 @@
 		bottom: 0;
 
 		width: 100%;
-		padding: 0 var(--sp3);
+		padding: 0 24px;
 
 		color: var(--ft1);
 		background-color: color-mix(in srgb, var(--bg1), transparent 10%);
 	}
 
 	.title {
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 		line-height: 120%;
 		font-weight: 700;
-		transition: color var(--trans);
+		transition: color 0.2s ease-in-out;
 	}
 
 	.description {
@@ -112,8 +112,8 @@
 		color: var(--ft2);
 		font-size: 0.8rem;
 		transition:
-			grid-template-rows var(--trans),
-			margin var(--trans);
+			grid-template-rows 0.2s ease-in-out,
+			margin 0.2s ease-in-out;
 	}
 	.description div {
 		overflow-y: hidden;
@@ -121,14 +121,14 @@
 
 	.bottom {
 		font-size: 0.8rem;
-		transition: color var(--trans);
+		transition: color 0.2s ease-in-out;
 		justify-content: space-between;
 		flex-wrap: wrap;
-		gap: var(--sp2);
+		gap: 16px;
 
 		color: var(--ft2);
 		line-height: 1;
-		padding: var(--sp1) 0;
+		padding: 8px 0;
 		border-top: 1px solid gray;
 	}
 

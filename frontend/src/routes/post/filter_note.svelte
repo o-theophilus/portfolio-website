@@ -2,7 +2,6 @@
 	import { page_state } from '$lib/store.svelte.js';
 
 	import { RoundButton } from '$lib/button';
-	import { Content } from '$lib/layout';
 
 	let text = $derived.by(() => {
 		let text = '';
@@ -47,14 +46,14 @@
 <style>
 	.filter {
 		display: flex;
-		gap: var(--sp2);
+		gap: 16px;
 		justify-content: space-between;
 		align-items: center;
 
-		margin-top: var(--sp2);
+		margin-top: 16px;
 
-		padding: var(--sp2);
-		border-radius: var(--sp0);
+		padding: 16px;
+		border-radius: 4px;
 
 		background-color: color-mix(in srgb, var(--cl1), transparent 90%);
 		color: var(--ft1);

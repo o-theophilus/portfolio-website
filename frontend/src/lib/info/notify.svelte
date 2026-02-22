@@ -1,8 +1,8 @@
 <script>
 	import { notify } from '$lib/store.svelte.js';
-	import { fade } from 'svelte/transition';
-	import { cubicInOut } from 'svelte/easing';
 	import { flip } from 'svelte/animate';
+	import { cubicInOut } from 'svelte/easing';
+	import { fade } from 'svelte/transition';
 
 	import Item from './notify.item.svelte';
 </script>
@@ -22,7 +22,7 @@
 <style>
 	section {
 		z-index: 1;
-		
+
 		position: fixed;
 		top: var(--headerHeight);
 		right: 0;
@@ -30,7 +30,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-end;
-		gap: var(--sp1);
+		gap: 8px;
 
 		pointer-events: none;
 	}

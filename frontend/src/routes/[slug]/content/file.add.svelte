@@ -1,5 +1,5 @@
 <script>
-	import { loading, notify, module, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
 	let { ops } = $props();
 	let input;
@@ -109,11 +109,11 @@
 <style>
 	img {
 		width: 100%;
-		border-radius: var(--sp1);
+		border-radius: 8px;
 		outline: 2px solid transparent;
 		transition:
-			outline-color var(--trans),
-			transform var(--trans);
+			outline-color 0.2s ease-in-out,
+			transform 0.2s ease-in-out;
 
 		aspect-ratio: var(--ar);
 	}

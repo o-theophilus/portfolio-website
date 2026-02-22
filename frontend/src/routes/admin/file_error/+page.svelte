@@ -1,14 +1,14 @@
 <script>
-	import { slide } from 'svelte/transition';
-	import { cubicInOut } from 'svelte/easing';
 	import { flip } from 'svelte/animate';
+	import { cubicInOut } from 'svelte/easing';
+	import { slide } from 'svelte/transition';
 
-	import { loading, notify, app } from '$lib/store.svelte.js';
+	import { app, loading, notify } from '$lib/store.svelte.js';
 
+	import { BackButton, Button, FoldButton } from '$lib/button';
+	import { Note, PageNote } from '$lib/info';
 	import { Content } from '$lib/layout';
-	import { FoldButton, Button, BackButton } from '$lib/button';
-	import { Meta, Log, Icon } from '$lib/macro';
-	import { PageNote, Note } from '$lib/info';
+	import { Icon, Log, Meta } from '$lib/macro';
 
 	let { data } = $props();
 	let unused = $state(data.unused);
@@ -96,7 +96,7 @@
 						No photo here
 					</PageNote>
 				{/if}
-				
+
 				<Note note={error.error} status="400" --note-margin-top="16px"></Note>
 
 				{#if unused.length > 0}
@@ -192,7 +192,7 @@
 
 <style>
 	.fold {
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 	}
 
 	.group_title {
@@ -200,7 +200,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 	}
 
 	.unused {
@@ -211,7 +211,7 @@
 
 	img {
 		width: 100px;
-		border-radius: var(--sp0);
+		border-radius: 4px;
 		cursor: pointer;
 		background-color: var(--bg2);
 	}
@@ -221,6 +221,6 @@
 	}
 
 	.btns {
-		margin-top: var(--sp2);
+		margin-top: 16px;
 	}
 </style>

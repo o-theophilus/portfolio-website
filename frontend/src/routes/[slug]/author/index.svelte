@@ -1,34 +1,18 @@
 <script>
-	import { module, app } from '$lib/store.svelte.js';
+	import { app, module } from '$lib/store.svelte.js';
 
 	import { Link } from '$lib/button';
-	import Button from '../button.svelte';
 	import { Avatar, Spinner } from '$lib/macro';
+	import Button from '../button.svelte';
 	import Form from './edit.svelte';
 
-	let { item, edit_mode } = $props();
-	let author = $state({});
-	let loading = $state(true);
-
-	const update = async (data) => {
-		item = data;
-	};
-
-	export const load = async () => {
-		loading = true;
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/author/${item.key}`);
-		resp = await resp.json();
-		loading = false;
-		if (resp.status == 200) {
-			author = resp.item;
-		}
-	};
+	let { author, post, edit_mode, loading, update } = $props();
 </script>
 
 {#if loading || author.username}
 	<hr />
 	{#if app.user.access.includes('post:edit_author') && edit_mode}
-		<Button onclick={() => module.open(Form, { key: item.key, update })}>Edit Author</Button>
+		<Button onclick={() => module.open(Form, { key: post.key, update })}>Edit Author</Button>
 	{/if}
 
 	<div class="line">
@@ -58,7 +42,7 @@
 
 <style>
 	hr {
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 	}
 
 	.line {

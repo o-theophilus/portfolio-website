@@ -16,14 +16,14 @@
 	const validate = () => {
 		error = {};
 
-		form.name = form.name.trim().replace(/\s+/g, ' ');
+		if (form.name) form.name = form.name.trim().replace(/\s+/g, ' ');
 		if (!form.name) {
 			error.name = 'This field is required';
 		} else if (form.name.length > 100) {
 			error.name = 'This field cannot exceed 100 characters';
 		}
 
-		form.email = form.email.trim();
+		if (form.email) form.email = form.email.trim();
 		if (!form.email) {
 			error.email = 'This field is required';
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
@@ -35,7 +35,7 @@
 		if (!form.password) {
 			error.password = 'This field is required';
 		} else if (
-			!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$/.test(form.password) ||
+			!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^\s]+$/.test(form.password) ||
 			form.password.length < 8 ||
 			form.password.length > 18
 		) {

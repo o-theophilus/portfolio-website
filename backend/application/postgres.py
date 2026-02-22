@@ -1,9 +1,9 @@
-from flask import Blueprint, jsonify
 import os
+
 import psycopg2
 import psycopg2.extras
+from flask import Blueprint, jsonify
 from psycopg2.extras import Json
-
 
 bp = Blueprint("postgres", __name__)
 
@@ -54,7 +54,7 @@ def create_tables():
             phone TEXT,
             photo TEXT,
             access TEXT[] DEFAULT '{}'::TEXT[],
-            theme TEXT NOT NULL DEFAULT 'dark'
+            theme TEXT NOT NULL DEFAULT 'system'
         );
 
         CREATE TABLE IF NOT EXISTS post (
@@ -83,11 +83,19 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS report (
             key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             date_created TIMESTAMPTZ DEFAULT now(),
-            user_key UUID NOT NULL REFERENCES "user"(key) ON DELETE CASCADE,
-            entity_key UUID NOT NULL,
-            entity_type TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'active',
+
+            reporter_key UUID NOT NULL REFERENCES "user"(key),
+
+            reported_key UUID REFERENCES "user"(key) ON DELETE CASCADE,
+            comment_key UUID REFERENCES comment(key) ON DELETE CASCADE,
+
             comment TEXT NOT NULL,
-            tags TEXT[] DEFAULT '{}'::TEXT[]
+            tags TEXT[] DEFAULT '{}'::TEXT[],
+
+            resolver_key UUID REFERENCES "user"(key),
+            resolve_comment TEXT,
+            date_resolved TIMESTAMPTZ
         );
 
         CREATE TABLE IF NOT EXISTS block (
@@ -102,8 +110,8 @@ def create_tables():
             key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             date_created TIMESTAMPTZ DEFAULT now(),
             user_key UUID NOT NULL REFERENCES "user"(key) ON DELETE CASCADE,
-            entity_type TEXT NOT NULL,
-            entity_key UUID NOT NULL,
+            post_key UUID REFERENCES post(key) ON DELETE CASCADE,
+            comment_key UUID REFERENCES comment(key) ON DELETE CASCADE,
             reaction TEXT NOT NULL
         );
 

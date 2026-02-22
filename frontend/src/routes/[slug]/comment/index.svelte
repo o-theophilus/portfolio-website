@@ -1,32 +1,30 @@
 <script>
-	import { slide } from 'svelte/transition';
+	import { app, module } from '$lib/store.svelte.js';
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { module, app } from '$lib/store.svelte.js';
+	import { slide } from 'svelte/transition';
 
-	import { Button, FoldButton } from '$lib/button';
 	import { Login } from '$lib/auth';
-	import { Icon, Spinner } from '$lib/macro';
-	import { Dropdown } from '$lib/input';
+	import { Button, FoldButton } from '$lib/button';
 	import { PageNote } from '$lib/info';
-	import Item from './item.svelte';
+	import { Dropdown } from '$lib/input';
+	import { Icon, Spinner } from '$lib/macro';
 	import Add from './_add.svelte';
-	import Control from './control.svelte';
+	import One from './one.svelte';
 
-	let { post } = $props();
-	let items = $state([]);
+	let { post, comment, loading } = $props();
 
-	let order_by = $state([]);
-	let open = $state(false);
-	let loading = $state(true);
+	let comments = $derived(comment.comments);
+	let order_by = $derived(comment.order_by);
+
+	let open = $derived(comments?.length > 0);
 	let search = $state({
 		order: 'oldest',
 		page_no: 1
 	});
 
 	const update = (data) => {
-		items = data;
-		open = true;
+		comments = data;
 	};
 
 	export const load = async () => {
@@ -44,9 +42,7 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			items = resp.items;
-			order_by = resp.order_by;
-			if (items.length) open = true;
+			comments = resp.comments;
 		}
 
 		loading = false;
@@ -58,10 +54,10 @@
 <div class="line space">
 	<div class="line">
 		<span class="page_title">
-			{#if items.length > 0}
-				{items.length}
+			{#if comments?.length > 0}
+				{comments?.length}
 			{/if}
-			Comment{#if items.length > 1}s{/if}
+			Comment{#if comments?.length > 1}s{/if}
 		</span>
 		<Spinner active={loading} size="20" />
 	</div>
@@ -78,7 +74,7 @@
 
 {#if open && !loading}
 	<div class="margin" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
-		{#if items.length > 1}
+		{#if comments?.length > 1}
 			<Dropdown
 				--select-height="10"
 				--select-padding-x="0"
@@ -98,20 +94,9 @@
 			/>
 		{/if}
 
-		{#each items as item (item.key)}
+		{#each comments as comment (comment.key)}
 			<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-				<Item {item}>
-					{#snippet parent()}
-						{#each items as x}
-							{#if item.parent_key == x.key}
-								<Item item={x}></Item>
-							{/if}
-						{/each}
-					{/snippet}
-					{#snippet control()}
-						<Control {post} {item} {items} {update} {search}></Control>
-					{/snippet}
-				</Item>
+				<One {comment} {post} {search} {update}></One>
 			</div>
 		{:else}
 			<PageNote>
@@ -138,6 +123,6 @@
 	}
 
 	hr {
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 	}
 </style>

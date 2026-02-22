@@ -1,11 +1,11 @@
 <script>
-	import { module, app } from '$lib/store.svelte.js';
+	import { app, module } from '$lib/store.svelte.js';
 
-	import Button from '../button.svelte';
+	import { PageNote } from '$lib/info';
 	import { Marked } from '$lib/macro';
+	import Button from '../button.svelte';
 	import Edit from './edit.svelte';
 	import File from './file.svelte';
-	import { PageNote } from '$lib/info';
 
 	let { item, edit_mode, update } = $props();
 
@@ -56,6 +56,6 @@
 
 <style>
 	hr {
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 	}
 </style>

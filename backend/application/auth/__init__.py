@@ -1,14 +1,15 @@
-from flask import Blueprint, jsonify, request
-from uuid import uuid4
-import re
 import os
-from werkzeug.security import generate_password_hash, check_password_hash
-from ..tools import (
-    get_session, user_schema, send_mail, generate_code,
-    reserved_words, check_code)
-from ..postgres import db_open, db_close
+import re
+from uuid import uuid4
+
+from flask import Blueprint, jsonify, request
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from ..log import log
+from ..postgres import db_close, db_open
 from ..storage import storage
+from ..tools import (access_pass, check_code, generate_code, get_session,
+                     reserved_words, send_mail, user_schema)
 
 bp = Blueprint("auth", __name__)
 
@@ -36,23 +37,54 @@ def new_token(cur, user_key, login=False, remember=False):
     return cur.fetchone()["key"]
 
 
-def delete_user(cur, user):
-    cur.execute("""
-        UPDATE block
-        SET admin_key = (SELECT key FROM "user" WHERE email = %s)
-        WHERE admin_key = %s
-    ;""", (os.environ["MAIL_USERNAME"], user["key"]))
+@bp.get("/admin/default")
+def default_admin():
+    con, cur = db_open()
+    email = os.environ["MAIL_USERNAME"]
 
-    cur.execute("""
-        UPDATE post
-        SET author_key = (SELECT key FROM "user" WHERE email = %s)
-        WHERE key = %s
-    ;""", (os.environ["MAIL_USERNAME"], user["key"]))
+    cur.execute('SELECT * FROM "user" WHERE email = %s;', (email,))
+    if not cur.fetchone():
+        cur.execute("""
+                INSERT INTO "user"
+                (status, name, username, email, password, access)
+                VALUES (%s, %s, %s, %s, %s, %s) RETURNING *;
+            """, (
+            "confirmed",
+            "Theophilus",
+            "omni",
+            email,
+            generate_password_hash(
+                os.environ["MAIL_PASSWORD"], method="scrypt"),
+            [f"{x}:{y[0]}" for x in access_pass for y in access_pass[x]]
+        ))
+        user = cur.fetchone()
 
-    cur.execute("""
-        DELETE FROM "user" WHERE key = %s;
-    """, (user["key"],))
-    storage("delete", user["photo"])
+        log(
+            cur=cur,
+            user_key=user["key"],
+            action="created",
+            entity_type="account",
+            entity_key=user["key"]
+        )
+        log(
+            cur=cur,
+            user_key=user["key"],
+            action="signedup",
+            entity_type="account",
+            entity_key=user["key"]
+        )
+        log(
+            cur=cur,
+            user_key=user["key"],
+            action="confirmed",
+            entity_type="account",
+            entity_key=user["key"]
+        )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })
 
 
 @bp.post("/init")
@@ -128,13 +160,13 @@ def signup():
     else:
         cur.execute('SELECT * FROM "user" WHERE email = %s;', (email,))
         email_user = cur.fetchone()
-        if email_user and email_user["status"] == "confirmed":
+        if email_user and email_user["status"] != "signedup":
             error["email"] = "Email already in use"
 
     if not password:
         error["password"] = "This field is required"
     elif (
-        not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+$", password)
+        not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^\s]+$", password)
         or len(password) not in range(8, 19)
     ):
         error["password"] = """Password must include at least 1 lowercase
@@ -147,7 +179,7 @@ def signup():
         error["confirm_password"] = """Password and confirm password does not
         match"""
 
-    if error != {}:
+    if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -283,7 +315,7 @@ def login():
         error["email"] = "This field is required"
     if not password:
         error["password"] = "This field is required"
-    if error != {}:
+    if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -446,14 +478,28 @@ def deactivate():
         error["password"] = "This field is required"
     elif not check_password_hash(user["password"], password):
         error["password"] = "Incorrect password"
-    if error != {}:
+    if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
             **error
         })
 
-    delete_user(cur, user)
+    cur.execute(
+        """
+            UPDATE block
+            SET admin_key = (SELECT key FROM "user" WHERE email = %s)
+            WHERE admin_key = %s;
+        """, (os.environ["MAIL_USERNAME"], user["key"]))
+    cur.execute(
+        """
+            UPDATE post
+            SET author_key = (SELECT key FROM "user" WHERE email = %s)
+            WHERE admin_key = %s;
+        """, (os.environ["MAIL_USERNAME"], user["key"]))
+    cur.execute("""DELETE FROM "user" WHERE key = %s;""", (user["key"],))
+
+    storage("delete", user["photo"])
     anon_user = anon(cur)
     token = new_token(cur, anon_user["key"])
 

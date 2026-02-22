@@ -1,8 +1,8 @@
 <script>
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 	import { slide } from 'svelte/transition';
 
@@ -91,17 +91,17 @@
 
 <style>
 	.error {
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 		font-size: 0.8rem;
 		color: red;
 	}
 
 	.actions {
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 	}
 
 	label {
 		display: flex;
-		gap: var(--sp2);
+		gap: 16px;
 	}
 </style>

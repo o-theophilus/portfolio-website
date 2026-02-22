@@ -31,7 +31,7 @@
 		text-transform: capitalize;
 		box-shadow: 0 0 3px color-mix(in srgb, var(--ft2), transparent 50%) inset;
 
-		transition: background-color var(--trans);
+		transition: background-color 0.2s ease-in-out;
 	}
 	button:disabled {
 		opacity: 0.4;
@@ -43,8 +43,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 0 var(--sp1);
-		transition: color var(--trans);
+		padding: 0 8px;
+		transition: color 0.2s ease-in-out;
 	}
 	.state_1 {
 		color: white;
@@ -67,9 +67,9 @@
 		background-color: var(--cl1);
 
 		transition:
-			background-color var(--trans),
-			left var(--trans),
-			width var(--trans);
+			background-color 0.2s ease-in-out,
+			left 0.2s ease-in-out,
+			width 0.2s ease-in-out;
 		/* box-shadow: 0 0 3px rgba(0, 0, 0, 0.857); */
 	}
 	button:not(:disabled):hover .knob {

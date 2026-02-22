@@ -1,10 +1,10 @@
-import resend
-from flask import request, current_app
 import os
 import random
-from datetime import datetime, timezone, timedelta
-from psycopg2.extras import Json
+from datetime import datetime, timedelta, timezone
 
+import resend
+from flask import current_app, request
+from psycopg2.extras import Json
 
 reserved_words = [
     "meji", "app", "home", "shop", "save", "cart", "profile", "orders",
@@ -47,6 +47,11 @@ access_pass = {
     ],
     "log": [
         ['view', 1]
+    ],
+    "maintenance": [
+        ['session', 1],
+        ['anonymous', 1],
+        ['coupon', 1]
     ]
 }
 
@@ -74,7 +79,10 @@ def get_session(cur, login=False):
 
     cur.execute("""
         UPDATE session SET date_updated = %s WHERE key = %s;
-    """, (datetime.now(timezone.utc), session["key"]))
+    """, (
+        datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
+        session["key"])
+    )
 
     return {"status": 200, "user": user, "login": session["login"] != "false"}
 
@@ -139,7 +147,7 @@ def send_mail(to, subject, body):
         resend.api_key = os.environ["RESEND_API_KEY"]
         params = {
             "from": "Theophilus <info@theophilus.website>",
-            "to": [to],
+            "to": [to] if type(to) is not list else to,
             "subject": subject,
             "html": body,
         }

@@ -1,7 +1,9 @@
-from flask import Blueprint, jsonify, request
 from math import ceil
-from ...tools import get_session
+
+from flask import Blueprint, jsonify, request
+
 from ...postgres import db_close, db_open
+from ...tools import get_session
 
 bp = Blueprint("block_get", __name__)
 
@@ -23,11 +25,6 @@ def get_many():
             "error": "unauthorized access"
         })
 
-    search = request.args.get("search", "")
-    order = request.args.get("order", "latest")
-    page_no = int(request.args.get("page_no", 1))
-    page_size = int(request.args.get("page_size", 24))
-
     order_by = {
         'latest': 'date_created',
         'oldest': 'date_created'
@@ -37,7 +34,19 @@ def get_many():
         'oldest': 'ASC'
     }
 
-    cur.execute("""
+    searchParams = {
+        "search": "",
+        "order": "latest",
+        "page_no": 1,
+        "page_size": 24
+    }
+    search = request.args.get("search", searchParams["search"]).strip()
+    order = request.args.get("order", searchParams["order"])
+    page_no = int(request.args.get("page_no", searchParams["page_no"]))
+    page_size = int(request.args.get("page_size", searchParams["page_size"]))
+    page_size = min(page_size, 100)
+
+    cur.execute(f"""
         SELECT
             block.key,
             block.date_created,
@@ -70,16 +79,15 @@ def get_many():
                 "user".key, "user".name, "user".email,
                 admin.key, admin.name, admin.email
             ) ILIKE %s)
-        ORDER BY {} {}
+        ORDER BY {order_by[order]} {order_dir[order]}, block.key DESC
         LIMIT %s OFFSET %s;
-    """.format(order_by[order], order_dir[order]),
-        (
+    """, (
         search, f"%{search}%",
         page_size, (page_no - 1) * page_size
     ))
-    items = cur.fetchall()
+    blocks = cur.fetchall()
 
-    for x in items:
+    for x in blocks:
         x["admin"]["photo"] = (
             f"{request.host_url}file/{x['admin']['photo']}"
             if x["admin"]["photo"] else None
@@ -92,22 +100,8 @@ def get_many():
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "items": items,
+        "blocks": blocks,
         "order_by": list(order_by.keys()),
-        "total_page": ceil(
-            items[0]["_count"] / page_size) if items else 0
-    })
-
-
-@bp.get("/blocked/<key>")
-def ckeck(key):
-    con, cur = db_open()
-
-    cur.execute("SELECT * FROM block WHERE user_key = %s;", (key,))
-    blocked = cur.fetchone()
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "blocked":  True if blocked else False
+        "total_page": ceil(blocks[0]["_count"] / page_size) if blocks else 0,
+        "searchParams": searchParams
     })

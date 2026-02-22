@@ -1,12 +1,15 @@
-from flask import Blueprint, jsonify, request
-import re
 import os
+import re
+from datetime import datetime, timezone
 from uuid import uuid4
+
+from flask import Blueprint, jsonify, request
 from werkzeug.security import check_password_hash
-from ..tools import reserved_words, get_session
-from ..postgres import db_open, db_close
-from ..storage import storage
+
 from ..log import log
+from ..postgres import db_close, db_open
+from ..storage import storage
+from ..tools import get_session, reserved_words
 from .get import get_many, post_schema
 
 bp = Blueprint("post", __name__)
@@ -36,7 +39,7 @@ def add():
         error["title"] = "This field is required"
     elif len(title) > 100:
         error["title"] = "This field cannot exceed 100 characters"
-    if error != {}:
+    if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -204,7 +207,7 @@ def edit(key):
         elif status == "active" and not post["content"]:
             error["status"] = "no content"
 
-    if error != {}:
+    if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -274,27 +277,6 @@ def delete(key):
         })
 
     cur.execute("""
-        DELETE FROM "like"
-        WHERE entity_type = 'post' entity_key = %s;
-    """, (post["key"],))
-
-    cur.execute("""
-        WITH RECURSIVE to_delete AS (
-            SELECT key
-            FROM comment
-            WHERE post_key = %s
-
-            UNION ALL
-
-            SELECT c.key
-            FROM comment c
-            INNER JOIN to_delete td ON c.parent_key = td.key
-        )
-        DELETE FROM comment
-        WHERE key IN (SELECT key FROM to_delete);
-    """, (post["key"],))
-
-    cur.execute("""
         DELETE FROM post WHERE key = %s;
     """, (post["key"],))
 
@@ -313,4 +295,78 @@ def delete(key):
     db_close(con, cur)
     return jsonify({
         "status": 200
+    })
+
+
+@bp.post("/post/like/<key>")
+def like(key):
+    con, cur = db_open()
+
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
+
+    reaction = request.json.get("reaction")
+
+    if reaction not in ["like", "dislike"]:
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
+
+    cur.execute("""SELECT * FROM post WHERE key = %s;""", (key,))
+    if not cur.fetchone():
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
+
+    cur.execute("""
+        SELECT * FROM "like" WHERE user_key = %s AND post_key = %s;
+    """, (user["key"], key))
+    user_reaction = cur.fetchone()
+
+    un = ""
+    if not user_reaction:
+        cur.execute("""
+            INSERT INTO "like" (user_key, post_key, reaction)
+            VALUES (%s, %s, %s);
+        """, (user["key"], key, reaction))
+    elif user_reaction["reaction"] == reaction:
+        un = "un"
+        cur.execute("""DELETE FROM "like" WHERE key = %s;""",
+                    (user_reaction["key"],))
+    else:
+        cur.execute("""
+            UPDATE "like"
+            SET date_created = %s, reaction = %s WHERE key = %s;
+        """, (datetime.now(timezone.utc), reaction, user_reaction["key"]))
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action=f"{un}{reaction}",
+        entity_key=key,
+        entity_type="post"
+    )
+
+    cur.execute("""
+        SELECT
+            COUNT(CASE WHEN user_key != %s
+                AND reaction = 'like' THEN 1 END) AS others_like,
+            COUNT(CASE WHEN user_key != %s
+                AND reaction = 'dislike' THEN 1 END) AS others_dislike,
+            MAX(CASE WHEN user_key = %s THEN reaction END) AS user_reaction
+        FROM "like"
+        WHERE post_key = %s
+    """, (user["key"], user["key"], user["key"], key))
+    reactions = cur.fetchone()
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        **reactions
     })

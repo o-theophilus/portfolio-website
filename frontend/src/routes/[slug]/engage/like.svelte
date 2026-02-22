@@ -1,43 +1,39 @@
 <script>
-	import { app } from '$lib/store.svelte.js';
 	import { Like } from '$lib/button';
+	import { app } from '$lib/store.svelte.js';
 
-	let { item, edata = $bindable() } = $props();
+	let { post, engagement = $bindable() } = $props();
 
 	let like = $derived.by(() => {
-		if (edata.user_like == 'like') return edata.like + 1;
-		return edata.like;
+		if (engagement.user_reaction == 'like') return engagement.others_like + 1;
+		return engagement.others_like;
 	});
 	let dislike = $derived.by(() => {
-		if (edata.user_like == 'dislike') return edata.dislike + 1;
-		return edata.dislike;
+		if (engagement.user_reaction == 'dislike') return engagement.others_dislike + 1;
+		return engagement.others_dislike;
 	});
 
 	const submit = async (reaction) => {
-		if (
-			!edata.user_like ||
-			(reaction == 'like' && edata.user_like == 'dislike') ||
-			(reaction == 'dislike' && edata.user_like == 'like')
-		) {
-			edata.user_like = reaction;
+		if (reaction == engagement.user_reaction) {
+			engagement.user_reaction = null;
 		} else {
-			edata.user_like = null;
+			engagement.user_reaction = reaction;
 		}
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/like`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/like/${post.key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: app.token
 			},
-			body: JSON.stringify({ entity_type: 'post', entity_key: item.key, reaction })
+			body: JSON.stringify({ reaction })
 		});
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			edata.like = resp.like;
-			edata.dislike = resp.dislike;
-			edata.user_like = resp.user_like;
+			engagement.others_like = resp.others_like;
+			engagement.others_dislike = resp.others_dislike;
+			engagement.user_reaction = resp.user_reaction;
 		} else {
 			error = resp;
 		}
@@ -46,7 +42,7 @@
 
 {#if app.login}
 	<Like
-		active={edata.user_like}
+		active={engagement.user_reaction}
 		{like}
 		{dislike}
 		onlike={() => submit('like')}

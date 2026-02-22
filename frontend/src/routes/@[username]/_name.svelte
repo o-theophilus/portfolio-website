@@ -10,7 +10,7 @@
 
 	const validate = () => {
 		error = {};
-		form.name = form.name.trim().replace(/\s+/g, ' ');
+		if (form.name) form.name = form.name.trim().replace(/\s+/g, ' ');
 		if (!form.name) {
 			error.name = 'This field is required';
 		} else if (form.name.length > 100) {

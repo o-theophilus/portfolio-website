@@ -65,7 +65,7 @@
 
 <style>
 	section {
-		--size: var(--sp3);
+		--size: 24px;
 
 		display: flex;
 		align-items: center;
@@ -77,7 +77,7 @@
 		outline: 2px solid var(--pagination-outline-color, transparent);
 		outline-offset: -2px;
 
-		transition: outline-color var(--trans);
+		transition: outline-color 0.2s ease-in-out;
 	}
 	section:hover,
 	section:has(input:focus) {
@@ -121,15 +121,15 @@
 		height: 40px;
 		aspect-ratio: 1/1;
 
-		border-radius: var(--sp0);
+		border-radius: 4px;
 		background-color: var(--button);
 		color: var(--ft2);
 		border: none;
 		font-weight: 700;
 
 		transition:
-			color var(--trans),
-			background-color var(--trans);
+			color 0.2s ease-in-out,
+			background-color 0.2s ease-in-out;
 	}
 
 	button:hover {

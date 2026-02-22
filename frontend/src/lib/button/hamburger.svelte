@@ -38,8 +38,8 @@
 		cursor: pointer;
 
 		transition:
-			background-color var(--trans),
-			outline-color var(--trans);
+			background-color 0.2s ease-in-out,
+			outline-color 0.2s ease-in-out;
 	}
 
 	.menu_btn:hover {
@@ -58,8 +58,8 @@
 		background-color: var(--hamburger-color, hsl(0, 0%, 80%));
 
 		transition:
-			background-color var(--trans),
-			transform var(--trans);
+			background-color 0.2s ease-in-out,
+			transform 0.2s ease-in-out;
 	}
 
 	.menu_btn:hover div {

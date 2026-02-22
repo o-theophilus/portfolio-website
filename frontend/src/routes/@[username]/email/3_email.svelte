@@ -5,7 +5,7 @@
 	import { IG } from '$lib/input';
 	import { Note } from '$lib/info';
 	import { Form } from '$lib/layout';
-	
+
 	import Code from './4_code.svelte';
 	import EmailTemplate from './email_template.svelte';
 
@@ -16,7 +16,7 @@
 	const validate = () => {
 		error = {};
 
-		form.email = form.email.trim();
+		if (form.email) form.email = form.email.trim();
 		if (!form.email) {
 			error.email = 'This field is required';
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {

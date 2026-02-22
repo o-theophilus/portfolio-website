@@ -1,15 +1,15 @@
 <script>
+	import { replaceState } from '$app/navigation';
 	import { page } from '$app/state';
+	import { app } from '$lib/store.svelte.js';
 	import { onMount } from 'svelte';
-	import { module, app } from '$lib/store.svelte.js';
 
-	import { Content } from '$lib/layout';
 	import { Toggle } from '$lib/button';
-	import { Meta, Log } from '$lib/macro';
-	import Button from './button.svelte';
+	import { Content } from '$lib/layout';
+	import { Log, Meta } from '$lib/macro';
 
-	import { Status, Photo, Title, Date, Description, Content_, Tags, Author, Comment } from '.';
-	import Engagament from './engage/engagement.svelte';
+	import { Author, Comment, Content_, Date, Description, Photo, Status, Tags, Title } from '.';
+	import Engagement from './engage/engagement.svelte';
 	import Like from './engage/like.svelte';
 	import Share from './engage/share.svelte';
 	import Highlight from './highlight.svelte';
@@ -17,58 +17,68 @@
 	import ToTop from './to_top.svelte';
 
 	let { data } = $props();
-	let item = $derived(data.item);
+	let post = $derived(data.post);
 	let edit_mode = $state(false);
-	let is_admin = $state(false);
+	let is_admin = app.user.access.some((x) =>
+		[
+			'post:add',
+			'post:edit_photo',
+			'post:edit_title',
+			'post:edit_date',
+			'post:edit_description',
+			'post:edit_content',
+			'post:edit_files',
+			'post:edit_tags',
+			'post:edit_status',
+			'post:edit_author',
+			'post:edit_highlight'
+		].includes(x)
+	);
 
-	const update = (data) => {
-		item = data;
-	};
+	let loading = $state(false);
+	let engagement = $state({});
+	let author = $state({});
+	let comment = $state([]);
+	let similar = $state([]);
 
-	let engagament = $state();
-	let author = $state();
-	let comment = $state();
-	let similar = $state();
-
-	const refresh = async (data) => {
-		item = data;
+	const update = async (data) => {
+		post = data;
 		edit_mode = false;
-		await engagament.load();
-		await author.load();
-		await comment.load();
-		await similar.load();
+		loading = true;
+
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/after/${post.key}`, {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: app.token
+			}
+		});
+
+		resp = await resp.json();
+		loading = false;
+
+		if (resp.status == 200) {
+			engagement = resp.engagement;
+			author = resp.author;
+			comment = resp.comment;
+			similar = resp.similar;
+		}
 	};
 
 	onMount(async () => {
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/admin/access/post:edit`);
-		resp = await resp.json();
-		if (resp.status == 200) {
-			is_admin = app.user.access.some((x) => resp.access.includes(x));
-		}
-
-		refresh(item);
+		update(post);
 
 		if (page.url.searchParams.has('edit') && is_admin) {
 			page.url.searchParams.delete('edit');
 			edit_mode = true;
-			window.history.replaceState(history.state, '', page.url.href);
+			replaceState(page.url.href);
 		}
-	});
-
-	let edata = $state({
-		comment: 0,
-		like: 0,
-		dislike: 0,
-		share: 0,
-		view: 0,
-		user_like: null
 	});
 </script>
 
-{#key item.key}
-	<Log action={'viewed'} entity_key={item.key} entity_type={'post'} />
+{#key post.key}
+	<Log action={'viewed'} entity_key={post.key} entity_type={'post'} />
 {/key}
-<Meta title={item.title} description={item.description} image={item.photo} />
+<Meta title={post.title} description={post.description} image={post.photo} />
 
 <Content>
 	{#if is_admin}
@@ -78,32 +88,32 @@
 
 	{#if edit_mode && (app.user.access.includes('post:edit_status') || app.user.access.includes('post:edit_highlight'))}
 		<div class="line status">
-			<Status {item} {update}></Status>
-			<Highlight {item} />
+			<Status item={post} {update}></Status>
+			<Highlight item={post} />
 		</div>
 	{/if}
-	<Photo bind:item {edit_mode} {update} />
-	<Title {item} {edit_mode} {update} />
-	<Description {item} {edit_mode} {update} />
+	<Photo bind:item={post} {edit_mode} {update} />
+	<Title item={post} {edit_mode} {update} />
+	<Description item={post} {edit_mode} {update} />
 	<div class="line space date">
-		<Date {item} {edit_mode} {update}></Date>
-		<Engagament {item} bind:edata bind:this={engagament} />
+		<Date item={post} {edit_mode} {update}></Date>
+		<Engagement {engagement} {loading} />
 	</div>
-	<Content_ {item} {edit_mode} {update} />
-	<Tags {item} {edit_mode} {update} />
-	<Author {item} {edit_mode} bind:this={author} />
+	<Content_ item={post} {edit_mode} {update} />
+	<Tags item={post} {edit_mode} {update} />
+	<Author {author} {post} {edit_mode} {loading} {update} />
 </Content>
 
 <Content --content-background-color="var(--bg2)" --content-height>
 	<div class="line engage">
-		<Like {item} bind:edata />
-		<Share {item} />
+		<Like {post} bind:engagement />
+		<Share item={post} />
 	</div>
-	<Comment post={item} bind:this={comment} />
+	<Comment {post} {comment} {loading} />
 </Content>
 
 <Content --content-height --content-padding-top="0" --content-padding-bottom="0">
-	<Similar key={item.key} bind:this={similar} {refresh} />
+	<Similar {similar} {loading} {update} />
 	<ToTop />
 </Content>
 

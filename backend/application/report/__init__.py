@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
-from ..tools import get_session
-from ..postgres import db_close, db_open
+
 from ..log import log
+from ..postgres import db_close, db_open
+from ..tools import get_session
 
 bp = Blueprint("report", __name__)
 
@@ -22,8 +23,7 @@ def create():
     tags = request.json.get("tags")
 
     if (
-        not session["login"]
-        or not entity_key
+        not entity_key
         or entity_key == user["key"]
         or not entity_type
         or entity_type not in ["user", "comment"]
@@ -35,11 +35,16 @@ def create():
             "error": "Invalid request"
         })
 
+    error = {}
     if not comment:
+        error["comment"] = "This field is required"
+    elif len(comment) > 500:
+        error["comment"] = "This field cannot exceed 500 characters"
+    if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "comment": "This field is required"
+            **error
         })
 
     cur.execute(f"""
@@ -52,21 +57,26 @@ def create():
             "error": "Invalid request"
         })
 
-    cur.execute("""
-        INSERT INTO report (user_key, entity_key, entity_type, comment, tags)
-        VALUES (%s, %s, %s, %s, %s) RETURNING *;
-    """, (user["key"], entity["key"], entity_type, comment, tags))
+    if entity_type == "user":
+        column = "reported_key"
+    if entity_type == "comment":
+        column = "comment_key"
+
+    cur.execute(f"""
+        INSERT INTO report (reporter_key, {column}, comment, tags)
+        VALUES (%s, %s, %s, %s) RETURNING *;
+    """, (user["key"], entity["key"], comment, tags))
     report = cur.fetchone()
 
     log(
         cur=cur,
         user_key=user["key"],
-        action="created",
+        action="created report",
         entity_key=report["key"],
         entity_type="report",
         misc={
-            "entity_key":  entity_key,
-            "entity_type":  entity_type,
+            "key": entity_key,
+            "type": entity_type
         }
     )
 
@@ -76,7 +86,7 @@ def create():
     })
 
 
-@bp.delete("/report/<key>")
+@bp.put("/report/<key>")
 def resolve(key):
     con, cur = db_open()
 
@@ -95,7 +105,11 @@ def resolve(key):
 
     cur.execute("SELECT * FROM report WHERE key = %s;", (key,))
     report = cur.fetchone()
-    if not report or report["entity_key"] == user["key"]:
+    if (
+        not report
+        or report["reported_key"] == user["key"]
+        or report["status"] == "resolved"
+    ):
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -103,6 +117,7 @@ def resolve(key):
         })
 
     comment = request.json.get("comment")
+    status = request.json.get("status")
     delete_comment = request.json.get("delete_comment", False)
 
     error = {}
@@ -110,35 +125,56 @@ def resolve(key):
         error["comment"] = "This field is required"
     elif len(comment) > 500:
         error["comment"] = "This field cannot exceed 500 characters"
-    if error != {}:
+
+    if not status or status not in ["resolved", "dismissed"]:
+        error["status"] = "This field is required"
+    if error:
         db_close(con, cur)
         return jsonify({
             "status": 400,
             **error
         })
 
-    misc = {
-        "user_key": report["user_key"],
-        "entity_key": report["entity_key"],
-        "entity_type": report["entity_type"],
-        "comment": report["comment"],
-        "tags": report["tags"]
-    }
+    cur.execute("""
+        UPDATE report
+        SET status = %s, date_resolved = now(),
+        resolver_key = %s, resolve_comment = %s,
+        WHERE key = %s;
+    """, (status, user["key"], comment, key))
 
-    cur.execute("DELETE FROM report WHERE key = %s;", (report["key"],))
-    if report["entity_type"] == "comment" and delete_comment:
-        cur.execute("DELETE FROM comment WHERE key = %s;",
-                    (report["entity_key"],))
-        misc["deleted_comment"] = report["entity_key"]
+    if report["comment_key"]:
+        entity_type = "comment"
+        entity_key = report["comment_key"]
+    elif report["reported_key"]:
+        entity_type = "user"
+        entity_key = report["reported_key"]
 
     log(
         cur=cur,
         user_key=user["key"],
-        action="resolved",
+        action="resolved report",
         entity_key=report["key"],
         entity_type="report",
-        misc=misc
+        misc={
+            "entity_key": entity_key,
+            "entity_type": entity_type,
+        }
     )
+
+    if report["comment_key"] and delete_comment:
+        cur.execute(
+            "DELETE FROM comment WHERE key = %s RETURNING *;",
+            (report["comment_key"],))
+        comment = cur.fetchone()
+
+        log(
+            cur=cur,
+            user_key=user["key"],
+            action="deleted comment",
+            entity_key=comment["key"],
+            entity_type="comment",
+            misc={"post_key": comment["post_key"]}
+        )
 
     db_close(con, cur)
     return jsonify({

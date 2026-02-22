@@ -9,7 +9,7 @@
 
 <style>
 	.fold {
-		transition: transform var(--trans);
+		transition: transform 0.2s ease-in-out;
 		transform: rotate(180deg);
 	}
 	.open {

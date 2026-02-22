@@ -1,5 +1,5 @@
 <script>
-	import { module, app } from '$lib/store.svelte.js';
+	import { app, module } from '$lib/store.svelte.js';
 
 	import Button from '../button.svelte';
 	import Edit from './edit.svelte';
@@ -39,13 +39,13 @@
 		display: block;
 
 		width: 100%;
-		border-radius: var(--sp1);
+		border-radius: 8px;
 
 		background-color: var(--bg2);
 	}
 	.img .line {
 		position: absolute;
-		bottom: var(--sp1);
-		left: var(--sp1);
+		bottom: 8px;
+		left: 8px;
 	}
 </style>

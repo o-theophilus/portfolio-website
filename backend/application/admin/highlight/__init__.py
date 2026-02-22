@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify, request
 from psycopg2.extras import Json
-from ...postgres import db_open, db_close
+
 from ...log import log
+from ...postgres import db_close, db_open
 from ...tools import get_session
 from .get import get_many
-
 
 bp = Blueprint("highlight", __name__)
 

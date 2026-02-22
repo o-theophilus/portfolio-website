@@ -1,8 +1,8 @@
 <script>
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
 	let form = $state({});
@@ -34,7 +34,8 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.item);
+			// TEST: test this
+			module.value.update(resp.post);
 			module.close();
 			notify.open('Author Saved');
 		} else {
@@ -62,6 +63,6 @@
 <style>
 	.line {
 		display: flex;
-		gap: var(--sp1);
+		gap: 8px;
 	}
 </style>

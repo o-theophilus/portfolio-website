@@ -1,7 +1,7 @@
 <script>
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { loading, notify, module, app } from '$lib/store.svelte.js';
 
 	import { Button, RoundButton } from '$lib/button';
 	import { Icon } from '$lib/macro';
@@ -156,9 +156,9 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		gap: var(--sp1);
+		gap: 8px;
 		flex-wrap: wrap;
-		margin-top: var(--sp2);
+		margin-top: 16px;
 	}
 
 	.used,
@@ -169,7 +169,7 @@
 
 		width: var(--size);
 		height: var(--size);
-		border-radius: var(--sp0);
+		border-radius: 4px;
 		cursor: pointer;
 		overflow: hidden;
 		font-size: 0.8rem;
@@ -177,8 +177,8 @@
 		background-color: var(--bg2);
 		outline: 2px solid transparent;
 		transition:
-			outline-color var(--trans),
-			transform var(--trans);
+			outline-color 0.2s ease-in-out,
+			transform 0.2s ease-in-out;
 	}
 
 	.used:hover,

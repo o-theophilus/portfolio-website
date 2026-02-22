@@ -1,7 +1,9 @@
-from flask import Blueprint, jsonify, request
 from math import ceil
-from ..tools import get_session
+
+from flask import Blueprint, jsonify, request
+
 from ..postgres import db_close, db_open
+from ..tools import get_session
 
 bp = Blueprint("log_get", __name__)
 
@@ -32,12 +34,21 @@ def get_many():
         return jsonify(session)
     user = session["user"]
 
-    u_search = request.args.get("u_search", "").strip()
-    entity_type = request.args.get("entity_type", "all")
-    action = request.args.get("action", "all")
-    e_search = request.args.get("e_search", "").strip()
-    page_no = int(request.args.get("page_no", 1))
-    page_size = int(request.args.get("page_size", 24))
+    searchParams = {
+        "u_search": "",
+        "entity_type": "all",
+        "action": "all",
+        "e_search": "",
+        "page_no": 1,
+        "page_size": 24
+    }
+    u_search = request.args.get("u_search", searchParams["u_search"]).strip()
+    entity_type = request.args.get("entity_type", searchParams["entity_type"])
+    action = request.args.get("action", searchParams["action"])
+    e_search = request.args.get("e_search", searchParams["e_search"]).strip()
+    page_no = int(request.args.get("page_no", searchParams["page_no"]))
+    page_size = int(request.args.get("page_size", searchParams["page_size"]))
+    page_size = min(page_size, 100)
 
     if "log:view" not in user["access"]:
         u_search = user["key"]
@@ -94,9 +105,11 @@ def get_many():
         e_search, f"%{e_search}%",
         page_size, (page_no - 1) * page_size
     ))
-    items = cur.fetchall()
+    logs = cur.fetchall()
 
-    for x in items:
+    # TODO: descrive the log action well
+    # so you can remove this block
+    for x in logs:
         if x["entity"]["type"] == "page":
             x["action"] = "viewed"
 
@@ -120,7 +133,8 @@ def get_many():
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "items": items,
+        "logs": logs,
         "search_query": sq,
-        "total_page": ceil(items[0]["_count"] / page_size) if items else 0
+        "total_page": ceil(logs[0]["_count"] / page_size) if logs else 0,
+        "searchParams": searchParams
     })

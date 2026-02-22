@@ -1,6 +1,6 @@
 <script>
-	import { Icon } from '$lib/macro';
 	import { Link } from '$lib/button';
+	import { Icon } from '$lib/macro';
 	let { children, ...props } = $props();
 </script>
 
@@ -17,7 +17,7 @@
 		align-items: center;
 		gap: 8px;
 		width: fit-content;
-		transition: gap var(--trans);
+		transition: gap 0.2s ease-in-out;
 	}
 
 	.link:hover {

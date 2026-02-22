@@ -1,5 +1,5 @@
 <script>
-	import { module, app } from '$lib/store.svelte.js';
+	import { app, module } from '$lib/store.svelte.js';
 	import Button from '../button.svelte';
 	import Edit from './edit.svelte';
 
@@ -27,6 +27,6 @@
 
 <style>
 	.margin {
-		margin: var(--sp2) 0;
+		margin: 16px 0;
 	}
 </style>

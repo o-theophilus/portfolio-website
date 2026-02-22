@@ -1,6 +1,6 @@
 <script>
-	import { module, notify, loading, app } from '$lib/store.svelte.js';
 	import { page } from '$app/state';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
@@ -69,6 +69,6 @@
 	.line {
 		display: flex;
 		align-items: center;
-		gap: var(--sp1);
+		gap: 8px;
 	}
 </style>

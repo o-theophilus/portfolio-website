@@ -1,59 +1,42 @@
 <script>
+	import { replaceState } from '$app/navigation';
+	import { page_state } from '$lib/store.svelte.js';
+	import { onMount } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { page } from '$app/state';
-	import { onMount } from 'svelte';
-	import { page_state } from '$lib/store.svelte.js';
 
-	import { Content } from '$lib/layout';
 	import { BackButton } from '$lib/button';
-	import { Pagination, Dropdown, Search } from '$lib/input';
 	import { PageNote } from '$lib/info';
-	import { Meta, Log, Icon } from '$lib/macro';
-	import Item from './item.svelte';
+	import { Dropdown, Pagination, Search } from '$lib/input';
+	import { Content } from '$lib/layout';
+	import { Icon, Log, Meta } from '$lib/macro';
+	import One from './one.svelte';
 
 	let { data } = $props();
-	let items = $derived(data.items);
+	let reports = $derived(data.reports);
 	let total_page = $derived(data.total_page);
 	let { order_by } = data;
-	let { _type } = data;
-	let { _status } = data;
-	let search = $state({
-		type: '',
-		status: '',
-		search: '',
-		order: 'latest',
-		page_no: 1
-	});
+	let { type } = data;
+	let searchParams = $state({ ...data.searchParams });
+	let defaultParams = $state(data.searchParams);
 
 	onMount(() => {
-		if (page_state.searchParams.type) {
-			search.type = page_state.searchParams.type;
+		const sp = page_state.searchParams;
+		if (Object.keys(sp).length) {
+			queueMicrotask(() => replaceState(`?${new URLSearchParams(sp)}`));
+			for (const key of Object.keys(searchParams)) {
+				if (sp[key]) searchParams[key] = sp[key];
+			}
 		}
-		if (page_state.searchParams.status) {
-			search.status = page_state.searchParams.status;
-		}
-		if (page_state.searchParams.search) {
-			search.search = page_state.searchParams.search;
-		}
-		if (page_state.searchParams.order) {
-			search.order = page_state.searchParams.order;
-		}
-		if (page_state.searchParams.page_no) {
-			search.page_no = page_state.searchParams.page_no;
-		}
-
-		page.url.search = new URLSearchParams(page_state.searchParams);
-		window.history.replaceState(history.state, '', page.url.href);
 	});
 
 	const update = (key) => {
 		let temp = [];
-		for (const x of items) {
+		for (const x of reports) {
 			if (x.user.key == key) continue;
 			temp.push(x);
 		}
-		items = temp;
+		reports = temp;
 		page_state.refresh();
 	};
 </script>
@@ -66,26 +49,25 @@
 		<div class="line">
 			<BackButton />
 			<div class="page_title">
-				Report{items.length > 1 ? 's' : ''}
+				Report{reports.length > 1 ? 's' : ''}
 			</div>
 		</div>
 
 		<Dropdown
 			icon2="chevron-down"
-			list={['all', ..._type]}
-			bind:value={search.type}
+			list={type}
+			bind:value={searchParams.type}
 			onchange={(v) => {
-				v = v == 'all' ? '' : v;
-
-				search.page_no = 1;
-				page_state.set({ type: v });
+				searchParams.page_no = 1;
+				page_state.set({ type: v == defaultParams.type ? '' : v });
 			}}
 		/>
 	</div>
 
 	<Search
-		bind:value={search.search}
+		bind:value={searchParams.search}
 		ondone={(v) => {
+			searchParams.page_no = 1;
 			page_state.set({ search: v });
 		}}
 	></Search>
@@ -101,17 +83,16 @@
 		list={order_by}
 		icon="arrow-down-narrow-wide"
 		icon2="chevron-down"
-		bind:value={search.order}
+		bind:value={searchParams.order}
 		onchange={(v) => {
-			search.page_no = 1;
-			v = v == 'latest' ? '' : v;
-			page_state.set({ order: v });
+			searchParams.page_no = 1;
+			page_state.set({ order: v == defaultParams.order ? '' : v });
 		}}
 	/>
 
-	{#each items as item (item.key)}
+	{#each reports as report (report.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<Item {item} {update} />
+			<One {report} {update} />
 		</div>
 	{:else}
 		<PageNote>
@@ -122,7 +103,7 @@
 
 	<Pagination
 		{total_page}
-		bind:value={search.page_no}
+		bind:value={searchParams.page_no}
 		ondone={(v) => {
 			if (v == 1) v = 0;
 			page_state.set({ page_no: v });

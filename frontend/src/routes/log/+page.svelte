@@ -1,49 +1,32 @@
 <script>
+	import { replaceState } from '$app/navigation';
+	import { app, page_state } from '$lib/store.svelte.js';
+	import { onMount } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
-	import { onMount } from 'svelte';
-	import { page } from '$app/state';
-	import { app, page_state } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
+	import { PageNote } from '$lib/info';
 	import { Dropdown, Pagination, Search } from '$lib/input';
 	import { Content } from '$lib/layout';
-	import { PageNote } from '$lib/info';
-	import { Meta, Icon } from '$lib/macro';
-	import Item from './item.svelte';
+	import { Icon, Meta } from '$lib/macro';
+	import One from './one.svelte';
 
 	let { data } = $props();
-	let items = $derived(data.items);
+	let logs = $derived(data.logs);
 	let total_page = $derived(data.total_page);
 	let search_query = $derived(data.search_query);
-
-	let search = $state({
-		u_search: '',
-		entity_type: 'all',
-		action: 'all',
-		e_search: '',
-		page_no: 1
-	});
+	let searchParams = $state({ ...data.searchParams });
+	let defaultParams = $state(data.searchParams);
 
 	onMount(() => {
-		if (page_state.searchParams.u_search) {
-			search.u_search = page_state.searchParams.u_search;
+		const sp = page_state.searchParams;
+		if (Object.keys(sp).length) {
+			queueMicrotask(() => replaceState(`?${new URLSearchParams(sp)}`));
+			for (const key of Object.keys(searchParams)) {
+				if (sp[key]) searchParams[key] = sp[key];
+			}
 		}
-		if (page_state.searchParams.entity_type) {
-			search.entity_type = page_state.searchParams.entity_type;
-		}
-		if (page_state.searchParams.action) {
-			search.action = page_state.searchParams.action;
-		}
-		if (page_state.searchParams.e_search) {
-			search.e_search = page_state.searchParams.e_search;
-		}
-		if (page_state.searchParams.page_no) {
-			search.page_no = page_state.searchParams.page_no;
-		}
-
-		page.url.search = new URLSearchParams(page_state.searchParams);
-		window.history.replaceState(history.state, '', page.url.href);
 	});
 </script>
 
@@ -58,13 +41,13 @@
 		<div class="line nowrap">
 			<Search
 				placeholder="Search for User"
-				bind:value={search.u_search}
+				bind:value={searchParams.u_search}
 				ondone={(v) => {
-					search.page_no = 1;
+					searchParams.page_no = 1;
 					page_state.set({ u_search: v });
 				}}
 			></Search>
-			<Button onclick={() => (search.u_search = app.user.key)}>Me</Button>
+			<Button onclick={() => (searchParams.u_search = app.user.key)}>Me</Button>
 		</div>
 	{/if}
 
@@ -72,40 +55,41 @@
 		<Dropdown
 			icon2="chevron-down"
 			list={Object.keys(search_query)}
-			bind:value={search.entity_type}
+			bind:value={searchParams.entity_type}
 			onchange={(v) => {
-				v = v == 'all' ? '' : v;
-				search.action = 'all';
-				search.page_no = 1;
-				page_state.set({ entity_type: v, action: '' });
+				searchParams.page_no = 1;
+				searchParams.action = 'all';
+				page_state.set({
+					entity_type: v == defaultParams.entity_type ? '' : v,
+					action: ''
+				});
 			}}
 			--select-width="100%"
 		/>
 		<Dropdown
 			icon2="chevron-down"
-			list={search_query[search.entity_type]}
-			bind:value={search.action}
+			list={search_query[searchParams.entity_type]}
+			bind:value={searchParams.action}
 			onchange={(v) => {
-				v = v == 'all' ? '' : v;
-				search.page_no = 1;
-				page_state.set({ action: v });
+				searchParams.page_no = 1;
+				page_state.set({ action: v == defaultParams.action ? '' : v });
 			}}
 			--select-width="100%"
 		/>
 	</div>
 
 	<Search
-		placeholder="Search for {search.entity_type}"
-		bind:value={search.e_search}
+		placeholder="Search for {searchParams.entity_type}"
+		bind:value={searchParams.e_search}
 		ondone={(v) => {
-			search.page_no = 1;
+			searchParams.page_no = 1;
 			page_state.set({ e_search: v });
 		}}
 	></Search>
 
-	{#each items as item (item.key)}
+	{#each logs as log (log.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<Item {item} bind:search />
+			<One {log} bind:search={searchParams} />
 		</div>
 	{:else}
 		<PageNote>
@@ -116,7 +100,7 @@
 
 	<Pagination
 		{total_page}
-		bind:value={search.page_no}
+		bind:value={searchParams.page_no}
 		ondone={(v) => {
 			if (v == 1) v = 0;
 			page_state.set({ page_no: v });

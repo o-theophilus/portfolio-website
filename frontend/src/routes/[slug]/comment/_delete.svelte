@@ -1,12 +1,12 @@
 <script>
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Form } from '$lib/layout';
 	import { Note } from '$lib/info';
-	import Item from './item.svelte';
+	import { Form } from '$lib/layout';
+	import One from './one.svelte';
 
-	let item = { ...module.value.item };
+	let comment = { ...module.value.comment };
 	let error = $state({});
 
 	const submit = async () => {
@@ -15,7 +15,7 @@
 		loading.open(`Deleting comment . . .`);
 
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/comment/${item.key}?${new URLSearchParams(
+			`${import.meta.env.VITE_BACKEND}/comment/${comment.key}?${new URLSearchParams(
 				module.value.search
 			).toString()}`,
 			{
@@ -30,7 +30,7 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			module.value.update(resp.items);
+			module.value.update(resp.comments);
 			module.close();
 			notify.open('Comment Deleted');
 		} else {
@@ -40,7 +40,7 @@
 </script>
 
 <Form title="Delete Comment" error={error.error}>
-	<Item {item}></Item>
+	<One {comment}></One>
 
 	<Note --note-margin-top="16px" status="400" note="Are you sure you want to delete this comment"
 	></Note>
@@ -54,6 +54,6 @@
 <style>
 	.line {
 		display: flex;
-		gap: var(--sp1);
+		gap: 8px;
 	}
 </style>

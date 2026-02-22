@@ -56,12 +56,12 @@
 		flex-direction: column;
 		align-items: end;
 
-		border-radius: var(--sp0);
+		border-radius: 4px;
 		fill: currentColor;
 		font-size: 0.8rem;
 
 		pointer-events: all;
-		padding: var(--sp2);
+		padding: 16px;
 
 		color: green;
 		border-left: 8px solid green;
@@ -96,8 +96,8 @@
 		color: var(--ft2);
 
 		transition:
-			background-color var(--trans),
-			color var(--trans);
+			background-color 0.2s ease-in-out,
+			color 0.2s ease-in-out;
 	}
 	button:hover {
 		background-color: red;

@@ -1,6 +1,6 @@
 <script>
-	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
+	import { slide } from 'svelte/transition';
 
 	import { FoldButton } from '$lib/button';
 
@@ -33,8 +33,8 @@
 		border-bottom: 1px solid var(--bg2);
 
 		transition:
-			border-color var(--trans),
-			border-size var(--trans);
+			border-color 0.2s ease-in-out,
+			border-size 0.2s ease-in-out;
 	}
 	.open {
 		border-top: 2px solid var(--ft1_d);
@@ -42,10 +42,10 @@
 	}
 
 	.line {
-		padding: var(--sp2) 0;
+		padding: 16px 0;
 		text-transform: capitalize;
 
-		transition: font-weight var(--trans);
+		transition: font-weight 0.2s ease-in-out;
 	}
 
 	.open .line {
@@ -53,6 +53,6 @@
 	}
 
 	.content {
-		padding-bottom: var(--sp2);
+		padding-bottom: 16px;
 	}
 </style>

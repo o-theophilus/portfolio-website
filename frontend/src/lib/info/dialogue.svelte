@@ -1,8 +1,8 @@
 <script>
 	import { module } from '$lib/store.svelte.js';
 
-	import { Icon } from '$lib/macro';
 	import { Button } from '$lib/button';
+	import { Icon } from '$lib/macro';
 
 	let title = module.value.title || 'Done';
 	let status = module.value.status || 200;
@@ -43,9 +43,9 @@
 	.title {
 		display: flex;
 		align-items: center;
-		gap: var(--sp2);
+		gap: 16px;
 
-		padding: var(--sp2);
+		padding: 16px;
 		padding-right: 32px;
 
 		color: white;
@@ -66,8 +66,8 @@
 
 	.text,
 	.btn {
-		padding: 0 var(--sp2);
-		margin: var(--sp2) 0;
+		padding: 0 16px;
+		margin: 16px 0;
 	}
 
 	.text:first-letter {

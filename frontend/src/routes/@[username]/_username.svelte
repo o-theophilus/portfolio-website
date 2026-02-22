@@ -10,12 +10,13 @@
 
 	const validate = () => {
 		error = {};
-		form.username = form.username.trim();
+
+		if (form.username) form.username = form.username.trim();
 		if (!form.username) {
 			error.username = 'This field is required';
-		} else if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(form.username) || form.username.length > 20) {
+		} else if (!/^[A-Za-z][A-Za-z0-9-]*$/.test(form.username) || form.username.length > 20) {
 			error.username =
-				'Username can only contain letters, numbers, or underscores, must start with a letter, and be at most 20 characters';
+				'Username can only contain letters, numbers, or dash, must start with a letter, and be at most 20 characters';
 		} else if (form.username == app.user.username) {
 			error.username = 'No changes were made';
 		}

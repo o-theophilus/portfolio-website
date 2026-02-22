@@ -1,37 +1,23 @@
 <script>
-	import { slide } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
+	import { slide } from 'svelte/transition';
 
+	import { FoldButton } from '$lib/button';
+	import { Avatar, Spinner } from '$lib/macro';
 	import { app } from '$lib/store.svelte.js';
-	import { FoldButton, Link } from '$lib/button';
-	import { Spinner, Avatar } from '$lib/macro';
 
-	let { key, refresh } = $props();
-	let items = $state([]);
+	let { similar = [], loading, update } = $props();
 	let open = $state(true);
-	let loading = $state(true);
-
-	export const load = async () => {
-		loading = true;
-
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/similar/${key}`);
-		resp = await resp.json();
-		loading = false;
-
-		if (resp.status == 200) {
-			items = resp.items;
-		}
-	};
 
 	const prerender = (post) => {
 		app.post = post;
 	};
 </script>
 
-{#if loading || items.length > 0}
+{#if loading || similar.length}
 	<div class="title line">
 		<div class="page_title line">
-			Similar Post{#if items.length > 1}s{/if}
+			Similar Post{#if similar.length > 1}s{/if}
 			<Spinner active={loading} size="20" />
 		</div>
 
@@ -47,36 +33,36 @@
 
 	{#if open && !loading}
 		<div class="area" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
-			{#each items as item}
+			{#each similar as post}
 				<div class="post">
 					<a
-						href="/{item.slug}"
+						href="/{post.slug}"
 						onclick={() => {
-							prerender(item);
-							refresh(item);
+							prerender(post);
+							update(post);
 						}}
-						onmouseenter={() => prerender(item)}
+						onmouseenter={() => prerender(post)}
 					>
-						<Avatar size="58" photo={item.photo} no_photo="/no_photo.png" name={item.title}
+						<Avatar size="58" photo={post.photo} no_photo="/no_photo.png" name={post.title}
 						></Avatar>
 					</a>
 					<div class="details">
 						<a
 							class="link"
-							href="/{item.slug}"
+							href="/{post.slug}"
 							onclick={() => {
-								prerender(item);
-								refresh(item);
+								prerender(post);
+								update(post);
 							}}
-							onmouseenter={() => prerender(item)}
+							onmouseenter={() => prerender(post)}
 						>
-							{item.title}
+							{post.title}
 						</a>
 
-						{#if item.description}
+						{#if post.description}
 							<br />
 							<div class="desc">
-								{item.description}
+								{post.description}
 							</div>
 						{/if}
 					</div>
@@ -94,13 +80,13 @@
 
 	.area {
 		display: grid;
-		gap: var(--sp3);
+		gap: 24px;
 		margin: 48px 0;
 	}
 
 	.post {
 		display: flex;
-		gap: var(--sp2);
+		gap: 16px;
 	}
 
 	.link {
@@ -108,7 +94,7 @@
 		color: var(--link-color);
 		font-weight: 700;
 
-		transition: color var(--trans);
+		transition: color 0.2s ease-in-out;
 	}
 
 	.link:hover {

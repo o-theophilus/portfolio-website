@@ -1,9 +1,9 @@
 .markdown img {
 	width: 100%;
 	/* margin: 20px auto; */
-	/* padding: var(--sp2); */
+	/* padding: 16px; */
 	margin-top: 16px ;
-	border-radius: var(--sp1);
+	border-radius: 8px;
 	
 	background-color: var(--bg2);
 }
@@ -45,7 +45,7 @@ blockquote {
 	color: white;
 	text-decoration: none;
 
-	transition: background-color var(--trans);
+	transition: background-color 0.2s ease-in-out;
 }
 
 .markdown a.button:hover {
@@ -57,14 +57,14 @@ blockquote {
 	line-height: 0;
 }
 .markdown .embed embed {
-	border-radius: var(--sp1);
+	border-radius: 8px;
 }
 .markdown .embed a {
 	--size: 40px;
 
 	position: absolute;
-	top: var(--sp2);
-	right: var(--sp2);
+	top: 16px;
+	right: 16px;
 
 	display: flex;
 	justify-content: center;
@@ -72,12 +72,12 @@ blockquote {
 
 	width: var(--size);
 	height: var(--size);
-	border-radius: var(--sp1);
+	border-radius: 8px;
 
 	fill: var(--ft2);
 	background-color: var(--button);
 	
-	transition: fill var(--trans), background-color var(--trans);
+	transition: fill 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 .markdown .embed a:hover {
 	background-color: var(--cl1);
@@ -132,7 +132,7 @@ ul {
 pre {
 	padding: 20px;
 	margin: 16px 0;
-	border-radius: var(--sp0);
+	border-radius: 4px;
 
 	background-color: hsl(0, 0%, 15%);
 

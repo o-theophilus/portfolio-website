@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify
 from psycopg2.extras import Json
-from ...postgres import db_open, db_close
-from ...post import post_schema
 
+from ...post import post_schema
+from ...postgres import db_close, db_open
 
 bp = Blueprint("highlight_get", __name__)
 
