@@ -16,7 +16,8 @@ def get_many(key, cur=None):
 
     session = get_session(cur, True)
     if session["status"] != 200:
-        db_close(con, cur)
+        if close_conn:
+            db_close(con, cur)
         return jsonify(session)
     user = session["user"]
 
