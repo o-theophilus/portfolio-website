@@ -1,17 +1,16 @@
 <script>
-	import { loading, module, notify, app, page_state } from '$lib/store.svelte.js';
+	import { app, loading, module, notify, page_state } from '$lib/store.svelte.js';
 
 	import { Button, Tag } from '$lib/button';
+	import { Dropdown, IG } from '$lib/input';
 	import { Form } from '$lib/layout';
-	import { IG, Dropdown } from '$lib/input';
-	import { Avatar } from '$lib/macro';
-	import { template, tags } from './_report.template.js';
-	import Item from './one.svelte';
+	import { tags, template } from './_report.template.js';
+	import One from './one.svelte';
 
-	let item = { ...module.value.item };
+	let comment = { ...module.value.comment };
 
 	let form = $state({
-		entity_key: item.key,
+		entity_key: comment.key,
 		entity_type: 'comment',
 		comment: '',
 		tags: []
@@ -55,7 +54,9 @@
 </script>
 
 <Form title="Report" error={error.error}>
-	<Item {item}></Item>
+	<div class="comment">
+		<One {comment}></One>
+	</div>
 
 	<IG
 		bind:value={form.comment}
@@ -110,6 +111,15 @@
 </Form>
 
 <style>
+	.comment {
+		padding: 16px;
+
+		background-color: var(--bg2);
+		border-radius: 8px;
+		outline: 1px solid var(--ol);
+		outline-offset: -1px;
+	}
+
 	.label {
 		font-size: 0.8rem;
 	}

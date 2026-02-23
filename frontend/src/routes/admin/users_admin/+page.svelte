@@ -15,7 +15,8 @@
 	let { data } = $props();
 	let users = $derived(data.users);
 	let total_page = $derived(data.total_page);
-	let { search_query } = data;
+	let { access } = data;
+
 	let { order_by } = data;
 	let searchParams = $state({ ...data.searchParams });
 	let defaultParams = $state(data.searchParams);
@@ -34,7 +35,7 @@
 <Log entity_type={'page'} />
 <Meta title="Admin" description="Users with elevated Access" />
 
-<Content>
+<Content --content-height="auto">
 	<div class="line">
 		<BackButton />
 		<div class="page_title">
@@ -46,7 +47,7 @@
 	<div class="line nowrap">
 		<Dropdown
 			icon2="chevron-down"
-			list={Object.keys(search_query)}
+			list={Object.keys(access)}
 			bind:value={searchParams.entity_type}
 			onchange={(v) => {
 				searchParams.page_no = 1;
@@ -60,7 +61,7 @@
 		/>
 		<Dropdown
 			icon2="chevron-down"
-			list={search_query[searchParams.entity_type]}
+			list={access[searchParams.entity_type]}
 			bind:value={searchParams.action}
 			onchange={(v) => {
 				searchParams.page_no = 1;
@@ -95,7 +96,9 @@
 			page_state.set({ order: v == defaultParams.order ? '' : v });
 		}}
 	/>
+</Content>
 
+<Content --content-padding-top="1px">
 	{#each users as user (user.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
 			<One {user} />

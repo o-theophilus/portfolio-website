@@ -72,6 +72,8 @@
 
 <style>
 	button {
+		all: unset;
+
 		position: relative;
 
 		display: inline-flex;
@@ -88,10 +90,10 @@
 		border: none;
 		font-size: var(--select-font-size, 1rem);
 		font-weight: var(--select-font-weight, 400);
-		background-color: var(--select-background-color, var(--cl1));
-		color: var(--select-color, white);
-		outline: 2px solid var(--select-outline-color, light-dark(transparent, hsl(0, 0%, 20%)));
-		outline-offset: -2px;
+		background-color: var(--select-background-color, hsl(0, 0%, 5%));
+		color: var(--select-color, hsl(0, 0%, 70%));
+		outline: 1px solid var(--select-outline-color, light-dark(transparent, hsl(0, 0%, 30%)));
+		outline-offset: -1px;
 
 		transition:
 			color 0.2s ease-in-out,
@@ -99,11 +101,8 @@
 			outline-color 0.2s ease-in-out;
 	}
 	button:hover {
-		background-color: var(
-			--select-background-color-hover,
-			color-mix(in srgb, var(--cl1), black 30%)
-		);
-		color: var(--select-color-hover, white);
+		background-color: var(--select-background-color-hover, hsl(0, 0%, 20%));
+		color: var(--select-color-hover, hsl(0, 0%, 95%));
 		outline-color: var(--select-outline-color-hover, transparent);
 	}
 	:disabled {
@@ -131,8 +130,8 @@
 		cursor: pointer;
 	}
 	option {
-		background-color: var(--bg1);
+		background-color: var(--bg);
 		color: var(--ft2);
-		font-size: 0.8rem;
+		font-size: 1rem;
 	}
 </style>

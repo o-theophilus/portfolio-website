@@ -4,7 +4,7 @@
 	import { app } from '$lib/store.svelte.js';
 	import { onMount } from 'svelte';
 
-	import { Toggle } from '$lib/button';
+	import { Switch } from '$lib/button';
 	import { Content } from '$lib/layout';
 	import { Log, Meta } from '$lib/macro';
 
@@ -38,7 +38,7 @@
 	let loading = $state(false);
 	let engagement = $state({});
 	let author = $state({});
-	let comment = $state([]);
+	let comment_resp = $state([]);
 	let similar = $state([]);
 
 	const update = async (data) => {
@@ -59,7 +59,7 @@
 		if (resp.status == 200) {
 			engagement = resp.engagement;
 			author = resp.author;
-			comment = resp.comment;
+			comment_resp = resp.comment_resp;
 			similar = resp.similar;
 		}
 	};
@@ -80,9 +80,19 @@
 {/key}
 <Meta title={post.title} description={post.description} image={post.photo} />
 
-<Content>
+<Content --content-background-color="var(--bg)">
 	{#if is_admin}
-		<Toggle state_2="edit" active={edit_mode} onclick={() => (edit_mode = !edit_mode)} />
+		<Switch
+			--toggle-height="21px"
+			--toggle-font-size="0.8rem"
+			--toggle-padding-x="8px"
+			list={['', 'edit']}
+			value={!edit_mode ? '' : 'edit'}
+			onclick={() => {
+				edit_mode = !edit_mode;
+			}}
+		/>
+
 		<br />
 	{/if}
 
@@ -104,15 +114,23 @@
 	<Author {author} {post} {edit_mode} {loading} {update} />
 </Content>
 
-<Content --content-background-color="var(--bg2)" --content-height>
+<Content --content-height>
 	<div class="line engage">
 		<Like {post} bind:engagement />
 		<Share item={post} />
 	</div>
-	<Comment {post} {comment} {loading} />
+
+	<hr />
+
+	<Comment {post} {comment_resp} {loading} />
 </Content>
 
-<Content --content-height --content-padding-top="0" --content-padding-bottom="0">
+<Content
+	--content-background-color="var(--bg2)"
+	--content-height="auto"
+	--content-padding-top="1px"
+	--content-padding-bottom="1px"
+>
 	<Similar {similar} {loading} {update} />
 	<ToTop />
 </Content>

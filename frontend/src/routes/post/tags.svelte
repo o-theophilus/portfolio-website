@@ -1,27 +1,26 @@
 <script>
+	import { Button, RoundButton, Switch } from '$lib/button';
+	import { Checkbox, Input } from '$lib/input';
 	import { app } from '$lib/store.svelte.js';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
-
-	import { Button, RoundButton, Toggle } from '$lib/button';
-	import { IG } from '$lib/input';
-	import { Icon } from '$lib/macro';
 
 	let { value = $bindable(), ondone } = $props();
 
 	let selected = $state([]);
 	let multiply = $state(false);
 	let filter = $state('');
-	let loading = $state(true);
-	let open = $state(false);
 
 	let _selected = $state([]);
 	let _multiply = $state(false);
 
+	let loading = $state(false);
 	onMount(async () => {
 		if (!app.tags) {
+			loading = true;
 			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tags`);
 			resp = await resp.json();
+			loading = false;
 
 			if (resp.status == 200) {
 				app.tags = resp.tags;
@@ -36,7 +35,6 @@
 
 		selected = value.split(',').filter(Boolean);
 		_selected = [...selected];
-		loading = false;
 	});
 
 	const submit = () => {
@@ -58,14 +56,28 @@
 		clear();
 		if (_selected.length) submit();
 		open = false;
+		can_close = false;
 	};
 
 	const ok = () => {
 		filter = '';
 		submit();
 		open = false;
+		can_close = false;
 	};
+
+	let menu = $state();
+	let open = $state(false);
+	let can_close = $state(false);
 </script>
+
+<svelte:window
+	onclick={(e) => {
+		if (menu && menu.contains(e.target)) return;
+		if (open && !can_close) open = false;
+		can_close = false;
+	}}
+/>
 
 <div class="filter">
 	<Button
@@ -75,33 +87,38 @@
 		--button-height="48px"
 		onclick={() => {
 			open = !open;
+			can_close = true;
 			filter = '';
+			selected = [..._selected];
+			multiply = _multiply;
 		}}
 		disabled={loading}
 	></Button>
 
 	{#if open}
-		<div class="popup" transition:slide>
-			<IG type="text" placeholder="filter" bind:value={filter} no_pad>
-				{#snippet right()}
-					{#if filter}
-						<div class="close">
-							<RoundButton
-								--button-background-color-hover="red"
-								icon="x"
-								onclick={() => (filter = '')}
-							></RoundButton>
-						</div>
-					{/if}
-				{/snippet}
-			</IG>
+		<div class="popup" transition:slide bind:this={menu}>
+			<div class="search">
+				<Input placeholder="filter" bind:value={filter}>
+					{#snippet right()}
+						{#if filter}
+							<div class="clear">
+								<RoundButton
+									--button-background-color-hover="red"
+									icon="x"
+									onclick={() => (filter = '')}
+								></RoundButton>
+							</div>
+						{/if}
+					{/snippet}
+				</Input>
+			</div>
 
 			<div class="tags">
-				{#if app.tags?.length}
+				{#if app.tags.length}
 					{#each app.tags as x}
 						{#if x.toLowerCase().includes(filter.toLowerCase())}
-							<button
-								class="custom-checkbox"
+							<Checkbox
+								value={selected.includes(x)}
 								onclick={() => {
 									if (selected.includes(x)) {
 										selected = selected.filter((y) => y != x);
@@ -109,27 +126,25 @@
 										selected.push(x);
 									}
 								}}
-							>
-								<div class="checkbox" class:active={selected.includes(x)}>
-									<div class="icon">
-										<Icon icon="check"></Icon>
-									</div>
-								</div>
-								{x}
-							</button>
+								label={x}
+							></Checkbox>
 						{/if}
 					{/each}
 				{/if}
 			</div>
 
 			<div class="multiply">
-				<Toggle
-					active={multiply}
-					state_1="any"
-					state_2="all"
-					onclick={() => (multiply = !multiply)}
+				<Switch
+					--toggle-height="21px"
+					--toggle-font-size="0.8rem"
+					--toggle-padding-x="8px"
+					list={['any', 'all']}
+					value={!multiply ? 'any' : 'all'}
+					onclick={() => {
+						multiply = !multiply;
+					}}
 					disabled={selected.length < 2}
-				></Toggle>
+				/>
 			</div>
 
 			<div class="buttons">
@@ -176,12 +191,16 @@
 
 		padding: 0 8px;
 
-		background-color: var(--bg1);
+		background-color: var(--bg);
 		border-radius: 4px;
-		outline: 2px solid var(--bg2);
+		outline: 2px solid var(--bg1);
 	}
 
-	.close {
+	.search {
+		margin: 8px 0;
+	}
+
+	.clear {
 		margin-right: 8px;
 	}
 
@@ -190,62 +209,8 @@
 		padding: 8px;
 		overflow: auto;
 
-		outline: 2px solid var(--bg2);
+		outline: 2px solid var(--bg1);
 		outline-offset: -2px;
-	}
-
-	.custom-checkbox {
-		all: unset;
-
-		display: flex;
-		align-items: center;
-		gap: 16px;
-
-		width: 100%;
-		margin: 4px 0;
-
-		font-size: 0.8rem;
-		line-height: 100%;
-	}
-
-	.checkbox {
-		--size: 20px;
-		position: relative;
-
-		flex-shrink: 0;
-
-		width: var(--size);
-		height: var(--size);
-		border-radius: 4px;
-		outline: 2px solid var(--input);
-		outline-offset: -2px;
-
-		background-color: var(--input);
-		cursor: pointer;
-
-		transition: background-color 0.2s ease-in-out;
-	}
-
-	.checkbox:hover {
-		outline-color: var(--ft1);
-	}
-	.active {
-		background-color: var(--cl1);
-	}
-
-	.icon {
-		position: absolute;
-		inset: 0;
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: transparent;
-
-		transition: color 0.2s ease-in-out;
-	}
-	.active .icon {
-		color: white;
 	}
 
 	.multiply {

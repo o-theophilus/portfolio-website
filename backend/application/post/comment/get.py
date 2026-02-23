@@ -1,3 +1,5 @@
+from math import ceil
+
 from flask import Blueprint, jsonify, request
 
 from ...postgres import db_close, db_open
@@ -21,26 +23,31 @@ def get_many(key, cur=None):
     order_by = {
         'latest': 'c.date_created',
         'oldest': 'c.date_created',
-        'reply': 'reply_count',
-        'like': '"like"',
-        'dislike': 'dislike',
-        'most relevant ▼': 'most_like',
-        'most engaged': 'most_engaged',
+        'most reply': 'reply_count',
+        # 'like': '"like"',
+        # 'dislike': 'dislike',
+        'most relevant': 'most_like',
+        # 'most engaged': 'most_engaged',
     }
     order_dir = {
         'latest': 'DESC',
         'oldest': 'ASC',
-        'reply': 'DESC',
+        'most reply': 'DESC',
         'like': 'DESC',
         'dislike': 'DESC',
-        'most relevant ▼': 'DESC',
+        'most relevant': 'DESC',
         'most engaged': 'DESC',
     }
 
     searchParams = {
-        "order": 'most relevant ▼'
+        "order": 'most relevant',
+        "page_no": 1,
+        "page_size": 24
     }
     order = request.args.get("order", searchParams["order"])
+    page_no = int(request.args.get("page_no", searchParams["page_no"]))
+    page_size = int(request.args.get("page_size", searchParams["page_size"]))
+    page_size = min(page_size, 100)
 
     cur.execute(f"""
         SELECT
@@ -73,8 +80,9 @@ def get_many(key, cur=None):
         ) l ON l.comment_key = c.key
 
         WHERE c.post_key = %s AND c.parent_key IS NULL
-        ORDER BY {order_by[order]} {order_dir[order]}, c.key DESC;
-    """, (key, key))
+        ORDER BY {order_by[order]} {order_dir[order]}, c.key DESC
+        LIMIT %s OFFSET %s;
+    """, (key, key, page_size, (page_no - 1) * page_size))
     comments = cur.fetchall()
     replies = []
     likes = []
@@ -160,11 +168,23 @@ def get_many(key, cur=None):
             "replies": replies_map.get(x["key"], [])
         })
 
+    cur.execute("""
+        SELECT
+            COUNT(*) AS total,
+            COUNT(*) FILTER (WHERE parent_key IS NULL) AS total_parent
+        FROM comment WHERE post_key = %s;
+    """, (key,))
+    row = cur.fetchone()
+    total = row["total"]
+    total_parent = row["total_parent"]
+
     if close_conn:
         db_close(con, cur)
     return jsonify({
         "status": 200,
         "comments": final_comments,
         "order_by": list(order_by.keys()),
+        "total_comment": total,
+        "total_page": ceil(total_parent / page_size),
         "searchParams": searchParams,
     })

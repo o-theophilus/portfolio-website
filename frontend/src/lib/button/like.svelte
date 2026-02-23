@@ -32,10 +32,10 @@
 		padding: 4px 16px;
 		font-size: 0.7rem;
 
-		color: var(--like-color, white);
-		background-color: var(--like-background-color, var(--cl1));
-		outline: 2px solid var(--like-outline-color, light-dark(transparent, hsl(0, 0%, 20%)));
-		outline-offset: -2px;
+		color: var(--like-color, hsl(0, 0%, 60%));
+		background-color: var(--like-background-color, hsl(0, 0%, 5%));
+		outline: 1px solid var(--like-outline-color, light-dark(transparent, hsl(0, 0%, 30%)));
+		outline-offset: -1px;
 		border: none;
 		cursor: pointer;
 
@@ -53,8 +53,11 @@
 
 	.active,
 	button:hover {
-		background-color: var(--like-background-color-hover, color-mix(in srgb, var(--cl1), black 30%));
-		outline-color: var(--like-outline-color-hover, transparent);
-		color: var(--like-color-hover, white);
+		background-color: var(--button-background-color-hover, hsl(0, 0%, 20%));
+		color: var(--button-color-hover, hsl(0, 0%, 95%));
+		outline-color: var(--button-outline-color-hover, transparent);
+	}
+	.active {
+		background-color: var(--button-background-color-hover, var(--cl1));
 	}
 </style>

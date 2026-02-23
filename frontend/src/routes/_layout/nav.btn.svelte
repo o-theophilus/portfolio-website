@@ -48,11 +48,11 @@
 	}
 
 	.is_home {
-		color: var(--bg1);
+		color: var(--bg);
 	}
 	a.is_home:hover,
 	button.is_home:hover {
-		color: var(--bg1);
+		color: var(--bg);
 	}
 
 	.active {

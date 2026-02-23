@@ -38,7 +38,9 @@
 		margin-bottom: var(--note-margin-bottom, 16px);
 		max-width: var(--note-width, 100%);
 
-		background-color: color-mix(in srgb, var(--cl1), transparent 90%);
+		background-color: color-mix(in srgb, var(--bg2), transparent 70%);
+		outline: 1px solid color-mix(in srgb, var(--ft2), transparent 70%);
+		outline-offset: -1px;
 		border-radius: 4px;
 		font-size: 0.8rem;
 	}
@@ -51,18 +53,21 @@
 
 	.block._200 {
 		background-color: color-mix(in srgb, green, transparent 90%);
+		outline-color: color-mix(in srgb, green, transparent 70%);
 	}
 	._200 .line {
 		color: green;
 	}
 	.block._201 {
 		background-color: color-mix(in srgb, var(--yellow), transparent 90%);
+		outline-color: color-mix(in srgb, var(--yellow), transparent 70%);
 	}
 	._201 .line {
 		color: var(--yellow);
 	}
 	.block._400 {
 		background-color: color-mix(in srgb, red, transparent 90%);
+		outline-color: color-mix(in srgb, red, transparent 70%);
 	}
 	._400 .line {
 		color: red;

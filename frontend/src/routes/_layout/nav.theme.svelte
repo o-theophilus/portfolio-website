@@ -84,34 +84,43 @@
 		border: none;
 		cursor: pointer;
 
+		outline: 1px solid transparent;
+		outline-offset: -1px;
+
 		transition:
 			color 0.2s ease-in-out,
+			outline-color 0.2s ease-in-out,
 			background-color 0.2s ease-in-out;
-	}
 
-	.is_home {
-		color: var(--bg1);
-	}
+		&:hover {
+			outline-color: var(--ol);
+			background-color: var(--bg2);
+		}
 
-	button:hover {
-		color: white;
-		background-color: var(--cl1);
+		&.is_home {
+			color: var(--bg);
+
+			&:hover {
+				background-color: color-mix(in srgb, var(--bg1), transparent 80%);
+			}
+		}
 	}
 
 	.switch {
 		position: absolute;
 		top: 0;
 		transition: top 0.2s ease-in-out;
-	}
-	.light {
-		top: -100%;
-	}
-	.dark {
-		top: -200%;
-	}
 
-	.state {
-		width: var(--size);
-		height: var(--size);
+		&.light {
+			top: -100%;
+		}
+		&.dark {
+			top: -200%;
+		}
+
+		& .state {
+			width: var(--size);
+			height: var(--size);
+		}
 	}
 </style>

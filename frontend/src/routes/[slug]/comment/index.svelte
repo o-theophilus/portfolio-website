@@ -1,37 +1,39 @@
 <script>
-	import { app, module } from '$lib/store.svelte.js';
+	import { app, module,scroll } from '$lib/store.svelte.js';
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
 
 	import { Login } from '$lib/auth';
-	import { Button, FoldButton } from '$lib/button';
+	import { Button, FoldButton, RoundButton } from '$lib/button';
 	import { PageNote } from '$lib/info';
-	import { Dropdown } from '$lib/input';
+	import { Dropdown, Pagination } from '$lib/input';
 	import { Icon, Spinner } from '$lib/macro';
 	import Add from './_add.svelte';
+	import Control from './one.control.svelte';
 	import One from './one.svelte';
 
-	let { post, comment, loading } = $props();
+	let { post, comment_resp, loading } = $props();
 
-	let comments = $derived(comment.comments);
-	let order_by = $derived(comment.order_by);
+	let comments = $derived(comment_resp.comments);
+	let total_comment = $derived(comment_resp.total_comment);
+	let total_page = $derived(comment_resp.total_page);
+	let order_by = $derived(comment_resp.order_by);
+	let searchParams = $derived(comment_resp.searchParams);
 
 	let open = $derived(comments?.length > 0);
-	let search = $state({
-		order: 'oldest',
-		page_no: 1
-	});
 
-	const update = (data) => {
-		comments = data;
+	const update = (a, b, c) => {
+		comments = a;
+		total_comment = b;
+		total_page = c;
 	};
 
 	export const load = async () => {
 		loading = true;
 
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/${post.key}/comments?${new URLSearchParams(search).toString()}`,
+			`${import.meta.env.VITE_BACKEND}/${post.key}/comments?${new URLSearchParams(searchParams).toString()}`,
 			{
 				headers: {
 					'Content-Type': 'application/json',
@@ -46,18 +48,17 @@
 		}
 
 		loading = false;
+		scroll("#comment_section")
 	};
 </script>
 
-<hr />
-
-<div class="line space">
+<div class="line space" id="comment_section">
 	<div class="line">
 		<span class="page_title">
-			{#if comments?.length > 0}
-				{comments?.length}
+			{#if total_comment > 0}
+				{total_comment}
 			{/if}
-			Comment{#if comments?.length > 1}s{/if}
+			Comment{#if total_comment > 1}s{/if}
 		</span>
 		<Spinner active={loading} size="20" />
 	</div>
@@ -86,17 +87,33 @@
 				list={order_by}
 				icon="arrow-down-narrow-wide"
 				icon2="chevron-down"
-				bind:value={search.order}
+				bind:value={searchParams.order}
 				onchange={(v) => {
-					search.page_no = 1;
+					searchParams.page_no = 1;
 					load();
 				}}
 			/>
 		{/if}
 
 		{#each comments as comment (comment.key)}
-			<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-				<One {comment} {post} {search} {update}></One>
+			<div class="comment" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
+				<div class="main">
+					<One {comment}></One>
+					<Control {comment} {post} {searchParams} {update}>
+						{#snippet reply()}
+							<RoundButton
+								icon="reply"
+								onclick={() => module.open(Add, { comment, post, searchParams, update })}
+							/>
+						{/snippet}
+					</Control>
+				</div>
+				{#each comment.replies as reply (reply.key)}
+					<div class="reply" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
+						<One comment={reply}></One>
+						<Control comment={reply} {post} {searchParams} {update}></Control>
+					</div>
+				{/each}
 			</div>
 		{:else}
 			<PageNote>
@@ -104,12 +121,23 @@
 				No comment
 			</PageNote>
 		{/each}
+
+		<Pagination
+			{total_page}
+			bind:value={searchParams.page_no}
+			ondone={(v) => {
+				load();
+			}}
+		></Pagination>
 	</div>
 {/if}
 
 <div class="button">
 	{#if app.login}
-		<Button icon="message-circle-plus" onclick={() => module.open(Add, { post, update, search })}>
+		<Button
+			icon="message-circle-plus"
+			onclick={() => module.open(Add, { post, update, searchParams })}
+		>
 			Add comment
 		</Button>
 	{:else}
@@ -118,11 +146,26 @@
 </div>
 
 <style>
-	.button {
-		margin: 16px 0;
+	.comment {
+		margin-top: 8px;
+
+		border-radius: 8px;
+		overflow: hidden;
+		outline: 1px solid var(--ol);
+		outline-offset: -1px;
 	}
 
-	hr {
+	.main {
+		padding: 16px;
+		background-color: var(--bg3);
+	}
+	.reply {
+		border-top: 1px solid var(--ol);
+		padding: 16px;
+		background-color: var(--bg2);
+	}
+
+	.button {
 		margin: 16px 0;
 	}
 </style>

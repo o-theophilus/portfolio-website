@@ -45,8 +45,4 @@
 		margin-top: 8px;
 		gap: 4px;
 	}
-
-	hr {
-		margin: 16px 0;
-	}
 </style>

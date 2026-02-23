@@ -1,5 +1,5 @@
 <script>
-	import { app, loading, module, notify } from '$lib/store.svelte.js';
+	import { app, loading, module, notify, scroll } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
@@ -31,7 +31,7 @@
 		loading.open('Adding Comment . . .');
 		let resp = await fetch(
 			`${import.meta.env.VITE_BACKEND}/comment/${post.key}?${new URLSearchParams(
-				module.value.search
+				module.value.searchParams
 			).toString()}`,
 			{
 				method: 'post',
@@ -46,9 +46,10 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.comments);
+			module.value.update(resp.comments, resp.total_comment, resp.total_page);
 			module.close();
 			notify.open('Comment Added');
+			scroll('#comment_section');
 		} else {
 			error = resp;
 		}
@@ -57,7 +58,9 @@
 
 <Form title="{parent ? 'Reply' : 'Add'} Comment" error={error.error}>
 	{#if parent}
-		<One comment={parent}></One>
+		<div class="comment">
+			<One comment={parent}></One>
+		</div>
 	{/if}
 
 	<IG
@@ -70,3 +73,14 @@
 
 	<Button icon2="send-horizontal" onclick={validate}>Submit</Button>
 </Form>
+
+<style>
+	.comment {
+		padding: 16px;
+
+		background-color: var(--bg2);
+		border-radius: 8px;
+		outline: 1px solid var(--ol);
+		outline-offset: -1px;
+	}
+</style>

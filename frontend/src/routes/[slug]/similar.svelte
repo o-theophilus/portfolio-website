@@ -32,7 +32,7 @@
 	</div>
 
 	{#if open && !loading}
-		<div class="area" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
+		<div class="post_area" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
 			{#each similar as post}
 				<div class="post">
 					<a
@@ -78,36 +78,39 @@
 		margin: 48px 0;
 	}
 
-	.area {
+	.post_area {
 		display: grid;
 		gap: 24px;
 		margin: 48px 0;
+
+		@media screen and (min-width: 600px) {
+			& {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
 	}
 
 	.post {
 		display: flex;
 		gap: 16px;
-	}
 
-	.link {
-		text-decoration: none;
-		color: var(--link-color);
-		font-weight: 700;
+		& .link {
+			text-decoration: none;
+			color: var(--link-color, var(--link));
+			font-weight: 700;
 
-		transition: color 0.2s ease-in-out;
-	}
+			line-height: 10%;
 
-	.link:hover {
-		color: var(--link-color-hover);
-	}
+			transition: color 0.2s ease-in-out;
 
-	@media screen and (min-width: 600px) {
-		.area {
-			grid-template-columns: 1fr 1fr;
+			&:hover {
+				color: var(--link-color-hover, color-mix(in srgb, var(--link), black 30%));
+			}
 		}
-	}
 
-	.desc {
-		font-size: 0.8rem;
+		& .desc {
+			margin-top: 4px;
+			font-size: 0.7rem;
+		}
 	}
 </style>

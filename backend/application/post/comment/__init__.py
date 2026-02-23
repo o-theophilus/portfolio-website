@@ -34,7 +34,8 @@ def create(key):
     parent_key = request.json.get("parent_key")
     if parent_key:
         cur.execute("SELECT * FROM comment WHERE key = %s;", (parent_key,))
-        if not cur.fetchone():
+        parent = cur.fetchone()
+        if not parent or parent["parent_key"] is not None:
             db_close(con, cur)
             return jsonify({
                 "status": 400,
@@ -69,9 +70,9 @@ def create(key):
         misc={"post_key": post["key"]}
     )
 
-    items = get_many(post["key"], cur)
+    comment_resp = get_many(post["key"], cur)
     db_close(con, cur)
-    return items
+    return comment_resp
 
 
 @bp.delete("/comment/<key>")
@@ -106,9 +107,9 @@ def delete(key):
         misc={"post_key": comment["post_key"]}
     )
 
-    comments = get_many(comment["post_key"], cur)
+    comment_resp = get_many(comment["post_key"], cur)
     db_close(con, cur)
-    return comments
+    return comment_resp
 
 
 @bp.post("/comment/like/<key>")

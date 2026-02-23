@@ -177,7 +177,7 @@ def get_many(cur=None):
     cur.execute(f"""
         SELECT COUNT(*) FROM post
         WHERE post.status = %s
-            AND (%s = '' OR post.title ILIKE %s) {tag_query}
+            AND (%s = '' OR post.title ILIKE %s) {tag_query};
     """, (*params,))
     total_page = cur.fetchone()["count"]
 
@@ -296,7 +296,7 @@ def after_post(key):
 
     engagement = get_engagement(cur, key, user["key"])
     author = get_author(cur, key)
-    comment = get_comments(key, cur).json
+    comment_resp = get_comments(key, cur).json
     similar = get_similar(cur, key)
 
     db_close(con, cur)
@@ -304,10 +304,7 @@ def after_post(key):
         "status": 200,
         "engagement": engagement,
         "author": author,
-        "comment": {
-            "comments": comment["comments"],
-            "order_by": comment["order_by"]
-        },
+        "comment_resp": comment_resp,
         "similar": similar
     })
 

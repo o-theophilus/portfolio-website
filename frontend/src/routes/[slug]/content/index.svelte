@@ -53,9 +53,3 @@
 {:else if edit_mode}
 	<PageNote>No content</PageNote>
 {/if}
-
-<style>
-	hr {
-		margin: 16px 0;
-	}
-</style>

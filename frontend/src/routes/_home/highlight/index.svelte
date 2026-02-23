@@ -4,9 +4,8 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { fade } from 'svelte/transition';
 
-	import { LinkArrow, RoundButton, Tag } from '$lib/button';
+	import { Button, LinkArrow, RoundButton, Tag } from '$lib/button';
 	import { Content } from '$lib/layout';
-	import { Icon } from '$lib/macro';
 	import { onMount } from 'svelte';
 	import Edit from './edit.svelte';
 
@@ -88,21 +87,8 @@
 
 				{#if app.highlight.length > 1}
 					<div class="nav">
-						<button
-							onclick={() => {
-								set(-1);
-							}}
-						>
-							<Icon icon="chevron-left" />
-						</button>
-
-						<button
-							onclick={() => {
-								set(1);
-							}}
-						>
-							<Icon icon="chevron-right" />
-						</button>
+						<Button icon="chevron-left" onclick={() => set(-1)}></Button>
+						<Button icon="chevron-right" onclick={() => set(1)}></Button>
 					</div>
 
 					<div class="indicator">
@@ -114,8 +100,8 @@
 									index = i;
 								}}
 							>
-								<span style:display="none">hidden</span></button
-							>
+								<span style:display="none">hidden</span>
+							</button>
 						{/each}
 					</div>
 				{/if}
@@ -192,35 +178,16 @@
 		left: 0;
 
 		display: flex;
-		padding: 6px;
+		padding: 8px;
 		gap: 4px;
 		pointer-events: none;
-	}
 
-	.nav button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-shrink: 0;
-
-		border: none;
-		width: 40px;
-		height: 40px;
-		border-radius: 4px;
-
-		background-color: black;
-		color: white;
-		cursor: pointer;
-		pointer-events: all;
-
-		transition: background-color 0.2s ease-in-out;
-	}
-	.nav button:hover {
-		background-color: var(--cl1);
+		--button-width: 40px;
+		--button-height: 40px;
 	}
 
 	.indicator {
-		--size: 12px;
+		--size: 8px;
 		--gap: 6px;
 
 		position: absolute;
@@ -235,55 +202,56 @@
 		padding: var(--gap);
 		margin: 8px;
 		border-radius: calc((var(--size) + var(--size) * 2) / 2);
-	}
 
-	.indicator button {
-		flex-shrink: 0;
-		width: var(--size);
-		height: var(--size);
+		& button {
+			flex-shrink: 0;
+			width: var(--size);
+			height: var(--size);
 
-		background-color: gray;
-		border-radius: calc(var(--size) / 2);
-		border: none;
-		cursor: pointer;
+			background-color: gray;
+			border-radius: calc(var(--size) / 2);
+			border: none;
+			cursor: pointer;
 
-		transition:
-			width 0.2s ease-in-out,
-			background-color 0.2s ease-in-out;
-	}
+			transition:
+				width 0.2s ease-in-out,
+				background-color 0.2s ease-in-out;
 
-	.indicator button.active {
-		width: calc(var(--size) * 2);
-		background-color: white;
-	}
-	.indicator button:hover {
-		background-color: var(--cl1);
+			&.active {
+				width: calc(var(--size) * 3);
+				background-color: white;
+			}
+			&:hover {
+				background-color: var(--cl1);
+			}
+		}
 	}
 
 	.info {
 		max-width: 400px;
-	}
-	.name {
-		display: inline-block;
 
-		color: var(--ft1);
-		font-weight: 700;
-		font-size: 1.2rem;
-		text-decoration: none;
+		& .name {
+			display: inline-block;
 
-		transition: color 0.2s ease-in-out;
-	}
-	.name:hover {
-		color: var(--cl1);
-	}
+			color: var(--ft1);
+			font-weight: 700;
+			font-size: 1.2rem;
+			text-decoration: none;
 
-	.name,
-	.description {
-		margin-top: 16px;
-	}
+			transition: color 0.2s ease-in-out;
+			&:hover {
+				color: var(--link-color-hover, color-mix(in srgb, var(--cl1), black 30%));
+			}
+		}
 
-	.tag {
-		margin-top: 16px;
-		gap: 4px;
+		& .name,
+		& .description {
+			margin-top: 16px;
+		}
+
+		& .tag {
+			margin-top: 16px;
+			gap: 4px;
+		}
 	}
 </style>

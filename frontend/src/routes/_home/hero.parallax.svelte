@@ -29,9 +29,8 @@
 		alt="parallax1"
 	/>
 
-	<div class="block">
+	<div class="logo_name">
 		<div class="icon">
-			<div class="icon_bg"></div>
 			<Icon icon="logo" size="96" />
 		</div>
 		<div class="details">
@@ -104,7 +103,7 @@
 		object-fit: cover;
 	}
 
-	.block {
+	.logo_name {
 		position: fixed;
 		top: 100px;
 
@@ -116,54 +115,54 @@
 		width: 100%;
 		padding: 16px;
 
-		color: var(--bg1);
-		transition: color 0.2s ease-in-out;
-	}
+		& .icon {
+			position: relative;
 
-	.details {
-		display: flex;
-		flex-direction: column;
-		text-align: center;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			border-radius: 50%;
+			line-height: 0;
+			fill: var(--cl1);
+
+			&::before {
+				content: '';
+				position: absolute;
+				z-index: -1;
+
+				width: 80px;
+				height: 80px;
+				border-radius: 50%;
+				background-color: white;
+			}
+		}
+		& .details {
+			display: flex;
+			flex-direction: column;
+			text-align: center;
+
+			color: var(--bg);
+			transition: color 0.2s ease-in-out;
+
+			& .name {
+				font-size: 2rem;
+				font-weight: 800;
+			}
+
+			& .role {
+				font-size: 1.1rem;
+			}
+		}
 	}
 
 	@media screen and (min-height: 600px) {
-		.block {
+		.logo_name {
 			flex-direction: column;
 			top: 140px;
 		}
 		.details {
 			align-items: center;
 		}
-	}
-
-	.icon {
-		position: relative;
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		border-radius: 50%;
-		line-height: 0;
-		fill: var(--cl1);
-	}
-
-	.icon_bg {
-		position: absolute;
-		z-index: -1;
-
-		width: 80px;
-		height: 80px;
-		border-radius: 50%;
-		background-color: white;
-	}
-
-	.name {
-		font-size: 2rem;
-		font-weight: 800;
-	}
-
-	.role {
-		font-size: 1.1rem;
 	}
 </style>

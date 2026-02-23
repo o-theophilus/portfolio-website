@@ -17,8 +17,4 @@
 	.comp {
 		padding: 24px;
 	}
-
-	hr {
-		margin: 16px 0;
-	}
 </style>

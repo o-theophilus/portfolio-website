@@ -43,7 +43,7 @@
 <Log entity_type={'page'} />
 <Meta title="Blocked User{blocks.length > 1 ? 's' : ''}" />
 
-<Content --content-background-color="var(--bg2)">
+<Content --content-height="auto">
 	<div class="line space">
 		<div class="line">
 			<BackButton />
@@ -78,7 +78,9 @@
 			page_state.set({ order: v == defaultParams.order ? '' : v });
 		}}
 	/>
+</Content>
 
+<Content --content-padding-top="1px">
 	{#each blocks as block (block.key)}
 		<div class="report" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
 			<One {block} {update} />

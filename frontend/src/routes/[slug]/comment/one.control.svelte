@@ -5,11 +5,10 @@
 
 	import { Like, RoundButton } from '$lib/button';
 	import { Icon } from '$lib/macro';
-	import Add from './_add.svelte';
 	import Delete from './_delete.svelte';
 	import Report from './_report.svelte';
 
-	let { comment, post, search, update } = $props();
+	let { comment, post, searchParams, update, reply } = $props();
 
 	let error = $state({});
 	let open_menu = $state(false);
@@ -63,21 +62,22 @@
 	}}
 />
 
-{#snippet button(text, icon, onclick)}
-	<button class="btn" {onclick}>
-		<Icon {icon}></Icon>
-		{text}
-	</button>
-{/snippet}
-
 {#snippet menu()}
 	<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
 		{#if comment.user.key == app.user.key}
-			{@render button('Delete', 'trash-2', () => module.open(Delete, { comment, update, search }))}
+			<button onclick={() => module.open(Delete, { comment, update, searchParams })}>
+				<Icon icon="trash-2"></Icon>
+				Delete
+			</button>
 		{:else}
-			{@render button('Report', 'flag-triangle-right', () => {
-				module.open(Report, { comment });
-			})}
+			<button
+				onclick={() => {
+					module.open(Report, { comment });
+				}}
+			>
+				<Icon icon="flag-triangle-right"></Icon>
+				Report
+			</button>
 		{/if}
 	</div>
 {/snippet}
@@ -92,10 +92,7 @@
 
 	<div class="line space control">
 		<div class="line">
-			<RoundButton
-				icon="reply"
-				onclick={() => module.open(Add, { comment, post, search, update })}
-			/>
+			{@render reply?.()}
 
 			<Like
 				--like-height="32px"
@@ -136,6 +133,7 @@
 	.menu_area {
 		position: relative;
 	}
+
 	.menu {
 		position: absolute;
 		bottom: 40px;
@@ -144,33 +142,33 @@
 		display: flex;
 		flex-direction: column;
 
-		background-color: var(--bg1);
+		background-color: var(--bg);
 		border-radius: 4px;
 
-		outline: 2px solid var(--bg2);
-	}
+		outline: 1px solid var(--ol);
+		outline-offset: -1px;
 
-	.btn {
-		all: unset;
+		& button {
+			all: unset;
 
-		display: flex;
-		align-items: center;
-		gap: 8px;
+			display: flex;
+			align-items: center;
+			gap: 8px;
 
-		color: var(--ft2);
-		font-size: 0.8rem;
-		text-align: center;
-		padding: 8px;
+			font-size: 0.8rem;
+			text-align: center;
+			padding: 8px;
 
-		border-bottom: 1px solid var(--bg2);
+			border-bottom: 1px solid var(--bg2);
 
-		transition:
-			color 0.2s ease-in-out,
-			background-color 0.2s ease-in-out;
-	}
+			transition:
+				color 0.2s ease-in-out,
+				background-color 0.2s ease-in-out;
 
-	.btn:hover {
-		background-color: var(--bg2);
-		color: var(--ft1);
+			&:hover {
+				background-color: var(--bg2);
+				color: var(--ft1);
+			}
+		}
 	}
 </style>

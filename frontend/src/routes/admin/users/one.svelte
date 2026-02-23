@@ -1,6 +1,7 @@
 <script>
+	import { Tag } from '$lib/button';
 	import { Avatar } from '$lib/macro';
-	let { user } = $props();
+	let { user, all = false } = $props();
 </script>
 
 <a href="/@{user.username}">
@@ -14,6 +15,12 @@
 			@{user.username}
 		</span>
 	</div>
+
+	{#if user.blocked}
+		<Tag>Blocked</Tag>
+	{:else if all}
+		<Tag>{user.status}</Tag>
+	{/if}
 </a>
 
 <style>
@@ -22,32 +29,37 @@
 		align-items: center;
 		gap: 16px;
 
-		margin: 16px 0;
-		padding-top: 16px;
-		border-top: 2px solid var(--input);
+		margin-top: 8px;
+		padding: 16px;
+		background-color: var(--bg3);
+		border-radius: 8px;
 
 		text-decoration: none;
 		color: var(--ft2);
-	}
-	a:hover {
 		text-decoration: none;
-	}
+		outline: 1px solid var(--ol);
+		outline-offset: -1px;
 
-	.details {
-		width: 100%;
-		line-height: 100%;
-	}
+		transition: background-color 0.2s ease-in-out;
 
-	.name {
-		font-weight: 700;
-		color: var(--ft1);
-	}
-	.username {
-		font-size: 0.7em;
-	}
+		&:hover {
+			background-color: var(--bg2);
+		}
 
-	span {
-		word-wrap: break-word;
-		word-break: break-all;
+		& .details {
+			width: 100%;
+			line-height: 100%;
+
+			& .name {
+				font-weight: 700;
+				color: var(--ft1);
+			}
+
+			& .username {
+				font-size: 0.7em;
+			}
+		}
+
+		--tag-font-size: 0.7rem;
 	}
 </style>

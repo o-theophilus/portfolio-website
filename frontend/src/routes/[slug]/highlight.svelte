@@ -1,6 +1,6 @@
 <script>
-	import { loading, app, notify } from '$lib/store.svelte.js';
-	import { Toggle } from '$lib/button';
+	import { Switch } from '$lib/button';
+	import { app, loading, notify } from '$lib/store.svelte.js';
 	import { onMount } from 'svelte';
 	let { item } = $props();
 
@@ -54,5 +54,12 @@
 </script>
 
 {#if app.user.access.includes('post:edit_highlight') && item.status == 'active'}
-	<Toggle state_2="highlight" active={is_highlighted} onclick={submit} />
+	<Switch
+		--toggle-height="21px"
+		--toggle-font-size="0.8rem"
+		--toggle-padding-x="8px"
+		list={['', 'highlight']}
+		value={!is_highlighted ? '' : 'highlight'}
+		onclick={submit}
+	/>
 {/if}

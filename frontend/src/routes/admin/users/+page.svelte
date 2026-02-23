@@ -34,7 +34,7 @@
 <Log entity_type={'page'} />
 <Meta title="All Users" />
 
-<Content>
+<Content --content-height="auto">
 	<div class="line space">
 		<div class="line">
 			<BackButton />
@@ -79,10 +79,12 @@
 			page_state.set({ order: v == defaultParams.order ? '' : v });
 		}}
 	/>
+</Content>
 
+<Content --content-padding-top="1px">
 	{#each users as user (user.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<One {user} />
+			<One {user} all={searchParams.status == 'all'} />
 		</div>
 	{:else}
 		<PageNote>

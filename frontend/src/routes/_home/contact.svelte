@@ -4,7 +4,12 @@
 	import Scroller from './scroller2.svelte';
 </script>
 
-<Content --content-height="100%" --content-padding-top="80px">
+<Content
+	--content-height="100%"
+	--content-padding-top="80px"
+	--content-padding-bottom="80px"
+	--content-background-color="var(--bg)"
+>
 	<Observe let:intersecting>
 		<div class="observe" class:intersecting>
 			<div>

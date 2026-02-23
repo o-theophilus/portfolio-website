@@ -51,7 +51,7 @@
 
 		font-size: 0.6rem;
 		color: var(--ft2);
-		background-color: var(--bg2);
+		background-color: var(--bg1);
 		transition:
 			background-color 0.2s ease-in-out,
 			color 0.2s ease-in-out;

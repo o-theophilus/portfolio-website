@@ -37,7 +37,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.items, resp.total_page);
+			module.value.update(resp.posts, resp.total_page);
 			module.open(Dialogue, {
 				message: 'Post Created',
 				buttons: [
@@ -45,7 +45,7 @@
 						name: 'OK',
 						icon: 'check',
 						fn: () => {
-							goto(`/${resp.item.slug}?edit=true`);
+							goto(`/${resp.post.slug}?edit=true`);
 							module.close();
 						}
 					}

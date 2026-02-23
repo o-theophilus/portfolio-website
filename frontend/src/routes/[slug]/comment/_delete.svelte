@@ -1,5 +1,5 @@
 <script>
-	import { app, loading, module, notify } from '$lib/store.svelte.js';
+	import { app, loading, module, notify, scroll } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
 	import { Note } from '$lib/info';
@@ -16,7 +16,7 @@
 
 		let resp = await fetch(
 			`${import.meta.env.VITE_BACKEND}/comment/${comment.key}?${new URLSearchParams(
-				module.value.search
+				module.value.searchParams
 			).toString()}`,
 			{
 				method: 'delete',
@@ -30,9 +30,10 @@
 		resp = await resp.json();
 
 		if (resp.status == 200) {
-			module.value.update(resp.comments);
+			module.value.update(resp.comments, resp.total_comment, resp.total_page);
 			module.close();
 			notify.open('Comment Deleted');
+			scroll('#comment_section');
 		} else {
 			error = resp;
 		}
@@ -40,7 +41,9 @@
 </script>
 
 <Form title="Delete Comment" error={error.error}>
-	<One {comment}></One>
+	<div class="comment">
+		<One {comment}></One>
+	</div>
 
 	<Note --note-margin-top="16px" status="400" note="Are you sure you want to delete this comment"
 	></Note>
@@ -52,6 +55,15 @@
 </Form>
 
 <style>
+	.comment {
+		padding: 16px;
+
+		background-color: var(--bg2);
+		border-radius: 8px;
+		outline: 1px solid var(--ol);
+		outline-offset: -1px;
+	}
+
 	.line {
 		display: flex;
 		gap: 8px;

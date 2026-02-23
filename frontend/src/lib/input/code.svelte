@@ -80,7 +80,7 @@
 		font-size: var(--input-font-size, 1.5rem);
 		text-align: center;
 		background-color: var(--input-background-color, transparent);
-		color: var(--input-color, hsl(0, 0%, 0%));
+		color: var(--input-color, var(--ft1));
 	}
 	input:not(:last-of-type) {
 		border-right: 1px solid var(--input);

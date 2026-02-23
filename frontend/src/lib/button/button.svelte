@@ -9,8 +9,8 @@
 		onclick,
 		onmouseenter,
 		href = null,
+		target,
 		tabindex = null,
-		target = '',
 		icon = null,
 		icon2 = null,
 		icon_size = 16
@@ -20,21 +20,29 @@
 {#if href}
 	<a {href} class:caps {onmouseenter} title={tooltip} tabindex={null} {target}>
 		{#if icon}
-			<Icon {icon} size={icon_size}></Icon>
+			{#key icon}
+				<Icon {icon} size={icon_size}></Icon>
+			{/key}
 		{/if}
 		{@render children?.()}
 		{#if icon2}
-			<Icon icon={icon2} size={icon_size}></Icon>
+			{#key icon2}
+				<Icon icon={icon2} size={icon_size}></Icon>
+			{/key}
 		{/if}
 	</a>
 {:else if onclick}
 	<button {onclick} class:caps {disabled} {onmouseenter} title={tooltip} {tabindex}>
 		{#if icon}
-			<Icon {icon} size={icon_size}></Icon>
+			{#key icon}
+				<Icon {icon} size={icon_size}></Icon>
+			{/key}
 		{/if}
 		{@render children?.()}
 		{#if icon2}
-			<Icon icon={icon2} size={icon_size}></Icon>
+			{#key icon2}
+				<Icon icon={icon2} size={icon_size}></Icon>
+			{/key}
 		{/if}
 	</button>
 {:else}
@@ -68,11 +76,12 @@
 
 		font-size: var(--button-font-size, 1rem);
 		font-weight: var(--button-font-weight, 700);
-		background-color: var(--button-background-color, var(--cl1));
-		color: var(--button-color, white);
-		outline: 2px solid var(--button-outline-color, light-dark(transparent, hsl(0, 0%, 20%)));
-		outline-offset: -2px;
+		background-color: var(--button-background-color, hsl(0, 0%, 5%));
+		color: var(--button-color, hsl(0, 0%, 60%));
+		outline: 1px solid var(--button-outline-color, light-dark(transparent, hsl(0, 0%, 30%)));
+		outline-offset: -1px;
 		fill: currentColor;
+		pointer-events: all;
 	}
 
 	a,
@@ -95,11 +104,8 @@
 	/* button:focus, */
 	a:hover,
 	button:hover {
-		background-color: var(
-			--button-background-color-hover,
-			color-mix(in srgb, var(--cl1), black 30%)
-		);
-		color: var(--button-color-hover, white);
+		background-color: var(--button-background-color-hover, hsl(0, 0%, 20%));
+		color: var(--button-color-hover, hsl(0, 0%, 95%));
 		outline-color: var(--button-outline-color-hover, transparent);
 	}
 

@@ -35,10 +35,10 @@
 		width: max-content;
 		display: flex;
 		flex-direction: column;
-		background-color: var(--bg1);
+		background-color: var(--bg);
 		border-radius: 4px;
 
-		outline: 2px solid var(--bg2);
+		outline: 1px solid var(--ol);
 	}
 
 	a {
@@ -48,7 +48,7 @@
 		text-align: center;
 		padding: 8px;
 
-		border-bottom: 1px solid var(--bg2);
+		border-bottom: 1px solid var(--ol);
 
 		transition:
 			color 0.2s ease-in-out,

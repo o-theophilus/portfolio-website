@@ -41,10 +41,6 @@
 {/if}
 
 <style>
-	hr {
-		margin: 16px 0;
-	}
-
 	.line {
 		gap: 16px;
 	}

@@ -1,6 +1,6 @@
 <script>
 	import { replaceState } from '$app/navigation';
-	import { Button, Radio } from '$lib/button';
+	import { Button, Switch } from '$lib/button';
 	import { PageNote } from '$lib/info';
 	import { Dropdown, Pagination, Search } from '$lib/input';
 	import { Content } from '$lib/layout';
@@ -11,7 +11,7 @@
 	import { cubicInOut } from 'svelte/easing';
 	import Add from './_add.svelte';
 	import FilterNote from './filter_note.svelte';
-	import Item from './item.svelte';
+	import One from './one.svelte';
 	import Tags from './tags.svelte';
 
 	let { data } = $props();
@@ -46,26 +46,22 @@
 	description="This page showcases a collection of interesting blogs and projects that I have worked on"
 />
 
-<Content
-	--content-background-color="var(--bg2)"
-	--content-height="auto"
-	--content-padding-bottom="0"
->
+<Content --content-height="auto">
 	<div class="line space">
 		<div class="page_title">
 			Post{posts.length > 1 ? 's' : ''}
 		</div>
 		{#if app.user.access.includes('post:add')}
 			<div class="line">
-				<Radio
+				<Switch
 					--button-outline-color-hover="var(--ft1)"
 					list={_status}
 					bind:value={searchParams.status}
-					ondone={(v) => {
+					onclick={(v) => {
 						searchParams.page_no = 1;
 						page_state.set({ status: v == defaultParams.status ? '' : v });
 					}}
-				></Radio>
+				></Switch>
 				<Button icon="plus" extra="outline" onclick={() => module.open(Add, { update })}>
 					Add
 				</Button>
@@ -121,16 +117,12 @@
 	/>
 </Content>
 
-<Content
-	--content-background-color="var(--bg2)"
-	--content-padding-top="1px"
-	--content-width="1500px"
->
+<Content --content-padding-top="1px" --content-width="1500px">
 	{#if posts.length}
 		<section class="items">
-			{#each posts as item (item.key)}
+			{#each posts as post (post.key)}
 				<div animate:flip={{ delay: 0, duration: 500, easing: cubicInOut }}>
-					<Item {item} />
+					<One {post} />
 				</div>
 			{/each}
 		</section>

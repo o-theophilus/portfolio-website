@@ -2,7 +2,7 @@
 	import { Datetime, Icon } from '$lib/macro';
 	import { app, page_state } from '$lib/store.svelte.js';
 
-	let { log, search = $bindable() } = $props();
+	let { log, searchParams = $bindable() } = $props();
 
 	let href = $state('');
 	if (log.entity.type == 'post') {
@@ -39,8 +39,8 @@
 	{#if log.user.key && app.user.access.includes('log:view')}
 		<button
 			onclick={() => {
-				search.page_no = 1;
-				search.u_search = log.user.key;
+				searchParams.page_no = 1;
+				searchParams.u_search = log.user.key;
 				page_state.set({ u_search: log.user.key });
 			}}
 		>
@@ -58,8 +58,8 @@
 
 		<button
 			onclick={() => {
-				search.page_no = 1;
-				search.e_search = log.entity.key;
+				searchParams.page_no = 1;
+				searchParams.e_search = log.entity.key;
 				page_state.set({ e_search: log.entity.key });
 			}}
 		>
@@ -84,10 +84,13 @@
 
 <style>
 	section {
-		margin: 16px 0;
-		padding-top: 16px;
-		border-top: 2px solid var(--bg2);
+		margin-top: 8px;
 		color: var(--ft1);
+		background-color: var(--bg3);
+		border-radius: 8px;
+		padding: 16px;
+		outline: 1px solid var(--ol);
+		outline-offset: -1pxs;
 
 		font-size: 0.8rem;
 	}
@@ -117,12 +120,12 @@
 	}
 
 	a {
-		color: var(--link-color);
+		color: var(--link);
 		text-decoration: none;
 		font-weight: 700;
 	}
 	button {
-		color: var(--link-color);
+		color: var(--link);
 		border: none;
 		background-color: transparent;
 		cursor: pointer;
@@ -130,7 +133,7 @@
 
 	button:hover,
 	a:hover {
-		color: var(--cl1_b);
+		color: color-mix(in srgb, var(--link), black 30%);
 	}
 	.break {
 		word-wrap: break-word;

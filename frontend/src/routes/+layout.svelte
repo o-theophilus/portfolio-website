@@ -24,7 +24,7 @@
 	main {
 		position: relative;
 
-		background-color: var(--bg1);
+		background-color: var(--bg);
 		color: var(--ft2);
 		transition:
 			background-color 0.2s ease-in-out,

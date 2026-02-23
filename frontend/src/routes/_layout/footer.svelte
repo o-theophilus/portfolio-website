@@ -1,6 +1,4 @@
 <script>
-	import { page } from '$app/state';
-
 	import Contact from './footer.contact.svelte';
 	import Form from './footer.form.svelte';
 	import Nav from './footer.nav.svelte';
@@ -9,12 +7,13 @@
 	import { Content } from '$lib/layout';
 </script>
 
-{#if page.url.pathname != '/post'}
-	<hr />
-{/if}
-
-<Content --content-height="100%" --content-padding-top="56px" --content-padding-bottom="56px">
-	<footer id="footer">
+<footer id="footer">
+	<Content
+		--content-height="auto"
+		--content-padding-top="56px"
+		--content-padding-bottom="56px"
+		--content-background-color="var(--bg)"
+	>
 		<div class="page_title">Get In Touch</div>
 
 		<section>
@@ -36,10 +35,13 @@
 			</div>
 		</section>
 		<div class="copyright">&copy 2026 | Designed & Built by Theophilus Ogbolu.</div>
-	</footer>
-</Content>
+	</Content>
+</footer>
 
 <style>
+footer{
+	border-top: 1px solid var(--ol);
+}
 	section {
 		display: flex;
 		flex-direction: column;

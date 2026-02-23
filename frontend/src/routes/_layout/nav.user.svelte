@@ -46,7 +46,7 @@
 	</div>
 {/snippet}
 
-<div class="user">
+<div class="user_n_menu">
 	<a href="/@{app.user.username}" class="menu_btn full" class:is_home>
 		{@render _user()}
 	</a>
@@ -55,10 +55,10 @@
 		<Hamburger
 			--hamburger-background-color="transpatent"
 			--hamburger-background-color-hover={is_home
-				? 'color-mix(in srgb, var(--bg1), transparent 80%)'
+				? 'color-mix(in srgb, var(--bg), transparent 80%)'
 				: 'var(--bg2)'}
-			--hamburger-color={is_home ? 'var(--bg1)' : 'var(--ft2)'}
-			--hamburger-color-hover={is_home ? 'var(--bg1)' : 'var(--ft1)'}
+			--hamburger-color={is_home ? 'var(--bg)' : 'var(--ft2)'}
+			--hamburger-color-hover={is_home ? 'var(--bg)' : 'var(--ft1)'}
 			{open}
 			onclick={() => {
 				open = !open;
@@ -84,7 +84,35 @@
 </div>
 
 <style>
-	.user {
+	.user_details {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		text-align: left;
+
+		transition: color 0.2s ease-in-out;
+
+		& .details {
+			display: flex;
+			flex-direction: column;
+
+			& .name {
+				font-size: 0.8rem;
+				font-weight: 600;
+				line-height: 120%;
+			}
+			& .email {
+				font-size: 0.7rem;
+				line-height: 120%;
+
+				max-width: 150px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+	}
+
+	.user_n_menu {
 		position: relative;
 		display: flex;
 	}
@@ -98,25 +126,28 @@
 		cursor: pointer;
 
 		transition: background-color 0.2s ease-in-out;
-	}
-	.menu_btn:hover {
-		color: var(--ft1);
-		background-color: var(--bg2);
-	}
-	.menu_btn.is_home {
-		color: var(--bg1);
-	}
-	.menu_btn.is_home:hover {
-		background-color: color-mix(in srgb, var(--bg1), transparent 80%);
-	}
 
-	.menu_btn.full {
-		padding: 4px;
-		padding-right: 8px;
-	}
+		&:hover {
+			color: var(--ft1);
+			background-color: var(--bg2);
+		}
 
-	.menu_btn.avatar {
-		padding: 4px;
+		&.full {
+			padding: 4px;
+			padding-right: 8px;
+		}
+
+		&.avatar {
+			padding: 4px;
+		}
+
+		&.is_home {
+			color: var(--bg);
+
+			&:hover {
+				background-color: color-mix(in srgb, var(--bg1), transparent 80%);
+			}
+		}
 	}
 
 	.hamburger,
@@ -132,31 +163,5 @@
 		.avatar {
 			display: none;
 		}
-	}
-
-	.user_details {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		text-align: left;
-
-		transition: color 0.2s ease-in-out;
-	}
-	.details {
-		display: flex;
-		flex-direction: column;
-	}
-	.name {
-		font-size: 0.8rem;
-		font-weight: 600;
-		line-height: 120%;
-	}
-	.email {
-		font-size: 0.7rem;
-		line-height: 120%;
-
-		max-width: 150px;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 </style>

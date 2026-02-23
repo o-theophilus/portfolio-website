@@ -110,49 +110,21 @@
 	<div class="page_title dark">Where I've Worked</div>
 	<br />
 
-	<div class="h_tab">
-		{#each exp as x, i}
-			{#if i != 0}
-				<div class="hline"></div>
-			{/if}
-			<div
-				class="tab"
-				role="presentation"
-				class:active={active == i}
-				onclick={() => {
-					active = i;
-				}}
-			>
-				<Icon icon={x.key.toLowerCase()} size={active == i ? '24' : '20'}></Icon>
-				{x.key}
-			</div>
-		{/each}
-	</div>
-
 	<div class="block">
-		<div class="v_tab">
-			<div class="indicator">
-				<div
-					class="pos"
-					style:--height="{100 / exp.length}%"
-					style:--active="{active * (100 / exp.length)}%"
-				></div>
-			</div>
-			<div>
-				{#each exp as x, i}
-					<div
-						role="presentation"
-						class="tab"
-						class:active={active == i}
-						onclick={() => {
-							active = i;
-						}}
-					>
-						<Icon icon={x.key.toLowerCase()} size="24"></Icon>
+		<div class="tab">
+			{#each exp as x, i}
+				<button
+					class:active={active == i}
+					onclick={() => {
+						active = i;
+					}}
+				>
+					<Icon icon={x.key.toLowerCase()} size={active == i ? '24' : '20'}></Icon>
+					<div class="name">
 						{x.key}
 					</div>
-				{/each}
-			</div>
+				</button>
+			{/each}
 		</div>
 
 		<div class="details">
@@ -169,16 +141,16 @@
 						</ul>
 					</div>
 
-					<div class="line">
+					<div class="tags">
 						{#each exp[active].tags as x}
-							<Tag --tag-color="var(--ft2)">
+							<Tag>
 								<img
-									class="tag"
+									class="tag_icon"
 									src="/logo/{x.toLowerCase()}.png"
 									alt={x}
-									onerror={(event) => {
-										const imgEl = event.currentTarget;
-										imgEl.parentNode && imgEl.parentNode.removeChild(imgEl);
+									onerror={(e) => {
+										const img = e.currentTarget;
+										img.parentNode && img.parentNode.removeChild(img);
 									}}
 								/>
 								{x}
@@ -196,165 +168,142 @@
 </Content>
 
 <style>
-	.h_tab {
-		--size: 32px;
-		display: flex;
-		align-items: center;
-
-		height: 40px;
-		margin-bottom: 24px;
-	}
-
-	.h_tab .hline {
-		background-color: gray;
-		height: 1px;
-		width: 100%;
-	}
-
-	.h_tab .tab {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 0px;
-
-		flex-shrink: 0;
-		width: var(--size);
-		height: var(--size);
-		border-radius: 50%;
-		overflow: hidden;
-
-		cursor: pointer;
-		outline: 1px solid gray;
-		color: transparent;
-		font-size: 0;
-
-		transition:
-			width 0.2s ease-in-out,
-			height 0.2s ease-in-out,
-			gap 0.2s ease-in-out,
-			border-radius 0.2s ease-in-out,
-			padding 0.2s ease-in-out,
-			color 0.2s ease-in-out;
-	}
-
-	.h_tab .tab.active {
-		gap: 4px;
-
-		width: unset;
-		height: unset;
-		padding: 8px 24px;
-		border-radius: 4px;
-		font-size: 0.8rem;
-		color: var(--ft1);
-
-		cursor: unset;
-	}
-
-	.h_tab .tab:not(.active):hover {
-		width: calc(1.2 * var(--size));
-		height: calc(1.2 * var(--size));
-	}
-
 	.block {
 		display: flex;
+		flex-direction: column;
 		gap: 24px;
 	}
 
-	.v_tab {
-		display: none;
-		height: fit-content;
-		flex-shrink: 0;
-	}
-
-	.indicator {
-		position: relative;
-		background-color: var(--bg2);
-		width: 1px;
-	}
-
-	.pos {
-		position: absolute;
-		top: var(--active);
-		left: -1px;
-		width: 3px;
-		height: var(--height);
-
-		background-color: var(--cl1);
-
-		transition: top 0.2s ease-in-out;
-	}
-
-	.v_tab .tab {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-
-		padding: 16px;
-		cursor: pointer;
-		font-size: 0.8rem;
-
-		transition:
-			color 0.2s ease-in-out,
-			background-color 0.2s ease-in-out;
-	}
-
-	.v_tab .tab.active {
-		color: var(--ft1);
-		background-color: var(--bg2);
-	}
-
-	.v_tab .tab:hover {
-		color: var(--ft1);
-		background-color: color-mix(in srgb, var(--cl1), transparent 90%);
-	}
-
 	.tab {
-		fill: var(--ft1);
+		--size: 32px;
+		display: flex;
+
+		border-bottom: 1px solid var(--ol);
+
+		position: relative;
+
+		&::before {
+			content: '';
+
+			position-anchor: --active;
+			position: absolute;
+
+			bottom: calc(anchor(bottom) - 2px);
+			left: anchor(left);
+			right: anchor(right);
+			height: 3px;
+
+			background-color: var(--cl1);
+
+			transition:
+				left 0.2s ease-in-out,
+				right 0.2s ease-in-out;
+		}
+
+		& button {
+			all: unset;
+			cursor: pointer;
+
+			display: flex;
+			align-items: center;
+			gap: 0;
+
+			border-radius: 4px;
+			height: 56px;
+			padding: 0 16px;
+			font-size: 0;
+			fill: var(--ft1);
+			flex-shrink: 0;
+
+			transition:
+				gap 0.2s ease-in-out,
+				font-size 0.2s ease-in-out,
+				color 0.2s ease-in-out,
+				background-color 0.2s ease-in-out;
+
+			&.active {
+				anchor-name: --active;
+
+				gap: 8px;
+				color: var(--ft1);
+				font-size: 0.8rem;
+				background-color: var(--bg3);
+			}
+
+			&:hover {
+				color: var(--ft1);
+				background-color: var(--bg2);
+			}
+		}
 	}
 
 	@media screen and (min-width: 500px) {
-		.h_tab {
-			display: none;
+		.block {
+			flex-direction: row;
 		}
 
-		.v_tab {
-			display: flex;
+		.tab {
+			flex-direction: column;
+			height: fit-content;
+
+			border: none;
+			border-left: 1px solid var(--ol);
+
+			&::before {
+				top: anchor(top);
+				bottom: anchor(bottom);
+				left: calc(anchor(left) - 2px);
+				width: 3px;
+				height: unset;
+
+				transition:
+					top 0.2s ease-in-out,
+					bottom 0.2s ease-in-out;
+			}
+
+			& button {
+				gap: 8px;
+				font-size: 0.8rem;
+			}
 		}
 	}
 
 	.details {
 		width: 100%;
-	}
 
-	.name {
-		color: var(--ft1);
-		margin-top: 8px;
-	}
-	.role {
-		font-weight: 800;
-		font-size: 1.2rem;
-		color: var(--ft1);
-	}
+		& .name {
+			font-size: 0.8rem;
+			margin-top: 8px;
+		}
+		& .role {
+			font-weight: 800;
+			font-size: 1.2rem;
+			color: var(--ft1);
+		}
 
-	.date {
-		margin: 8px 0;
-		font-size: 0.8rem;
-	}
+		& .date {
+			margin: 8px 0;
+			font-size: 0.7rem;
+		}
 
-	.info {
-		margin: 8px 0;
-	}
+		& .info {
+			margin: 8px 0;
 
-	/* li::marker {
-		color: var(--cl1);
-	} */
+			/* li::marker { */
+			/* color: var(--ol); */
+			/* } */
+		}
 
-	.line {
-		margin-top: 16px;
-		gap: 4px;
-	}
+		& .tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 4px;
 
-	.tag {
-		height: 16px;
+			margin-top: 16px;
+
+			& .tag_icon {
+				height: 16px;
+			}
+		}
 	}
 </style>

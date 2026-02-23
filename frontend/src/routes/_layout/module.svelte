@@ -14,9 +14,6 @@
 			<div class="close">
 				<RoundButton
 					icon="x"
-					--round-background-color="var(--button-background-color)"
-					--round-background-color-hover="red"
-					--round-outline-color="hsl(0, 0%, 20%)"
 					onclick={() => {
 						module.close();
 					}}
@@ -53,13 +50,16 @@
 		--pos: -10px;
 		top: var(--pos);
 		right: var(--pos);
+
+		--round-background-color: darkred;
+		--round-background-color-hover: red;
 	}
 
 	.block {
 		position: relative;
 	}
 	.content {
-		background-color: var(--bg1);
+		background-color: var(--bg);
 		box-shadow: var(--shad1);
 		border-radius: 8px;
 

@@ -66,24 +66,24 @@ def add():
         slug,
         author["key"] if author else None,
     ))
-    item = cur.fetchone()
+    post = cur.fetchone()
 
     log(
         cur=cur,
         user_key=user["key"],
         action="created",
-        entity_key=item["key"],
+        entity_key=post["key"],
         entity_type="post"
     )
 
-    items = get_many(cur)
+    posts = get_many(cur)
 
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "item": post_schema(item),
-        "items": items.json["items"],
-        "total_page": items.json["total_page"]
+        "post": post_schema(post),
+        "posts": posts.json["posts"],
+        "total_page": posts.json["total_page"]
     })
 
 
@@ -223,13 +223,13 @@ def edit(key):
         title, slug, date_created, description, content, tags,
         author_key, status, post["key"]
     ))
-    item = cur.fetchone()
+    post = cur.fetchone()
 
     log(
         cur=cur,
         user_key=user["key"],
         action="edited",
-        entity_key=item["key"],
+        entity_key=post["key"],
         entity_type="post",
         misc=request.json
     )
@@ -237,7 +237,7 @@ def edit(key):
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "item": post_schema(item)
+        "post": post_schema(post)
     })
 
 

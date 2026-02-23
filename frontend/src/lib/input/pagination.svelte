@@ -1,139 +1,182 @@
 <script>
-	import { Icon } from '$lib/macro';
+	import { Button } from '$lib/button';
+	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
+	let { value = $bindable(), min = 1, total_page, ondone } = $props();
+	let value_rt = $state(0);
 
-	let { value = $bindable(), total_page = 1, ondone } = $props();
-	let value_rt = $derived(value);
-	let width = $state();
+	const set = (val) => {
+		if (val == value && value_rt == val) return;
 
-	const submit = (val) => {
-		if (val == value) return;
+		if (val === 'increase') value += 1;
+		else if (val === 'decrease') value -= 1;
+		else {
+			const num = Number(val);
+			if (!Number.isNaN(num)) value = num;
+			else value = 0;
+		}
 
-		value = val;
-		if (value < 1 || !value) value = 1;
-		else if (value > total_page) value = total_page;
+		const maxNum = Number(total_page);
+		const minNum = Number(min);
+		if (!Number.isNaN(maxNum) && value > maxNum) value = maxNum;
+		if (!Number.isNaN(minNum) && value < minNum) value = minNum;
+
+		value_rt = value;
 		ondone?.(value);
 	};
+	onMount(() => (value_rt = value));
 </script>
 
 {#if total_page > 1}
 	<section>
-		{#if value > 1}
-			<button onclick={() => submit(parseInt(value) - 1)}>
-				<Icon icon="chevron-left" />
-			</button>
-		{/if}
+		<div class="block">
+			<form onsubmit={(e) => e.preventDefault()}>
+				<Button
+					disabled={value <= min}
+					--button-height="44px"
+					--button-width="44px"
+					icon="chevron-left"
+					tabindex={-1}
+					onclick={() => set('decrease')}
+				></Button>
+			</form>
 
-		<div class="input">
-			<input
-				style:width="calc({width}px + 4px)"
-				type="text"
-				oninput={(e) => (e.target.value = e.target.value.replace(/[^0-9]/g, ''))}
-				bind:value={value_rt}
-				onkeypress={(e) => {
-					if (e.key == 'Enter') submit(value_rt);
-				}}
-			/>
-			<div class="total">
-				/ {total_page}
-			</div>
-		</div>
+			<div class="width_helper">
+				<input
+					type="number"
+					bind:value={value_rt}
+					onkeydown={(e) => {
+						const allowedKeys = [
+							'Backspace',
+							'Delete',
+							'Tab',
+							'Escape',
+							'Enter',
+							'Home',
+							'End',
+							'ArrowLeft',
+							'ArrowRight',
+							'0',
+							'1',
+							'2',
+							'3',
+							'4',
+							'5',
+							'6',
+							'7',
+							'8',
+							'9'
+						];
 
-		<div class="width_helper" bind:clientWidth={width}>
-			<span>
-				{#if value_rt}
+						if (e.ctrlKey) {
+							return;
+						}
+
+						if (!allowedKeys.includes(e.key)) {
+							e.preventDefault();
+							return;
+						}
+
+						if (e.key == 'Enter') {
+							set(parseInt(value_rt));
+						}
+					}}
+					onpaste={(e) => {
+						e.preventDefault();
+						let data = (e.clipboardData || window.clipboardData).getData('text');
+						data = data.replace(/\D/g, '');
+						set(parseInt(data));
+					}}
+				/>
+				<div class="value">
 					{value_rt}
-				{:else}
-					0
+				</div>
+				&nbsp; / {total_page}
+			</div>
+
+			<form onsubmit={(e) => e.preventDefault()}>
+				{#if value != value_rt}
+					<div transition:slide={{ axis: 'x' }} onsubmit={(e) => e.preventDefault()}>
+						<Button
+							--button-height="44px"
+							--button-width="44px"
+							icon="chevrons-right"
+							tabindex={-1}
+							onclick={() => set(parseInt(value_rt))}
+						></Button>
+					</div>
 				{/if}
-			</span>
-			/ {total_page}
+				<Button
+					disabled={value >= total_page}
+					--button-height="44px"
+					--button-width="44px"
+					icon="chevron-right"
+					tabindex={-1}
+					onclick={() => set('increase')}
+				></Button>
+			</form>
 		</div>
-
-		{#if value_rt != value}
-			<button onclick={() => submit(value_rt)}>
-				<Icon icon="chevrons-right" />
-			</button>
-		{/if}
-
-		{#if value < total_page}
-			<button onclick={() => submit(parseInt(value) + 1)}>
-				<Icon icon="chevron-right" />
-			</button>
-		{/if}
 	</section>
 {/if}
 
 <style>
 	section {
-		--size: 24px;
-
+		margin-top: 24px;
 		display: flex;
-		align-items: center;
-		padding: 0 4px;
-
-		width: fit-content;
-		border-radius: 4px;
-		background-color: var(--pagination-background-color, hsl(0, 0%, 90%));
-		outline: 2px solid var(--pagination-outline-color, transparent);
-		outline-offset: -2px;
-
-		transition: outline-color 0.2s ease-in-out;
-	}
-	section:hover,
-	section:has(input:focus) {
-		outline-color: var(--pagination-outline-color-hover, transparent);
-	}
-
-	.input {
-		position: relative;
-		display: flex;
-		align-items: center;
 		justify-content: center;
 	}
-	input {
-		padding: var(--size);
-		height: 48px;
-		border: none;
 
-		color: var(--ft1);
-		background-color: transparent;
-	}
+	.block {
+		display: flex;
+		align-items: center;
 
-	.total {
-		position: absolute;
-		right: var(--size);
-		pointer-events: none;
-		color: var(--ft2);
+		padding: 2px;
+		width: fit-content;
+		border-radius: 4px;
+
+		background-color: var(--input);
+		outline: 1px solid var(--pagination-outline-color, var(--input));
+		outline-offset: -1px;
+
+		transition: outline-color 0.2s ease-in-out;
+
+		&:hover,
+		&:has(input:focus) {
+			outline-color: var(--pagination-outline-color-hover, var(--ft1));
+		}
 	}
 
 	.width_helper {
-		position: absolute;
-		visibility: hidden;
-		padding: var(--size);
-		display: inline-block;
-	}
+		position: relative;
 
-	button {
 		display: flex;
-		justify-content: center;
-		align-items: center;
 
-		height: 40px;
-		aspect-ratio: 1/1;
+		padding: 0 16px;
+		min-width: 60px;
 
-		border-radius: 4px;
-		background-color: var(--button);
-		color: var(--ft2);
-		border: none;
-		font-weight: 700;
-
-		transition:
-			color 0.2s ease-in-out,
-			background-color 0.2s ease-in-out;
+		& .value {
+			visibility: hidden;
+		}
 	}
 
-	button:hover {
-		background-color: var(--cl1);
-		color: white;
+	form {
+		display: flex;
+	}
+
+	input {
+		position: absolute;
+		inset: 0;
+
+		padding: 0 16px;
+		border: none;
+
+		font-size: var(--input-font-size, 1rem);
+		background-color: transparent;
+	}
+
+	input[type='number']::-webkit-outer-spin-button,
+	input[type='number']::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
 	}
 </style>

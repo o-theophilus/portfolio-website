@@ -4,7 +4,7 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
 
-	import { Button, FoldButton, Toggle } from '$lib/button';
+	import { Button, FoldButton, Switch } from '$lib/button';
 	import Confirm from './confirm.svelte';
 
 	let user = module.value;
@@ -45,12 +45,16 @@
 
 					<div class="access_area">
 						{#each actions as ac}
-							<Toggle
-								state_1=""
-								state_2={ac.split('_').join(' ')}
-								active={mods.includes(`${_type}:${ac}`)}
+							{@const name = ac.split('_').join(' ')}
+							{@const fullname = `${_type}:${ac}`}
+							<Switch
+								--toggle-height="21px"
+								--toggle-font-size="0.8rem"
+								--toggle-padding-x="8px"
+								list={['', name]}
+								value={!access.includes(fullname) ? '' : name}
 								onclick={() => {
-									select(`${_type}:${ac}`);
+									select(fullname);
 								}}
 							/>
 						{/each}

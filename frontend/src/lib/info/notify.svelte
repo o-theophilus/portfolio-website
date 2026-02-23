@@ -4,17 +4,17 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { fade } from 'svelte/transition';
 
-	import Item from './notify.item.svelte';
+	import One from './notify.one.svelte';
 </script>
 
 <section>
-	{#each notify.value as item (item.key)}
+	{#each notify.value as one (one.key)}
 		<div
 			class="one"
 			transition:fade={{ delay: 0, duration: 250, easing: cubicInOut }}
 			animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}
 		>
-			<Item {item} />
+			<One {one} />
 		</div>
 	{/each}
 </section>

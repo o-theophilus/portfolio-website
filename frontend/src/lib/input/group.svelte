@@ -1,9 +1,6 @@
 <script>
-	import { Icon } from '$lib/macro';
 	import { slide } from 'svelte/transition';
 	import Input from './input.svelte';
-	import Check from './password.checker.svelte';
-	import Show from './password.show.svelte';
 
 	let {
 		value = $bindable(),
@@ -11,29 +8,14 @@
 
 		name = '',
 		icon = null,
-		error = '',
-		no_pad = false,
 		required = false,
 
+		error = '',
 		label,
 		input,
 
-		right,
-		type: props_type,
-		onblur,
 		...props
 	} = $props();
-
-	let type = $state(props_type);
-	$effect(() => {
-		if (props_type?.startsWith('password')) {
-			if (show_password) {
-				type = 'text';
-			} else {
-				type = 'password';
-			}
-		}
-	});
 
 	let id = $derived.by(() => {
 		let temp = '';
@@ -42,23 +24,18 @@
 		}
 		return temp;
 	});
-
-	let _value = $state();
-	let show_check = $state(false);
 </script>
 
-<div class="inputGroup" class:no_pad>
+<div class="inputGroup">
 	{#if label}
 		{@render label()}
 	{:else if name}
-		<div class="label">
-			<label for={id}>
-				{name}
-				{#if required}
-					<span class="required">*</span>
-				{/if}
-			</label>
-		</div>
+		<label for={id}>
+			{name}
+			{#if required}
+				<span class="required">*</span>
+			{/if}
+		</label>
 	{/if}
 
 	{#if error}
@@ -68,111 +45,47 @@
 	{/if}
 
 	{#if input}
-		{@render input(id)}
-	{:else}
-		<div class="input" class:left_pad={icon} class:disabled={props.disabled}>
-			{#if icon}
-				<Icon {icon}></Icon>
-			{/if}
-			<Input
-				bind:value
-				{type}
-				{id}
-				{...props}
-				oninput={(e) => {
-					if (props_type.startsWith('password++')) {
-						_value = e.target.value;
-					}
-				}}
-				onfocus={(e) => {
-					if (props_type.startsWith('password++')) {
-						show_check = true;
-					}
-				}}
-				onblur={(e) => {
-					if (props_type.startsWith('password++')) {
-						show_check = false;
-					}
-					onblur?.();
-				}}
-			/>
-			{#if props_type?.startsWith('password+') && !props.disabled}
-				<div class="show_password">
-					<Show bind:show_password></Show>
-				</div>
-			{/if}
-			{@render right?.()}
+		<div class="input">
+			{@render input(id)}
 		</div>
-		{#if props_type == 'password++' && show_check && !props.disabled}
-			<div class="password" transition:slide>
-				<Check value={_value}></Check>
-			</div>
-		{/if}
+	{:else}
+		<div class="input">
+			<Input bind:value bind:show_password {id} {...props} />
+		</div>
 	{/if}
 </div>
 
 <style>
 	.inputGroup {
 		width: 100%;
-	}
-	.inputGroup:not(.no_pad) {
-		margin: 16px 0;
-	}
-
-	.input {
-		position: relative;
-		display: flex;
-		align-items: center;
-
-		width: 100%;
-
-		border-radius: 4px;
-		border: none;
-		margin: 8px 0;
-
-		outline: 2px solid var(--input);
-		outline-offset: -2px;
-		color: var(--ft2);
-		fill: currentColor;
-
-		background-color: var(--group-background-color, transparent);
-		transition: outline-color 0.2s ease-in-out;
+		margin-top: var(--group-margin-top, 16px);
+		margin-bottom: var(--group-margin-bottom, 16px);
+		line-height: 100%;
 	}
 
-	.input.disabled {
-		opacity: 0.4;
-	}
-
-	.input:hover:not(.disabled),
-	:global(.input:has(:focus)) {
-		outline-color: var(--ft1);
-		color: var(--ft1);
-	}
-
-	.label {
+	label {
 		font-size: 0.8rem;
 		transition: color 0.2s ease-in-out;
-	}
-	:global(.inputGroup:has(.input:hover:not(.disabled))),
-	:global(.inputGroup:has(:focus) .label) {
-		color: var(--ft1);
-	}
 
-	.required {
-		color: red;
-		font-weight: 1000;
-	}
+		&:hover {
+			color: var(--ft1);
+		}
 
+		& .required {
+			color: red;
+			font-weight: 1000;
+		}
+	}
 	.error {
 		color: red;
 		font-size: 0.8rem;
 	}
 
-	.left_pad {
-		padding-left: 16px;
+	.input {
+		margin-top: 4px;
 	}
 
-	.show_password {
-		padding-right: 8px;
+	:global(.inputGroup:has(input:hover, textarea:hover, input:focus, textarea:focus)) label {
+		color: var(--ft1);
 	}
 </style>

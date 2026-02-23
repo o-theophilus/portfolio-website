@@ -1,7 +1,7 @@
 <script>
 	import { app, module, page_state } from '$lib/store.svelte.js';
 
-	import { Button, LinkArrow, RoundButton, Toggle } from '$lib/button';
+	import { Button, LinkArrow, RoundButton, Switch } from '$lib/button';
 	import { Content } from '$lib/layout';
 	import { Avatar, Icon, Log, Meta } from '$lib/macro';
 
@@ -52,9 +52,12 @@
 		<div class="page_title">Profile</div>
 
 		{#if app.login && (user.key == app.user.key || app.user.access.some( (x) => ['user:set_access', 'user:reset_name', 'user:reset_username', 'user:reset_photo', 'block:block', 'block:unblock'].includes(x) ))}
-			<Toggle
-				state_2="edit"
-				active={edit_mode}
+			<Switch
+				--toggle-height="21px"
+				--toggle-font-size="0.8rem"
+				--toggle-padding-x="8px"
+				list={['', 'edit']}
+				value={!edit_mode ? '' : 'edit'}
 				onclick={() => {
 					edit_mode = !edit_mode;
 				}}
@@ -165,11 +168,9 @@
 			{/if}
 		</div>
 	{/if}
-	<br /><br /><br />
 
 	{#if app.user.access.includes('log:view')}
-		<hr />
-		<div class="pad">
+		<div class="center pad">
 			<LinkArrow
 				--link-font-size="0.8rem"
 				onclick={() => page_state.goto('log', { u_search: user.key })}
@@ -191,8 +192,7 @@
 		justify-content: center;
 	}
 
-	.pad,
-	hr {
+	.pad {
 		margin: 16px 0;
 	}
 </style>

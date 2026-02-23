@@ -5,7 +5,7 @@
 </script>
 
 <div id="scroll_1"></div>
-<Content --content-height="100%">
+<Content --content-height="100%" --content-background-color="var(--bg)">
 	<Observe let:intersecting>
 		<div class="comp" class:intersecting>
 			<div class="headline">Creating Engaging & Accessible Digital Experiences.</div>

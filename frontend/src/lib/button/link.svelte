@@ -22,7 +22,7 @@
 <style>
 	a,
 	button {
-		color: var(--link-color, var(--cl1));
+		color: var(--link-color, var(--link));
 		font-weight: var(--link-font-weight, 800);
 		font-size: var(--link-font-size, 1rem);
 		fill: currentColor;
@@ -40,6 +40,6 @@
 
 	:focus,
 	:hover {
-		color: var(--link-color-hover, color-mix(in srgb, var(--cl1), black 30%));
+		color: var(--link-color-hover, color-mix(in srgb, var(--link), black 30%));
 	}
 </style>

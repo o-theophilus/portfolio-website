@@ -3,46 +3,46 @@
 
 	import { Datetime, Icon } from '$lib/macro';
 
-	let { item } = $props();
+	let { post } = $props();
 
 	const prerender = () => {
-		app.post = item;
+		app.post = post;
 	};
-	let src = $state(item.photo ? `${item.photo}/500` : '/no_photo.png');
+	let src = $state(post.photo ? `${post.photo}/500` : '/no_photo.png');
 </script>
 
-<a href="/{item.slug}" onclick={prerender} onmouseenter={prerender}>
-	<img {src} loading="lazy" alt={item.title} onerror={() => (src = '/file_error.png')} />
+<a href="/{post.slug}" onclick={prerender} onmouseenter={prerender}>
+	<img {src} loading="lazy" alt={post.title} onerror={() => (src = '/file_error.png')} />
 
 	<div class="details">
 		<div class="title">
-			{item.title}
+			{post.title}
 		</div>
 
-		{#if item.description}
+		{#if post.description}
 			<div class="description">
 				<div>
-					{item.description}
+					{post.description}
 				</div>
 			</div>
 		{/if}
 
 		<div class="bottom line">
-			<Datetime datetime={item.date_created} type="ago" />
+			<Datetime datetime={post.date_created} type="ago" />
 			<div class="line info">
 				<div class="line">
 					<Icon icon="eye" size="12" />
-					{item.engagement.view}
+					{post.engagement.view}
 				</div>
 
 				<div class="line">
 					<Icon icon="message-circle" size="12" />
-					{item.engagement.comment}
+					{post.engagement.comment}
 				</div>
 
 				<div class="line">
 					<Icon icon="thumbs-up" size="12" />
-					{item.engagement.like}
+					{post.engagement.like}
 				</div>
 			</div>
 		</div>
@@ -55,11 +55,25 @@
 		position: relative;
 		text-decoration: none;
 
-		outline: 2px solid transparent;
+		outline: 1px solid var(--ol);
 		transition: outline-color 0.2s ease-in-out;
 
-		border-radius: 4px;
+		border-radius: 8px;
 		overflow: hidden;
+
+		&:hover {
+			outline-color: var(--ft1);
+
+			& img {
+				transition-duration: 5s;
+				transform: scale(1.2) rotate(5deg);
+			}
+
+			& .description {
+				grid-template-rows: 1fr;
+				margin: 16px 0;
+			}
+		}
 	}
 
 	img {
@@ -74,19 +88,6 @@
 		transition-timing-function: ease-in-out;
 	}
 
-	a:hover {
-		outline-color: var(--ft1);
-	}
-	a:hover img {
-		transition-duration: 5s;
-		transform: scale(1.2) rotate(5deg);
-	}
-
-	a:hover .description {
-		grid-template-rows: 1fr;
-		margin: 16px 0;
-	}
-
 	.details {
 		position: absolute;
 		bottom: 0;
@@ -95,28 +96,29 @@
 		padding: 0 24px;
 
 		color: var(--ft1);
-		background-color: color-mix(in srgb, var(--bg1), transparent 10%);
-	}
+		background-color: color-mix(in srgb, var(--bg3), transparent 10%);
 
-	.title {
-		margin: 16px 0;
-		line-height: 120%;
-		font-weight: 700;
-		transition: color 0.2s ease-in-out;
-	}
+		& .title {
+			margin: 16px 0;
+			line-height: 120%;
+			font-weight: 700;
+			transition: color 0.2s ease-in-out;
+		}
 
-	.description {
-		display: grid;
-		grid-template-rows: 0fr;
+		& .description {
+			display: grid;
+			grid-template-rows: 0fr;
 
-		color: var(--ft2);
-		font-size: 0.8rem;
-		transition:
-			grid-template-rows 0.2s ease-in-out,
-			margin 0.2s ease-in-out;
-	}
-	.description div {
-		overflow-y: hidden;
+			color: var(--ft2);
+			font-size: 0.8rem;
+			transition:
+				grid-template-rows 0.2s ease-in-out,
+				margin 0.2s ease-in-out;
+
+			& div {
+				overflow-y: hidden;
+			}
+		}
 	}
 
 	.bottom {
