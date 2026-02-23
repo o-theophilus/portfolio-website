@@ -14,7 +14,7 @@ def get_many(key, cur=None):
     if not cur:
         con, cur = db_open()
 
-    session = get_session(cur, True)
+    session = get_session(cur)
     if session["status"] != 200:
         if close_conn:
             db_close(con, cur)
