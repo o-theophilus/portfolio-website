@@ -146,10 +146,10 @@
 		outline: 2px solid transparent;
 
 		overflow: hidden;
-		transition: outline-color;
+		transition: outline-color 0.2s ease-in-out;
 	}
 	.carousel:has(img:hover) {
-		outline-color: var(--cl1);
+		outline-color: var(--ft1);
 	}
 
 	@media screen and (min-width: 700px) {
@@ -208,21 +208,21 @@
 			width: var(--size);
 			height: var(--size);
 
-			background-color: gray;
+			background-color: hsl(0, 0%, 50%);
 			border-radius: calc(var(--size) / 2);
 			border: none;
 			cursor: pointer;
-
+			
 			transition:
-				width 0.2s ease-in-out,
-				background-color 0.2s ease-in-out;
-
+			width 0.2s ease-in-out,
+			background-color 0.2s ease-in-out;
+			
 			&.active {
 				width: calc(var(--size) * 3);
 				background-color: white;
 			}
 			&:hover {
-				background-color: var(--cl1);
+				background-color: hsl(0, 0%, 70%);
 			}
 		}
 	}

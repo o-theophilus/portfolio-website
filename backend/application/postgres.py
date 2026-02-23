@@ -68,7 +68,8 @@ def create_tables():
             description TEXT,
             photo TEXT,
             files TEXT[] DEFAULT '{}'::TEXT[],
-            tags TEXT[] DEFAULT '{}'::TEXT[]
+            tags TEXT[] DEFAULT '{}'::TEXT[],
+            featured INT DEFAULT 0
         );
 
         CREATE TABLE IF NOT EXISTS comment (
@@ -84,15 +85,11 @@ def create_tables():
             key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             date_created TIMESTAMPTZ DEFAULT now(),
             status TEXT NOT NULL DEFAULT 'active',
-
             reporter_key UUID NOT NULL REFERENCES "user"(key),
-
             reported_key UUID REFERENCES "user"(key) ON DELETE CASCADE,
             comment_key UUID REFERENCES comment(key) ON DELETE CASCADE,
-
             comment TEXT NOT NULL,
             tags TEXT[] DEFAULT '{}'::TEXT[],
-
             resolver_key UUID REFERENCES "user"(key),
             resolve_comment TEXT,
             date_resolved TIMESTAMPTZ
