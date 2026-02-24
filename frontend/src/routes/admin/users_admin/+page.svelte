@@ -5,7 +5,6 @@
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
 
-	import { BackButton } from '$lib/button';
 	import { PageNote } from '$lib/info';
 	import { Dropdown, Pagination, Search } from '$lib/input';
 	import { Content } from '$lib/layout';
@@ -36,11 +35,8 @@
 <Meta title="Admin" description="Users with elevated Access" />
 
 <Content --content-height="auto">
-	<div class="line">
-		<BackButton />
-		<div class="page_title">
-			Admin{users.length > 1 ? 's' : ''}
-		</div>
+	<div class="page_title">
+		Admin{users.length > 1 ? 's' : ''}
 	</div>
 
 	<br />

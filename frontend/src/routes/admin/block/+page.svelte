@@ -1,6 +1,5 @@
 <script>
 	import { replaceState } from '$app/navigation';
-	import { BackButton } from '$lib/button';
 	import { PageNote } from '$lib/info';
 	import { Dropdown, Pagination, Search } from '$lib/input';
 	import { Content } from '$lib/layout';
@@ -44,13 +43,8 @@
 <Meta title="Blocked User{blocks.length > 1 ? 's' : ''}" />
 
 <Content --content-height="auto">
-	<div class="line space">
-		<div class="line">
-			<BackButton />
-			<div class="page_title">
-				Blocked User{blocks.length > 1 ? 's' : ''}
-			</div>
-		</div>
+	<div class="page_title">
+		Blocked User{blocks.length > 1 ? 's' : ''}
 	</div>
 
 	<Search
