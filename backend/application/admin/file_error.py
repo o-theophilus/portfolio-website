@@ -29,7 +29,7 @@ def get_file_error():
     users_photo = cur.fetchall()
     users_photo = [x["photo"] for x in users_photo if x["photo"]]
     user_store_photo = storage.get_all("user")
-    print(user_store_photo)
+    print("this#", user_store_photo)
     cur.execute("""
         SELECT username, name FROM "user"
         WHERE photo IS NOT NULL AND photo NOT IN %s;
