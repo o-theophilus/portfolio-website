@@ -247,7 +247,7 @@ def get_author(cur, key):
         return None
 
     author["photo"] = (
-        f"{request.host_url}file/{author['photo']}"
+        f"{request.host_url}photo/user/{author['photo']}"
         if author["photo"] else None
     )
 

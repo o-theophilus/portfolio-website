@@ -89,11 +89,11 @@ def get_many():
 
     for x in blocks:
         x["admin"]["photo"] = (
-            f"{request.host_url}file/{x['admin']['photo']}"
+            f"{request.host_url}photo/user/{x['admin']['photo']}"
             if x["admin"]["photo"] else None
         )
         x["user"]["photo"] = (
-            f"{request.host_url}file/{x['user']['photo']}"
+            f"{request.host_url}photo/user/{x['user']['photo']}"
             if x["user"]["photo"] else None
         )
 

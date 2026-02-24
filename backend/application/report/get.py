@@ -130,17 +130,17 @@ def get_many():
 
     for x in reports:
         x["user"]["photo"] = (
-            f"{request.host_url}file/{x['user']['photo']}"
+            f"{request.host_url}photo/user/{x['user']['photo']}"
             if x["user"]["photo"] else None
         )
         if x.get("reported_user"):
             x["reported_user"]["photo"] = (
-                f"{request.host_url}file/{x['reported_user']['photo']}"
+                f"{request.host_url}photo/user/{x['reported_user']['photo']}"
                 if x["reported_user"]["photo"] else None
             )
         if x.get("reported_comment"):
             x["reported_comment"]["user"]["photo"] = (
-                f"{request.host_url}file/{x['reported_comment']['user'][
+                f"{request.host_url}photo/user/{x['reported_comment']['user'][
                     'photo']}"
                 if x["reported_comment"]["user"]["photo"] else None
             )
