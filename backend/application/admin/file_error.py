@@ -31,7 +31,6 @@ def get_file_error():
     user_store_photo = storage.get_all("user")
     if '.emptyFolderPlaceholder' in user_store_photo:
         user_store_photo.remove('.emptyFolderPlaceholder')
-    print("this#", user_store_photo)
     cur.execute("""
         SELECT username, name FROM "user"
         WHERE photo IS NOT NULL AND photo <> ALL(%s);
