@@ -50,7 +50,7 @@ def get_file_error():
     cur.execute("""
         SELECT slug, title FROM post
         WHERE NOT ARRAY[%s] @> files OR
-        photo IS NOT NULL AND NOT photo <> ANY(%s);
+        photo IS NOT NULL AND photo <> ANY(%s);
     """, (post_store_photo, post_store_photo))
     posts_with_missing_photo = cur.fetchall()
 
