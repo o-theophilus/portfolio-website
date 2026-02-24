@@ -29,6 +29,8 @@ def get_file_error():
     users_photo = cur.fetchall()
     users_photo = [x["photo"] for x in users_photo if x["photo"]]
     user_store_photo = storage.get_all("user")
+    if '.emptyFolderPlaceholder' in user_store_photo:
+        user_store_photo.remove('.emptyFolderPlaceholder')
     print("this#", user_store_photo)
     cur.execute("""
         SELECT username, name FROM "user"
@@ -44,6 +46,8 @@ def get_file_error():
             posts_photo.append(x["photo"])
         posts_photo += x["files"]
     post_store_photo = storage.get_all("post")
+    if '.emptyFolderPlaceholder' in post_store_photo:
+        post_store_photo.remove('.emptyFolderPlaceholder')
     cur.execute("""
         SELECT slug, title FROM post
         WHERE NOT ARRAY[%s] @> files OR photo NOT IN %s;
