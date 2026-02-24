@@ -49,8 +49,8 @@ def get_file_error():
         post_store_photo.remove('.emptyFolderPlaceholder')
     cur.execute("""
         SELECT slug, title FROM post
-        WHERE NOT ARRAY[%s] @> files
-        OR (photo IS NOT NULL AND photo <> ANY(%s));
+        WHERE NOT %s @> files
+        OR (photo IS NOT NULL AND photo <> ALL(%s));
     """, (post_store_photo, post_store_photo))
     posts_with_missing_photo = cur.fetchall()
 
