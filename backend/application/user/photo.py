@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request
-from ..postgres import db_open, db_close
-from ..tools import get_session, user_schema
-from ..log import log
-from ..storage import storage
 
+from ..log import log
+from ..postgres import db_close, db_open
+from ..storage import storage
+from ..tools import get_session, user_schema
 
 bp = Blueprint("user_photo", __name__)
 
@@ -36,9 +36,9 @@ def add_photo():
     old_photo = None
     if user["photo"]:
         old_photo = user["photo"]
-        storage("delete", user["photo"])
+        storage.delete(user["photo"], "user")
 
-    file_name = storage("save", file)
+    file_name = storage.save(file, "user")
 
     cur.execute("""
         UPDATE "user"
@@ -87,7 +87,7 @@ def delete_photo():
             "error": "Invalid request"
         })
 
-    storage("delete", user["photo"])
+    storage.delete(user["photo"], "user")
 
     cur.execute("""
         UPDATE "user"

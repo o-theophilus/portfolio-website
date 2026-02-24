@@ -1,24 +1,30 @@
 <script>
+	import { FoldButton } from '$lib/button';
 	import { cubicInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
 
-	import { FoldButton } from '$lib/button';
-
-	let { open = false, onopen, children, title } = $props();
+	let { open = true, onclick, children, title } = $props();
 </script>
 
-<div class="block" class:open>
-	<div
-		class="line space"
-		role="presentation"
-		onclick={(e) => {
-			if (e.target != e.currentTarget) return;
-			onopen();
-		}}
-	>
-		{@render title()}
-		<FoldButton {open} onclick={onopen} />
-	</div>
+<div class="card" class:open>
+	{#if title || onclick}
+		<div
+			class="title"
+			role="presentation"
+			onclick={(e) => {
+				if (e.target != e.currentTarget) return;
+				if (onclick) onclick();
+			}}
+		>
+			<div>
+				{@render title?.()}
+			</div>
+
+			{#if onclick}
+				<FoldButton {open} {onclick} />
+			{/if}
+		</div>
+	{/if}
 
 	{#if open}
 		<div class="content" transition:slide|local={{ delay: 0, duration: 200, easing: cubicInOut }}>
@@ -28,31 +34,30 @@
 </div>
 
 <style>
-	.block {
-		border-top: 2px solid transparent;
-		border-bottom: 1px solid var(--bg2);
-
-		transition:
-			border-color 0.2s ease-in-out,
-			border-size 0.2s ease-in-out;
-	}
-	.open {
-		border-top: 2px solid var(--ft1_d);
-		border-bottom: 2px solid var(--ft1_d);
+	.card {
+		margin-top: var(--card-margin-top, 8px);
+		background-color: var(--card-background-color, var(--bg));
+		border-radius: 8px;
+		outline: 1px solid var(--card-outline-color, transparent);
+		outline-offset: -1px;
+		border-bottom: 1px solid var(--card-bottom-border-color, transparent);
 	}
 
-	.line {
-		padding: 16px 0;
-		text-transform: capitalize;
-
-		transition: font-weight 0.2s ease-in-out;
+	.title {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 16px;
+		padding: var(--card-title-padding, 24px);
+		border-bottom: 1px solid var(--card-title-border-color, transparent);
 	}
-
-	.open .line {
-		font-weight: 800;
+	.title div {
+		width: 100%;
+		pointer-events: none;
 	}
 
 	.content {
-		padding-bottom: 16px;
+		padding: var(--card-content-padding, 0 24px 24px 24px);
+		border-top: 1px solid var(--card-content-top-border-color, transparent);
 	}
 </style>

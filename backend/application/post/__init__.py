@@ -280,9 +280,9 @@ def delete(key):
         DELETE FROM post WHERE key = %s;
     """, (post["key"],))
 
-    storage("delete", post["photo"])
+    storage.delete(post["photo"], "post")
     for x in post["files"]:
-        storage("delete", x)
+        storage.delete(x, "post")
 
     log(
         cur=cur,

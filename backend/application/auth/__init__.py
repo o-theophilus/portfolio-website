@@ -499,7 +499,7 @@ def deactivate():
         """, (os.environ["MAIL_USERNAME"], user["key"]))
     cur.execute("""DELETE FROM "user" WHERE key = %s;""", (user["key"],))
 
-    storage("delete", user["photo"])
+    storage.delete(user["photo"], "user")
     anon_user = anon(cur)
     token = new_token(cur, anon_user["key"])
 

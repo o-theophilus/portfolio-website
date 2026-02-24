@@ -1,11 +1,9 @@
 <script>
-	import { page } from '$app/state';
-	import { cubicInOut } from 'svelte/easing';
-	import { slide } from 'svelte/transition';
-
 	import { Icon } from '$lib/macro';
 	import { app } from '$lib/store.svelte.js';
 	import { onMount } from 'svelte';
+	import { cubicInOut } from 'svelte/easing';
+	import { slide } from 'svelte/transition';
 
 	let nots = $state([]);
 
@@ -24,6 +22,7 @@
 			}
 		});
 		resp = await resp.json();
+		console.log(resp);
 
 		if (resp.status == 200) {
 			nots = resp.nots.map((x) => format(x));
@@ -46,13 +45,11 @@
 {#if nots.length}
 	<div class="comp">
 		<button
-			class:is_home={page.url.pathname == '/'}
 			onclick={() => {
 				open = !open;
 				self = true;
 			}}
 		>
-			<div class="new"></div>
 			<Icon icon="bell"></Icon>
 		</button>
 
@@ -63,6 +60,7 @@
 				</div>
 				{#each nots as x}
 					<a href={x.slug}>
+						{x.count}
 						{x.type}
 					</a>
 				{/each}
@@ -97,29 +95,26 @@
 		transition:
 			color 0.2s ease-in-out,
 			background-color 0.2s ease-in-out;
-	}
 
-	.is_home {
-		color: var(--bg1);
-	}
+		&:hover {
+			color: white;
+			background-color: var(--cl1);
+		}
 
-	button:hover {
-		color: white;
-		background-color: var(--cl1);
-	}
+		&::before {
+			content: '';
+			--size: 8px;
 
-	.new {
-		--size: 8px;
+			flex-shrink: 0;
+			position: absolute;
+			top: 0px;
+			right: 0px;
 
-		flex-shrink: 0;
-		position: absolute;
-		top: 0px;
-		right: 0px;
-
-		width: var(--size);
-		height: var(--size);
-		border-radius: 50%;
-		background-color: red;
+			width: var(--size);
+			height: var(--size);
+			border-radius: 50%;
+			background-color: red;
+		}
 	}
 
 	.menu {
@@ -132,10 +127,10 @@
 		flex-direction: column;
 
 		width: 200px;
-		background-color: var(--bg1);
+		background-color: var(--bg);
 		border-radius: 4px;
 
-		outline: 2px solid var(--bg2);
+		outline: 2px solid var(--bg1);
 	}
 
 	.title {
@@ -143,19 +138,18 @@
 		font-size: 0.7rem;
 		font-weight: 800;
 	}
-
+	
 	a {
+		border-top: 1px solid var(--bg1);
 		padding: 8px 16px;
 		text-decoration: none;
 		color: var(--ft1);
+		font-size: 0.8rem;
 
 		transition: background-color 0.2s ease-in-out;
-	}
-	a:hover {
-		background-color: var(--bg2);
-	}
-	.title,
-	a:not(:last-child) {
-		border-bottom: 2px solid var(--bg2);
+
+		&:hover {
+			background-color: var(--bg2);
+		}
 	}
 </style>
