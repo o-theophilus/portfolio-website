@@ -249,7 +249,7 @@
 		{#if posts.length}
 			<div class="link_area">
 				{#each posts as x}
-					<a class="link" href="/{x.slug}">{x.name}</a>
+					<a class="link" href="/{x.slug}">{x.title}</a>
 				{/each}
 			</div>
 		{:else}
