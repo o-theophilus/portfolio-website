@@ -31,8 +31,8 @@ def get_file_error():
     user_store_photo = storage.get_all("user")
     cur.execute("""
         SELECT username, name FROM "user"
-        WHERE photo IS NOT NULL AND NOT photo = ANY(%s);
-    """, (user_store_photo,))
+        WHERE photo IS NOT NULL AND photo NOT IN %s;
+    """, (tuple(user_store_photo),))
     users_with_missing_photo = cur.fetchall()
 
     cur.execute("""SELECT photo, files FROM post;""")
@@ -45,8 +45,8 @@ def get_file_error():
     post_store_photo = storage.get_all("post")
     cur.execute("""
         SELECT slug, title FROM post
-        WHERE NOT ARRAY[%s] @> files OR NOT photo = ANY(%s);
-    """, (post_store_photo, post_store_photo))
+        WHERE NOT ARRAY[%s] @> files OR photo NOT IN %s;
+    """, (post_store_photo, tuple(post_store_photo)))
     posts_with_missing_photo = cur.fetchall()
 
     db_close(con, cur)
