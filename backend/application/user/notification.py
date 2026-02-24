@@ -32,7 +32,7 @@ def notification():
         user_store_photo.remove('.emptyFolderPlaceholder')
     cur.execute("""
         SELECT COUNT(*) FROM "user"
-        WHERE photo IS NOT NULL AND NOT photo <> ANY(%s);
+        WHERE photo IS NOT NULL AND photo <> ANY(%s);
     """, (user_store_photo,))
     users_with_missing_photo = cur.fetchone()["count"]
     unused_user_photo = len(set(user_store_photo) - set(users_photo))
@@ -50,7 +50,7 @@ def notification():
     cur.execute("""
         SELECT COUNT(*) FROM post
         WHERE NOT ARRAY[%s] @> files OR
-        photo IS NOT NULL AND NOT photo <> ANY(%s);
+        photo IS NOT NULL AND photo <> ANY(%s);
     """, (post_store_photo, post_store_photo))
     posts_with_missing_photo = cur.fetchone()["count"]
     unused_post_photo = len(set(post_store_photo) - set(posts_photo))
