@@ -7,8 +7,6 @@
 	{label}
 </button>
 
-<!-- TODO: use this everywwhere -->
-
 <style>
 	button {
 		all: unset;

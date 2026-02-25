@@ -1,13 +1,13 @@
 <script>
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Marked } from '$lib/macro';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
+	import { Marked } from '$lib/macro';
 
-	let item = module.value.item;
-	let content = $state(item.content);
+	let post = module.value.post;
+	let content = $state(post.content);
 	let error = $state({});
 
 	const validate = () => {
@@ -15,7 +15,7 @@
 
 		if (!content) {
 			error.content = 'This field is required';
-		} else if (content == item.content) {
+		} else if (content == post.content) {
 			error.content = 'No changes were made';
 		}
 
@@ -24,7 +24,7 @@
 
 	const submit = async () => {
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${item.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -36,7 +36,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.item);
+			module.value.update(resp.post);
 			module.close();
 			notify.open('Content Saved');
 		} else {
@@ -47,7 +47,7 @@
 
 <Form title="Edit Content" error={error.error}>
 	<div class="marked">
-		<Marked content={module.value.process({ ...item, content })} />
+		<Marked content={module.value.process({ ...post, content })} />
 	</div>
 
 	<IG

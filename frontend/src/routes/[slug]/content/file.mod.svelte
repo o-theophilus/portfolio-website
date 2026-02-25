@@ -57,8 +57,8 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			ops.files = resp.item.files;
-			module.value.update(resp.item);
+			ops.files = resp.post.files;
+			module.value.update(resp.post);
 			notify.open('Order Saved');
 		} else {
 			ops.error = resp;

@@ -92,7 +92,7 @@ def add_file(key):
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "item": post_schema(post),
+        "post": post_schema(post),
         "error": error
     })
 
@@ -165,5 +165,5 @@ def order_delete_file(key):
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "item": post_schema(post)
+        "post": post_schema(post)
     })

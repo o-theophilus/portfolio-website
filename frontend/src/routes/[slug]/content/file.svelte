@@ -1,19 +1,19 @@
 <script>
-	import { module } from '$lib/store.svelte.js';
 	import { Form } from '$lib/layout';
+	import { module } from '$lib/store.svelte.js';
 
 	import Add from './file.add.svelte';
 	import Mod from './file.mod.svelte';
 
-	let item = $state(module.value.item);
+	let post = $state(module.value.post);
 
 	let ops = $state({
-		key: item.key,
-		files: item.files,
-		title: item.title,
+		key: post.key,
+		files: post.files,
+		title: post.title,
 
-		count: item.content.split('@[file]').length - 1,
-		active: item.files[0] || '/no_photo.png',
+		count: post.content.split('@[file]').length - 1,
+		active: post.files[0] || '/no_photo.png',
 		error: {}
 	});
 

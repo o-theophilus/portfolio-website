@@ -37,12 +37,6 @@ def create_tables():
         DROP TABLE IF EXISTS log CASCADE;
         DROP TABLE IF EXISTS session CASCADE;
 
-        CREATE TABLE IF NOT EXISTS app (
-            key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            alias TEXT UNIQUE NOT NULL,
-            value JSONB DEFAULT '{}'::jsonb
-        );
-
         CREATE TABLE IF NOT EXISTS "user" (
             key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             status TEXT NOT NULL DEFAULT 'anonymous',
@@ -149,7 +143,6 @@ def create_tables():
     })
 
 
-# @bp.get("/fix")
 def copy_db():
     def copy_table(from_cur, to_cur, table_name):
         from_cur.execute(f"""SELECT * FROM "{table_name}";""")

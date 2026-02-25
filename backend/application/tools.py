@@ -34,7 +34,7 @@ access_pass = {
         ['edit_tags', 2],
         ['edit_status', 2],
         ['edit_author', 2],
-        ['edit_highlight', 2]
+        ['edit_featured', 2]
     ],
     "report": [
         ['view', 1],

@@ -5,7 +5,7 @@ import { page } from '$app/state';
 export const app = $state({
 	user: {},
 	login: false,
-	highlight: null,
+	featured: null,
 	tags: null,
 	post: {},
 

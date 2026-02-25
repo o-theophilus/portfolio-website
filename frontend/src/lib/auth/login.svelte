@@ -4,9 +4,8 @@
 	import { app, loading, module } from '$lib/store.svelte.js';
 
 	import { Button, Link } from '$lib/button';
-	import { IG } from '$lib/input';
+	import { Checkbox, IG } from '$lib/input';
 	import { Form } from '$lib/layout';
-	import { Icon } from '$lib/macro';
 	import Confirm from './confirm.svelte';
 	import EmailTemplate from './confirm.template.svelte';
 	import Forgot from './forgot_1.email.svelte';
@@ -89,18 +88,13 @@
 
 	<IG>
 		{#snippet input()}
-			<div
-				class="custom-checkbox"
-				onclick={() => (form.remember = !form.remember)}
-				role="presentation"
-			>
-				<div class="checkbox" class:active={form.remember}>
-					<div class="icon">
-						<Icon icon="check"></Icon>
-					</div>
-				</div>
-				Remember me
-			</div>
+			<form onsubmit={(e) => e.preventDefault()} novalidate autocomplete="off">
+				<Checkbox
+					label="Remember me"
+					value={form.remember}
+					onclick={() => (form.remember = !form.remember)}
+				></Checkbox>
+			</form>
 		{/snippet}
 	</IG>
 
@@ -127,51 +121,5 @@
 <style>
 	.line {
 		gap: 16px;
-	}
-
-	.custom-checkbox {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-		font-size: 0.8rem;
-		width: max-content;
-	}
-
-	.checkbox {
-		--size: 20px;
-		position: relative;
-
-		width: var(--size);
-		height: var(--size);
-		border-radius: 4px;
-		outline: 2px solid var(--input);
-		outline-offset: -2px;
-
-		background-color: var(--input);
-		cursor: pointer;
-
-		transition: background-color 0.2s ease-in-out;
-	}
-
-	.checkbox:hover {
-		outline-color: var(--ft1);
-	}
-	.active {
-		background-color: var(--cl1);
-	}
-
-	.icon {
-		position: absolute;
-		inset: 0;
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: transparent;
-
-		transition: color 0.2s ease-in-out;
-	}
-	.active .icon {
-		color: white;
 	}
 </style>

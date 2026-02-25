@@ -36,7 +36,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.item);
+			module.value.update(resp.post);
 			module.close();
 			notify.open('Description saved');
 		} else {

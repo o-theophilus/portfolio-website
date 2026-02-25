@@ -10,7 +10,7 @@ from ..log import log
 from ..postgres import db_close, db_open
 from ..storage import storage
 from ..tools import get_session, reserved_words
-from .get import get_many, post_schema
+from .get import get_feature, get_many, post_schema
 
 bp = Blueprint("post", __name__)
 
@@ -217,11 +217,13 @@ def edit(key):
     cur.execute("""
         UPDATE post
         SET title = %s, slug = %s, date_created= %s, description= %s,
-        content= %s, tags= %s, author_key= %s, status= %s
+        content= %s, tags= %s, author_key= %s, status= %s, featured= %s
         WHERE key = %s RETURNING *;
     """, (
         title, slug, date_created, description, content, tags,
-        author_key, status, post["key"]
+        author_key, status,
+        post["featured"] if status == "active" else 0,
+        post["key"]
     ))
     post = cur.fetchone()
 
@@ -369,4 +371,124 @@ def like(key):
     return jsonify({
         "status": 200,
         **reactions
+    })
+
+
+@bp.post("/post/feature/<key>")
+def feature(key):
+    con, cur = db_open()
+
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
+
+    if "post:edit_featured" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error":  "unauthorized access"
+        })
+
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
+    if not post or post["status"] != "active":
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
+
+    action = "added post to featured"
+    if post["featured"] > 0:
+        action = "removed post from featured"
+
+    cur.execute("""
+        UPDATE post SET featured = %s WHERE key = %s RETURNING *;
+    """, (0 if post["featured"] > 0 else 1, post["key"],))
+    post = cur.fetchone()
+
+    cur.execute("""
+        WITH ordered AS (
+            SELECT key,
+                ROW_NUMBER() OVER (ORDER BY featured ASC, date_created ASC)
+                AS new_order
+            FROM post
+            WHERE featured > 0
+        )
+        UPDATE post p
+        SET featured = o.new_order
+        FROM ordered o
+        WHERE p.key = o.key;
+    """)
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action=action,
+        entity_key=post["key"],
+        entity_type="post"
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "post": post_schema(post)
+    })
+
+
+@bp.put("/post/feature")
+def edit_feature():
+    con, cur = db_open()
+
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
+
+    if "post:edit_featured" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error":  "unauthorized access"
+        })
+
+    keys = request.json.get("keys")
+
+    if not keys or type(keys) is not list:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
+
+    cur.execute("UPDATE post SET featured = 0;")
+
+    cur.execute("""
+        UPDATE post
+        SET featured = x.position
+        FROM (
+            SELECT key, position
+            FROM unnest(%s::uuid[]) WITH ORDINALITY AS t(key, position)
+        ) AS x
+        WHERE post.key = x.key;
+    """, (keys,))
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="re-ordered featured post",
+        entity_key="app",
+        entity_type="app",
+
+    )
+
+    posts = get_feature(cur).json["posts"]
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "posts": posts
     })

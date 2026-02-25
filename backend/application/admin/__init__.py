@@ -34,13 +34,13 @@ def perform_action(key):
         })
 
     _actions = request.json.get("actions")
-    note = request.json.get("note")
+    comment = request.json.get("comment")
 
     error = {}
     if not _actions or type(_actions) is not list or _actions == []:
         error["actions"] = "select action"
-    if not note:
-        error["note"] = "This field is required"
+    if not comment:
+        error["comment"] = "This field is required"
     if error:
         db_close(con, cur)
         return jsonify({
@@ -95,7 +95,7 @@ def perform_action(key):
         entity_key=e_user["key"],
         misc={
             "field(s)": ", ".join(actions),
-            "note": note
+            "comment": comment
         }
     )
 

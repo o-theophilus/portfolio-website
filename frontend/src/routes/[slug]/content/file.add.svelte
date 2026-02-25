@@ -49,8 +49,8 @@
 		input.value = '';
 
 		if (resp.status == 200) {
-			ops.files = resp.item.files;
-			module.value.update(resp.item);
+			ops.files = resp.post.files;
+			module.value.update(resp.post);
 			notify.open('Photo added');
 
 			if (resp.error) ops.error = resp;

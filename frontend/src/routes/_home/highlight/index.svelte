@@ -14,13 +14,12 @@
 	const set = (dir = 0) => {
 		index = index + dir;
 
-		if (index > app.highlight.length - 1) {
+		if (index > app.featured.length - 1) {
 			index = 0;
 		} else if (index < 0) {
-			index = app.highlight.length - 1;
+			index = app.featured.length - 1;
 		}
 	};
-	// TODO: update posts to have highlight index
 	const prerender = (post) => {
 		app.post = post;
 	};
@@ -30,33 +29,33 @@
 	};
 
 	onMount(async () => {
-		if (!app.highlight) {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/highlights`);
+		if (!app.featured) {
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/feature`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {
-				app.highlight = resp.items;
+				app.featured = resp.posts;
 			}
 		}
 	});
 
-	let src = $derived(app.highlight?.[index]?.photo || '/no_photo.png');
+	let src = $derived(app.featured?.[index]?.photo || '/no_photo.png');
 </script>
 
-{#if app.highlight?.length > 0 || app.user.access.includes('post:edit_highlight')}
+{#if app.featured?.length > 0 || app.user.access.includes('post:edit_featured')}
 	<Content --content-height="100%" --content-padding-top="80px" --content-padding-bottom="56px">
 		<div class="line">
 			<div class="page_title">
-				Some Thing{app.highlight?.length > 1 ? 's' : ''}
+				Some Thing{app.featured?.length > 1 ? 's' : ''}
 				I've Built
 			</div>
 
-			{#if app.user.access.includes('post:edit_highlight')}
+			{#if app.user.access.includes('post:edit_featured')}
 				<RoundButton icon="square-pen" onclick={() => module.open(Edit, { reset_index })} />
 			{/if}
 		</div>
 
-		{#if app.highlight?.length > 0}
+		{#if app.featured?.length > 0}
 			<LinkArrow href="/post" --link-font-size="0.8rem">View more</LinkArrow>
 
 			<br />
@@ -67,32 +66,32 @@
 					<img
 						in:fade|local={{ delay: 0, duration: 500, easing: cubicInOut }}
 						onclick={() => {
-							prerender(app.highlight[index]);
-							goto(`/${app.highlight[index].slug}`);
+							prerender(app.featured[index]);
+							goto(`/${app.featured[index].slug}`);
 						}}
 						onmouseenter={() => {
-							prerender(app.highlight[index]);
+							prerender(app.featured[index]);
 						}}
 						role="presentation"
 						{src}
-						alt={app.highlight[index].title}
+						alt={app.featured[index].title}
 						onerror={() => (src = '/no_photo.png')}
 					/>
 				{/key}
 				<div class="hidden">
-					{#each Array(app.highlight.length) as _, i}
-						<img src={app.highlight[i].photo || '/no_photo.png'} alt={app.highlight[i].title} />
+					{#each Array(app.featured.length) as _, i}
+						<img src={app.featured[i].photo || '/no_photo.png'} alt={app.featured[i].title} />
 					{/each}
 				</div>
 
-				{#if app.highlight.length > 1}
+				{#if app.featured.length > 1}
 					<div class="nav">
 						<Button icon="chevron-left" onclick={() => set(-1)}></Button>
 						<Button icon="chevron-right" onclick={() => set(1)}></Button>
 					</div>
 
 					<div class="indicator">
-						{#each Array(app.highlight.length) as _, i}
+						{#each Array(app.featured.length) as _, i}
 							<button
 								class="one"
 								class:active={i == index}
@@ -109,19 +108,19 @@
 
 			{#key index}
 				<div class="info" in:fade|local={{ delay: 0, duration: 500, easing: cubicInOut }}>
-					<a href="/{app.highlight[index].slug}" class="name">
-						{app.highlight[index].title}
+					<a href="/{app.featured[index].slug}" class="name">
+						{app.featured[index].title}
 					</a>
 
-					{#if app.highlight[index].description}
+					{#if app.featured[index].description}
 						<div class="description">
-							{app.highlight[index].description}
+							{app.featured[index].description}
 						</div>
 					{/if}
 
-					{#if app.highlight[index].tags.length > 0}
+					{#if app.featured[index].tags.length > 0}
 						<div class="line tag">
-							{#each app.highlight[index].tags as x}
+							{#each app.featured[index].tags as x}
 								<Tag onclick={() => page_state.goto('post', { tag: x })}>{x}</Tag>
 							{/each}
 						</div>
@@ -212,11 +211,11 @@
 			border-radius: calc(var(--size) / 2);
 			border: none;
 			cursor: pointer;
-			
+
 			transition:
-			width 0.2s ease-in-out,
-			background-color 0.2s ease-in-out;
-			
+				width 0.2s ease-in-out,
+				background-color 0.2s ease-in-out;
+
 			&.active {
 				width: calc(var(--size) * 3);
 				background-color: white;

@@ -1,10 +1,9 @@
 <script>
-	import { app, loading, module, notify } from '$lib/store.svelte.js';
-
 	import { Button } from '$lib/button';
-	import { IG } from '$lib/input';
+	import { Note } from '$lib/info';
+	import { Checkbox, IG } from '$lib/input';
 	import { Form } from '$lib/layout';
-	import { slide } from 'svelte/transition';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
 	let form = $state({ actions: [] });
 	let error = $state({});
@@ -12,8 +11,10 @@
 	const validate = () => {
 		error = {};
 
-		if (!form.note) {
-			error.note = 'This field is required';
+		if (!form.comment) {
+			error.comment = 'This field is required';
+		} else if (form.comment.length > 500) {
+			error.comment = 'This field cannot exceed 500 characters';
 		}
 
 		if (form.actions.length == 0) {
@@ -52,56 +53,58 @@
 </script>
 
 <Form title="Actions" error={error.error}>
-	<div class="actions">
-		{#if app.user.access.includes('user:reset_name')}
-			<label>
-				<input type="checkbox" bind:group={form.actions} value="reset_name" />
-				Reset Name
-			</label>
-		{/if}
-		{#if app.user.access.includes('user:reset_username')}
-			<label>
-				<input type="checkbox" bind:group={form.actions} value="reset_username" />
-				Reset Username
-			</label>
-		{/if}
-		{#if app.user.access.includes('user:reset_photo')}
-			<label>
-				<input type="checkbox" bind:group={form.actions} value="reset_photo" />
-				Reset Photo
-			</label>
-		{/if}
-		{#if error.actions}
-			<span class="error" transition:slide>
-				{error.actions}
-			</span>
-		{/if}
-	</div>
+	<IG>
+		{#snippet input()}
+			{#if app.user.access.includes('user:reset_name')}
+				<Checkbox
+					label="Reset Name"
+					value={form.actions.includes('reset_name')}
+					onclick={() => {
+						if (form.actions.includes('reset_name')) {
+							form.actions = form.actions.filter((x) => x != 'reset_name');
+						} else {
+							form.actions.push('reset_name');
+						}
+					}}
+				></Checkbox>
+			{/if}
+			{#if app.user.access.includes('user:reset_username')}
+				<Checkbox
+					label="Reset Username"
+					value={form.actions.includes('reset_username')}
+					onclick={() => {
+						if (form.actions.includes('reset_username')) {
+							form.actions = form.actions.filter((x) => x != 'reset_username');
+						} else {
+							form.actions.push('reset_username');
+						}
+					}}
+				></Checkbox>
+			{/if}
+			{#if app.user.access.includes('user:reset_photo')}
+				<Checkbox
+					label="Reset Photo"
+					value={form.actions.includes('reset_photo')}
+					onclick={() => {
+						if (form.actions.includes('reset_photo')) {
+							form.actions = form.actions.filter((x) => x != 'reset_photo');
+						} else {
+							form.actions.push('reset_photo');
+						}
+					}}
+				></Checkbox>
+			{/if}
+			<Note note={error.actions} status="400" --note-margin-top="16px"></Note>
+		{/snippet}
+	</IG>
 
 	<IG
-		name="Note"
-		error={error.note}
+		name="Comment ({500 - form.comment.length})"
+		error={error.comment}
 		type="textarea"
-		placeholder="Note here"
-		bind:value={form.note}
+		placeholder="Comment here"
+		bind:value={form.comment}
 	/>
 
 	<Button icon2="send-Horizontal" onclick={validate}>Submit</Button>
 </Form>
-
-<style>
-	.error {
-		margin: 16px 0;
-		font-size: 0.8rem;
-		color: red;
-	}
-
-	.actions {
-		margin: 16px 0;
-	}
-
-	label {
-		display: flex;
-		gap: 16px;
-	}
-</style>

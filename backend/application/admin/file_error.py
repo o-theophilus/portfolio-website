@@ -9,17 +9,21 @@ bp = Blueprint("file_error", __name__)
 
 
 @bp.get("/file_error")
-def get_file_error():
-    con, cur = db_open()
+def get_file_error(cur=None):
+    close_conn = not cur
+    if not cur:
+        con, cur = db_open()
 
     session = get_session(cur, True)
     if session["status"] != 200:
-        db_close(con, cur)
+        if close_conn:
+            db_close(con, cur)
         return jsonify(session)
     user = session["user"]
 
     if "admin:manage_files" not in user["access"]:
-        db_close(con, cur)
+        if close_conn:
+            db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "unauthorized access"
@@ -54,7 +58,8 @@ def get_file_error():
     """, (post_store_photo, post_store_photo))
     posts_with_missing_photo = cur.fetchall()
 
-    db_close(con, cur)
+    if close_conn:
+        db_close(con, cur)
     return jsonify({
         "status": 200,
         "unused_post_photo": [f"{request.host_url}photo/post/{x}"

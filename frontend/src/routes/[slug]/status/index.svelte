@@ -1,23 +1,23 @@
 <script>
-	import { module, app } from '$lib/store.svelte.js';
+	import { app, module } from '$lib/store.svelte.js';
 
 	import Button from '../button.svelte';
 	import Edit from './edit.svelte';
 
-	let { item, update } = $props();
+	let { post, update } = $props();
 </script>
 
 {#if app.user.access.includes('post:edit_status')}
 	<Button
 		onclick={() =>
 			module.open(Edit, {
-				key: item.key,
-				status: item.status,
-				photo: item.photo,
+				key: post.key,
+				status: post.status,
+				photo: post.photo,
 				update
 			})}
 	>
-		Edit Status: <span class="status {item.status}">{item.status}</span>
+		Edit Status: <span class="status {post.status}">{post.status}</span>
 	</Button>
 {/if}
 

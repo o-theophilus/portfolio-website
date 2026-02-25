@@ -109,6 +109,8 @@ def get_many():
 
     # TODO: descrive the log action well
     # so you can remove this block
+    # review all the logs from the frontend
+    # without this fix below
     for x in logs:
         if x["entity"]["type"] == "page":
             x["action"] = "viewed"

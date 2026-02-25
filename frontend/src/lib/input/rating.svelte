@@ -2,7 +2,6 @@
 	import { Icon } from '$lib/macro';
 
 	let { value = $bindable(), disabled } = $props();
-	console.log(disabled);
 </script>
 
 <div class="stars" class:disabled>

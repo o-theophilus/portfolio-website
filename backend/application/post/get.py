@@ -32,9 +32,9 @@ def get(key):
     cur.execute("""
         SELECT * FROM post WHERE slug = %s OR key::TEXT = %s
     """, (key, key))
-    item = cur.fetchone()
+    post = cur.fetchone()
 
-    if not item:
+    if not post:
         db_close(con, cur)
         return jsonify({
             "status": 404,
@@ -42,7 +42,7 @@ def get(key):
         })
 
     if (
-        item["status"] != "active"
+        post["status"] != "active"
         and "post:add" not in user["access"]
         and "post:edit_status" not in user["access"]
     ):
@@ -55,7 +55,7 @@ def get(key):
     db_close(con, cur)
     return jsonify({
         "status": 200,
-        "post": post_schema(item)
+        "post": post_schema(post)
     })
 
 
@@ -67,7 +67,8 @@ def get_many(cur=None):
 
     session = get_session(cur)
     if session["status"] != 200:
-        db_close(con, cur)
+        if close_conn:
+            db_close(con, cur)
         return jsonify(session)
     user = session["user"]
 
@@ -337,4 +338,25 @@ def all_tags():
     return jsonify({
         "status": 200,
         "tags": [x["tag"] for x in tags_count]
+    })
+
+
+@bp.get("/post/feature")
+def get_feature(cur=None):
+    close_conn = not cur
+    if not cur:
+        con, cur = db_open()
+
+    cur.execute("""
+        SELECT * FROM post
+        WHERE status = 'active' AND featured > 0
+        ORDER BY featured ASC, date_created ASC;
+    """)
+    posts = cur.fetchall()
+
+    if close_conn:
+        db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "posts": [post_schema(x) for x in posts]
     })

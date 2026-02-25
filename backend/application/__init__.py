@@ -2,9 +2,8 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 
 from . import admin, api, auth, fix, log, post, postgres, report, storage, user
-from .admin import block, file_error, highlight
+from .admin import block, file_error
 from .admin.block import get as block_get
-from .admin.highlight import get as highlight_get
 from .auth import forgot
 from .log import get as log_get
 from .post import comment, file
@@ -43,8 +42,6 @@ def create_app(conf=None):
     app.register_blueprint(block.bp)
     app.register_blueprint(block_get.bp)
     app.register_blueprint(file_error.bp)
-    app.register_blueprint(highlight.bp)
-    app.register_blueprint(highlight_get.bp)
     app.register_blueprint(report.bp)
     app.register_blueprint(report_get.bp)
     app.register_blueprint(user.bp)

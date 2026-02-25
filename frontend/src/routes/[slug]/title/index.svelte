@@ -3,7 +3,7 @@
 	import Button from '../button.svelte';
 	import Edit from './edit.svelte';
 
-	let { item, edit_mode, update } = $props();
+	let { post, edit_mode, update } = $props();
 </script>
 
 <div class="comp">
@@ -11,8 +11,8 @@
 		<Button
 			onclick={() =>
 				module.open(Edit, {
-					key: item.key,
-					title: item.title,
+					key: post.key,
+					title: post.title,
 					update
 				})}
 		>
@@ -20,7 +20,7 @@
 		</Button>
 	{/if}
 	<div class="page_title">
-		{item.title}
+		{post.title}
 	</div>
 </div>
 

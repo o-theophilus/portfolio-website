@@ -5,12 +5,12 @@
 	import { Form } from '$lib/layout';
 	import { Icon } from '$lib/macro';
 
-	let item = $state({ ...module.value });
-	let has_photo = $state(item.photo ? true : false);
+	let post = $state({ ...module.value });
+	let has_photo = $state(post.photo ? true : false);
 	let error = $state({});
 	let input;
 	let dragover = $state(false);
-	let src = $derived(item.photo || '/select_photo.png');
+	let src = $derived(post.photo || '/select_photo.png');
 
 	const validate = () => {
 		error = {};
@@ -31,7 +31,7 @@
 		formData.append('file', file);
 
 		loading.open('uploading . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}${item.slug}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}${post.slug}`, {
 			method: 'put',
 			headers: {
 				Authorization: app.token
@@ -43,8 +43,8 @@
 		input.value = '';
 
 		if (resp.status == 200) {
-			item.photo = resp[item.type].photo;
-			module.value.update(resp[item.type]);
+			post.photo = resp[post.type].photo;
+			module.value.update(resp[post.type]);
 			has_photo = true;
 			notify.open('Photo updated');
 		} else {
@@ -56,7 +56,7 @@
 		error = {};
 
 		loading.open('removing . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}${item.slug}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}${post.slug}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
@@ -67,9 +67,9 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			item.photo = null;
+			post.photo = null;
 
-			item.update(resp[item.type]);
+			post.update(resp[post.type]);
 			has_photo = false;
 			notify.open('Photo removed');
 		} else {
@@ -78,10 +78,10 @@
 	};
 </script>
 
-<Form title="{item.type} Photo" error={error.error}>
+<Form title="{post.type} Photo" error={error.error}>
 	<img
 		{src}
-		alt={item.name}
+		alt={post.name}
 		class:dragover
 		class:no_photo={!has_photo}
 		onerror={() => (src = '/file_error.png')}
@@ -126,7 +126,7 @@
 				input.click();
 			}}
 		>
-			{#if item.photo}
+			{#if post.photo}
 				<Icon icon="square-pen" />
 				Change
 			{:else}

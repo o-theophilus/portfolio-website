@@ -4,6 +4,7 @@
 	import { slide } from 'svelte/transition';
 
 	import { Like, RoundButton } from '$lib/button';
+	import { Note } from '$lib/info';
 	import { Icon } from '$lib/macro';
 	import Delete from './_delete.svelte';
 	import Report from './_report.svelte';
@@ -62,34 +63,7 @@
 	}}
 />
 
-{#snippet menu()}
-	<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
-		{#if comment.user.key == app.user.key}
-			<button onclick={() => module.open(Delete, { comment, update, searchParams })}>
-				<Icon icon="trash-2"></Icon>
-				Delete
-			</button>
-		{:else}
-			<button
-				onclick={() => {
-					module.open(Report, { comment });
-				}}
-			>
-				<Icon icon="flag-triangle-right"></Icon>
-				Report
-			</button>
-		{/if}
-	</div>
-{/snippet}
-
-<!-- TODO: enforce all app.login in the backend -->
 {#if app.login}
-	{#if error.error}
-		<div class="error" transition:slide>
-			{error.error}
-		</div>
-	{/if}
-
 	<div class="line space control">
 		<div class="line">
 			{@render reply?.()}
@@ -114,18 +88,31 @@
 			/>
 
 			{#if open_menu}
-				{@render menu()}
+				<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
+					{#if comment.user.key == app.user.key}
+						<button onclick={() => module.open(Delete, { comment, update, searchParams })}>
+							<Icon icon="trash-2"></Icon>
+							Delete
+						</button>
+					{:else}
+						<button
+							onclick={() => {
+								module.open(Report, { comment });
+							}}
+						>
+							<Icon icon="flag-triangle-right"></Icon>
+							Report
+						</button>
+					{/if}
+				</div>
 			{/if}
 		</div>
 	</div>
+
+	<Note --note-margin-top="16px" --note-margin-bottom="0" status="400" note={error.error}></Note>
 {/if}
 
 <style>
-	.error {
-		color: red;
-		font-size: 0.8rem;
-		margin: 8px 0;
-	}
 	.control {
 		margin-top: 16px;
 	}

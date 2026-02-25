@@ -12,7 +12,7 @@
 	import Engagement from './engage/engagement.svelte';
 	import Like from './engage/like.svelte';
 	import Share from './engage/share.svelte';
-	import Highlight from './highlight.svelte';
+	import Feature from './feature.svelte';
 	import Similar from './similar.svelte';
 	import ToTop from './to_top.svelte';
 
@@ -31,7 +31,7 @@
 			'post:edit_tags',
 			'post:edit_status',
 			'post:edit_author',
-			'post:edit_highlight'
+			'post:edit_featured'
 		].includes(x)
 	);
 
@@ -42,6 +42,10 @@
 	let similar = $state([]);
 
 	const update = async (data) => {
+		post = data;
+	};
+
+	const hard_update = async (data) => {
 		post = data;
 		edit_mode = false;
 		loading = true;
@@ -65,7 +69,7 @@
 	};
 
 	onMount(async () => {
-		update(post);
+		hard_update(post);
 
 		if (page.url.searchParams.has('edit') && is_admin) {
 			page.url.searchParams.delete('edit');
@@ -96,28 +100,28 @@
 		<br />
 	{/if}
 
-	{#if edit_mode && (app.user.access.includes('post:edit_status') || app.user.access.includes('post:edit_highlight'))}
+	{#if edit_mode && (app.user.access.includes('post:edit_status') || app.user.access.includes('post:edit_featured'))}
 		<div class="line status">
-			<Status item={post} {update}></Status>
-			<Highlight item={post} />
+			<Status {post} {update}></Status>
+			<Feature {post} {update} />
 		</div>
 	{/if}
-	<Photo bind:item={post} {edit_mode} {update} />
-	<Title item={post} {edit_mode} {update} />
-	<Description item={post} {edit_mode} {update} />
+	<Photo bind:post {edit_mode} {update} />
+	<Title {post} {edit_mode} {update} />
+	<Description {post} {edit_mode} {update} />
 	<div class="line space date">
-		<Date item={post} {edit_mode} {update}></Date>
-		<Engagement {engagement} {loading} />
+		<Date {post} {edit_mode} {update}></Date>
+		<Engagement {engagement} {loading}></Engagement>
 	</div>
-	<Content_ item={post} {edit_mode} {update} />
-	<Tags item={post} {edit_mode} {update} />
-	<Author {author} {post} {edit_mode} {loading} {update} />
+	<Content_ {post} {edit_mode} {update}></Content_>
+	<Tags {post} {edit_mode} {update}></Tags>
+	<Author {author} {post} {edit_mode} {loading} update={hard_update} />
 </Content>
 
 <Content --content-height>
 	<div class="line engage">
 		<Like {post} bind:engagement />
-		<Share item={post} />
+		<Share {post} />
 	</div>
 
 	<hr />
@@ -131,7 +135,7 @@
 	--content-padding-top="1px"
 	--content-padding-bottom="1px"
 >
-	<Similar {similar} {loading} {update} />
+	<Similar {similar} {loading} update={hard_update} />
 	<ToTop />
 </Content>
 

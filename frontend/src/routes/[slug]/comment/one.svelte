@@ -4,7 +4,6 @@
 	import { onMount } from 'svelte';
 
 	let { comment } = $props();
-	console.log(comment);
 
 	let _this;
 	onMount(() => {
