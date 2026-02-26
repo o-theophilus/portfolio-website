@@ -32,11 +32,15 @@ def block(key):
     cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
     user = cur.fetchone()
 
+    cur.execute("""SELECT * FROM block WHERE user_key = %s;""", (key,))
+    block = cur.fetchone()
+
     if (
         not user
         or user["key"] == me["key"]
-        or user["status"] != "active"
+        or user["status"] != "confirmed"
         or user["email"] == os.environ["MAIL_USERNAME"]
+        or block
     ):
         db_close(con, cur)
         return jsonify({
@@ -117,7 +121,7 @@ def unblock(key):
     if (
         not user
         or user["key"] == me["key"]
-        or user["status"] != "active"
+        or user["status"] != "confirmed"
         or user["email"] == os.environ["MAIL_USERNAME"]
     ):
         db_close(con, cur)

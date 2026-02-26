@@ -16,6 +16,7 @@
 	let total_page = $derived(data.total_page);
 	let { order_by } = data;
 	let { type } = data;
+	let { _status } = data;
 	let searchParams = $state({ ...data.searchParams });
 	let defaultParams = $state(data.searchParams);
 
@@ -29,14 +30,9 @@
 		}
 	});
 
-	const update = (key) => {
-		let temp = [];
-		for (const x of reports) {
-			if (x.user.key == key) continue;
-			temp.push(x);
-		}
-		reports = temp;
-		page_state.refresh();
+	const update = (a, b) => {
+		reports = a;
+		total_page = b;
 	};
 </script>
 
@@ -49,15 +45,26 @@
 			Report{reports.length > 1 ? 's' : ''}
 		</div>
 
-		<Dropdown
-			icon2="chevron-down"
-			list={type}
-			bind:value={searchParams.type}
-			onchange={(v) => {
-				searchParams.page_no = 1;
-				page_state.set({ type: v == defaultParams.type ? '' : v });
-			}}
-		/>
+		<div class="line">
+			<Dropdown
+				icon2="chevron-down"
+				list={type}
+				bind:value={searchParams.type}
+				onchange={(v) => {
+					searchParams.page_no = 1;
+					page_state.set({ type: v == defaultParams.type ? '' : v });
+				}}
+			/>
+			<Dropdown
+				icon2="chevron-down"
+				list={_status}
+				bind:value={searchParams.status}
+				onchange={(v) => {
+					searchParams.page_no = 1;
+					page_state.set({ status: v == defaultParams.status ? '' : v });
+				}}
+			/>
+		</div>
 	</div>
 
 	<Search
@@ -90,7 +97,7 @@
 <Content --content-padding-top="1px">
 	{#each reports as report (report.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<One {report} {update} />
+			<One {report} {update} {searchParams} />
 		</div>
 	{:else}
 		<PageNote>

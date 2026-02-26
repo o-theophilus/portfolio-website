@@ -9,7 +9,7 @@ bp = Blueprint("postgres", __name__)
 
 
 def db_open():
-    con = psycopg2.connect(os.environ["DATABASE_URI"])
+    con = psycopg2.connect(os.environ["ONLINE_DB"])
     cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     return con, cur
 
@@ -26,7 +26,6 @@ def create_tables():
 
     cur.execute('CREATE EXTENSION IF NOT EXISTS "pgcrypto";')
     cur.execute("""
-        DROP TABLE IF EXISTS app CASCADE;
         DROP TABLE IF EXISTS "user" CASCADE;
         DROP TABLE IF EXISTS post CASCADE;
         DROP TABLE IF EXISTS comment CASCADE;
@@ -77,23 +76,24 @@ def create_tables():
 
         CREATE TABLE IF NOT EXISTS report (
             key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            date_created TIMESTAMPTZ DEFAULT now(),
             status TEXT NOT NULL DEFAULT 'active',
+            date_created TIMESTAMPTZ DEFAULT now(),
             reporter_key UUID NOT NULL REFERENCES "user"(key),
-            reported_key UUID REFERENCES "user"(key) ON DELETE CASCADE,
-            comment_key UUID REFERENCES comment(key) ON DELETE CASCADE,
-            comment TEXT NOT NULL,
+            reporter_comment TEXT NOT NULL,
             tags TEXT[] DEFAULT '{}'::TEXT[],
+            date_resolved TIMESTAMPTZ,
             resolver_key UUID REFERENCES "user"(key),
-            resolve_comment TEXT,
-            date_resolved TIMESTAMPTZ
+            resolver_comment TEXT,
+            reported_user_key UUID REFERENCES "user"(key) ON DELETE CASCADE,
+            reported_comment_key UUID REFERENCES comment(key) ON DELETE CASCADE
         );
 
         CREATE TABLE IF NOT EXISTS block (
             key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             date_created TIMESTAMPTZ DEFAULT now(),
             admin_key UUID NOT NULL REFERENCES "user"(key) ON DELETE CASCADE,
-            user_key UUID NOT NULL REFERENCES "user"(key) ON DELETE CASCADE,
+            user_key UUID UNIQUE NOT NULL REFERENCES "user"(key)
+                ON DELETE CASCADE,
             comment TEXT NOT NULL
         );
 

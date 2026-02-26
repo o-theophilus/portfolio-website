@@ -5,13 +5,10 @@
 	import { Dropdown, IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 	import { tags, template } from './_report.template.js';
-	import One from './one.svelte';
-
-	let comment = { ...module.value.comment };
 
 	let form = $state({
-		entity_key: comment.key,
-		entity_type: 'comment',
+		entity_key: module.value.user.key,
+		entity_type: 'user',
 		comment: '',
 		tags: []
 	});
@@ -53,11 +50,7 @@
 	};
 </script>
 
-<Form title="Report Comment" error={error.error}>
-	<div class="comment">
-		<One {comment}></One>
-	</div>
-
+<Form title="Report User" error={error.error}>
 	<IG
 		bind:value={form.comment}
 		error={error.comment}
@@ -114,15 +107,6 @@
 </Form>
 
 <style>
-	.comment {
-		padding: 16px;
-
-		background-color: var(--bg2);
-		border-radius: 8px;
-		outline: 1px solid var(--ol);
-		outline-offset: -1px;
-	}
-
 	.label {
 		font-size: 0.8rem;
 	}

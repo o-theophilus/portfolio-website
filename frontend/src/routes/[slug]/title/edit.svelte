@@ -1,9 +1,9 @@
 <script>
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
-
-	import { IG } from '$lib/input';
+	import { replaceState } from '$app/navigation';
 	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
 	let form = $state({ title: module.value.title });
 	let error = $state({});
@@ -34,7 +34,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			window.history.replaceState(history.state, '', `/${resp.item.slug}`);
+			replaceState(`/${resp.item.slug}`);
 			module.value.update(resp.item);
 			notify.open('Title Saved');
 			module.close();

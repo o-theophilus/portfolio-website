@@ -1,20 +1,19 @@
 <script>
 	import { page } from '$app/state';
+	import { Button, FoldButton, Switch } from '$lib/button';
 	import { module } from '$lib/store.svelte.js';
 	import { cubicInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
-
-	import { Button, FoldButton, Switch } from '$lib/button';
 	import Confirm from './confirm.svelte';
 
-	let user = module.value;
-	let mods = $state([...user.access]);
+	let user = module.value.user;
+	let access = $state(module.value.access ? [...module.value.access] : [...user.access]);
 	let init = [...user.access];
 	let active_name = $state('');
-	let disabled = $derived(JSON.stringify([...mods].sort()) == JSON.stringify([...init].sort()));
+	let disabled = $derived(JSON.stringify([...access].sort()) == JSON.stringify([...init].sort()));
 
 	const select = (x) => {
-		mods = mods.includes(x) ? mods.filter((p) => p !== x) : [...mods, x];
+		access = access.includes(x) ? access.filter((p) => p !== x) : [...access, x];
 	};
 </script>
 
@@ -65,9 +64,12 @@
 	{/each}
 
 	<div class="line">
-		<Button icon="history" onclick={() => (mods = [...init])} {disabled}>Reset</Button>
-		<Button icon2="send-horizontal" onclick={() => module.open(Confirm, { mods })} {disabled}
-			>Submit</Button
+		<Button icon="history" onclick={() => (access = [...init])} {disabled}>Reset</Button>
+		<Button
+			icon2="send-horizontal"
+			onclick={() =>
+				module.open(Confirm, { access, user: module.value.user, update: module.value.update })}
+			{disabled}>Submit</Button
 		>
 	</div>
 </section>
@@ -90,7 +92,7 @@
 	}
 
 	.content {
-		border: 0 solid var(--bg2);
+		border: 0 solid var(--bg1);
 		border-width: 1px 0;
 		padding-bottom: 8px;
 	}

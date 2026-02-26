@@ -1,9 +1,9 @@
 <script>
-	import { module, notify, loading, app } from '$lib/store.svelte.js';
-
-	import { IG } from '$lib/input';
+	import { replaceState } from '$app/navigation';
 	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
 	let form = $state({ username: app.user.username });
 	let error = $state({});
@@ -38,7 +38,7 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			window.history.replaceState(history.state, '', `/@${resp.user.username}`);
+			replaceState(`/@${resp.user.username}`);
 			module.value.update(resp.user);
 			notify.open('Name Changed');
 			module.close();

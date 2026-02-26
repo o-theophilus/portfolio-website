@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, request
 from ..log import log
 from ..postgres import db_close, db_open
 from ..tools import get_session
+from .get import get_many
 
 bp = Blueprint("report", __name__)
 
@@ -58,12 +59,12 @@ def create():
         })
 
     if entity_type == "user":
-        column = "reported_key"
+        column = "reported_user_key"
     if entity_type == "comment":
-        column = "comment_key"
+        column = "reported_comment_key"
 
     cur.execute(f"""
-        INSERT INTO report (reporter_key, {column}, comment, tags)
+        INSERT INTO report (reporter_key, {column}, reporter_comment, tags)
         VALUES (%s, %s, %s, %s) RETURNING *;
     """, (user["key"], entity["key"], comment, tags))
     report = cur.fetchone()
@@ -86,7 +87,7 @@ def create():
     })
 
 
-@bp.put("/report/<key>")
+@bp.put("/report/resolve/<key>")
 def resolve(key):
     con, cur = db_open()
 
@@ -107,8 +108,8 @@ def resolve(key):
     report = cur.fetchone()
     if (
         not report
-        or report["reported_key"] == user["key"]
-        or report["status"] == "resolved"
+        or report["reported_user_key"] == user["key"]
+        or report["status"] != "active"
     ):
         db_close(con, cur)
         return jsonify({
@@ -117,7 +118,6 @@ def resolve(key):
         })
 
     comment = request.json.get("comment")
-    status = request.json.get("status")
     delete_comment = request.json.get("delete_comment", False)
 
     error = {}
@@ -126,28 +126,19 @@ def resolve(key):
     elif len(comment) > 500:
         error["comment"] = "This field cannot exceed 500 characters"
 
-    if not status or status not in ["resolved", "dismissed"]:
-        error["status"] = "This field is required"
-    if error:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            **error
-        })
-
     cur.execute("""
         UPDATE report
-        SET status = %s, date_resolved = now(),
-        resolver_key = %s, resolve_comment = %s,
+        SET status = 'resolved', date_resolved = now(),
+        resolver_key = %s, resolver_comment = %s
         WHERE key = %s;
-    """, (status, user["key"], comment, key))
+    """, (user["key"], comment, key))
 
-    if report["comment_key"]:
+    if report["reported_comment_key"]:
         entity_type = "comment"
-        entity_key = report["comment_key"]
-    elif report["reported_key"]:
+        entity_key = report["reported_comment_key"]
+    elif report["reported_user_key"]:
         entity_type = "user"
-        entity_key = report["reported_key"]
+        entity_key = report["reported_user_key"]
 
     log(
         cur=cur,
@@ -161,10 +152,10 @@ def resolve(key):
         }
     )
 
-    if report["comment_key"] and delete_comment:
+    if report["reported_comment_key"] and delete_comment:
         cur.execute(
             "DELETE FROM comment WHERE key = %s RETURNING *;",
-            (report["comment_key"],))
+            (report["reported_comment_key"],))
         comment = cur.fetchone()
 
         log(
@@ -176,7 +167,75 @@ def resolve(key):
             misc={"post_key": comment["post_key"]}
         )
 
+    reports = get_many(cur)
     db_close(con, cur)
-    return jsonify({
-        "status": 200
-    })
+    return reports
+
+
+@bp.put("/report/dismiss/<key>")
+def dismiss(key):
+    con, cur = db_open()
+
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
+
+    if "report:resolve" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "unauthorized access"
+        })
+
+    cur.execute("SELECT * FROM report WHERE key = %s;", (key,))
+    report = cur.fetchone()
+    if (
+        not report
+        or report["reported_user_key"] == user["key"]
+        or report["status"] != "active"
+    ):
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
+
+    comment = request.json.get("comment")
+
+    error = {}
+    if not comment:
+        error["comment"] = "This field is required"
+    elif len(comment) > 500:
+        error["comment"] = "This field cannot exceed 500 characters"
+
+    cur.execute("""
+        UPDATE report
+        SET status = 'dismissed', date_resolved = now(),
+        resolver_key = %s, resolver_comment = %s
+        WHERE key = %s;
+    """, (user["key"], comment, key))
+
+    if report["reported_comment_key"]:
+        entity_type = "comment"
+        entity_key = report["reported_comment_key"]
+    elif report["reported_user_key"]:
+        entity_type = "user"
+        entity_key = report["reported_user_key"]
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="dismissed report",
+        entity_key=report["key"],
+        entity_type="report",
+        misc={
+            "entity_key": entity_key,
+            "entity_type": entity_type,
+        }
+    )
+
+    reports = get_many(cur)
+    db_close(con, cur)
+    return reports

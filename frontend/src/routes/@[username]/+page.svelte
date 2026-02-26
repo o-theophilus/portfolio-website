@@ -5,12 +5,12 @@
 	import { Content } from '$lib/layout';
 	import { Avatar, Icon, Log, Meta } from '$lib/macro';
 
-	import { onMount } from 'svelte';
 	import Photo from '../[slug]/photo/edit.svelte';
 	import Action from './_admin_action.svelte';
 	import Block from './_block.svelte';
 	import Name from './_name.svelte';
 	import Phone from './_phone.svelte';
+	import Report from './_report.svelte';
 	import Username from './_username.svelte';
 	import Access from './access/form.svelte';
 	import Delete from './delete/form.svelte';
@@ -20,21 +20,6 @@
 	let { data } = $props();
 	let user = $derived(data.user);
 	let edit_mode = $state(false);
-	let blocked = $state(true);
-
-	onMount(async () => {
-		if (app.user.access.includes('block:block')) {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/blocked/${user.key}`);
-			resp = await resp.json();
-
-			if (resp.status == 200) {
-				blocked = resp.blocked;
-			}
-		}
-	});
-	const udate_blocked = () => {
-		blocked = true;
-	};
 
 	const update = (data) => {
 		user = data;
@@ -117,13 +102,15 @@
 		</div>
 	{/if}
 
-	{#if edit_mode && user.key == app.user.key}
-		<div class="line center">
-			<Icon icon="at-sign" />
-			{user.username}
+	<div class="line center">
+		<Icon icon="at-sign" />
+		{user.username}
+		{#if edit_mode && user.key == app.user.key}
 			<RoundButton icon="square-pen" onclick={() => module.open(Username, { update })} />
-		</div>
+		{/if}
+	</div>
 
+	{#if edit_mode && user.key == app.user.key}
 		<div class="line center">
 			<Icon icon="key-round" />
 			********
@@ -141,16 +128,13 @@
 				</Button>
 			{:else}
 				{#if app.user.access.includes('user:set_access')}
-					<Button --button-font-size="0.8rem" onclick={() => module.open(Access, { ...user })}>
+					<Button --button-font-size="0.8rem" onclick={() => module.open(Access, { user, update })}>
 						Access
 					</Button>
 				{/if}
 
 				{#if app.user.access.some( (x) => ['user:reset_name', 'user:reset_username', 'user:reset_photo'].includes(x) )}
-					<Button
-						--button-font-size="0.8rem"
-						onclick={() => module.open(Action, { ...user, update })}
-					>
+					<Button --button-font-size="0.8rem" onclick={() => module.open(Action, { user, update })}>
 						Reset
 					</Button>
 				{/if}
@@ -159,13 +143,27 @@
 					<Button
 						icon="lock-keyhole"
 						--button-font-size="0.8rem"
-						disabled={blocked}
-						onclick={() => module.open(Block, { key: user.key, update: udate_blocked })}
+						disabled={user.blocked}
+						onclick={() => module.open(Block, { user, update })}
 					>
-						Block{#if blocked}ed{/if}
+						Block{#if user.blocked}ed{/if}
 					</Button>
 				{/if}
 			{/if}
+		</div>
+	{/if}
+
+	{#if user.key != app.user.key}
+		<div class="center">
+			<br />
+			<Button
+				icon="lock-keyhole"
+				--button-font-size="0.8rem"
+				disabled={user.blocked}
+				onclick={() => module.open(Report, { user })}
+			>
+				Report user
+			</Button>
 		</div>
 	{/if}
 

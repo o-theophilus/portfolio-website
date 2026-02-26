@@ -1,4 +1,5 @@
 <script>
+	import { replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import { module } from '$lib/store.svelte.js';
 	import { onMount } from 'svelte';
@@ -31,7 +32,7 @@
 
 		if (_module) {
 			module.open(_module, value);
-			window.history.replaceState(history.state, '', '/');
+			replaceState('/');
 		}
 	});
 </script>

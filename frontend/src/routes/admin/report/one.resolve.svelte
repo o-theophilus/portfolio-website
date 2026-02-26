@@ -1,12 +1,10 @@
 <script>
-	import { slide } from 'svelte/transition';
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
-	import { Note } from '$lib/info';
 	import { Button } from '$lib/button';
+	import { Note } from '$lib/info';
+	import { Checkbox, IG } from '$lib/input';
 	import { Form } from '$lib/layout';
-	import { Icon } from '$lib/macro';
 
 	let form = $state({ comment: '', delete_comment: false });
 	let error = $state({});
@@ -27,19 +25,25 @@
 		error = {};
 
 		loading.open('Resolving Report . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/report/${module.value.key}`, {
-			method: 'delete',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: app.token
-			},
-			body: JSON.stringify(form)
-		});
+		let resp = await fetch(
+			`${import.meta.env.VITE_BACKEND}/report/resolve/${module.value.report.key}?${new URLSearchParams(
+				module.value.searchParams
+			).toString()}`,
+			{
+				method: 'put',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: app.token
+				},
+				body: JSON.stringify(form)
+			}
+		);
 		resp = await resp.json();
 		loading.close();
+		console.log(resp);
 
 		if (resp.status == 200) {
-			module.value.update(module.value.key);
+			module.value.update(resp.reports, resp.total_page);
 			notify.open('Report Resolved');
 			module.close();
 		} else {
@@ -57,7 +61,7 @@
 		bind:value={form.comment}
 	/>
 
-	{#if module.value.entity_type == 'comment'}
+	{#if module.value.report.comment_key}
 		<Note>
 			Resolving this report will not delete the comment. If you want to delete the comment, please
 			check the box below.
@@ -65,18 +69,11 @@
 
 		<IG>
 			{#snippet input()}
-				<button
-					class="custom-checkbox"
+				<Checkbox
+					label="Delete Comment"
+					value={form.delete_comment}
 					onclick={() => (form.delete_comment = !form.delete_comment)}
-				>
-					<div class="checkbox" class:active={form.delete_comment}>
-						<div class="icon">
-							<Icon icon="check"></Icon>
-						</div>
-					</div>
-
-					Delete Comment
-				</button>
+				></Checkbox>
 			{/snippet}
 		</IG>
 	{/if}

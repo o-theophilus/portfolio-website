@@ -54,18 +54,9 @@ def add():
         slug = f"{slug[:89]}-{str(uuid4().hex)[:10]}"
 
     cur.execute("""
-        SELECT key FROM "user" WHERE email = %s;
-    """, (os.environ["MAIL_USERNAME"],))
-    author = cur.fetchone()
-
-    cur.execute("""
         INSERT INTO post (title, slug, author_key)
         VALUES (%s, %s, %s) RETURNING *;
-    """, (
-        title,
-        slug,
-        author["key"] if author else None,
-    ))
+    """, (title, slug, user["key"],))
     post = cur.fetchone()
 
     log(
@@ -183,9 +174,10 @@ def edit(key):
 
             cur.execute("""
                 SELECT key FROM "user"
-                WHERE key = %s OR email = %s OR username = %s;
+                WHERE key::TEXT = %s OR email = %s OR username = %s;
             """, (author_key, author_key, author_key))
             author = cur.fetchone()
+            print(author)
 
             if not author:
                 error["author_key"] = "no user found"

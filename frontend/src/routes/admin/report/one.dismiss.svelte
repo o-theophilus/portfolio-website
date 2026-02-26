@@ -1,13 +1,11 @@
 <script>
-	import { slide } from 'svelte/transition';
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
-	import { Note } from '$lib/info';
 	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
-	let form = $state({ comment: '', blocked: false });
+	let form = $state({ comment: '' });
 	let error = $state({});
 
 	const validate = () => {
@@ -25,21 +23,27 @@
 	const submit = async () => {
 		error = {};
 
-		loading.open('Unblocking User . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/block/${module.value.key}`, {
-			method: 'post',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: app.token
-			},
-			body: JSON.stringify(form)
-		});
+		loading.open('Resolving Report . . .');
+		let resp = await fetch(
+			`${import.meta.env.VITE_BACKEND}/report/dismiss/${module.value.report.key}?${new URLSearchParams(
+				module.value.searchParams
+			).toString()}`,
+			{
+				method: 'put',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: app.token
+				},
+				body: JSON.stringify(form)
+			}
+		);
 		resp = await resp.json();
 		loading.close();
+		console.log(resp);
 
 		if (resp.status == 200) {
-			module.value.update(module.value.key);
-			notify.open('User Unblocked');
+			module.value.update(resp.reports, resp.total_page);
+			notify.open('Report Resolved');
 			module.close();
 		} else {
 			error = resp;
@@ -47,7 +51,7 @@
 	};
 </script>
 
-<Form title="Unblock User" error={error.error}>
+<Form title="Dismiss Report" error={error.error}>
 	<IG
 		name="Comment ({500 - form.comment.length})"
 		error={error.comment}

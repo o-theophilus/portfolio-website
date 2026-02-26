@@ -1,13 +1,11 @@
 <script>
-	import { page } from '$app/state';
-	import { app, loading, module, notify } from '$lib/store.svelte.js';
-
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 	import Access from './form.svelte';
 
-	let form = $state({ access: module.value.mods });
+	let form = $state({ access: module.value.access });
 	let error = $state({});
 
 	const validate = async () => {
@@ -25,7 +23,7 @@
 
 		loading.open('saving . . .');
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/admin/user/access/${page.data.user.key}`,
+			`${import.meta.env.VITE_BACKEND}/admin/access/${module.value.user.key}`,
 			{
 				method: 'put',
 				headers: {
@@ -39,8 +37,9 @@
 		loading.close();
 
 		if (resp.status == 200) {
-			module.close();
 			notify.open('Access saved');
+			module.value.update(resp.user);
+			module.close();
 		} else {
 			error = resp;
 		}
@@ -58,7 +57,15 @@
 	></IG>
 
 	<div class="line">
-		<Button icon="arrow-left" onclick={() => module.open(Access, { mods: module.value.mods })}>
+		<Button
+			icon="arrow-left"
+			onclick={() =>
+				module.open(Access, {
+					user: module.value.user,
+					update: module.value.update,
+					access: module.value.access
+				})}
+		>
 			Back
 		</Button>
 		<Button icon2="send-horizontal" onclick={validate}>Submit</Button>

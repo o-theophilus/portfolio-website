@@ -9,17 +9,21 @@ bp = Blueprint("block_get", __name__)
 
 
 @bp.get("/blocks")
-def get_many():
-    con, cur = db_open()
+def get_many(cur=None):
+    close_conn = not cur
+    if not cur:
+        con, cur = db_open()
 
     session = get_session(cur, True)
     if session["status"] != 200:
-        db_close(con, cur)
+        if close_conn:
+            db_close(con, cur)
         return jsonify(session)
     user = session["user"]
 
     if "block:view" not in user["access"]:
-        db_close(con, cur)
+        if close_conn:
+            db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "unauthorized access"
@@ -66,7 +70,6 @@ def get_many():
                 'photo', "user".photo
             ) AS "user",
 
-
             COUNT(*) OVER() AS _count
 
         FROM block
@@ -97,11 +100,12 @@ def get_many():
             if x["user"]["photo"] else None
         )
 
-    db_close(con, cur)
+    if close_conn:
+        db_close(con, cur)
     return jsonify({
         "status": 200,
         "blocks": blocks,
-        "order_by": list(order_by.keys()),
         "total_page": ceil(blocks[0]["_count"] / page_size) if blocks else 0,
-        "searchParams": searchParams
+        "order_by": list(order_by.keys()),
+        "searchParams": searchParams,
     })

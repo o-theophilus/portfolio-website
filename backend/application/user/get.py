@@ -100,8 +100,7 @@ def get_many():
         SELECT
             "user".*,
             CASE WHEN block.user_key IS NOT NULL
-                THEN true ELSE false END AS blocked,
-            COUNT(*) OVER() AS _count
+                THEN true ELSE false END AS blocked
         FROM "user"
         LEFT JOIN block ON "user".key = block.user_key
         WHERE (
@@ -120,13 +119,25 @@ def get_many():
     ))
     users = cur.fetchall()
 
+    cur.execute("""
+        SELECT COUNT(*) FROM "user"
+        WHERE (
+                %s = 'all' OR status = %s
+            ) AND (%s = '' OR CONCAT_WS(', ', key, name, email) ILIKE %s
+        );
+    """, (
+        status, status,
+        search, f"%{search}%",
+    ))
+    total_page = cur.fetchone()["count"]
+
     db_close(con, cur)
     return jsonify({
         "status": 200,
         "users": [user_schema(x) for x in users],
         "order_by": list(order_by.keys()),
         "_status": ['anonymous', 'signedup', 'confirmed'],
-        "total_page": ceil(users[0]["_count"] / page_size) if users else 0,
+        "total_page": ceil(total_page / page_size),
         "searchParams": searchParams
     })
 

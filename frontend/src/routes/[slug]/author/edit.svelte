@@ -11,16 +11,16 @@
 	const validate = () => {
 		error = {};
 
-		if (!form.author_email) {
-			error.author_email = 'This field is required';
-		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.author_email)) {
-			error.author_email = 'Invalid email address';
+		if (!form.author_id) {
+			error.author_id = 'This field is required';
+		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.author_id)) {
+			error.author_id = 'Invalid email address';
 		}
 
-		Object.keys(error).length === 0 && submit(form.author_email);
+		Object.keys(error).length === 0 && submit(form.author_id);
 	};
 
-	const submit = async (_in = 'default') => {
+	const submit = async (id = 'default') => {
 		loading.open('Loading . . .');
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.key}`, {
 			method: 'put',
@@ -28,13 +28,12 @@
 				'Content-Type': 'application/json',
 				Authorization: app.token
 			},
-			body: JSON.stringify({ author_email: _in })
+			body: JSON.stringify({ author_key: id })
 		});
 		resp = await resp.json();
 		loading.close();
 
 		if (resp.status == 200) {
-			// TEST: test this
 			module.value.update(resp.post);
 			module.close();
 			notify.open('Author Saved');
@@ -48,10 +47,10 @@
 	<IG
 		name="Author Email"
 		icon="mail"
-		error={error.author_email}
+		error={error.author_id}
 		placeholder="Email here"
 		type="text"
-		bind:value={form.author_email}
+		bind:value={form.author_id}
 	/>
 
 	<div class="line">

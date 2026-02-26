@@ -15,6 +15,41 @@ def quick_fix():
         DROP TABLE IF EXISTS app CASCADE;
     """)
 
+    cur.execute("""
+        ALTER TABLE report
+        RENAME COLUMN comment TO reporter_comment;
+    """)
+
+    cur.execute("""
+        ALTER TABLE report
+        RENAME COLUMN resolve_comment TO resolver_comment;
+    """)
+
+    cur.execute("""
+        ALTER TABLE report
+        RENAME COLUMN reported_key TO reported_user_key;
+    """)
+
+    cur.execute("""
+        ALTER TABLE report
+        RENAME COLUMN comment_key TO reported_comment_key;
+    """)
+
+    cur.execute("""
+        DROP TABLE IF EXISTS block CASCADE;
+    """)
+
+    cur.execute("""
+            CREATE TABLE IF NOT EXISTS block (
+            key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            date_created TIMESTAMPTZ DEFAULT now(),
+            admin_key UUID NOT NULL REFERENCES "user"(key) ON DELETE CASCADE,
+            user_key UUID UNIQUE NOT NULL REFERENCES
+                "user"(key) ON DELETE CASCADE,
+            comment TEXT NOT NULL
+        );
+    """)
+
     db_close(con, cur)
     return jsonify({
         "status": 200

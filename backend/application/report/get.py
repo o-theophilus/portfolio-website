@@ -9,25 +9,29 @@ bp = Blueprint("report_get", __name__)
 
 
 @bp.get("/reports")
-def get_many():
-    con, cur = db_open()
+def get_many(cur=None):
+    close_conn = not cur
+    if not cur:
+        con, cur = db_open()
 
     session = get_session(cur, True)
     if session["status"] != 200:
-        db_close(con, cur)
+        if close_conn:
+            db_close(con, cur)
         return jsonify(session)
     user = session["user"]
 
     if "report:view" not in user["access"]:
-        db_close(con, cur)
+        if close_conn:
+            db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "unauthorized access"
         })
 
     order_by = {
-        'latest': 'date_created',
-        'oldest': 'date_created'
+        'latest': 'report.date_created',
+        'oldest': 'report.date_created'
     }
 
     order_dir = {
@@ -54,32 +58,68 @@ def get_many():
     cur.execute(f"""
         SELECT
             report.key,
-            report.date_created,
-            report.comment,
-            report.tags,
-            report.reported_key,
-            report.comment_key,
+            report.status,
+            report.resolver_key,
+            report.reported_user_key,
+            report.reported_comment_key,
 
             jsonb_build_object(
-                'name', "user".name,
-                'username', "user".username,
-                'photo', "user".photo
-            ) AS "user"
+                'date_created', report.date_created,
+                'comment', report.reporter_comment,
+                'tags', report.tags,
+                'user', jsonb_build_object(
+                    'name', reporter.name,
+                    'username', reporter.username,
+                    'photo', reporter.photo
+                )
+            ) AS reporter,
+
+            jsonb_build_object(
+                'date_created', report.date_resolved,
+                'comment', report.resolver_comment,
+                'user', jsonb_build_object(
+                    'name', resolver.name,
+                    'username', resolver.username,
+                    'photo', resolver.photo
+                )
+            ) AS resolver,
+
+            jsonb_build_object(
+                'user', jsonb_build_object(
+                    'name', ru.name,
+                    'username', ru.username,
+                    'photo', ru.photo
+                )
+            ) AS reported_user,
+
+            jsonb_build_object(
+                'date_created', rc.date_created,
+                'comment', rc.comment,
+                'user', jsonb_build_object(
+                    'name', rc_user.name,
+                    'username', rc_user.username,
+                    'photo', rc_user.photo
+                )
+            ) AS reported_comment
 
         FROM report
-        LEFT JOIN "user" ON report.reporter_key = "user".key
+        LEFT JOIN "user" reporter ON report.reporter_key = reporter.key
+        LEFT JOIN "user" resolver ON report.resolver_key = resolver.key
+        LEFT JOIN "user" ru ON report.reported_user_key = ru.key
+        LEFT JOIN comment rc ON report.reported_comment_key = rc.key
+        LEFT JOIN "user" rc_user ON rc.user_key = rc_user.key
 
         WHERE
             report.status = %s
             AND (
                 %s = 'all'
-                OR (%s = 'user' AND report.reported_key IS NOT NULL)
-                OR (%s = 'comment' AND report.comment_key IS NOT NULL)
+                OR (%s = 'user' AND report.reported_user_key IS NOT NULL)
+                OR (%s = 'comment' AND report.reported_comment_key IS NOT NULL)
             )
             AND (%s = '' OR CONCAT_WS(', ',
-                report.key, report.comment, report.tags,
-                report.reporter_key, report.reported_key,
-                report.comment_key
+                report.key, report.reporter_comment, report.tags::text,
+                report.reporter_key, report.reported_user_key,
+                report.reported_comment_key
             ) ILIKE %s)
         ORDER BY {order_by[order]} {order_dir[order]}, report.key DESC
         LIMIT %s OFFSET %s;
@@ -90,60 +130,36 @@ def get_many():
         page_size, (page_no - 1) * page_size
     ))
     reports = cur.fetchall()
-    user_keys = []
-    comment_keys = []
 
+    url = f"{request.host_url}photo/user/"
     for x in reports:
-        if x["reported_user_key"] and x["reported_user_key"] not in user_keys:
-            user_keys.append(x["reported_user_key"])
-        if x["comment_key"] and x["comment_key"] not in comment_keys:
-            comment_keys.append(x["comment_key"])
+        if x["reporter"]["user"]["photo"]:
+            x["reporter"]["user"]["photo"] = f"{url}{x[
+                'reporter']['user']['photo']}"
 
-    if user_keys:
-        cur.execute("""
-            SELECT key, name, username, photo
-            FROM "user" WHERE key = ANY(%s);
-        """, (user_keys,))
-        users = {x["key"]: x for x in cur.fetchall()}
-        for x in reports:
-            if x["reported_user_key"]:
-                x["reported_user"] = users.get(x["reported_user_key"])
+        if x["resolver_key"]:
+            if x["resolver"]["user"]["photo"]:
+                x["resolver"]["user"]["photo"] = f"{url}{x[
+                    'resolver']['user']['photo']}"
+        else:
+            del x["resolver_key"]
+            del x["resolver"]
 
-    if comment_keys:
-        cur.execute("""
-            SELECT
-                comment.key, comment.comment, comment.date_created,
-                comment.post_key,
-                jsonb_build_object(
-                    'name', "user".name,
-                    'username', "user".username,
-                    'photo', "user".photo
-                ) AS "user"
-            FROM comment
-            JOIN "user" ON comment.user_key = "user".key
-            WHERE comment.key = ANY(%s);
-        """, (comment_keys,))
-        comments = {x["key"]: x for x in cur.fetchall()}
-        for x in reports:
-            if x["comment_key"]:
-                x["reported_comment"] = comments.get(x["comment_key"])
+        if x["reported_user_key"]:
+            if x["reported_user"]["user"]["photo"]:
+                x["reported_user"]["user"]["photo"] = f"{url}{x[
+                    'reported_user']['user']['photo']}"
+        else:
+            del x["reported_user_key"]
+            del x["reported_user"]
 
-    for x in reports:
-        x["user"]["photo"] = (
-            f"{request.host_url}photo/user/{x['user']['photo']}"
-            if x["user"]["photo"] else None
-        )
-        if x.get("reported_user"):
-            x["reported_user"]["photo"] = (
-                f"{request.host_url}photo/user/{x['reported_user']['photo']}"
-                if x["reported_user"]["photo"] else None
-            )
-        if x.get("reported_comment"):
-            x["reported_comment"]["user"]["photo"] = (
-                f"{request.host_url}photo/user/{x['reported_comment']['user'][
-                    'photo']}"
-                if x["reported_comment"]["user"]["photo"] else None
-            )
+        if x["reported_comment_key"]:
+            if x["reported_comment"]["user"]["photo"]:
+                x["reported_comment"]["user"]["photo"] = f"{url}{x[
+                    'reported_comment']['user']['photo']}"
+        else:
+            del x["reported_comment_key"]
+            del x["reported_comment"]
 
     cur.execute("""
         SELECT COUNT(*) FROM report
@@ -151,12 +167,13 @@ def get_many():
             report.status = %s
             AND (
                 %s = 'all'
-                OR (%s = 'user' AND report.reported_key IS NOT NULL)
-                OR (%s = 'comment' AND report.comment_key IS NOT NULL)
+                OR (%s = 'user' AND report.reported_user_key IS NOT NULL)
+                OR (%s = 'comment' AND report.reported_comment_key IS NOT NULL)
             )
             AND (%s = '' OR CONCAT_WS(', ',
-                report.key, report.comment, report.tags,
-                report.reporter_key, report.reported_key, report.comment_key
+                report.key, report.reporter_comment, report.tags::text,
+                report.reporter_key, report.reported_user_key,
+                report.reported_comment_key
             ) ILIKE %s);
     """, (
         status,
@@ -165,7 +182,8 @@ def get_many():
     ))
     total_page = cur.fetchone()["count"]
 
-    db_close(con, cur)
+    if close_conn:
+        db_close(con, cur)
     return jsonify({
         "status": 200,
         "reports": reports,
