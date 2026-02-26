@@ -9,7 +9,7 @@ bp = Blueprint("postgres", __name__)
 
 
 def db_open():
-    con = psycopg2.connect(os.environ["ONLINE_DB"])
+    con = psycopg2.connect(os.environ["DATABASE_URI"])
     cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     return con, cur
 
