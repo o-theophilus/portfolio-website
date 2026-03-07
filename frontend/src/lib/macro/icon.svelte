@@ -2,6 +2,7 @@
 	import {
 		ArrowDown,
 		ArrowDownNarrowWide,
+		ArrowDownUp,
 		ArrowLeft,
 		ArrowRight,
 		ArrowUp,
@@ -90,6 +91,7 @@
 				Moon,
 				ArrowUp,
 				ArrowDown,
+				ArrowDownUp,
 				ArrowRight,
 				ArrowLeft,
 				CornerRightDown,
