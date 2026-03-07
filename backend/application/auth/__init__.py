@@ -6,6 +6,7 @@ from flask import Blueprint, jsonify, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..log import log
+from ..post.get import get_tags
 from ..postgres import db_close, db_open
 from ..storage import storage
 from ..tools import (access_pass, check_code, generate_code, get_session,
@@ -111,12 +112,15 @@ def init():
             entity_type="account",
         )
 
+    tags = get_tags(cur)
+
     db_close(con, cur)
     return jsonify({
         "status": 200,
         "user": user_schema(user),
         "token": token,
         "login": login,
+        "tags": tags
     })
 
 

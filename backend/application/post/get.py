@@ -311,10 +311,7 @@ def after_post(key):
     })
 
 
-@bp.get("/tags")
-def all_tags():
-    con, cur = db_open()
-
+def get_tags(cur):
     cur.execute("SELECT tags FROM post WHERE status = 'active';")
     temp = cur.fetchall()
 
@@ -333,12 +330,7 @@ def all_tags():
             })
 
     tags_count = sorted(tags_count, key=lambda d: d["count"], reverse=True)
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "tags": [x["tag"] for x in tags_count]
-    })
+    return [x["tag"] for x in tags_count]
 
 
 @bp.get("/post/feature")

@@ -8,6 +8,7 @@
 	app.user = data.locals.user;
 	app.token = data.locals.token;
 	app.login = data.locals.login;
+	app.tags = data.locals.tags;
 </script>
 
 <main class="{app.user.theme}_theme">

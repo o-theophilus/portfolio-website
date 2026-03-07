@@ -1,9 +1,9 @@
 <script>
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 	import { onMount } from 'svelte';
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button, Tag } from '$lib/button';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
 	let error = $state({});
@@ -63,21 +63,10 @@
 		tags_string = tags.join(', ');
 	};
 
-	let _loading = true;
 	onMount(async () => {
 		if (tags_string == '') {
 			tags_string = module.value.title.split(' ').join(', ');
 		}
-
-		if (!app.tags) {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tags`);
-			resp = await resp.json();
-
-			if (resp.status == 200) {
-				app.tags = resp.tags;
-			}
-		}
-		_loading = false;
 	});
 </script>
 
