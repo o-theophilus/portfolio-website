@@ -46,7 +46,8 @@ access_pass = {
         ['unblock', 3]
     ],
     "log": [
-        ['view', 1]
+        ['view', 1],
+        ['view_others', 2],
     ],
     "maintenance": [
         ['session', 1],

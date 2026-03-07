@@ -2,8 +2,8 @@ from math import ceil
 
 from flask import Blueprint, jsonify, request
 
-from ..postgres import db_close, db_open
-from ..tools import get_session
+from ...postgres import db_close, db_open
+from ...tools import get_session
 
 bp = Blueprint("report_get", __name__)
 
@@ -25,7 +25,7 @@ def get_many(cur=None):
         if close_conn:
             db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 

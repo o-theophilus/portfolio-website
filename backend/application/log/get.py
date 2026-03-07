@@ -51,6 +51,13 @@ def get_many():
     page_size = min(page_size, 100)
 
     if "log:view" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 403,
+            "error": "unauthorized access"
+        })
+
+    if "log:view_others" not in user["access"]:
         u_search = user["key"]
 
     cur.execute("""

@@ -49,7 +49,7 @@ def default_admin():
                 (status, name, username, email, password, access)
                 VALUES (%s, %s, %s, %s, %s, %s) RETURNING *;
             """, (
-            "confirmed",
+            "active",
             "Theophilus",
             "omni",
             email,
@@ -76,7 +76,7 @@ def default_admin():
         log(
             cur=cur,
             user_key=user["key"],
-            action="confirmed",
+            action="activated account",
             entity_type="account",
             entity_key=user["key"]
         )
@@ -269,13 +269,13 @@ def confirm():
         })
 
     cur.execute("""
-        UPDATE "user" SET status = 'confirmed' WHERE key = %s;
+        UPDATE "user" SET status = 'active' WHERE key = %s;
     """, (user["key"],))
 
     log(
         cur=cur,
         user_key=user["key"],
-        action="confirmed_email",
+        action="activated account",
         entity_key="auth",
         entity_type="account",
     )
@@ -333,7 +333,7 @@ def login():
 
     if (
         not in_user
-        or in_user["status"] not in ['signedup', 'confirmed']
+        or in_user["status"] not in ['signedup', 'active']
         or not check_password_hash(in_user["password"], password)
     ):
         db_close(con, cur)
@@ -364,7 +364,7 @@ def login():
         db_close(con, cur)
         return jsonify({
             "status": 400,
-            "error": "not confirmed"
+            "error": "not active"
         })
 
     cur.execute("""

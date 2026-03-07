@@ -25,7 +25,7 @@ def get_file_error(cur=None):
         if close_conn:
             db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 
@@ -84,7 +84,7 @@ def delete_file():
     if "admin:manage_files" not in user["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 

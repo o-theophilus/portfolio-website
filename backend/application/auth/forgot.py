@@ -40,7 +40,7 @@ def forgot_1_email():
         SELECT * FROM "user" WHERE email = %s
     ;""", (email,))
     user = cur.fetchone()
-    if not user or user["status"] not in ['signedup', 'confirmed']:
+    if not user or user["status"] not in ['signedup', 'active']:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -77,7 +77,7 @@ def forgot_2_code():
 
     cur.execute("""SELECT * FROM "user" WHERE email = %s;""", (email,))
     user = cur.fetchone()
-    if not user or user["status"] not in ['signedup', 'confirmed']:
+    if not user or user["status"] not in ['signedup', 'active']:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -115,7 +115,7 @@ def forgot_3_password():
         SELECT * FROM "user" WHERE email = %s
     ;""", (email,))
     user = cur.fetchone()
-    if not user or user["status"] not in ['signedup', 'confirmed']:
+    if not user or user["status"] not in ['signedup', 'active']:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -172,14 +172,14 @@ def forgot_3_password():
         entity_type="account"
     )
 
-    if user["status"] != "confirmed":
+    if user["status"] != "active":
         cur.execute("""
-            UPDATE "user" SET status = 'confirmed' WHERE key = %s;
+            UPDATE "user" SET status = 'active' WHERE key = %s;
         """, (user["key"],))
         log(
             cur=cur,
             user_key=user["key"],
-            action="confirmed_email",
+            action="activated account",
             entity_key="auth",
             entity_type="account",
         )

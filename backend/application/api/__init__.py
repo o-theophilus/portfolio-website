@@ -68,7 +68,7 @@ def user_delete_session():
     if "maintenance:session" not in user["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 
@@ -93,7 +93,7 @@ def user_delete_anonymous():
     if "maintenance:anonymous" not in user["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 

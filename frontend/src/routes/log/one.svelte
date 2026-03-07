@@ -36,7 +36,7 @@
 		{log.user.name}
 	</a>
 
-	{#if log.user.key && app.user.access.includes('log:view')}
+	{#if log.user.key && app.user.access.includes('log:view_others')}
 		<button
 			onclick={() => {
 				searchParams.page_no = 1;

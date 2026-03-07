@@ -17,6 +17,8 @@
 			error.content = 'This field is required';
 		} else if (content == post.content) {
 			error.content = 'No changes were made';
+		} else if (content > 5000) {
+			error.content = 'This field cannot exceed 5000 characters';
 		}
 
 		Object.keys(error).length === 0 && submit();

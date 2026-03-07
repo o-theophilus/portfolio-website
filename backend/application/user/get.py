@@ -64,7 +64,7 @@ def get_many():
     if "user:view" not in session["user"]["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 
@@ -84,7 +84,7 @@ def get_many():
 
     searchParams = {
         "search": "",
-        "status": "confirmed",
+        "status": "active",
         "order": "latest",
         "page_no": 1,
         "page_size": 24
@@ -136,7 +136,7 @@ def get_many():
         "status": 200,
         "users": [user_schema(x) for x in users],
         "order_by": list(order_by.keys()),
-        "_status": ['anonymous', 'signedup', 'confirmed'],
+        "_status": ['anonymous', 'signedup', 'active'],
         "total_page": ceil(total_page / page_size),
         "searchParams": searchParams
     })
@@ -155,7 +155,7 @@ def get_admins():
     if "user:set_access" not in user["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 

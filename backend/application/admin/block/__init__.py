@@ -20,12 +20,12 @@ def block(key):
         return jsonify(session)
     me = session["user"]
 
-    comment = request.json.get("comment")
+    comment = request.json.get("comment", "").strip()
 
     if "block:block" not in me["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 
@@ -38,7 +38,7 @@ def block(key):
     if (
         not user
         or user["key"] == me["key"]
-        or user["status"] != "confirmed"
+        or user["status"] != "active"
         or user["email"] == os.environ["MAIL_USERNAME"]
         or block
     ):
@@ -106,12 +106,12 @@ def unblock(key):
         return jsonify(session)
     me = session["user"]
 
-    comment = request.json.get("comment")
+    comment = request.json.get("comment", "").strip()
 
     if "block:unblock" not in me["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 
@@ -121,7 +121,7 @@ def unblock(key):
     if (
         not user
         or user["key"] == me["key"]
-        or user["status"] != "confirmed"
+        or user["status"] != "active"
         or user["email"] == os.environ["MAIL_USERNAME"]
     ):
         db_close(con, cur)

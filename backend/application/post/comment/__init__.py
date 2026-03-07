@@ -42,7 +42,7 @@ def create(key):
                 "error": "Invalid request"
             })
 
-    comment = request.json.get("comment")
+    comment = request.json.get("comment", "").strip()
     error = {}
     if not comment:
         error["comment"] = "This field is required"

@@ -1,13 +1,14 @@
 from flask import Blueprint, jsonify, request
 
-from ..log import log
-from ..postgres import db_close, db_open
-from ..tools import get_session
+from ...log import log
+from ...postgres import db_close, db_open
+from ...tools import get_session
 from .get import get_many
 
 bp = Blueprint("report", __name__)
 
 
+# TODO:move this to user and review
 @bp.post("/report")
 def create():
     con, cur = db_open()
@@ -20,7 +21,7 @@ def create():
 
     entity_key = request.json.get("entity_key")
     entity_type = request.json.get("entity_type")
-    comment = request.json.get("comment")
+    comment = request.json.get("comment", "").strip()
     tags = request.json.get("tags")
 
     if (
@@ -100,7 +101,7 @@ def resolve(key):
     if "report:resolve" not in user["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 
@@ -117,7 +118,7 @@ def resolve(key):
             "error": "Invalid request"
         })
 
-    comment = request.json.get("comment")
+    comment = request.json.get("comment", "").strip()
     delete_comment = request.json.get("delete_comment", False)
 
     error = {}
@@ -185,7 +186,7 @@ def dismiss(key):
     if "report:resolve" not in user["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 
@@ -202,7 +203,7 @@ def dismiss(key):
             "error": "Invalid request"
         })
 
-    comment = request.json.get("comment")
+    comment = request.json.get("comment", "").strip()
 
     error = {}
     if not comment:

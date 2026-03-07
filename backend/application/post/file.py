@@ -22,7 +22,7 @@ def add_file(key):
     if "post:edit_files" not in user["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 
@@ -110,7 +110,7 @@ def order_delete_file(key):
     if "post:edit_files" not in user["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 

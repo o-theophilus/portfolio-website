@@ -1,16 +1,16 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-from . import admin, api, auth, fix, log, post, postgres, report, storage, user
-from .admin import block, file_error
+from . import admin, api, auth, fix, log, post, postgres, storage, user
+from .admin import block, file_error, report
 from .admin.block import get as block_get
+from .admin.report import get as report_get
 from .auth import forgot
 from .log import get as log_get
 from .post import comment, file
 from .post import get as post_get
 from .post import photo as post_photo
 from .post.comment import get as comment_get
-from .report import get as report_get
 from .user import email
 from .user import get as user_get
 from .user import notification, password

@@ -28,7 +28,7 @@ def add():
     if "post:add" not in user["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error": "unauthorized access"
         })
 
@@ -109,7 +109,7 @@ def edit(key):
     status = post["status"]
 
     if "title" in request.json:
-        title = request.json.get("title")
+        title = request.json.get("title", "").strip()
         if "post:edit_title" not in user["access"]:
             error["title"] = "unauthorized access"
         elif not title:
@@ -138,7 +138,7 @@ def edit(key):
             error["date_created"] = "No changes were made"
 
     if "description" in request.json:
-        description = request.json.get("description")
+        description = request.json.get("description", "").strip()
         if "post:edit_description" not in user["access"]:
             error["description"] = "unauthorized access"
         elif description == post["description"]:
@@ -147,11 +147,13 @@ def edit(key):
             error["description"] = "This field cannot exceed 500 characters"
 
     if "content" in request.json:
-        content = request.json.get("content")
+        content = request.json.get("content", "").strip()
         if "post:edit_content" not in user["access"]:
             error["content"] = "unauthorized access"
         elif content == post["content"]:
             error["content"] = "No changes were made"
+        elif len(content) > 5000:
+            error["content"] = "This field cannot exceed 5000 characters"
 
     if "tags" in request.json:
         tags = request.json.get("tags")
@@ -379,7 +381,7 @@ def feature(key):
     if "post:edit_featured" not in user["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error":  "unauthorized access"
         })
 
@@ -443,7 +445,7 @@ def edit_feature():
     if "post:edit_featured" not in user["access"]:
         db_close(con, cur)
         return jsonify({
-            "status": 400,
+            "status": 403,
             "error":  "unauthorized access"
         })
 
