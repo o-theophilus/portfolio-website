@@ -7,11 +7,7 @@
 	import { tags, template } from './_report.template.js';
 	import One from './one.svelte';
 
-	let comment = { ...module.value.comment };
-
 	let form = $state({
-		entity_key: comment.key,
-		entity_type: 'comment',
 		comment: '',
 		tags: []
 	});
@@ -32,14 +28,17 @@
 	const submit = async () => {
 		loading.open('Sending Report . . .');
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/report`, {
-			method: 'post',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: app.token
-			},
-			body: JSON.stringify(form)
-		});
+		let resp = await fetch(
+			`${import.meta.env.VITE_BACKEND}/report/comment/${module.value.comment.key}`,
+			{
+				method: 'post',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: app.token
+				},
+				body: JSON.stringify(form)
+			}
+		);
 		resp = await resp.json();
 		loading.close();
 
@@ -55,7 +54,7 @@
 
 <Form title="Report Comment" error={error.error}>
 	<div class="comment">
-		<One {comment}></One>
+		<One comment={module.value.comment}></One>
 	</div>
 
 	<IG

@@ -7,8 +7,6 @@
 	import { tags, template } from './_report.template.js';
 
 	let form = $state({
-		entity_key: module.value.user.key,
-		entity_type: 'user',
 		comment: '',
 		tags: []
 	});
@@ -29,7 +27,7 @@
 	const submit = async () => {
 		loading.open('Sending Report . . .');
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/report`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/report/user/${module.value.user.key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',

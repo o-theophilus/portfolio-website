@@ -133,3 +133,65 @@ def edit_user():
         "status": 200,
         "user": user_schema(user)
     })
+
+
+@bp.post("/report/user/<key>")
+def report(key):
+    con, cur = db_open()
+
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
+
+    comment = request.json.get("comment", "").strip()
+    tags = request.json.get("tags")
+
+    if type(tags) is not list:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
+
+    error = {}
+    if not comment:
+        error["comment"] = "This field is required"
+    elif len(comment) > 500:
+        error["comment"] = "This field cannot exceed 500 characters"
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            **error
+        })
+
+    cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
+    reported_user = cur.fetchone()
+    if not reported_user:
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
+
+    cur.execute("""
+        INSERT INTO report (reporter_key, reported_user_key,
+            reporter_comment, tags)
+        VALUES (%s, %s, %s, %s) RETURNING *;
+    """, (user["key"], reported_user["key"], comment, tags))
+    report = cur.fetchone()
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="reported user",
+        entity_key=report["key"],
+        entity_type="report",
+        misc={"key": reported_user["key"]}
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })

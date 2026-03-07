@@ -1,6 +1,6 @@
 <script>
 	import { replaceState } from '$app/navigation';
-	import { Button, Switch } from '$lib/button';
+	import { Button } from '$lib/button';
 	import { PageNote } from '$lib/info';
 	import { Dropdown, Pagination, Search } from '$lib/input';
 	import { Content } from '$lib/layout';
@@ -52,59 +52,71 @@
 			Post{posts.length > 1 ? 's' : ''}
 		</div>
 		{#if app.user.access.includes('post:add')}
-			<div class="line">
-				<Switch
-					--button-outline-color-hover="var(--ft1)"
-					list={_status}
-					bind:value={searchParams.status}
-					onclick={(v) => {
-						searchParams.page_no = 1;
-						page_state.set({ status: v == defaultParams.status ? '' : v });
-					}}
-				></Switch>
-				<Button icon="plus" extra="outline" onclick={() => module.open(Add, { update })}>
-					Add
-				</Button>
-			</div>
+			<Button
+				icon="plus"
+				--button-height="32px"
+				--button-font-size="0.8rem"
+				onclick={() => module.open(Add, { update })}>Add</Button
+			>
 		{/if}
 	</div>
 
-	<div class="line nowrap">
-		<Search
-			bind:value={searchParams.search}
-			ondone={(v) => {
-				searchParams.page_no = 1;
-				page_state.set({ search: v });
-			}}
-		></Search>
+	<Search
+		bind:value={searchParams.search}
+		ondone={(v) => {
+			searchParams.page_no = 1;
+			page_state.set({ search: v });
+		}}
+	></Search>
 
-		<Tags
-			bind:this={tags}
-			bind:value={searchParams.tag}
-			ondone={(v) => {
+	<div class="line space">
+		<div class="line">
+			{#if app.user.access.includes('item:add')}
+				<Dropdown
+					--select-height="32px"
+					--select-padding-x="8px"
+					--select-font-size="0.8rem"
+					label="Status: {searchParams.status}"
+					list={_status}
+					icon="list-filter"
+					icon2="chevron-down"
+					bind:value={searchParams.status}
+					onchange={(v) => {
+						searchParams.page_no = 1;
+						page_state.set({ status: v == defaultParams.status ? '' : v });
+					}}
+				/>
+			{/if}
+			<Tags
+				bind:this={tags}
+				bind:value={searchParams.tag}
+				ondone={(v) => {
+					searchParams.page_no = 1;
+					page_state.set({ tag: v });
+				}}
+			/>
+		</div>
+
+		<Dropdown
+			--select-height="1"
+			--select-padding-x="0"
+			--select-font-size="0.8rem"
+			--select-background-color="transparent"
+			--select-background-color-hover="transparent"
+			--select-color="var(--ft2)"
+			--select-color-hover="var(--ft1)"
+			--select-outline-color="transparent"
+			label="Sort: {searchParams.order}"
+			list={order_by}
+			icon="arrow-down-up"
+			icon2="chevron-down"
+			bind:value={searchParams.order}
+			onchange={(v) => {
 				searchParams.page_no = 1;
-				page_state.set({ tag: v });
+				page_state.set({ order: v == defaultParams.order ? '' : v });
 			}}
 		/>
 	</div>
-
-	<Dropdown
-		--select-height="10"
-		--select-padding-x="0"
-		--select-font-size="0.8rem"
-		--select-background-color="transparent"
-		--select-background-color-hover="transparent"
-		--select-color-hover="var(--ft1)"
-		--select-outline-color="transparent"
-		list={order_by}
-		icon="arrow-down-narrow-wide"
-		icon2="chevron-down"
-		bind:value={searchParams.order}
-		onchange={(v) => {
-			searchParams.page_no = 1;
-			page_state.set({ order: v == defaultParams.order ? '' : v });
-		}}
-	/>
 
 	<FilterNote
 		onclick={() => {

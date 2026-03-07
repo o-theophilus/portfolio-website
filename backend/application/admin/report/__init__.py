@@ -8,86 +8,6 @@ from .get import get_many
 bp = Blueprint("report", __name__)
 
 
-# TODO:move this to user and review
-@bp.post("/report")
-def create():
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
-    entity_key = request.json.get("entity_key")
-    entity_type = request.json.get("entity_type")
-    comment = request.json.get("comment", "").strip()
-    tags = request.json.get("tags")
-
-    if (
-        not entity_key
-        or entity_key == user["key"]
-        or not entity_type
-        or entity_type not in ["user", "comment"]
-        or type(tags) is not list
-    ):
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "Invalid request"
-        })
-
-    error = {}
-    if not comment:
-        error["comment"] = "This field is required"
-    elif len(comment) > 500:
-        error["comment"] = "This field cannot exceed 500 characters"
-    if error:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            **error
-        })
-
-    cur.execute(f"""
-        SELECT * FROM "{entity_type}" WHERE key = %s;
-    """, (entity_key,))
-    entity = cur.fetchone()
-    if not entity:
-        return jsonify({
-            "status": 400,
-            "error": "Invalid request"
-        })
-
-    if entity_type == "user":
-        column = "reported_user_key"
-    if entity_type == "comment":
-        column = "reported_comment_key"
-
-    cur.execute(f"""
-        INSERT INTO report (reporter_key, {column}, reporter_comment, tags)
-        VALUES (%s, %s, %s, %s) RETURNING *;
-    """, (user["key"], entity["key"], comment, tags))
-    report = cur.fetchone()
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="created report",
-        entity_key=report["key"],
-        entity_type="report",
-        misc={
-            "key": entity_key,
-            "type": entity_type
-        }
-    )
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200
-    })
-
-
 @bp.put("/report/resolve/<key>")
 def resolve(key):
     con, cur = db_open()
@@ -119,7 +39,7 @@ def resolve(key):
         })
 
     comment = request.json.get("comment", "").strip()
-    delete_comment = request.json.get("delete_comment", False)
+    handle = request.json.get("handle", False)
 
     error = {}
     if not comment:
@@ -153,20 +73,49 @@ def resolve(key):
         }
     )
 
-    if report["reported_comment_key"] and delete_comment:
-        cur.execute(
-            "DELETE FROM comment WHERE key = %s RETURNING *;",
-            (report["reported_comment_key"],))
-        comment = cur.fetchone()
+    if handle:
+        if (
+            report["reported_user_key"]
+            and "user:block" not in user["access"]
+        ):
+            cur.execute("""
+                INSERT INTO block (admin_key, user_key, comment)
+                VALUES (%s, %s, %s);
+            """, (user["key"], report["reported_user_key"], comment))
 
-        log(
-            cur=cur,
-            user_key=user["key"],
-            action="deleted comment",
-            entity_key=comment["key"],
-            entity_type="comment",
-            misc={"post_key": comment["post_key"]}
-        )
+            cur.execute("""
+                DELETE FROM session WHERE user_key = %s;
+            """, (user["key"],))
+
+            log(
+                cur=cur,
+                user_key=user["key"],
+                action="blocked",
+                entity_key=report["reported_user_key"],
+                entity_type="user",
+                misc={"comment":  comment}
+            )
+
+        elif (
+            report["reported_comment_key"]
+            and "comment:delete_others" in user["access"]
+        ):
+            cur.execute(
+                "DELETE FROM comment WHERE key = %s RETURNING *;",
+                (report["reported_comment_key"],))
+            comment = cur.fetchone()
+
+            log(
+                cur=cur,
+                user_key=user["key"],
+                action="deleted comment",
+                entity_key=comment["key"],
+                entity_type="comment",
+                misc={
+                    "item_key": comment["item_key"],
+                    "comment": comment
+                }
+            )
 
     reports = get_many(cur)
     db_close(con, cur)

@@ -22,7 +22,7 @@ def block(key):
 
     comment = request.json.get("comment", "").strip()
 
-    if "block:block" not in me["access"]:
+    if "user:block" not in me["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 403,

@@ -8,15 +8,14 @@ from .tools import access_pass
 bp = Blueprint("fix", __name__)
 
 
-# @bp.get("/fix")
 def quick_fix():
     con, cur = db_open()
 
     # TODO
     cur.execute("""
-        ALTER TABLE "user"
-        SET (status = 'active')
-        WHERE status = 'confirmed'
+        UPDATE "user"
+        SET status = 'active'
+        WHERE status = 'confirmed';
     """)
 
     db_close(con, cur)
@@ -25,6 +24,7 @@ def quick_fix():
     })
 
 
+@bp.get("/fix")
 def fix_access():
     con, cur = db_open()
 

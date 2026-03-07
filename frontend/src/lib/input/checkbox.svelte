@@ -1,8 +1,8 @@
 <script>
-	let { label, value = $bindable(), onclick } = $props();
+	let { label, value = $bindable(), onclick, disabled } = $props();
 </script>
 
-<button {onclick}>
+<button {onclick} {disabled}>
 	<div class="checkbox" class:active={value}>&#10004;</div>
 	{label}
 </button>
@@ -20,6 +20,16 @@
 
 		&:hover .checkbox {
 			outline-color: var(--ft1);
+		}
+
+		&:disabled {
+			cursor: unset;
+			opacity: 0.6;
+
+			.checkbox {
+				cursor: unset;
+				outline-color: var(--input);
+			}
 		}
 	}
 

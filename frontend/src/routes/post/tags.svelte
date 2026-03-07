@@ -14,19 +14,7 @@
 	let _selected = $state([]);
 	let _multiply = $state(false);
 
-	let loading = $state(false);
 	onMount(async () => {
-		if (!app.tags) {
-			loading = true;
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/tags`);
-			resp = await resp.json();
-			loading = false;
-
-			if (resp.status == 200) {
-				app.tags = resp.tags;
-			}
-		}
-
 		if (value.endsWith(':all')) {
 			multiply = true;
 			_multiply = multiply;
@@ -82,9 +70,12 @@
 <div class="filter">
 	<Button
 		icon="list-filter"
-		--button-padding-x="0"
-		--button-width="48px"
-		--button-height="48px"
+		icon2="chevron-down"
+		--button-padding-x="8px"
+		--button-height="32px"
+		--button-font-size="0.8rem"
+		--button-font-weight="400"
+		--button-color="hsl(0, 0%, 60%)"
 		onclick={() => {
 			open = !open;
 			can_close = true;
@@ -92,8 +83,9 @@
 			selected = [..._selected];
 			multiply = _multiply;
 		}}
-		disabled={loading}
-	></Button>
+	>
+		Tags
+	</Button>
 
 	{#if open}
 		<div class="popup" transition:slide bind:this={menu}>
@@ -175,29 +167,28 @@
 
 <style>
 	.filter {
-		position: relative;
+		anchor-name: --button;
 	}
 
 	.popup {
 		z-index: 1;
 		position: absolute;
-		top: 52px;
-		right: 0;
+		position-anchor: --button;
+		position-area: bottom span-right;
+
+		margin: 8px 0;
+
 		width: 200px;
 		height: 308px;
 
 		display: flex;
 		flex-direction: column;
 
-		padding: 0 8px;
+		padding: 8px;
 
 		background-color: var(--bg);
 		border-radius: 4px;
 		outline: 2px solid var(--bg1);
-	}
-
-	.search {
-		margin: 8px 0;
 	}
 
 	.clear {
@@ -209,18 +200,19 @@
 		padding: 8px;
 		overflow: auto;
 
+		margin-top: 8px;
 		outline: 2px solid var(--bg1);
 		outline-offset: -2px;
 	}
 
 	.multiply {
-		margin: 8px 0;
+		margin-top: 8px;
 	}
 	.buttons {
 		display: flex;
 		gap: 8px;
 
-		margin-bottom: 8px;
+		margin-top: 8px;
 	}
 	.wide {
 		width: 100%;

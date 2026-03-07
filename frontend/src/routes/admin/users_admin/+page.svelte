@@ -39,34 +39,6 @@
 		Admin{users.length > 1 ? 's' : ''}
 	</div>
 
-	<br />
-	<div class="line nowrap">
-		<Dropdown
-			icon2="chevron-down"
-			list={Object.keys(access)}
-			bind:value={searchParams.entity_type}
-			onchange={(v) => {
-				searchParams.page_no = 1;
-				searchParams.action = 'all';
-				page_state.set({
-					entity_type: v == defaultParams.entity_type ? '' : v,
-					action: ''
-				});
-			}}
-			--select-width="100%"
-		/>
-		<Dropdown
-			icon2="chevron-down"
-			list={access[searchParams.entity_type]}
-			bind:value={searchParams.action}
-			onchange={(v) => {
-				searchParams.page_no = 1;
-				page_state.set({ action: v == defaultParams.action ? '' : v });
-			}}
-			--select-width="100%"
-		/>
-	</div>
-
 	<Search
 		bind:value={searchParams.search}
 		ondone={(v) => {
@@ -75,23 +47,60 @@
 		}}
 	></Search>
 
-	<Dropdown
-		--select-height="10"
-		--select-padding-x="0"
-		--select-font-size="0.8rem"
-		--select-background-color="transparent"
-		--select-background-color-hover="transparent"
-		--select-color-hover="var(--ft1)"
-		--select-outline-color="transparent"
-		list={order_by}
-		icon="arrow-down-narrow-wide"
-		icon2="chevron-down"
-		bind:value={searchParams.order}
-		onchange={(v) => {
-			searchParams.page_no = 1;
-			page_state.set({ order: v == defaultParams.order ? '' : v });
-		}}
-	/>
+	<div class="line space">
+		<div class="line">
+			<Dropdown
+				--select-height="32px"
+				--select-padding-x="8px"
+				--select-font-size="0.8rem"
+				icon2="chevron-down"
+				label="Type: {searchParams.entity_type}"
+				list={Object.keys(access)}
+				bind:value={searchParams.entity_type}
+				onchange={(v) => {
+					searchParams.page_no = 1;
+					searchParams.action = defaultParams.action;
+					page_state.set({
+						entity_type: v == defaultParams.entity_type ? '' : v,
+						action: ''
+					});
+				}}
+			/>
+			<Dropdown
+				--select-height="32px"
+				--select-padding-x="8px"
+				--select-font-size="0.8rem"
+				icon2="chevron-down"
+				label="Action: {searchParams.action}"
+				list={access[searchParams.entity_type]}
+				bind:value={searchParams.action}
+				onchange={(v) => {
+					searchParams.page_no = 1;
+					page_state.set({ action: v == defaultParams.action ? '' : v });
+				}}
+			/>
+		</div>
+
+		<Dropdown
+			--select-height="1"
+			--select-padding-x="0"
+			--select-font-size="0.8rem"
+			--select-background-color="transparent"
+			--select-background-color-hover="transparent"
+			--select-color="var(--ft2)"
+			--select-color-hover="var(--ft1)"
+			--select-outline-color="transparent"
+			label="Sort: {searchParams.order}"
+			list={order_by}
+			icon="arrow-down-up"
+			icon2="chevron-down"
+			bind:value={searchParams.order}
+			onchange={(v) => {
+				searchParams.page_no = 1;
+				page_state.set({ order: v == defaultParams.order ? '' : v });
+			}}
+		/>
+	</div>
 </Content>
 
 <Content --content-padding-top="1px">

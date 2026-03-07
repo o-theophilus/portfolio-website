@@ -36,13 +36,15 @@ access_pass = {
         ['edit_author', 2],
         ['edit_featured', 2]
     ],
+    "comment": [
+        ['delete_others', 3]
+    ],
     "report": [
         ['view', 1],
         ['resolve', 3]
     ],
     "block": [
         ['view', 1],
-        ['block', 3],
         ['unblock', 3]
     ],
     "log": [

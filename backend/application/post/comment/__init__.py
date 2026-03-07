@@ -184,3 +184,65 @@ def like(key):
         "status": 200,
         **reactions
     })
+
+
+@bp.post("/report/comment/<key>")
+def report(key):
+    con, cur = db_open()
+
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
+
+    comment = request.json.get("comment", "").strip()
+    tags = request.json.get("tags")
+
+    if type(tags) is not list:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
+
+    error = {}
+    if not comment:
+        error["comment"] = "This field is required"
+    elif len(comment) > 500:
+        error["comment"] = "This field cannot exceed 500 characters"
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            **error
+        })
+
+    cur.execute("""SELECT * FROM comment WHERE key = %s;""", (key,))
+    reported_comment = cur.fetchone()
+    if not reported_comment:
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
+
+    cur.execute("""
+        INSERT INTO report (reporter_key, reported_comment_key,
+            reporter_comment, tags)
+        VALUES (%s, %s, %s, %s) RETURNING *;
+    """, (user["key"], reported_comment["key"], comment, tags))
+    report = cur.fetchone()
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action="reported comment",
+        entity_key=report["key"],
+        entity_type="report",
+        misc={"key": reported_comment["key"]}
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200
+    })

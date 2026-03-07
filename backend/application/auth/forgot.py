@@ -25,7 +25,7 @@ def forgot_1_email():
     email = request.json.get("email")
 
     error = None
-    if email:
+    if not email:
         error = "This field is required"
     elif not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
         error = "Invalid email address"
