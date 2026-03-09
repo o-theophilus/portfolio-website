@@ -8,7 +8,6 @@ from .log import get as log_get
 from .post import comment, file
 from .post import get as post_get
 from .post import photo as post_photo
-from .post.comment import get as comment_get
 from .report import get as report_get
 from .user import email
 from .user import get as user_get
@@ -51,7 +50,6 @@ def create_app(conf=None):
     app.register_blueprint(file.bp)
     app.register_blueprint(post_photo.bp)
     app.register_blueprint(comment.bp)
-    app.register_blueprint(comment_get.bp)
     app.register_blueprint(api.bp)
     app.register_blueprint(fix.bp)
 

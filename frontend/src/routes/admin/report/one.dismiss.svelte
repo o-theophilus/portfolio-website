@@ -39,7 +39,6 @@
 		);
 		resp = await resp.json();
 		loading.close();
-		console.log(resp);
 
 		if (resp.status == 200) {
 			module.value.update(resp.reports, resp.total_page);

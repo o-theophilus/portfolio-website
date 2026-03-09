@@ -166,13 +166,13 @@ def get_posts(cur=None):
         ) c ON c.post_key = post.key
 
         LEFT JOIN (
-            SELECT post_key,
+            SELECT entity_key,
                 COUNT(*) FILTER (WHERE reaction = 'like') AS "like",
                 COUNT(*) FILTER (WHERE reaction = 'dislike') AS dislike
             FROM "like"
-            WHERE post_key IS NOT NULL
-            GROUP BY post_key
-        ) l ON l.post_key = post.key
+            WHERE entity_type = 'post'
+            GROUP BY entity_key
+        ) l ON l.entity_key = post.key
 
         LEFT JOIN (
             SELECT entity_key, COUNT(DISTINCT user_key) AS _count
@@ -301,13 +301,13 @@ def get_comments(key, cur=None):
         ) sub_c ON sub_c.parent_key = c.key
 
         LEFT JOIN (
-            SELECT comment_key,
+            SELECT entity_key,
                 COUNT(*) FILTER (WHERE reaction = 'like') AS "like",
                 COUNT(*) FILTER (WHERE reaction = 'dislike') AS dislike
             FROM "like"
-            WHERE comment_key IS NOT NULL
-            GROUP BY comment_key
-        ) l ON l.comment_key = c.key
+            WHERE entity_type = 'comment'
+            GROUP BY entity_key
+        ) l ON l.entity_key = c.key
 
         WHERE c.post_key = %s AND c.parent_key IS NULL
         ORDER BY {order_by[order]} {order_dir[order]}, c.key DESC
@@ -336,20 +336,20 @@ def get_comments(key, cur=None):
 
         cur.execute("""
             SELECT
-                comment_key,
+                entity_key,
                 COUNT(*) FILTER (WHERE reaction = 'like' AND user_key != %s)
                     AS others_like,
                 COUNT(*) FILTER (WHERE reaction = 'dislike' AND user_key != %s)
                     AS others_dislike,
                 MAX(reaction) FILTER (WHERE user_key = %s) AS user_reaction
             FROM "like"
-            WHERE comment_key::TEXT = ANY(%s)
-            GROUP BY comment_key
+            WHERE entity_key::TEXT = ANY(%s) AND entity_type = 'comment'
+            GROUP BY entity_key
         """, (user["key"], user["key"], user["key"], comment_keys))
         likes = cur.fetchall()
 
     likes_map = {
-        x["comment_key"]: {
+        x["entity_key"]: {
             "others_like": x["others_like"],
             "others_dislike": x["others_dislike"],
             "user_reaction": x["user_reaction"]
@@ -429,7 +429,7 @@ def get_engagement(cur, key, user_key):
                 AND reaction = 'dislike' THEN 1 END) AS others_dislike,
             MAX(CASE WHEN user_key = %s THEN reaction END) AS user_reaction
         FROM "like"
-        WHERE post_key = %s
+        WHERE entity_key = %s AND entity_type = 'comment'
     """, (user_key, user_key, user_key, key))
     reactions = cur.fetchone()
 

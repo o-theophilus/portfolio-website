@@ -7,7 +7,6 @@
 	import Resolve from './one.resolve.svelte';
 
 	let { report, update, searchParams } = $props();
-	console.log(report);
 
 	let open = $state(false);
 </script>

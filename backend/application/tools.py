@@ -81,11 +81,8 @@ def get_session(cur, login=False):
         return {"status": 404, "error": "invalid or expired token"}
 
     cur.execute("""
-        UPDATE session SET date_updated = %s WHERE key = %s;
-    """, (
-        datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
-        session["key"])
-    )
+        UPDATE session SET date_updated = now() WHERE key = %s;
+    """, (session["key"],))
 
     return {"status": 200, "user": user, "login": session["login"] != "false"}
 

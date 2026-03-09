@@ -2,8 +2,8 @@ from math import ceil
 
 from flask import Blueprint, jsonify, request
 
-from ...postgres import db_close, db_open
-from ...tools import get_session
+from ..postgres import db_close, db_open
+from ..tools import get_session
 
 bp = Blueprint("report_get", __name__)
 
@@ -60,8 +60,8 @@ def get_many(cur=None):
             report.key,
             report.status,
             report.resolver_key,
-            report.reported_user_key,
-            report.reported_comment_key,
+            report.entity_key,
+            report.entity_type,
 
             jsonb_build_object(
                 'date_created', report.date_created,
@@ -106,28 +106,25 @@ def get_many(cur=None):
         FROM report
         LEFT JOIN "user" reporter ON report.reporter_key = reporter.key
         LEFT JOIN "user" resolver ON report.resolver_key = resolver.key
-        LEFT JOIN "user" ru ON report.reported_user_key = ru.key
+        LEFT JOIN "user" ru ON report.entity_key = ru.key
         LEFT JOIN block ON ru.key = block.user_key
-        LEFT JOIN comment rc ON report.reported_comment_key = rc.key
+        LEFT JOIN comment rc ON report.entity_key = rc.key
         LEFT JOIN "user" rc_user ON rc.user_key = rc_user.key
 
         WHERE
             report.status = %s
             AND (
-                %s = 'all'
-                OR (%s = 'user' AND report.reported_user_key IS NOT NULL)
-                OR (%s = 'comment' AND report.reported_comment_key IS NOT NULL)
+                %s = 'all' OR report.entity_type = %s
             )
             AND (%s = '' OR CONCAT_WS(', ',
                 report.key, report.reporter_comment, report.tags::text,
-                report.reporter_key, report.reported_user_key,
-                report.reported_comment_key
+                report.reporter_key, report.entity_key
             ) ILIKE %s)
         ORDER BY {order_by[order]} {order_dir[order]}, report.key DESC
         LIMIT %s OFFSET %s;
     """, (
         status,
-        _type, _type, _type,
+        _type, _type,
         search, f"%{search}%",
         page_size, (page_no - 1) * page_size
     ))
@@ -147,20 +144,18 @@ def get_many(cur=None):
             del x["resolver_key"]
             del x["resolver"]
 
-        if x["reported_user_key"]:
+        if x["entity_type"] == "user":
             if x["reported_user"]["user"]["photo"]:
                 x["reported_user"]["user"]["photo"] = f"{url}{x[
                     'reported_user']['user']['photo']}"
         else:
-            del x["reported_user_key"]
             del x["reported_user"]
 
-        if x["reported_comment_key"]:
+        if x["entity_type"] == "comment":
             if x["reported_comment"]["user"]["photo"]:
                 x["reported_comment"]["user"]["photo"] = f"{url}{x[
                     'reported_comment']['user']['photo']}"
         else:
-            del x["reported_comment_key"]
             del x["reported_comment"]
 
     cur.execute("""
@@ -168,18 +163,15 @@ def get_many(cur=None):
         WHERE
             report.status = %s
             AND (
-                %s = 'all'
-                OR (%s = 'user' AND report.reported_user_key IS NOT NULL)
-                OR (%s = 'comment' AND report.reported_comment_key IS NOT NULL)
+                %s = 'all' OR report.entity_type = %s
             )
             AND (%s = '' OR CONCAT_WS(', ',
                 report.key, report.reporter_comment, report.tags::text,
-                report.reporter_key, report.reported_user_key,
-                report.reported_comment_key
+                report.reporter_key, report.entity_key
             ) ILIKE %s);
     """, (
         status,
-        _type, _type, _type,
+        _type, _type,
         search, f"%{search}%",
     ))
     total_page = cur.fetchone()["count"]

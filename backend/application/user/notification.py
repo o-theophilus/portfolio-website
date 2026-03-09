@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 
-from ..admin.file_error import get_file_error
+from ..api.file_error import get_file_error
 from ..postgres import db_close, db_open
 from ..tools import get_session
 

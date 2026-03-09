@@ -139,7 +139,8 @@ def edit_user():
     })
 
 
-@bp.post("/user/<key>/report")
+# TODO: user report and comment report can be unified
+@bp.post("/users/<key>/report")
 def report(key):
     con, cur = db_open()
 
@@ -180,10 +181,10 @@ def report(key):
         })
 
     cur.execute("""
-        INSERT INTO report (reporter_key, reported_user_key,
-            reporter_comment, tags)
-        VALUES (%s, %s, %s, %s) RETURNING *;
-    """, (user["key"], reported_user["key"], comment, tags))
+        INSERT INTO report (reporter_key, reporter_comment,
+            tags, entity_key, entity_type)
+        VALUES (%s, %s, %s, %s, 'user') RETURNING *;
+    """, (user["key"], comment, tags, reported_user["key"]))
     report = cur.fetchone()
 
     log(

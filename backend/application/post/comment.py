@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 from flask import Blueprint, jsonify, request
 
 from ..log import log
@@ -74,16 +72,17 @@ def like(key):
         })
 
     cur.execute("""
-        SELECT * FROM "like" WHERE user_key = %s AND comment_key = %s;
+        SELECT * FROM "like"
+        WHERE user_key = %s AND entity_key = %s AND entity_type = 'comment';
     """, (user["key"], key))
     user_reaction = cur.fetchone()
 
     un = ""
     if not user_reaction:
         cur.execute("""
-            INSERT INTO "like" (user_key, comment_key, reaction)
-            VALUES (%s, %s, %s);
-        """, (user["key"], key, reaction))
+            INSERT INTO "like" (user_key, reaction, entity_key, entity_type)
+            VALUES (%s, %s, %s, 'comment');
+        """, (user["key"], reaction, key))
     elif user_reaction["reaction"] == reaction:
         un = "un"
         cur.execute("""DELETE FROM "like" WHERE key = %s;""",
@@ -91,8 +90,8 @@ def like(key):
     else:
         cur.execute("""
             UPDATE "like"
-            SET date_created = %s, reaction = %s WHERE key = %s;
-        """, (datetime.now(timezone.utc), reaction, user_reaction["key"]))
+            SET date_created = now(), reaction = %s WHERE key = %s;
+        """, (reaction, user_reaction["key"]))
 
     log(
         cur=cur,
@@ -110,7 +109,7 @@ def like(key):
                 AND reaction = 'dislike' THEN 1 END) AS others_dislike,
             MAX(CASE WHEN user_key = %s THEN reaction END) AS user_reaction
         FROM "like"
-        WHERE comment_key = %s
+        WHERE entity_key = %s AND entity_type = 'comment'
     """, (user["key"], user["key"], user["key"], key))
     reactions = cur.fetchone()
 
@@ -162,10 +161,10 @@ def report(key):
         })
 
     cur.execute("""
-        INSERT INTO report (reporter_key, reported_comment_key,
-            reporter_comment, tags)
-        VALUES (%s, %s, %s, %s) RETURNING *;
-    """, (user["key"], reported_comment["key"], comment, tags))
+        INSERT INTO report (reporter_key, reporter_comment,
+            tags, entity_key, entity_type)
+        VALUES (%s, %s, %s, %s, 'comment') RETURNING *;
+    """, (user["key"], comment, tags, reported_comment["key"]))
     report = cur.fetchone()
 
     log(

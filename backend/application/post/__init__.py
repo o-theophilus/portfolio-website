@@ -1,6 +1,5 @@
 import os
 import re
-from datetime import datetime, timezone
 from uuid import uuid4
 
 from flask import Blueprint, jsonify, request
@@ -179,7 +178,6 @@ def edit(key):
                 WHERE key::TEXT = %s OR email = %s OR username = %s;
             """, (author_key, author_key, author_key))
             author = cur.fetchone()
-            print(author)
 
             if not author:
                 error["author_key"] = "no user found"
@@ -385,16 +383,17 @@ def like(key):
         })
 
     cur.execute("""
-        SELECT * FROM "like" WHERE user_key = %s AND post_key = %s;
+        SELECT * FROM "like"
+        WHERE user_key = %s AND entity_key = %s AND entity_type = 'post';
     """, (user["key"], key))
     user_reaction = cur.fetchone()
 
     un = ""
     if not user_reaction:
         cur.execute("""
-            INSERT INTO "like" (user_key, post_key, reaction)
-            VALUES (%s, %s, %s);
-        """, (user["key"], key, reaction))
+            INSERT INTO "like" (user_key, reaction, entity_key, entity_type)
+            VALUES (%s, %s, %s, 'post');
+        """, (user["key"], reaction, key))
     elif user_reaction["reaction"] == reaction:
         un = "un"
         cur.execute("""DELETE FROM "like" WHERE key = %s;""",
@@ -402,8 +401,8 @@ def like(key):
     else:
         cur.execute("""
             UPDATE "like"
-            SET date_created = %s, reaction = %s WHERE key = %s;
-        """, (datetime.now(timezone.utc), reaction, user_reaction["key"]))
+            SET date_created = now(), reaction = %s WHERE key = %s;
+        """, (reaction, user_reaction["key"]))
 
     log(
         cur=cur,
@@ -421,7 +420,7 @@ def like(key):
                 AND reaction = 'dislike' THEN 1 END) AS others_dislike,
             MAX(CASE WHEN user_key = %s THEN reaction END) AS user_reaction
         FROM "like"
-        WHERE post_key = %s
+        WHERE entity_key = %s AND entity_type = 'post'
     """, (user["key"], user["key"], user["key"], key))
     reactions = cur.fetchone()
 
@@ -433,7 +432,7 @@ def like(key):
 
 
 @bp.post("/posts/<key>/comment")
-def comment(key):
+def add_comment(key):
     con, cur = db_open()
 
     session = get_session(cur, True)
