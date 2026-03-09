@@ -159,7 +159,6 @@
 			<Button
 				icon="lock-keyhole"
 				--button-font-size="0.8rem"
-				disabled={user.blocked}
 				onclick={() => module.open(Report, { user })}
 			>
 				Report user

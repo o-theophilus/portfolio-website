@@ -24,7 +24,7 @@
 
 		loading.open('Unblocking User . . .');
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/block/${module.value.user.key}?${new URLSearchParams(module.value.searchParams).toString()}`,
+			`${import.meta.env.VITE_BACKEND}/users/${module.value.user.key}/block?${new URLSearchParams(module.value.searchParams).toString()}`,
 			{
 				method: 'delete',
 				headers: {

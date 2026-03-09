@@ -50,7 +50,7 @@
 		edit_mode = false;
 		loading = true;
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/after/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}/after`, {
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: app.token

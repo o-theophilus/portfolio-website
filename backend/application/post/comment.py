@@ -2,80 +2,15 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, jsonify, request
 
-from ...log import log
-from ...postgres import db_close, db_open
-from ...tools import get_session
-from .get import get_many
+from ..log import log
+from ..postgres import db_close, db_open
+from ..tools import get_session
+from .get import get_comments
 
 bp = Blueprint("comment", __name__)
 
 
-@bp.post("/comment/<key>")
-def create(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
-    cur.execute("""
-        SELECT * FROM post WHERE slug = %s OR key = %s;
-    """, (key, key))
-    post = cur.fetchone()
-    if not post:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            "error": "Invalid request"
-        })
-
-    parent_key = request.json.get("parent_key")
-    if parent_key:
-        cur.execute("SELECT * FROM comment WHERE key = %s;", (parent_key,))
-        parent = cur.fetchone()
-        if not parent or parent["parent_key"] is not None:
-            db_close(con, cur)
-            return jsonify({
-                "status": 400,
-                "error": "Invalid request"
-            })
-
-    comment = request.json.get("comment", "").strip()
-    error = {}
-    if not comment:
-        error["comment"] = "This field is required"
-    elif len(comment) > 500:
-        error["comment"] = "This field cannot exceed 500 characters"
-    if error:
-        db_close(con, cur)
-        return jsonify({
-            "status": 400,
-            **error
-        })
-
-    cur.execute("""
-        INSERT INTO comment (user_key, post_key, comment, parent_key)
-        VALUES (%s, %s, %s, %s) RETURNING *;
-    """, (user["key"], post["key"], comment, parent_key))
-    comment = cur.fetchone()
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="created",
-        entity_key=comment["key"],
-        entity_type="comment",
-        misc={"post_key": post["key"]}
-    )
-
-    comment_resp = get_many(post["key"], cur)
-    db_close(con, cur)
-    return comment_resp
-
-
-@bp.delete("/comment/<key>")
+@bp.delete("/comments/<key>")
 def delete(key):
     con, cur = db_open()
 
@@ -107,12 +42,12 @@ def delete(key):
         misc={"post_key": comment["post_key"]}
     )
 
-    comment_resp = get_many(comment["post_key"], cur)
+    comment_resp = get_comments(comment["post_key"], cur)
     db_close(con, cur)
     return comment_resp
 
 
-@bp.post("/comment/like/<key>")
+@bp.post("/comments/<key>/like")
 def like(key):
     con, cur = db_open()
 
@@ -186,7 +121,7 @@ def like(key):
     })
 
 
-@bp.post("/report/comment/<key>")
+@bp.post("/comments/<key>/report")
 def report(key):
     con, cur = db_open()
 

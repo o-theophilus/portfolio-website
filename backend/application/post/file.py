@@ -9,7 +9,7 @@ from .get import post_schema
 bp = Blueprint("post_file", __name__)
 
 
-@bp.post("/post/file/<key>")
+@bp.post("/posts/<key>/file")
 def add_file(key):
     con, cur = db_open()
 
@@ -97,7 +97,7 @@ def add_file(key):
     })
 
 
-@bp.put("/post/file/<key>")
+@bp.put("/posts/<key>/file")
 def order_delete_file(key):
     con, cur = db_open()
 

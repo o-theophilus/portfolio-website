@@ -30,7 +30,7 @@
 	const submit = async () => {
 		loading.open('Adding Comment . . .');
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/comment/${post.key}?${new URLSearchParams(
+			`${import.meta.env.VITE_BACKEND}/posts/${post.key}/comment?${new URLSearchParams(
 				module.value.searchParams
 			).toString()}`,
 			{

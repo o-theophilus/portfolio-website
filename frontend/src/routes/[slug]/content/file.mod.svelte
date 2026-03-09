@@ -45,7 +45,7 @@
 		ops.error = {};
 
 		loading.open('Saving . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/file/${ops.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${ops.key}/file`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',

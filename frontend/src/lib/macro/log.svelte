@@ -11,7 +11,7 @@
 			entity_key = `${page.url.pathname}${page.url.search}`;
 		}
 
-		fetch(`${import.meta.env.VITE_BACKEND}/log`, {
+		fetch(`${import.meta.env.VITE_BACKEND}/logs`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',

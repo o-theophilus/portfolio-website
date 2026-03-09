@@ -26,7 +26,7 @@
 
 		loading.open('Resolving Report . . .');
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/report/resolve/${module.value.report.key}?${new URLSearchParams(
+			`${import.meta.env.VITE_BACKEND}/reports/${module.value.report.key}?${new URLSearchParams(
 				module.value.searchParams
 			).toString()}`,
 			{

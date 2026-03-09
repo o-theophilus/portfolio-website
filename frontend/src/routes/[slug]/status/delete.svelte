@@ -25,7 +25,7 @@
 		error = {};
 
 		loading.open('Deleting Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${module.value.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${module.value.key}`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',

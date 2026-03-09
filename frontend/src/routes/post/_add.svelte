@@ -25,7 +25,7 @@
 	const submit = async () => {
 		loading.open('Creating Post . . .');
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post${page.url.search}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts${page.url.search}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',

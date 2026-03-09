@@ -23,7 +23,7 @@
 		error = {};
 
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',

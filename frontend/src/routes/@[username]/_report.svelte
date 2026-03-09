@@ -27,7 +27,7 @@
 	const submit = async () => {
 		loading.open('Sending Report . . .');
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/report/user/${module.value.user.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/users/${module.value.user.key}/report`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',

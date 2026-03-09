@@ -23,7 +23,7 @@
 
 		loading.open('saving . . .');
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/admin/access/${module.value.user.key}`,
+			`${import.meta.env.VITE_BACKEND}/users/${module.value.user.key}/access`,
 			{
 				method: 'put',
 				headers: {

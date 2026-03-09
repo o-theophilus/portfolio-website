@@ -6,7 +6,7 @@
 	const submit = async () => {
 		loading.open('Updating feature . . .');
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/feature/${post.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}/feature`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',

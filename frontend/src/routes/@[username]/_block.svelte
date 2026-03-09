@@ -23,7 +23,7 @@
 		error = {};
 
 		loading.open('Blocking User . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/block/${module.value.user.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/users/${module.value.user.key}/block`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',

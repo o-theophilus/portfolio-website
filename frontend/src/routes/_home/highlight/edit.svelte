@@ -44,7 +44,7 @@
 		error = {};
 
 		loading.open('Updating feature . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/feature`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/feature`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',

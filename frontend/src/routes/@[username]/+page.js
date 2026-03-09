@@ -7,7 +7,7 @@ export const load = async ({ parent, fetch, params }) => {
 		return { user: a.locals.user }
 	}
 
-	let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/${params.username}`, {
+	let resp = await fetch(`${import.meta.env.VITE_BACKEND}/users/${params.username}`, {
 		method: 'get',
 		headers: {
 			'Content-Type': 'application/json',

@@ -8,7 +8,7 @@ from .get import get_many
 bp = Blueprint("report", __name__)
 
 
-@bp.put("/report/resolve/<key>")
+@bp.put("/reports/<key>")
 def resolve(key):
     con, cur = db_open()
 
@@ -76,7 +76,7 @@ def resolve(key):
     if handle:
         if (
             report["reported_user_key"]
-            and "user:block" not in user["access"]
+            and "user:block" in user["access"]
         ):
             cur.execute("""
                 INSERT INTO block (admin_key, user_key, comment)
@@ -122,7 +122,7 @@ def resolve(key):
     return reports
 
 
-@bp.put("/report/dismiss/<key>")
+@bp.delete("/reports/<key>")
 def dismiss(key):
     con, cur = db_open()
 

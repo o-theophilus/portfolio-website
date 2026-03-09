@@ -32,7 +32,7 @@
 			engagement.user_reaction = reaction;
 		}
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comment/like/${comment.key}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comments/${comment.key}/like`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',

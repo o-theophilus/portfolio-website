@@ -10,12 +10,12 @@ from ..log import log
 from ..postgres import db_close, db_open
 from ..storage import storage
 from ..tools import get_session, reserved_words
-from .get import get_feature, get_many, post_schema
+from .get import get_comments, get_feature, get_posts, post_schema
 
 bp = Blueprint("post", __name__)
 
 
-@bp.post("/post")
+@bp.post("/posts")
 def add():
     con, cur = db_open()
 
@@ -67,7 +67,7 @@ def add():
         entity_type="post"
     )
 
-    posts = get_many(cur)
+    posts = get_posts(cur)
 
     db_close(con, cur)
     return jsonify({
@@ -78,7 +78,7 @@ def add():
     })
 
 
-@bp.put("/post/<key>")
+@bp.put("/posts/<key>")
 def edit(key):
     con, cur = db_open()
 
@@ -237,7 +237,71 @@ def edit(key):
     })
 
 
-@bp.delete("/post/<key>")
+@bp.post("/posts/<key>/feature")
+def feature(key):
+    con, cur = db_open()
+
+    session = get_session(cur, True)
+    if session["status"] != 200:
+        db_close(con, cur)
+        return jsonify(session)
+    user = session["user"]
+
+    if "post:edit_featured" not in user["access"]:
+        db_close(con, cur)
+        return jsonify({
+            "status": 403,
+            "error":  "unauthorized access"
+        })
+
+    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    post = cur.fetchone()
+    if not post or post["status"] != "active":
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            "error": "Invalid request"
+        })
+
+    action = "added post to featured"
+    if post["featured"] > 0:
+        action = "removed post from featured"
+
+    cur.execute("""
+        UPDATE post SET featured = %s WHERE key = %s RETURNING *;
+    """, (0 if post["featured"] > 0 else 1, post["key"],))
+    post = cur.fetchone()
+
+    cur.execute("""
+        WITH ordered AS (
+            SELECT key,
+                ROW_NUMBER() OVER (ORDER BY featured ASC, date_created ASC)
+                AS new_order
+            FROM post
+            WHERE featured > 0
+        )
+        UPDATE post p
+        SET featured = o.new_order
+        FROM ordered o
+        WHERE p.key = o.key;
+    """)
+
+    log(
+        cur=cur,
+        user_key=user["key"],
+        action=action,
+        entity_key=post["key"],
+        entity_type="post"
+    )
+
+    db_close(con, cur)
+    return jsonify({
+        "status": 200,
+        "post": post_schema(post)
+    })
+
+
+@bp.delete("/posts/<key>")
 def delete(key):
     con, cur = db_open()
 
@@ -294,7 +358,7 @@ def delete(key):
     })
 
 
-@bp.post("/post/like/<key>")
+@bp.post("/posts/<key>/like")
 def like(key):
     con, cur = db_open()
 
@@ -368,8 +432,8 @@ def like(key):
     })
 
 
-@bp.post("/post/feature/<key>")
-def feature(key):
+@bp.post("/posts/<key>/comment")
+def comment(key):
     con, cur = db_open()
 
     session = get_session(cur, True)
@@ -378,61 +442,62 @@ def feature(key):
         return jsonify(session)
     user = session["user"]
 
-    if "post:edit_featured" not in user["access"]:
-        db_close(con, cur)
-        return jsonify({
-            "status": 403,
-            "error":  "unauthorized access"
-        })
-
-    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    cur.execute("""
+        SELECT * FROM post WHERE slug = %s OR key = %s;
+    """, (key, key))
     post = cur.fetchone()
-    if not post or post["status"] != "active":
+    if not post:
         db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
         })
 
-    action = "added post to featured"
-    if post["featured"] > 0:
-        action = "removed post from featured"
+    parent_key = request.json.get("parent_key")
+    if parent_key:
+        cur.execute("SELECT * FROM comment WHERE key = %s;", (parent_key,))
+        parent = cur.fetchone()
+        if not parent or parent["parent_key"] is not None:
+            db_close(con, cur)
+            return jsonify({
+                "status": 400,
+                "error": "Invalid request"
+            })
+
+    comment = request.json.get("comment", "").strip()
+    error = {}
+    if not comment:
+        error["comment"] = "This field is required"
+    elif len(comment) > 500:
+        error["comment"] = "This field cannot exceed 500 characters"
+    if error:
+        db_close(con, cur)
+        return jsonify({
+            "status": 400,
+            **error
+        })
 
     cur.execute("""
-        UPDATE post SET featured = %s WHERE key = %s RETURNING *;
-    """, (0 if post["featured"] > 0 else 1, post["key"],))
-    post = cur.fetchone()
-
-    cur.execute("""
-        WITH ordered AS (
-            SELECT key,
-                ROW_NUMBER() OVER (ORDER BY featured ASC, date_created ASC)
-                AS new_order
-            FROM post
-            WHERE featured > 0
-        )
-        UPDATE post p
-        SET featured = o.new_order
-        FROM ordered o
-        WHERE p.key = o.key;
-    """)
+        INSERT INTO comment (user_key, post_key, comment, parent_key)
+        VALUES (%s, %s, %s, %s) RETURNING *;
+    """, (user["key"], post["key"], comment, parent_key))
+    comment = cur.fetchone()
 
     log(
         cur=cur,
         user_key=user["key"],
-        action=action,
-        entity_key=post["key"],
-        entity_type="post"
+        action="created",
+        entity_key=comment["key"],
+        entity_type="comment",
+        misc={"post_key": post["key"]}
     )
 
+    comment_resp = get_comments(post["key"], cur)
     db_close(con, cur)
-    return jsonify({
-        "status": 200,
-        "post": post_schema(post)
-    })
+    return comment_resp
 
 
-@bp.put("/post/feature")
+@bp.put("/posts/feature")
 def edit_feature():
     con, cur = db_open()
 

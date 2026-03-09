@@ -15,7 +15,7 @@
 		loading.open(`Deleting comment . . .`);
 
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/comment/${comment.key}?${new URLSearchParams(
+			`${import.meta.env.VITE_BACKEND}/comments/${comment.key}?${new URLSearchParams(
 				module.value.searchParams
 			).toString()}`,
 			{

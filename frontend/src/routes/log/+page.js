@@ -24,7 +24,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
 		return page_state.state[page_name].data
 	}
 
-	let backend = new URL(`${import.meta.env.VITE_BACKEND}/log`)
+	let backend = new URL(`${import.meta.env.VITE_BACKEND}/logs`)
 	backend.search = new URLSearchParams(page_state.state[page_name].searchParams);
 	let resp = await fetch(backend.href, {
 		method: 'get',

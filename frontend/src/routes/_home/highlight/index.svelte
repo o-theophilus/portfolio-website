@@ -30,7 +30,7 @@
 
 	onMount(async () => {
 		if (!app.featured) {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/feature`);
+			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/feature`);
 			resp = await resp.json();
 
 			if (resp.status == 200) {

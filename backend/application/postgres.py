@@ -84,8 +84,8 @@ def create_tables():
             date_resolved TIMESTAMPTZ,
             resolver_key UUID REFERENCES "user"(key),
             resolver_comment TEXT,
-            reported_user_key UUID REFERENCES "user"(key) ON DELETE CASCADE,
-            reported_comment_key UUID REFERENCES comment(key) ON DELETE CASCADE
+            entity_type TEXT NOT NULL, -- user, review
+            entity_key UUID NOT NULL
         );
 
         CREATE TABLE IF NOT EXISTS block (
@@ -101,9 +101,10 @@ def create_tables():
             key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             date_created TIMESTAMPTZ DEFAULT now(),
             user_key UUID NOT NULL REFERENCES "user"(key) ON DELETE CASCADE,
-            post_key UUID REFERENCES post(key) ON DELETE CASCADE,
-            comment_key UUID REFERENCES comment(key) ON DELETE CASCADE,
-            reaction TEXT NOT NULL
+            reaction TEXT NOT NULL DEFAULT 'like',
+            entity_type TEXT NOT NULL, -- item, review
+            entity_key UUID NOT NULL,
+            UNIQUE (user_key, entity_key)
         );
 
         CREATE TABLE IF NOT EXISTS code (

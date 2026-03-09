@@ -5,7 +5,7 @@ export const load = async ({ fetch, params, parent }) => {
     if (app.post.slug == params.slug) return { post: app.post }
 
     let a = await parent();
-    let resp = await fetch(`${import.meta.env.VITE_BACKEND}/post/${params.slug}`, {
+    let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${params.slug}`, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: a.locals.token

@@ -33,7 +33,7 @@
 		loading = true;
 
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/${post.key}/comments?${new URLSearchParams(searchParams).toString()}`,
+			`${import.meta.env.VITE_BACKEND}/posts/${post.key}/comments?${new URLSearchParams(searchParams).toString()}`,
 			{
 				headers: {
 					'Content-Type': 'application/json',

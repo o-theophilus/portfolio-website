@@ -19,7 +19,7 @@
 						name: post.title,
 						photo: post.photo,
 						type: 'post',
-						slug: `/post/photo/${post.key}`,
+						slug: `/posts/${post.key}/photo`,
 						update
 					});
 				}}

@@ -9,7 +9,7 @@ from .get import post_schema
 bp = Blueprint("post_photo", __name__)
 
 
-@bp.put("/post/photo/<key>")
+@bp.put("/posts/<key>/photo")
 def add_photo(key):
     con, cur = db_open()
 
@@ -80,7 +80,7 @@ def add_photo(key):
     })
 
 
-@bp.delete("/post/photo/<key>")
+@bp.delete("/posts/<key>/photo")
 def delete_photo(key):
     con, cur = db_open()
 

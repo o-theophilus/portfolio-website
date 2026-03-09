@@ -25,11 +25,11 @@
 
 		loading.open('Resolving Report . . .');
 		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/report/dismiss/${module.value.report.key}?${new URLSearchParams(
+			`${import.meta.env.VITE_BACKEND}/reports/${module.value.report.key}?${new URLSearchParams(
 				module.value.searchParams
 			).toString()}`,
 			{
-				method: 'put',
+				method: 'delete',
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: app.token
