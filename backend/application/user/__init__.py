@@ -214,7 +214,7 @@ def block(key):
 
     comment = request.json.get("comment", "").strip()
 
-    if "user:block" not in me["access"]:
+    if "user.block" not in me["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 403,
@@ -300,7 +300,7 @@ def unblock(key):
 
     comment = request.json.get("comment", "").strip()
 
-    if "block:unblock" not in me["access"]:
+    if "block.unblock" not in me["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 403,
@@ -394,17 +394,17 @@ def perform_action(key):
     actions = []
     error = None
     if "reset_name" in _actions:
-        if "user:reset_name" in user["access"]:
+        if "user.reset_name" in user["access"]:
             actions.append("name")
         else:
             error = "unauthorized access"
     if "reset_username" in _actions:
-        if "user:reset_username" in user["access"]:
+        if "user.reset_username" in user["access"]:
             actions.append("username")
         else:
             error = "unauthorized access"
     if "reset_photo" in _actions:
-        if "user:reset_photo" in user["access"]:
+        if "user.reset_photo" in user["access"]:
             actions.append("photo")
         else:
             error = "unauthorized access"
@@ -459,7 +459,7 @@ def set_access(key):
         return jsonify(session)
     me = session["user"]
 
-    if "user:set_access" not in me["access"]:
+    if "user.set_access" not in me["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 403,

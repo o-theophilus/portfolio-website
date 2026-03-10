@@ -59,7 +59,7 @@
 				{block.comment}
 			</div>
 
-			{#if app.user.access.includes('block:unblock')}
+			{#if app.user.access.includes('block.unblock')}
 				<Button
 					icon="lock-open"
 					--button-font-size="0.8rem"

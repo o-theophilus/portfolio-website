@@ -7,7 +7,7 @@
 	let { post, update } = $props();
 </script>
 
-{#if app.user.access.includes('post:edit_status')}
+{#if app.user.access.includes('post.edit_status')}
 	<Button
 		onclick={() =>
 			module.open(Edit, {

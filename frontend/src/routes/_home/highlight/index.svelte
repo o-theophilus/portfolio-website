@@ -42,7 +42,7 @@
 	let src = $derived(app.featured?.[index]?.photo || '/no_photo.png');
 </script>
 
-{#if app.featured?.length > 0 || app.user.access.includes('post:edit_featured')}
+{#if app.featured?.length > 0 || app.user.access.includes('post.edit_featured')}
 	<Content --content-height="100%" --content-padding-top="80px" --content-padding-bottom="56px">
 		<div class="line">
 			<div class="page_title">
@@ -50,7 +50,7 @@
 				I've Built
 			</div>
 
-			{#if app.user.access.includes('post:edit_featured')}
+			{#if app.user.access.includes('post.edit_featured')}
 				<RoundButton icon="square-pen" onclick={() => module.open(Edit, { reset_index })} />
 			{/if}
 		</div>

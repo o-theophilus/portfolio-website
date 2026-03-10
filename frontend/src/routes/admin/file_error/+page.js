@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 
 export const load = async ({ parent, fetch }) => {
 	let a = await parent();
-	if (!a.locals.user.access.includes("admin:manage_files")) {
+	if (!a.locals.user.access.includes("admin.manage_files")) {
 		throw error(404, "Unauthorized access")
 	}
 

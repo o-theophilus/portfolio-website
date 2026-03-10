@@ -11,7 +11,7 @@
 
 {#if loading || author.username}
 	<hr />
-	{#if app.user.access.includes('post:edit_author') && edit_mode}
+	{#if app.user.access.includes('post.edit_author') && edit_mode}
 		<Button onclick={() => module.open(Form, { key: post.key, update })}>Edit Author</Button>
 	{/if}
 

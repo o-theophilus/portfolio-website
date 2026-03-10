@@ -21,17 +21,17 @@
 	let edit_mode = $state(false);
 	let is_admin = app.user.access.some((x) =>
 		[
-			'post:add',
-			'post:edit_photo',
-			'post:edit_title',
-			'post:edit_date',
-			'post:edit_description',
-			'post:edit_content',
-			'post:edit_files',
-			'post:edit_tags',
-			'post:edit_status',
-			'post:edit_author',
-			'post:edit_featured'
+			'post.add',
+			'post.edit_photo',
+			'post.edit_title',
+			'post.edit_date',
+			'post.edit_description',
+			'post.edit_content',
+			'post.edit_files',
+			'post.edit_tags',
+			'post.edit_status',
+			'post.edit_author',
+			'post.edit_featured'
 		].includes(x)
 	);
 
@@ -100,7 +100,7 @@
 		<br />
 	{/if}
 
-	{#if edit_mode && (app.user.access.includes('post:edit_status') || app.user.access.includes('post:edit_featured'))}
+	{#if edit_mode && (app.user.access.includes('post.edit_status') || app.user.access.includes('post.edit_featured'))}
 		<div class="line status">
 			<Status {post} {update}></Status>
 			<Feature {post} {update} />

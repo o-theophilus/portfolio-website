@@ -3,7 +3,7 @@ import { error } from "@sveltejs/kit";
 
 export const load = async ({ fetch, url, parent, depends }) => {
 	let a = await parent();
-	if (!a.locals.login || !a.locals.user.access.includes('log:view')) {
+	if (!a.locals.login || !a.locals.user.access.includes('log.view')) {
 		throw error(400, "Unauthorized access")
 	}
 

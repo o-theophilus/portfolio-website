@@ -36,11 +36,11 @@
 
 {#if edit_mode}
 	<div class="line">
-		{#if app.user.access.includes('post:edit_content')}
+		{#if app.user.access.includes('post.edit_content')}
 			<Button onclick={() => module.open(Edit, { post, update, process })}>Edit Content</Button>
 		{/if}
 
-		{#if app.user.access.includes('post:edit_files') && post.content && post.content.includes('@[file]')}
+		{#if app.user.access.includes('post.edit_files') && post.content && post.content.includes('@[file]')}
 			<Button icon="image" onclick={() => module.open(File, { post, update })}>Manage Files</Button>
 		{/if}
 	</div>

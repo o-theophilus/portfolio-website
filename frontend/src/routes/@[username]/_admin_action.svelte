@@ -56,7 +56,7 @@
 <Form title="Actions" error={error.error}>
 	<IG>
 		{#snippet input()}
-			{#if app.user.access.includes('user:reset_name')}
+			{#if app.user.access.includes('user.reset_name')}
 				<Checkbox
 					label="Reset Name"
 					value={form.actions.includes('reset_name')}
@@ -69,7 +69,7 @@
 					}}
 				></Checkbox>
 			{/if}
-			{#if app.user.access.includes('user:reset_username')}
+			{#if app.user.access.includes('user.reset_username')}
 				<Checkbox
 					label="Reset Username"
 					value={form.actions.includes('reset_username')}
@@ -82,7 +82,7 @@
 					}}
 				></Checkbox>
 			{/if}
-			{#if app.user.access.includes('user:reset_photo')}
+			{#if app.user.access.includes('user.reset_photo')}
 				<Checkbox
 					label="Reset Photo"
 					value={form.actions.includes('reset_photo')}

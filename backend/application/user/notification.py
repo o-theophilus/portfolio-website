@@ -18,7 +18,7 @@ def notification():
     user = session["user"]
 
     nots = []
-    if "admin:manage_files" in user["access"]:
+    if "admin.manage_files" in user["access"]:
         file_error = get_file_error(cur).json
 
         if "unused_post_photo" in file_error and file_error[

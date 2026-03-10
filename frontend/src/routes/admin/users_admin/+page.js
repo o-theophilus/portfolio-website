@@ -5,7 +5,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
 	depends(true)
 
 	let a = await parent();
-	if (!a.locals.user.access.includes("user:set_access")) {
+	if (!a.locals.user.access.includes("user.set_access")) {
 		throw error(400, "Unauthorized access")
 	}
 

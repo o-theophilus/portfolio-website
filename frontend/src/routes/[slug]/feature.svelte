@@ -29,7 +29,7 @@
 	};
 </script>
 
-{#if app.user.access.includes('post:edit_featured') && post.status == 'active'}
+{#if app.user.access.includes('post.edit_featured') && post.status == 'active'}
 	<Switch
 		--toggle-height="21px"
 		--toggle-font-size="0.8rem"

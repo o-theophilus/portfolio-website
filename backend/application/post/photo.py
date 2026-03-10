@@ -19,7 +19,7 @@ def add_photo(key):
         return jsonify(session)
     user = session["user"]
 
-    if "post:edit_photo" not in user["access"]:
+    if "post.edit_photo" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 403,
@@ -90,7 +90,7 @@ def delete_photo(key):
         return jsonify(session)
     user = session["user"]
 
-    if "post:edit_photo" not in user["access"]:
+    if "post.edit_photo" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 403,

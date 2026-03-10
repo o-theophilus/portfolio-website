@@ -18,7 +18,7 @@ def resolve(key):
         return jsonify(session)
     user = session["user"]
 
-    if "report:resolve" not in user["access"]:
+    if "report.resolve" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 403,
@@ -69,7 +69,7 @@ def resolve(key):
     if handle:
         if (
             report["entity_type"] == "user"
-            and "user:block" in user["access"]
+            and "user.block" in user["access"]
         ):
             cur.execute("""
                 INSERT INTO block (admin_key, user_key, comment)
@@ -91,7 +91,7 @@ def resolve(key):
 
         elif (
             report["entity_type"] == "comment"
-            and "comment:delete_others" in user["access"]
+            and "comment.delete_others" in user["access"]
         ):
             cur.execute(
                 "DELETE FROM comment WHERE key = %s RETURNING *;",
@@ -125,7 +125,7 @@ def dismiss(key):
         return jsonify(session)
     user = session["user"]
 
-    if "report:resolve" not in user["access"]:
+    if "report.resolve" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 403,

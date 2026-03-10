@@ -21,7 +21,7 @@ def get_many(cur=None):
         return jsonify(session)
     user = session["user"]
 
-    if "report:view" not in user["access"]:
+    if "report.view" not in user["access"]:
         if close_conn:
             db_close(con, cur)
         return jsonify({

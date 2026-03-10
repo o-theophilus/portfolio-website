@@ -11,7 +11,7 @@
 <div class="img">
 	<img {src} alt={post.title} onerror={() => (src = '/file_error.png')} />
 	<div class="line">
-		{#if app.user.access.includes('post:edit_photo') && edit_mode}
+		{#if app.user.access.includes('post.edit_photo') && edit_mode}
 			<Button
 				onclick={() => {
 					module.open(Edit, {

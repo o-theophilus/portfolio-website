@@ -24,7 +24,7 @@ def add():
         return jsonify(session)
     user = session["user"]
 
-    if "post:add" not in user["access"]:
+    if "post.add" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 403,
@@ -109,7 +109,7 @@ def edit(key):
 
     if "title" in request.json:
         title = request.json.get("title", "").strip()
-        if "post:edit_title" not in user["access"]:
+        if "post.edit_title" not in user["access"]:
             error["title"] = "unauthorized access"
         elif not title:
             error["title"] = "This field is required"
@@ -129,7 +129,7 @@ def edit(key):
 
     if "date_created" in request.json:
         date_created = request.json.get("date_created")
-        if "post:edit_date" not in user["access"]:
+        if "post.edit_date" not in user["access"]:
             error["date_created"] = "unauthorized access"
         elif not date_created:
             error["date_created"] = "This field is required"
@@ -138,7 +138,7 @@ def edit(key):
 
     if "description" in request.json:
         description = request.json.get("description", "").strip()
-        if "post:edit_description" not in user["access"]:
+        if "post.edit_description" not in user["access"]:
             error["description"] = "unauthorized access"
         elif description == post["description"]:
             error["description"] = "No changes were made"
@@ -147,7 +147,7 @@ def edit(key):
 
     if "content" in request.json:
         content = request.json.get("content", "").strip()
-        if "post:edit_content" not in user["access"]:
+        if "post.edit_content" not in user["access"]:
             error["content"] = "unauthorized access"
         elif content == post["content"]:
             error["content"] = "No changes were made"
@@ -156,7 +156,7 @@ def edit(key):
 
     if "tags" in request.json:
         tags = request.json.get("tags")
-        if "post:edit_tags" not in user["access"]:
+        if "post.edit_tags" not in user["access"]:
             error["tags"] = "unauthorized access"
         elif type(tags) is not list:
             error["tags"] = "This field is required"
@@ -165,7 +165,7 @@ def edit(key):
 
     if "author_key" in request.json:
         author_key = request.json.get("author_key")
-        if "post:edit_author" not in user["access"]:
+        if "post.edit_author" not in user["access"]:
             error["author_key"] = "unauthorized access"
         elif not author_key:
             error["author_key"] = "This field is required"
@@ -188,7 +188,7 @@ def edit(key):
 
     if "status" in request.json:
         status = request.json.get("status")
-        if "post:edit_status" not in user["access"]:
+        if "post.edit_status" not in user["access"]:
             error["status"] = "unauthorized access"
         elif not status or status not in ['active', 'draft']:
             error["status"] = "Invalid request"
@@ -245,7 +245,7 @@ def feature(key):
         return jsonify(session)
     user = session["user"]
 
-    if "post:edit_featured" not in user["access"]:
+    if "post.edit_featured" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 403,
@@ -312,7 +312,7 @@ def delete(key):
     password = request.json.GET("password")
 
     error = None
-    if "post:edit_status" not in user["access"]:
+    if "post.edit_status" not in user["access"]:
         error = "unauthorized access"
     elif not password:
         error = "This field is required"
@@ -506,7 +506,7 @@ def edit_feature():
         return jsonify(session)
     user = session["user"]
 
-    if "post:edit_featured" not in user["access"]:
+    if "post.edit_featured" not in user["access"]:
         db_close(con, cur)
         return jsonify({
             "status": 403,

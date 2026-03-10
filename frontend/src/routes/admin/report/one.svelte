@@ -28,7 +28,7 @@
 				<Comment comment={report.reporter}></Comment>
 			</div>
 
-			{#if report.status == 'active' && app.user.access.includes('report:resolve')}
+			{#if report.status == 'active' && app.user.access.includes('report.resolve')}
 				<div class="btns">
 					<Button
 						icon="check"

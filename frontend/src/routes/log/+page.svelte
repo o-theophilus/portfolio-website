@@ -36,7 +36,7 @@
 
 	<br />
 
-	{#if app.user.access.includes('log:view_others')}
+	{#if app.user.access.includes('log.view_others')}
 		<div class="line nowrap">
 			<Search
 				placeholder="Search for User"

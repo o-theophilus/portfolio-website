@@ -7,7 +7,7 @@
 </script>
 
 <div class="margin">
-	{#if app.user.access.includes('post:edit_description') && edit_mode}
+	{#if app.user.access.includes('post.edit_description') && edit_mode}
 		<Button
 			onclick={() =>
 				module.open(Edit, {

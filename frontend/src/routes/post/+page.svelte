@@ -51,7 +51,7 @@
 		<div class="page_title">
 			Post{posts.length > 1 ? 's' : ''}
 		</div>
-		{#if app.user.access.includes('post:add')}
+		{#if app.user.access.includes('post.add')}
 			<Button
 				icon="plus"
 				--button-height="32px"
@@ -71,7 +71,7 @@
 
 	<div class="line space">
 		<div class="line">
-			{#if app.user.access.includes('item:add')}
+			{#if app.user.access.includes('item.add')}
 				<Dropdown
 					--select-height="32px"
 					--select-padding-x="8px"

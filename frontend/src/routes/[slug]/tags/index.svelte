@@ -8,11 +8,11 @@
 	let { post, edit_mode, update } = $props();
 </script>
 
-{#if post.tags.length > 0 || (app.user.access.includes('post:edit_tags') && edit_mode)}
+{#if post.tags.length > 0 || (app.user.access.includes('post.edit_tags') && edit_mode)}
 	<hr />
 {/if}
 
-{#if app.user.access.includes('post:edit_tags') && edit_mode}
+{#if app.user.access.includes('post.edit_tags') && edit_mode}
 	<Button
 		onclick={() =>
 			module.open(Edit, {

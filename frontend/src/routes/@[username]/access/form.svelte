@@ -45,7 +45,7 @@
 					<div class="access_area">
 						{#each actions as ac}
 							{@const name = ac.split('_').join(' ')}
-							{@const fullname = `${_type}:${ac}`}
+							{@const fullname = `${_type}.${ac}`}
 							<Switch
 								--toggle-height="21px"
 								--toggle-font-size="0.8rem"

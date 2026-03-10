@@ -18,7 +18,7 @@
 		{#if app.user.access.length && page.url.pathname != '/admin'}
 			<a href="/admin" class="link">Admin</a>
 		{/if}
-		{#if app.user.access.includes('log:view')}
+		{#if app.user.access.includes('log.view')}
 			<a href="/log" class="link">Logs</a>
 		{/if}
 		<Logout />

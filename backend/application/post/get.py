@@ -64,8 +64,8 @@ def get(key):
 
     if (
         post["status"] != "active"
-        and "post:add" not in user["access"]
-        and "post:edit_status" not in user["access"]
+        and "post.add" not in user["access"]
+        and "post.edit_status" not in user["access"]
     ):
         db_close(con, cur)
         return jsonify({
@@ -130,8 +130,8 @@ def get_posts(cur=None):
     page_size = min(page_size, 100)
 
     if (
-        "post:edit_status" not in user["access"]
-        and "post:add" not in user["access"]
+        "post.edit_status" not in user["access"]
+        and "post.add" not in user["access"]
     ):
         status = "active"
 
