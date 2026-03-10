@@ -24,7 +24,7 @@ def search_query(cur):
     return actions
 
 
-@bp.get("/log")
+@bp.get("/logs")
 def get_many():
     con, cur = db_open()
 
