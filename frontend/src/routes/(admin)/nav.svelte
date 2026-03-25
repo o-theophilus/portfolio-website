@@ -2,9 +2,9 @@
 	import { page } from '$app/state';
 	import { Icon } from '$lib/macro';
 	import { app } from '$lib/store.svelte.js';
+	import { slide } from 'svelte/transition';
 
-	let { children } = $props();
-	let open = $state(true);
+	let { onclick } = $props();
 
 	const buttons = [
 		{
@@ -29,7 +29,7 @@
 			name: 'Reports',
 			href: '/admin/report',
 			access: 'report.view',
-			icon: 'user-pen'
+			icon: 'flag-triangle-right'
 		},
 		{
 			name: 'Blocked Users',
@@ -58,17 +58,11 @@
 			access: 'log.view',
 			icon: 'clipboard-list',
 			icon2: 'arrow-up-right'
-		},
-		{
-			name: 'Collapse',
-			onclick: () => (open = !open),
-			access: null,
-			icon: open ? 'panel-left-close' : 'panel-left-open'
 		}
 	]);
 </script>
 
-<div class="nav" class:small={!open}>
+<div class="container">
 	<div class="top">
 		{#each buttons as x}
 			{@const a = x.href.split('/')}
@@ -76,9 +70,9 @@
 			{@const active = a[a.length - 1] == b[b.length - 1]}
 
 			{#if app.user.access.includes(x.access) || x.access === null}
-				<a class:active href={x.href} data-sveltekit-preload-data>
+				<a class:active href={x.href} data-sveltekit-preload-data {onclick}>
 					<Icon icon={x.icon}></Icon>
-					<div class="name">
+					<div class="name" in:slide={{ delay: 200 }}>
 						{x.name}
 
 						{#if x.icon2}
@@ -93,42 +87,36 @@
 	<div class="bottom">
 		{#each buttons2 as x}
 			{#if app.user.access.includes(x.access) || x.access === null}
-				{#if x.href}
-					<a href={x.href} data-sveltekit-preload-data>
-						<Icon icon={x.icon}></Icon>
-						<div class="name">
-							{x.name}
+				<a href={x.href} data-sveltekit-preload-data>
+					<Icon icon={x.icon}></Icon>
+					<div class="name" in:slide={{ delay: 200 }}>
+						{x.name}
 
-							{#if x.icon2}
-								<Icon icon={x.icon2}></Icon>
-							{/if}
-						</div>
-					</a>
-				{:else}
-					<button onclick={() => (open = !open)}>
-						{#key open}
-							<Icon icon={x.icon}></Icon>
-						{/key}
-						<div class="name">
-							{x.name}
-						</div>
-					</button>
-				{/if}
+						{#if x.icon2}
+							<Icon icon={x.icon2}></Icon>
+						{/if}
+					</div>
+				</a>
 			{/if}
 		{/each}
 	</div>
 </div>
 
 <style>
-	.nav {
+	.container {
+		position: relative;
+		container-type: inline-size;
+
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		flex-shrink: 0;
-		height: 100vh;
-		padding: 8px;
 
-		position: relative;
+		padding: 8px;
+		height: 100%;
+		overflow-y: auto;
+		background-color: var(--bg);
+		border-radius: 8px;
 
 		&::before {
 			content: '';
@@ -148,26 +136,7 @@
 				bottom 0.2s ease-in-out;
 		}
 
-		&.small {
-			& a,
-			& button {
-				padding: 0;
-				width: 40px;
-
-				& .name {
-					display: none;
-				}
-			}
-		}
-
-		& button {
-			all: unset;
-			cursor: pointer;
-			box-sizing: border-box;
-		}
-
-		& a,
-		& button {
+		& a {
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -176,24 +145,32 @@
 			height: 40px;
 			padding: 0 16px;
 			border-radius: 8px;
-			width: 180px;
 
 			color: var(--ft2);
 			fill: currentColor;
 			text-decoration: none;
 			font-size: 0.8rem;
 
-			& .name {
-				display: flex;
+			.name {
+				display: none;
 				align-items: center;
 				justify-content: space-between;
+
 				width: 100%;
+				overflow: hidden;
+
+				@container (min-width: 100px) {
+					display: flex;
+				}
 			}
 
 			transition:
 				background-color 0.2s ease-in-out,
 				color 0.2s ease-in-out,
-				font-weight 0.2s ease-in-out;
+				font-weight 0.2s ease-in-out,
+				gap 0.2s ease-in-out,
+				width 0.2s ease-in-out,
+				padding 0.2s ease-in-out;
 
 			&.active {
 				anchor-name: --active;

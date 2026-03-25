@@ -1,7 +1,7 @@
 <script>
 	import { Notify } from '$lib/info';
 	import { app } from '$lib/store.svelte.js';
-	import { Footer, Loading, Module, Nav } from './_layout';
+	import { Loading, Module } from './_layout';
 	import './_layout/main.css';
 
 	let { data, children } = $props();
@@ -12,9 +12,7 @@
 </script>
 
 <main class="{app.user.theme}_theme">
-	<Nav />
 	{@render children()}
-	<Footer />
 
 	<Module />
 	<Loading />

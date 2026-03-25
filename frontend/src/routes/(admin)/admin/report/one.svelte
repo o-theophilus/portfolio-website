@@ -2,7 +2,7 @@
 	import { Button, FoldButton } from '$lib/button';
 	import { app, module } from '$lib/store.svelte.js';
 	import { slide } from 'svelte/transition';
-	import Comment from '../../[slug]/comment/one.svelte';
+	import Comment from '../../../(app)/[slug]/comment/one.svelte';
 	import Dismiss from './one.dismiss.svelte';
 	import Resolve from './one.resolve.svelte';
 
@@ -85,7 +85,7 @@
 		padding: 16px;
 		border-top: 1px solid var(--ol);
 	}
-	
+
 	.resolver {
 		padding: 16px;
 		border-top: 1px solid var(--ol);

@@ -1,7 +1,8 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-from . import api, auth, fix, log, post, postgres, report, storage, user
+from . import (api, auth, dashboard, fix, log, post, postgres, report, storage,
+               user)
 from .api import file_error
 from .auth import forgot
 from .log import get as log_get
@@ -52,5 +53,6 @@ def create_app(conf=None):
     app.register_blueprint(comment.bp)
     app.register_blueprint(api.bp)
     app.register_blueprint(fix.bp)
+    app.register_blueprint(dashboard.bp)
 
     return app
