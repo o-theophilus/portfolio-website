@@ -35,14 +35,14 @@ def delete(key):
         cur=cur,
         user_key=user["key"],
         action="deleted comment",
-        entity_key=comment["key"],
         entity_type="comment",
+        entity_key=comment["key"],
         misc={"post_key": comment["post_key"]}
     )
 
-    comment_resp = get_comments(comment["post_key"], cur)
+    comments = get_comments(comment["post_key"], cur)
     db_close(con, cur)
-    return comment_resp
+    return comments
 
 
 @bp.post("/comments/<key>/like")
@@ -57,14 +57,8 @@ def like(key):
 
     reaction = request.json.get("reaction")
 
-    if reaction not in ["like", "dislike"]:
-        return jsonify({
-            "status": 400,
-            "error": "Invalid request"
-        })
-
     cur.execute("""SELECT * FROM comment WHERE key = %s;""", (key,))
-    if not cur.fetchone():
+    if not cur.fetchone() or reaction not in ["like", "dislike"]:
         db_close(con, cur)
         return jsonify({
             "status": 400,
@@ -96,9 +90,9 @@ def like(key):
     log(
         cur=cur,
         user_key=user["key"],
-        action=f"{un}{reaction}",
+        action=f"{un}{reaction} comment",
+        entity_type="comment",
         entity_key=key,
-        entity_type="comment"
     )
 
     cur.execute("""
@@ -171,9 +165,12 @@ def report(key):
         cur=cur,
         user_key=user["key"],
         action="reported comment",
-        entity_key=report["key"],
-        entity_type="report",
-        misc={"key": reported_comment["key"]}
+        entity_type="comment",
+        entity_key=reported_comment["key"],
+        misc={
+            "entity_type": "report",
+            "entity_key": report["key"]
+        }
     )
 
     db_close(con, cur)

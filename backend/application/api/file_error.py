@@ -109,7 +109,7 @@ def delete_file():
         user_key=user["key"],
         action="deleted unuded photo(s)",
         entity_key="app",
-        entity_type="photo",
+        entity_type="app",
         misc={
             "photo(s)": photos,
             "from": entity

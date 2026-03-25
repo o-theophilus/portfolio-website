@@ -167,9 +167,9 @@ def forgot_3_password():
     log(
         cur=cur,
         user_key=user["key"],
-        action="changed_password",
-        entity_key="auth",
-        entity_type="account"
+        action="changed password",
+        entity_type="user",
+        entity_key=user["key"]
     )
 
     if user["status"] != "active":
@@ -180,8 +180,8 @@ def forgot_3_password():
             cur=cur,
             user_key=user["key"],
             action="activated account",
-            entity_key="auth",
-            entity_type="account",
+            entity_type="user",
+            entity_key=user["key"]
         )
 
     cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))

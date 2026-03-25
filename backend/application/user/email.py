@@ -200,7 +200,7 @@ def email_4_new_code():
     log(
         cur=cur,
         user_key=user["key"],
-        action="changed_email",
+        action="changed email",
         entity_type="user",
         entity_key=user["key"],
         misc={

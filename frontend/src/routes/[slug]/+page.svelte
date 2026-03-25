@@ -1,5 +1,5 @@
 <script>
-	import { replaceState } from '$app/navigation';
+	import { afterNavigate, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import { app } from '$lib/store.svelte.js';
 	import { onMount } from 'svelte';
@@ -69,14 +69,15 @@
 	};
 
 	onMount(async () => {
-		hard_update(post);
-
 		if (page.url.searchParams.has('edit') && is_admin) {
 			page.url.searchParams.delete('edit');
 			edit_mode = true;
 			replaceState(page.url.href);
 		}
 	});
+
+	afterNavigate(() => hard_update(post));
+	// TODO: test
 </script>
 
 {#key post.key}
@@ -135,7 +136,7 @@
 	--content-padding-top="1px"
 	--content-padding-bottom="1px"
 >
-	<Similar {similar} {loading} update={hard_update} />
+	<Similar {similar} {loading} />
 	<ToTop />
 </Content>
 

@@ -64,7 +64,7 @@ def add_photo(key):
     log(
         cur=cur,
         user_key=user["key"],
-        action="updated_photo",
+        action="updated post photo",
         entity_type="post",
         entity_key=post["key"],
         misc={
@@ -111,7 +111,7 @@ def delete_photo(key):
     log(
         cur=cur,
         user_key=user["key"],
-        action="deleted_photo",
+        action="deleted post photo",
         entity_type="post",
         entity_key=post["key"],
         misc={"photo": post["photo"]}
@@ -121,9 +121,9 @@ def delete_photo(key):
         log(
             cur=cur,
             user_key=user["key"],
-            action="edited",
-            entity_key=post["key"],
+            action="edited post",
             entity_type="post",
+            entity_key=post["key"],
             misc={"status": "draft"}
         )
 

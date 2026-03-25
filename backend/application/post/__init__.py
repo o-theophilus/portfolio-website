@@ -61,9 +61,9 @@ def add():
     log(
         cur=cur,
         user_key=user["key"],
-        action="created",
+        action="created post",
+        entity_type="post",
         entity_key=post["key"],
-        entity_type="post"
     )
 
     posts = get_posts(cur)
@@ -222,9 +222,9 @@ def edit(key):
     log(
         cur=cur,
         user_key=user["key"],
-        action="edited",
-        entity_key=post["key"],
+        action="edited post",
         entity_type="post",
+        entity_key=post["key"],
         misc=request.json
     )
 
@@ -288,8 +288,8 @@ def feature(key):
         cur=cur,
         user_key=user["key"],
         action=action,
+        entity_type="post",
         entity_key=post["key"],
-        entity_type="post"
     )
 
     db_close(con, cur)
@@ -345,9 +345,9 @@ def delete(key):
     log(
         cur=cur,
         user_key=user["key"],
-        action="deleted",
-        entity_key=post["key"],
-        entity_type="post"
+        action="deleted post",
+        entity_type="post",
+        entity_key=post["key"]
     )
 
     db_close(con, cur)
@@ -407,9 +407,9 @@ def like(key):
     log(
         cur=cur,
         user_key=user["key"],
-        action=f"{un}{reaction}",
+        action=f"{un}{reaction} post",
+        entity_type="post",
         entity_key=key,
-        entity_type="post"
     )
 
     cur.execute("""
@@ -485,9 +485,9 @@ def add_comment(key):
     log(
         cur=cur,
         user_key=user["key"],
-        action="created",
-        entity_key=comment["key"],
+        action="added comment",
         entity_type="comment",
+        entity_key=comment["key"],
         misc={"post_key": post["key"]}
     )
 
@@ -538,8 +538,8 @@ def edit_feature():
         cur=cur,
         user_key=user["key"],
         action="re-ordered featured post",
-        entity_key="app",
         entity_type="app",
+        entity_key="app",
 
     )
 

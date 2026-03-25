@@ -512,7 +512,7 @@ def get_similar(cur, key):
 
 
 @bp.get("/posts/<key>/after")
-def after_post(key):
+def after_get(key):
     con, cur = db_open()
 
     session = get_session(cur)

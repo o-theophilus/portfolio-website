@@ -6,7 +6,7 @@
 	import { Avatar, Spinner } from '$lib/macro';
 	import { app } from '$lib/store.svelte.js';
 
-	let { similar = [], loading, update } = $props();
+	let { similar = [], loading } = $props();
 	let open = $state(true);
 
 	const prerender = (post) => {
@@ -37,10 +37,7 @@
 				<div class="post">
 					<a
 						href="/{post.slug}"
-						onclick={() => {
-							prerender(post);
-							update(post);
-						}}
+						onclick={() => prerender(post)}
 						onmouseenter={() => prerender(post)}
 					>
 						<Avatar size="58" photo={post.photo} no_photo="/no_photo.png" name={post.title}

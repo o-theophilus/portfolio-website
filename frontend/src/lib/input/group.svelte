@@ -7,7 +7,6 @@
 		show_password = $bindable(),
 
 		name = '',
-		icon = null,
 		required = false,
 
 		error = '',

@@ -64,21 +64,21 @@ def default_admin():
             cur=cur,
             user_key=user["key"],
             action="created",
-            entity_type="account",
+            entity_type="user",
             entity_key=user["key"]
         )
         log(
             cur=cur,
             user_key=user["key"],
             action="signedup",
-            entity_type="account",
+            entity_type="user",
             entity_key=user["key"]
         )
         log(
             cur=cur,
             user_key=user["key"],
             action="activated account",
-            entity_type="account",
+            entity_type="user",
             entity_key=user["key"]
         )
 
@@ -108,8 +108,8 @@ def init():
             cur=cur,
             user_key=user["key"],
             action="created",
-            entity_key="auth",
-            entity_type="account",
+            entity_type="user",
+            entity_key=user["key"]
         )
 
     tags = get_tags(cur)
@@ -222,8 +222,8 @@ def signup():
         cur=cur,
         user_key=user["key"],
         action="signedup",
-        entity_key="auth",
-        entity_type="account",
+        entity_type="user",
+        entity_key=user["key"]
     )
 
     send_mail(
@@ -280,8 +280,8 @@ def confirm():
         cur=cur,
         user_key=user["key"],
         action="activated account",
-        entity_key="auth",
-        entity_type="account",
+        entity_type="user",
+        entity_key=user["key"]
     )
 
     cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))
@@ -381,22 +381,22 @@ def login():
     log(
         cur=cur,
         user_key=in_user["key"],
-        action="logged_in",
-        entity_key="auth",
-        entity_type="account",
+        action="logged in",
+        entity_type="user",
+        entity_key=in_user["key"],
         misc={
-            "from": out_user["key"],
+            "key": out_user["key"],
             "name": out_user["name"]
         }
     )
     log(
         cur=cur,
         user_key=out_user["key"],
-        action="logged_out",
-        entity_key="auth",
-        entity_type="account",
+        action="logged out",
+        entity_type="user",
+        entity_key=out_user["key"],
         misc={
-            "to": in_user["key"],
+            "key": in_user["key"],
             "name": in_user["name"]
         }
     )
@@ -428,11 +428,11 @@ def logout():
     log(
         cur=cur,
         user_key=user["key"],
-        action="logged_out",
-        entity_key="auth",
-        entity_type="account",
+        action="logged out",
+        entity_type="user",
+        entity_key=user["key"],
         misc={
-            "to": anon_user["key"],
+            "key": anon_user["key"],
             "name": anon_user["name"]
         }
     )
@@ -440,8 +440,8 @@ def logout():
         cur=cur,
         user_key=anon_user["key"],
         action="created",
-        entity_key="auth",
-        entity_type="account",
+        entity_type="user",
+        entity_key=anon_user["key"],
         misc={
             "from": user["key"],
             "name": user["name"]
@@ -510,19 +510,19 @@ def deactivate():
     log(
         cur=cur,
         user_key=user["key"],
-        action="deleted_account",
-        entity_key="auth",
-        entity_type="account",
+        action="deleted account",
+        entity_type="user",
+        entity_key=user["key"],
         misc={"note": note} if note else {}
     )
     log(
         cur=cur,
         user_key=anon_user["key"],
         action="created",
-        entity_key="auth",
-        entity_type="account",
+        entity_type="user",
+        entity_key=anon_user["key"],
         misc={
-            "from": user["key"],
+            "key": user["key"],
             "name": user["name"]
         }
     )

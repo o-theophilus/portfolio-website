@@ -1,10 +1,10 @@
 <script>
 	import { page } from '$app/state';
-	import { module, app } from '$lib/store.svelte.js';
+	import { app, module } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { Icon } from '$lib/macro';
 	import { Form } from '$lib/layout';
+	import { Icon } from '$lib/macro';
 
 	let title = `Check Out: ${module.value.title}`;
 
@@ -27,7 +27,7 @@
 		}
 	];
 
-	const click = (on) => {
+	const click = (platform) => {
 		fetch(`${import.meta.env.VITE_BACKEND}/log`, {
 			method: 'post',
 			headers: {
@@ -38,7 +38,7 @@
 				action: 'shared',
 				entity_type: 'post',
 				entity_key: module.post.key,
-				misc: { on }
+				misc: { platform }
 			})
 		});
 	};

@@ -54,7 +54,7 @@ def add_photo():
     log(
         cur=cur,
         user_key=user["key"],
-        action="updated_photo",
+        action="updated profile photo",
         entity_type="user",
         entity_key=user["key"],
         misc={
@@ -100,7 +100,7 @@ def delete_photo():
     log(
         cur=cur,
         user_key=user["key"],
-        action="deleted_photo",
+        action="deleted profile photo",
         entity_type="user",
         entity_key=user["key"],
         misc={"photo": user["photo"]}

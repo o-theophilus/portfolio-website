@@ -126,7 +126,7 @@ def edit_user():
     log(
         cur=cur,
         user_key=user["key"],
-        action="edited",
+        action="edited profile",
         entity_type="user",
         entity_key=user["key"],
         misc=request.json
@@ -191,9 +191,12 @@ def report(key):
         cur=cur,
         user_key=user["key"],
         action="reported user",
-        entity_key=report["key"],
-        entity_type="report",
-        misc={"key": reported_user["key"]}
+        entity_type="user",
+        entity_key=reported_user["key"],
+        misc={
+            "entity_type": "report",
+            "entity_key": report["key"]
+        }
     )
 
     db_close(con, cur)
@@ -264,9 +267,9 @@ def block(key):
     log(
         cur=cur,
         user_key=me["key"],
-        action="blocked",
-        entity_key=user["key"],
+        action="blocked user",
         entity_type="user",
+        entity_key=user["key"],
         misc={"comment":  comment}
     )
 
@@ -339,9 +342,9 @@ def unblock(key):
     log(
         cur=cur,
         user_key=me["key"],
-        action="unblocked",
-        entity_key=user["key"],
+        action="unblocked user",
         entity_type="user",
+        entity_key=user["key"],
         misc={"comment":  comment}
     )
 
@@ -433,7 +436,7 @@ def perform_action(key):
     log(
         cur=cur,
         user_key=user["key"],
-        action="reset",
+        action="reset profile",
         entity_type="user",
         entity_key=e_user["key"],
         misc={
@@ -506,9 +509,9 @@ def set_access(key):
     log(
         cur=cur,
         user_key=me["key"],
-        action="changed_access",
+        action="changed access",
+        entity_type="user",
         entity_key=user["key"],
-        entity_type="admin",
         misc={"from": user["access"], "to": access}
     )
 

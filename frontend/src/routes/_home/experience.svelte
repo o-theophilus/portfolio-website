@@ -17,7 +17,7 @@
 				'Led the design of impactful weekly social media content, banners, email templates, and newsletters.',
 				'Produced digital and print materials for various mediums, ensuring uniform brand representation, resulting in a 27% increase in brand recognition.'
 			],
-			tags: ['UI/UX', 'Figma', 'CorelDRAW', 'Photoshop', 'Premiere Pro', 'Illustrator']
+			tags: ['UIUX', 'Figma', 'CorelDRAW', 'Photoshop', 'Premiere Pro', 'Illustrator']
 		},
 
 		{
@@ -153,7 +153,11 @@
 										img.parentNode && img.parentNode.removeChild(img);
 									}}
 								/>
-								{x}
+								{#if x == 'UIUX'}
+									UI/UX
+								{:else}
+									{x}
+								{/if}
 							</Tag>
 						{/each}
 					</div>

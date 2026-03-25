@@ -80,9 +80,9 @@ def add_file(key):
     log(
         cur=cur,
         user_key=user["key"],
-        action="added_file",
-        entity_key=post["key"],
+        action="added file to post",
         entity_type="post",
+        entity_key=post["key"],
         misc={
             "added": ", ".join(file_names),
             "error": error
@@ -142,9 +142,9 @@ def order_delete_file(key):
     log(
         cur=cur,
         user_key=user["key"],
-        action="edited_files",
-        entity_key=post["key"],
+        action="edited post files",
         entity_type="post",
+        entity_key=post["key"],
         misc={
             "from": post["files"],
             "to": files

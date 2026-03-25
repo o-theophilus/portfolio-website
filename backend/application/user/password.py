@@ -124,7 +124,7 @@ def password_3_password():
     log(
         cur=cur,
         user_key=user["key"],
-        action="changed_password",
+        action="changed password",
         entity_type="user",
         entity_key=user["key"]
     )

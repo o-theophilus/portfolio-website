@@ -47,9 +47,11 @@
 		}}
 	>
 		{#each list as x}
-			<option value={isObj ? x.value : x}>
-				{isObj ? x.key : x}
-			</option>
+			{#if isObj ? x.value : x != 'hidden'}
+				<option value={isObj ? x.value : x}>
+					{isObj ? x.key : x}
+				</option>
+			{/if}
 		{/each}
 	</select>
 
