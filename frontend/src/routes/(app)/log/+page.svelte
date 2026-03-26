@@ -46,7 +46,14 @@
 					page_state.set({ u_search: v });
 				}}
 			></Search>
-			<Button onclick={() => (searchParams.u_search = app.user.key)}>Me</Button>
+			<Button
+				disabled={searchParams.u_search == app.user.key}
+				onclick={() => {
+					searchParams.page_no = 1;
+					searchParams.u_search = app.user.key;
+					page_state.set({ u_search: app.user.key });
+				}}>Me</Button
+			>
 		</div>
 	{/if}
 

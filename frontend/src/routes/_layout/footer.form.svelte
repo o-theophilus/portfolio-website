@@ -115,6 +115,7 @@
 				--select-background-color="transparent"
 				--select-background-color-hover="transparent"
 				--select-outline-color="transparent"
+				value="hidden"
 				label="Message"
 				list={Object.keys(template)}
 				icon2="chevron-down"

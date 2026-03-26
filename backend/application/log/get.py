@@ -68,6 +68,8 @@ def get_many():
             log.misc,
             log.action,
 
+            COUNT(*) OVER() AS _count,
+
             jsonb_build_object(
                 'key', "user".key,
                 'username', "user".username,
@@ -79,9 +81,7 @@ def get_many():
                 'type', log.entity_type,
                 'name', COALESCE(usr.name, post.title, comment.comment,
                     log.entity_key)
-            ) AS entity,
-
-            COUNT(*) OVER() AS _count
+            ) AS entity
 
         FROM log
         LEFT JOIN "user" ON log.user_key = "user".key
