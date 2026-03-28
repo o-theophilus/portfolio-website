@@ -6,7 +6,11 @@
 	import { Checkbox, IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
-	let form = $state({ comment: '', handle: false });
+	let form = $state({
+		comment: '',
+		block_user: false,
+		delete_comment: false
+	});
 	let error = $state({});
 
 	const validate = () => {
@@ -60,7 +64,7 @@
 		bind:value={form.comment}
 	/>
 
-	{#if module.value.report.reported_user && app.user.access.includes('user.block')}
+	{#if !module.value.report.reported.user.blocked && app.user.access.includes('user.block')}
 		<Note>
 			Resolving this report will not block the user. If you want to block the user, please check the
 			box below.
@@ -69,14 +73,16 @@
 		<IG>
 			{#snippet input()}
 				<Checkbox
-					disabled={module.value.report.reported_user.user.blocked}
+					disabled={module.value.report.reported.user.blocked}
 					label="Block User"
-					value={form.handle}
-					onclick={() => (form.handle = !form.handle)}
+					value={form.block_user}
+					onclick={() => (form.block_user = !form.block_user)}
 				></Checkbox>
 			{/snippet}
 		</IG>
-	{:else if module.value.report.reported_comment && app.user.access.includes('comment.delete_others')}
+	{/if}
+
+	{#if module.value.report.reported.comment_key && app.user.access.includes('comment.delete_others')}
 		<Note>
 			Resolving this report will not delete the comment. If you want to delete the comment, please
 			check the box below.
@@ -86,8 +92,8 @@
 			{#snippet input()}
 				<Checkbox
 					label="Delete Comment"
-					value={form.handle}
-					onclick={() => (form.handle = !form.handle)}
+					value={form.delete_comment}
+					onclick={() => (form.delete_comment = !form.delete_comment)}
 				></Checkbox>
 			{/snippet}
 		</IG>

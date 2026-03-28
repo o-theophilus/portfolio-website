@@ -17,7 +17,21 @@
 	} = $props();
 </script>
 
-{#if href}
+{#if href && onclick}
+	<a {onclick} {href} class:caps {onmouseenter} title={tooltip} tabindex={null} {target}>
+		{#if icon}
+			{#key icon}
+				<Icon {icon} size={icon_size}></Icon>
+			{/key}
+		{/if}
+		{@render children?.()}
+		{#if icon2}
+			{#key icon2}
+				<Icon icon={icon2} size={icon_size}></Icon>
+			{/key}
+		{/if}
+	</a>
+{:else if href}
 	<a {href} class:caps {onmouseenter} title={tooltip} tabindex={null} {target}>
 		{#if icon}
 			{#key icon}

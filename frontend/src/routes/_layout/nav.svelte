@@ -5,7 +5,7 @@
 	import { Login } from '$lib/auth';
 	import { Icon } from '$lib/macro';
 	import Link from './nav.btn.svelte';
-	import Notification from './nav.notification.svelte';
+	// import Notification from './nav.notification.svelte';
 	import Theme from './nav.theme.svelte';
 	import User from './nav.user.svelte';
 
@@ -30,7 +30,7 @@
 			{/if}
 		</a>
 		<div class="line">
-			<Notification />
+			<!-- <Notification /> -->
 			<Theme />
 			<Link {is_home} href="/post">Post</Link>
 			{#if app.login}

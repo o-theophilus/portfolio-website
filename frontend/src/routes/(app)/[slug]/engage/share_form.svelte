@@ -28,7 +28,7 @@
 	];
 
 	const click = (platform) => {
-		fetch(`${import.meta.env.VITE_BACKEND}/log`, {
+		fetch(`${import.meta.env.VITE_BACKEND}/logs`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -37,7 +37,7 @@
 			body: JSON.stringify({
 				action: 'shared',
 				entity_type: 'post',
-				entity_key: module.post.key,
+				entity_key: module.value.key,
 				misc: { platform }
 			})
 		});
@@ -52,6 +52,7 @@
 				title={x.name}
 				onclick={() => {
 					click(x.name);
+					module.close();
 				}}
 				href={x.href}
 			>

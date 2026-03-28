@@ -8,7 +8,7 @@ from .tools import access_pass
 bp = Blueprint("fix", __name__)
 
 
-@bp.get("/fix")
+# @bp.get("/fix")
 def quick_fix():
     con, cur = db_open()
 
@@ -21,9 +21,8 @@ def quick_fix():
             date_created TIMESTAMPTZ DEFAULT now(),
             user_key UUID NOT NULL REFERENCES "user"(key) ON DELETE CASCADE,
             reaction TEXT NOT NULL DEFAULT 'like',
-            entity_type TEXT NOT NULL, -- item, review
-            entity_key UUID NOT NULL,
-            UNIQUE (user_key, entity_key)
+            post_key UUID REFERENCES post(key) ON DELETE CASCADE,
+            comment_key UUID REFERENCES comment(key) ON DELETE CASCADE
         );
 
         CREATE TABLE IF NOT EXISTS report (
@@ -36,8 +35,10 @@ def quick_fix():
             date_resolved TIMESTAMPTZ,
             resolver_key UUID REFERENCES "user"(key),
             resolver_comment TEXT,
-            entity_type TEXT NOT NULL, -- user, review
-            entity_key UUID NOT NULL
+            reported_key UUID NOT NULL REFERENCES "user"(key)
+                ON DELETE CASCADE,
+            reported_comment_key UUID REFERENCES comment(key)
+                ON DELETE CASCADE
         );
     """)
 

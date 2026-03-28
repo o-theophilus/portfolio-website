@@ -29,7 +29,7 @@ def resolve(key):
     report = cur.fetchone()
     if (
         not report
-        or report["entity_key"] == user["key"]
+        or report["reported_key"] == user["key"]
         or report["status"] != "active"
     ):
         db_close(con, cur)
@@ -60,21 +60,17 @@ def resolve(key):
         action="resolved report",
         entity_type="report",
         entity_key=report["key"],
-        misc={
-            "entity_key": report["entity_key"],
-            "entity_type": report["entity_type"],
-        }
     )
 
     if handle:
         if (
-            report["entity_type"] == "user"
+            not report["reported_comment_key"]
             and "user.block" in user["access"]
         ):
             cur.execute("""
                 INSERT INTO block (admin_key, user_key, comment)
                 VALUES (%s, %s, %s);
-            """, (user["key"], report["entity_key"], comment))
+            """, (user["key"], report["reported_key"], comment))
 
             cur.execute("""
                 DELETE FROM session WHERE user_key = %s;
@@ -85,29 +81,25 @@ def resolve(key):
                 user_key=user["key"],
                 action="blocked user",
                 entity_type="user",
-                entity_key=report["entity_key"],
+                entity_key=report["reported_key"],
                 misc={"comment":  comment}
             )
 
         elif (
-            report["entity_type"] == "comment"
+            report["reported_comment_key"]
             and "comment.delete_others" in user["access"]
         ):
             cur.execute(
-                "DELETE FROM comment WHERE key = %s RETURNING *;",
-                (report["entity_key"],))
-            _comment = cur.fetchone()
+                "DELETE FROM comment WHERE key = %s;",
+                (report["reported_comment_key"],))
 
             log(
                 cur=cur,
                 user_key=user["key"],
                 action="deleted comment",
                 entity_type="comment",
-                entity_key=_comment["key"],
-                misc={
-                    "item_key": _comment["item_key"],
-                    "comment": comment
-                }
+                entity_key=report["reported_comment_key"],
+                misc={"comment": comment}
             )
 
     reports = get_many(cur)
@@ -136,7 +128,7 @@ def dismiss(key):
     report = cur.fetchone()
     if (
         not report
-        or report["entity_key"] == user["key"]
+        or report["reported_key"] == user["key"]
         or report["status"] != "active"
     ):
         db_close(con, cur)
@@ -166,10 +158,6 @@ def dismiss(key):
         action="dismissed report",
         entity_type="report",
         entity_key=report["key"],
-        misc={
-            "entity_key": report["entity_key"],
-            "entity_type": report["entity_type"],
-        }
     )
 
     reports = get_many(cur)

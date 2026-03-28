@@ -8,4 +8,5 @@ export { default as Marked } from "./marked.svelte"
 export { default as Meta } from "./meta.svelte"
 export { default as Observe } from "./observe.svelte"
 export { default as SideMenu } from "./side_menu.svelte"
+export { default as User } from "./user.svelte"
 
