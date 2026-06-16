@@ -1,6 +1,7 @@
 <script>
 	import { page } from '$app/state';
 	import { Icon } from '$lib/macro';
+	import { app } from '$lib/store.svelte.js';
 	import { slide } from 'svelte/transition';
 
 	let { onclick } = $props();

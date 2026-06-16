@@ -1,3 +1,4 @@
+export { default as AdminNav } from "./admin_nav.svelte"
 export { default as Nav } from "./nav.svelte"
 export { default as Footer } from "./footer.svelte"
 
