@@ -77,7 +77,6 @@
 	});
 
 	afterNavigate(() => hard_update(post));
-	// TODO: test
 </script>
 
 {#key post.key}

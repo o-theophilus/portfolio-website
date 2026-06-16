@@ -9,22 +9,13 @@
 	let title = `Check Out: ${module.value.title}`;
 
 	let platforms = [
-		{
-			name: 'facebook',
-			href: `https://www.facebook.com/sharer.php?u=${page.url.href}`
-		},
+		{ name: 'facebook', href: `https://www.facebook.com/sharer.php?u=${page.url.href}` },
 		{
 			name: 'twitter',
 			href: `http://twitter.com/share?text=${title}&url=${page.url.href}&hashtags=portfolio,website`
 		},
-		{
-			name: 'whatsapp',
-			href: `whatsapp://send?text=${title}%20${page.url.href}`
-		},
-		{
-			name: 'telegram',
-			href: `https://telegram.me/share/url?url=${page.url.href}&text=${title}`
-		}
+		{ name: 'whatsapp', href: `whatsapp://send?text=${title}%20${page.url.href}` },
+		{ name: 'telegram', href: `https://telegram.me/share/url?url=${page.url.href}&text=${title}` }
 	];
 
 	const click = (platform) => {
@@ -46,17 +37,17 @@
 
 <Form title="Share">
 	<div class="line">
-		{#each platforms as x}
+		{#each platforms as { name, href }}
 			<Button
 				target="_blank"
-				title={x.name}
+				tooltip={name}
 				onclick={() => {
-					click(x.name);
+					click(name);
 					module.close();
 				}}
-				href={x.href}
+				{href}
 			>
-				<Icon icon={x.name} />
+				<Icon icon={name} />
 			</Button>
 		{/each}
 	</div>

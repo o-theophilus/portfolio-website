@@ -22,7 +22,7 @@
 	>
 		<b>{'{'}code{'}'}</b>
 	</div>
-	<br /><br />
+	<br />
 	Enter this Code on the confirmation form. Note that it is valid for a limited time. If you didn't request
 	this, please disregard this message.
 	<br /><br />

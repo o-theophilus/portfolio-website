@@ -1,14 +1,14 @@
 <script>
-	import { module, app, loading } from '$lib/store.svelte.js';
+	import { app, loading, module } from '$lib/store.svelte.js';
 
+	import { Button, Link } from '$lib/button';
 	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
-	import { Button, Link } from '$lib/button';
 
-	import Signup from './signup.svelte';
-	import Login from './login.svelte';
+	import EmailTemplate from './forgot.email_template.svelte';
 	import Code from './forgot_2.code.svelte';
-	import EmailTemplate from './forgot.template.svelte';
+	import Login from './login.svelte';
+	import Signup from './signup.svelte';
 
 	let form = $state({ email: module.value.email });
 	let error = $state({});
@@ -65,13 +65,13 @@
 	<br />
 
 	<div class="line">
-		<Link onclick={() => module.open(Login, { email: form.email })} --link-font-size="0.8rem"
-			>Login</Link
-		>
+		<Link onclick={() => module.open(Login, { email: form.email })} --link-font-size="0.8rem">
+			Login
+		</Link>
 		<span class="divider"> | </span>
-		<Link onclick={() => module.open(Signup, { email: form.email })} --link-font-size="0.8rem"
-			>Signup</Link
-		>
+		<Link onclick={() => module.open(Signup, { email: form.email })} --link-font-size="0.8rem">
+			Signup
+		</Link>
 	</div>
 </Form>
 

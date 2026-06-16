@@ -1,3 +1,4 @@
+import os
 import re
 
 from flask import Blueprint, jsonify, request
@@ -5,7 +6,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..log import log
 from ..postgres import db_close, db_open
-from ..tools import check_code, generate_code, send_mail
+from ..tools import access_pass, check_code, generate_code, send_mail
 
 bp = Blueprint("auth_forgot", __name__)
 
@@ -174,8 +175,16 @@ def forgot_3_password():
 
     if user["status"] != "active":
         cur.execute("""
-            UPDATE "user" SET status = 'active' WHERE key = %s;
-        """, (user["key"],))
+            UPDATE "user"
+            SET status = 'active', access = %s
+            WHERE key = %s;
+        """, (
+            [f"{x}.{y[0]}" for x in access_pass for y in access_pass[x]] if (
+                user["email"] == os.environ["MAIL_USERNAME"]
+            ) else user["access"],
+            user["key"]
+        ))
+
         log(
             cur=cur,
             user_key=user["key"],

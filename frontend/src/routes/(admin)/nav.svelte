@@ -1,7 +1,6 @@
 <script>
 	import { page } from '$app/state';
 	import { Icon } from '$lib/macro';
-	import { app } from '$lib/store.svelte.js';
 	import { slide } from 'svelte/transition';
 
 	let { onclick } = $props();
@@ -10,43 +9,43 @@
 		{
 			name: 'Dashboard',
 			href: '/admin',
-			access: null,
+			access: true,
 			icon: 'layout-dashboard'
 		},
 		{
 			name: 'Admin',
 			href: '/admin/users_admin',
-			access: 'user.set_access',
+			access: app.user.access.includes('user.set_access'),
 			icon: 'shield-check'
 		},
 		{
 			name: 'Users',
 			href: '/admin/users',
-			access: 'user.view',
+			access: app.user.access.includes('user.view'),
 			icon: 'users'
 		},
 		{
 			name: 'Reports',
 			href: '/admin/report',
-			access: 'report.view',
+			access: app.user.access.includes('report.view'),
 			icon: 'flag-triangle-right'
 		},
 		{
 			name: 'Blocked Users',
 			href: '/admin/block',
-			access: 'block.view',
+			access: app.user.access.includes('block.view'),
 			icon: 'user-x'
 		},
 		{
 			name: 'File Error',
 			href: '/admin/file_error',
-			access: 'admin.manage_files',
+			access: app.user.access.includes('admin.manage_files'),
 			icon: 'file-warning'
 		},
 		{
 			name: 'Maintenance',
 			href: '/admin/maintenance',
-			access: 'admin.maintenance',
+			access: app.user.access.includes('admin.maintenance'),
 			icon: 'wrench'
 		}
 	];
@@ -55,7 +54,7 @@
 		{
 			name: 'Log',
 			href: '/log',
-			access: 'log.view',
+			access: app.user.access.includes('log.view'),
 			icon: 'clipboard-list',
 			icon2: 'arrow-up-right'
 		}
@@ -69,7 +68,7 @@
 			{@const b = page.url.pathname.split('/')}
 			{@const active = a[a.length - 1] == b[b.length - 1]}
 
-			{#if app.user.access.includes(x.access) || x.access === null}
+			{#if x.access}
 				<a class:active href={x.href} data-sveltekit-preload-data {onclick}>
 					<Icon icon={x.icon}></Icon>
 					<div class="name" in:slide={{ delay: 200 }}>
@@ -86,7 +85,7 @@
 
 	<div class="bottom">
 		{#each buttons2 as x}
-			{#if app.user.access.includes(x.access) || x.access === null}
+			{#if x.access}
 				<a href={x.href} data-sveltekit-preload-data>
 					<Icon icon={x.icon}></Icon>
 					<div class="name" in:slide={{ delay: 200 }}>

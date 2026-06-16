@@ -7,7 +7,7 @@
 	import { Checkbox, IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 	import Confirm from './confirm.svelte';
-	import EmailTemplate from './confirm.template.svelte';
+	import EmailTemplate from './confirm.email_template.svelte';
 	import Forgot from './forgot_1.email.svelte';
 	import Signup from './signup.svelte';
 

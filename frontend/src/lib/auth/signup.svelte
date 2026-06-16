@@ -1,12 +1,12 @@
 <script>
-	import { module, loading, app } from '$lib/store.svelte.js';
+	import { app, loading, module } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button, Link } from '$lib/button';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
-	import Login from './login.svelte';
-	import EmailTemplate from './confirm.template.svelte';
 	import Confirm from './confirm.svelte';
+	import EmailTemplate from './confirm.email_template.svelte';
+	import Login from './login.svelte';
 
 	let form = $state({ email: module.value.email });
 	let email_template;
@@ -116,9 +116,9 @@
 	<br />
 	<br />
 
-	<Link onclick={() => module.open(Login, { email: form.email })} --link-font-size="0.8rem"
-		>Login</Link
-	>
+	<Link onclick={() => module.open(Login, { email: form.email })} --link-font-size="0.8rem">
+		Login
+	</Link>
 </Form>
 
 <div bind:this={email_template} style="display: none;">

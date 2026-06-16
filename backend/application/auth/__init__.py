@@ -38,56 +38,6 @@ def new_token(cur, user_key, login=False, remember=False):
     return cur.fetchone()["key"]
 
 
-@bp.get("/admin/default")
-def default_admin():
-    con, cur = db_open()
-    email = os.environ["MAIL_USERNAME"]
-
-    cur.execute('SELECT * FROM "user" WHERE email = %s;', (email,))
-    if not cur.fetchone():
-        cur.execute("""
-                INSERT INTO "user"
-                (status, name, username, email, password, access)
-                VALUES (%s, %s, %s, %s, %s, %s) RETURNING *;
-            """, (
-            "active",
-            "Theophilus",
-            "omni",
-            email,
-            generate_password_hash(
-                os.environ["MAIL_PASSWORD"], method="scrypt"),
-            [f"{x}:{y[0]}" for x in access_pass for y in access_pass[x]]
-        ))
-        user = cur.fetchone()
-
-        log(
-            cur=cur,
-            user_key=user["key"],
-            action="created",
-            entity_type="user",
-            entity_key=user["key"]
-        )
-        log(
-            cur=cur,
-            user_key=user["key"],
-            action="signedup",
-            entity_type="user",
-            entity_key=user["key"]
-        )
-        log(
-            cur=cur,
-            user_key=user["key"],
-            action="activated account",
-            entity_type="user",
-            entity_key=user["key"]
-        )
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200
-    })
-
-
 @bp.post("/init")
 def init():
     con, cur = db_open()
@@ -273,8 +223,15 @@ def confirm():
         })
 
     cur.execute("""
-        UPDATE "user" SET status = 'active' WHERE key = %s;
-    """, (user["key"],))
+        UPDATE "user"
+        SET status = 'active', access = %s
+        WHERE key = %s;
+    """, (
+        [f"{x}.{y[0]}" for x in access_pass for y in access_pass[x]] if (
+            user["email"] == os.environ["MAIL_USERNAME"]
+        ) else user["access"],
+        user["key"]
+    ))
 
     log(
         cur=cur,

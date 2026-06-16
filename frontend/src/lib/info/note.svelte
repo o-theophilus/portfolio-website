@@ -9,16 +9,18 @@
 	<div class="block _{status}" transition:slide>
 		{#if note}
 			<div class="line nowrap">
-				<Icon
-					icon={status == 400
-						? 'circle-x'
-						: status == 201
-							? 'triangle-alert'
-							: status == 200
-								? 'square-check'
-								: 'info'}
-					size="20"
-				/>
+				{#key status}
+					<Icon
+						icon={status == 400
+							? 'circle-x'
+							: status == 201
+								? 'triangle-alert'
+								: status == 200
+									? 'square-check'
+									: 'info'}
+						size="20"
+					/>
+				{/key}
 				{@html note}
 			</div>
 		{/if}

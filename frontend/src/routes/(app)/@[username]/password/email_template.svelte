@@ -21,19 +21,14 @@
 		<b> {'{'}code{'}'} </b>
 	</div>
 	<br />
-	<br />
 	Please enter this Code on the password change form to validate your request. Please note that the Code
 	is only valid for a limited time.
-	<br />
-	<br />
+	<br /> <br />
 	If you did not request this change, please disregard this message.
-	<br />
-	<br />
+	<br /> <br />
 	If you have any questions or need further assistance, please don't hesitate to reach out to me.
-	<br />
-	<br />
+	<br /> <br />
 	Best regards,
-	<br />
-	<br />
+	<br /> <br />
 	<b> Theophilus Ogbolu</b>
 </EmailTemplate>

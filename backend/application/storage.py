@@ -136,7 +136,7 @@ def get_all_live(path=""):
     return [x["name"] for x in files]
 
 
-test = False
+test = os.environ.get("FLASK_DEBUG")
 
 
 def get_path(path=""):
