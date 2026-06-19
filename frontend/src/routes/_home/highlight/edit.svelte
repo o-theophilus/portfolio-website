@@ -54,11 +54,21 @@
 				keys: posts.map((x) => x.key)
 			})
 		});
+		let get_posts = await fetch(`${import.meta.env.VITE_BACKEND}/posts/feature`, {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: app.token
+			}
+		});
+
 		resp = await resp.json();
+		get_posts = await get_posts.json();
 		loading.close();
 
 		if (resp.status == 200) {
-			app.featured = resp.posts;
+			if (get_posts.status == 200) {
+				app.featured = resp.posts;
+			}
 			posts = [...app.featured];
 			init = [...app.featured];
 			module.value.reset_index();

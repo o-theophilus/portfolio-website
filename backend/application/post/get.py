@@ -4,8 +4,7 @@ from math import ceil
 
 from flask import Blueprint, jsonify, request
 
-from ..postgres import db_close, db_open
-from ..tools import get_session
+from ..tools import session
 
 bp = Blueprint("post_get", __name__)
 
@@ -41,22 +40,14 @@ def get_tags(cur):
 
 
 @bp.get("/posts/<key>")
-def get(key):
-    con, cur = db_open()
-
-    session = get_session(cur)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(False)
+def get(cur, user, key):
     cur.execute("""
         SELECT * FROM post WHERE slug = %s OR key::TEXT = %s
     """, (key, key))
     post = cur.fetchone()
 
     if not post:
-        db_close(con, cur)
         return jsonify({
             "status": 404,
             "error": "Oops! The post you're looking for doesn't exist"
@@ -67,13 +58,11 @@ def get(key):
         and "post.add" not in user["access"]
         and "post.edit_status" not in user["access"]
     ):
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
         })
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post_schema(post)
@@ -81,18 +70,8 @@ def get(key):
 
 
 @bp.get("/posts")
-def get_posts(cur=None):
-    close_conn = not cur
-    if not cur:
-        con, cur = db_open()
-
-    session = get_session(cur)
-    if session["status"] != 200:
-        if close_conn:
-            db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(False)
+def get_posts(cur, user):
     order_by = {
         'latest': 'post.date_created',
         'oldest': 'post.date_created',
@@ -203,8 +182,6 @@ def get_posts(cur=None):
     """, (*params,))
     total_page = cur.fetchone()["count"]
 
-    if close_conn:
-        db_close(con, cur)
     return jsonify({
         "status": 200,
         "posts": [post_schema(x) for x in posts],
@@ -216,11 +193,8 @@ def get_posts(cur=None):
 
 
 @bp.get("/posts/feature")
-def get_feature(cur=None):
-    close_conn = not cur
-    if not cur:
-        con, cur = db_open()
-
+@session(False)
+def get_feature(cur, user):
     cur.execute("""
         SELECT * FROM post
         WHERE status = 'active' AND featured > 0
@@ -228,27 +202,13 @@ def get_feature(cur=None):
     """)
     posts = cur.fetchall()
 
-    if close_conn:
-        db_close(con, cur)
     return jsonify({
         "status": 200,
         "posts": [post_schema(x) for x in posts]
     })
 
 
-@bp.get("/posts/<key>/comments")
-def get_comments(key, cur=None):
-    close_conn = not cur
-    if not cur:
-        con, cur = db_open()
-
-    session = get_session(cur)
-    if session["status"] != 200:
-        if close_conn:
-            db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+def get_comments(cur, user, key):
     order_by = {
         'latest': 'c.date_created',
         'oldest': 'c.date_created',
@@ -406,8 +366,6 @@ def get_comments(key, cur=None):
     total = row["total"]
     total_parent = row["total_parent"]
 
-    if close_conn:
-        db_close(con, cur)
     return jsonify({
         "status": 200,
         "comments": final_comments,
@@ -509,22 +467,20 @@ def get_similar(cur, key):
     return [post_schema(x) for x in posts]
 
 
+@bp.get("/posts/<key>/comments")
+@session(False)
+def _get_comments(cur, user, key):
+    return get_comments(cur, user, key)
+
+
 @bp.get("/posts/<key>/after")
-def after_get(key):
-    con, cur = db_open()
-
-    session = get_session(cur)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(False)
+def after_get(cur, user, key):
     engagement = get_engagement(cur, key, user["key"])
     author = get_author(cur, key)
-    comment_resp = get_comments(key, cur).json
+    comment_resp = get_comments(cur, user, key).json
     similar = get_similar(cur, key)
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "engagement": engagement,

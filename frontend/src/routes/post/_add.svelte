@@ -1,11 +1,11 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { module, loading, app } from '$lib/store.svelte.js';
 	import { page } from '$app/state';
+	import { app, loading, module } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
 	import { Dialogue } from '$lib/info';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
 	let form = $state({});
@@ -25,7 +25,7 @@
 	const submit = async () => {
 		loading.open('Creating Post . . .');
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts${page.url.search}`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -33,11 +33,23 @@
 			},
 			body: JSON.stringify(form)
 		});
+
+		let posts = await fetch(`${import.meta.env.VITE_BACKEND}/posts${page.url.search}`, {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: app.token
+			}
+		});
+
 		resp = await resp.json();
+		posts = await posts.json();
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.posts, resp.total_page);
+			if (posts.status == 200) {
+				module.value.update(posts.posts, posts.total_page);
+			}
+
 			module.open(Dialogue, {
 				message: 'Post Created',
 				buttons: [

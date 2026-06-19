@@ -18,6 +18,7 @@
 
 		if (resp.status == 200) {
 			update(resp.post);
+			app.featured = null;
 			let msg = 'Added post to featured';
 			if (post.featured == 0) {
 				msg = 'Removed post from featured';

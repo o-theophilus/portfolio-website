@@ -1,29 +1,17 @@
 from flask import Blueprint, jsonify, request
 
 from ..log import log
-from ..postgres import db_close, db_open
 from ..storage import storage
-from ..tools import get_session
+from ..tools import rate_limit, session
 
 bp = Blueprint("file_error", __name__)
 
 
 @bp.get("/file_error")
-def get_file_error(cur=None):
-    close_conn = not cur
-    if not cur:
-        con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        if close_conn:
-            db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(20, 1)
+def get_file_error(cur, user):
     if "admin.manage_files" not in user["access"]:
-        if close_conn:
-            db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -58,8 +46,6 @@ def get_file_error(cur=None):
     """, (post_store_photo, post_store_photo))
     posts_with_missing_photo = cur.fetchall()
 
-    if close_conn:
-        db_close(con, cur)
     return jsonify({
         "status": 200,
         "unused_post_photo": [f"{request.host_url}photo/post/{x}"
@@ -72,17 +58,10 @@ def get_file_error(cur=None):
 
 
 @bp.delete("/file_error")
-def delete_file():
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(20, 1)
+def delete_file(cur, user):
     if "admin.manage_files" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -95,7 +74,6 @@ def delete_file():
         not photos or type(photos) is not list
         or not entity or entity not in ["user", "post"]
     ):
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -116,7 +94,6 @@ def delete_file():
         }
     )
 
-    db_close(con, cur)
     return jsonify({
         "status": 200
     })

@@ -5,37 +5,12 @@ from flask import Blueprint, jsonify, request
 
 from ..log import log
 from ..postgres import db_close, db_open
-from ..tools import get_session, send_mail
+from ..tools import rate_limit, send_mail, session
 
 bp = Blueprint("api", __name__)
 
 
-def delete_session(cur, user_key):
-    cur.execute("""
-        DELETE FROM session
-        WHERE (
-                remember = FALSE
-                AND date_updated <= NOW() - INTERVAL '3 days'
-            ) OR (
-                remember = TRUE
-                AND date_updated <= NOW() - INTERVAL '14 days'
-            )
-        RETURNING key;
-    """)
-    sessions = cur.fetchall()
-    log(
-        cur=cur,
-        user_key=user_key,
-        action="cleaned up expired sessions",
-        entity_key="maintenance",
-        entity_type="app",
-        misc={
-            "deleted_sessions": [x["key"] for x in sessions],
-        }
-    )
-
-
-def delete_anonymous(cur, user_key):
+def delete_anonymous(cur, user):
     cur.execute("""
         DELETE FROM "user"
         WHERE status = 'anonymous'
@@ -45,7 +20,7 @@ def delete_anonymous(cur, user_key):
     users = cur.fetchall()
     log(
         cur=cur,
-        user_key=user_key,
+        user_key=user["key"],
         action="cleaned up anonymous users",
         entity_key="maintenance",
         entity_type="app",
@@ -55,51 +30,18 @@ def delete_anonymous(cur, user_key):
     )
 
 
-@bp.post("/maintenance/session")
-def user_delete_session():
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
-    if "maintenance.session" not in user["access"]:
-        db_close(con, cur)
-        return jsonify({
-            "status": 403,
-            "error": "unauthorized access"
-        })
-
-    delete_session(cur, user["key"])
-
-    db_close(con, cur)
-    return jsonify({
-        "status": 200
-    })
-
-
 @bp.post("/maintenance/anonymous")
-def user_delete_anonymous():
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(20, 1)
+def user_delete_anonymous(cur, user):
     if "maintenance.anonymous" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
         })
 
-    delete_session(cur, user["key"])
+    delete_anonymous(cur, user)
 
-    db_close(con, cur)
     return jsonify({
         "status": 200
     })
@@ -114,8 +56,24 @@ def cron():
     """, (os.environ["MAIL_USERNAME"],))
     user = cur.fetchone()
 
-    delete_session(cur, user["key"])
-    delete_anonymous(cur, user["key"])
+    delete_anonymous(cur, user)
+
+    cur.execute("""
+        DELETE FROM rate_limit_log
+        WHERE created_at < NOW() - INTERVAL '1 day';
+    """)
+
+    cur.execute("""
+        DELETE FROM session
+        WHERE (
+                remember = FALSE
+                AND date_updated <= NOW() - INTERVAL '3 days'
+            ) OR (
+                remember = TRUE
+                AND date_updated <= NOW() - INTERVAL '14 days'
+            )
+        RETURNING key;
+    """)
 
     db_close(con, cur)
     return jsonify({
@@ -124,7 +82,9 @@ def cron():
 
 
 @bp.post("/contact")
-def footer_send_email():
+@session(False)
+@rate_limit(20, 1)
+def footer_send_email(cur, user):
 
     email_template = request.json.get("email_template")
     name = request.json.get("name")

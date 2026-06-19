@@ -42,11 +42,27 @@
 				body: JSON.stringify(form)
 			}
 		);
+		let get_reports = await fetch(
+			`${import.meta.env.VITE_BACKEND}/reports/${module.value.report.key}?${new URLSearchParams(
+				module.value.searchParams
+			).toString()}`,
+			{
+				method: 'put',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: app.token
+				},
+				body: JSON.stringify(form)
+			}
+		);
 		resp = await resp.json();
+		get_reports = await get_reports.json();
 		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.reports, resp.total_page);
+			if (get_reports.status == 200) {
+				module.value.update(get_reports.reports, get_reports.total_page);
+			}
 			notify.open('Report Resolved');
 			module.close();
 		} else {

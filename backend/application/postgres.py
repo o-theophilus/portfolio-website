@@ -34,6 +34,7 @@ def create_tables():
         DROP TABLE IF EXISTS "like" CASCADE;
         DROP TABLE IF EXISTS code CASCADE;
         DROP TABLE IF EXISTS log CASCADE;
+        DROP TABLE IF EXISTS rate_limit_log CASCADE;
         DROP TABLE IF EXISTS session CASCADE;
 
         CREATE TABLE IF NOT EXISTS "user" (
@@ -126,6 +127,15 @@ def create_tables():
             status TEXT NOT NULL DEFAULT '200',
             misc JSONB DEFAULT '{}'::jsonb
         );
+
+        CREATE TABLE IF NOT EXISTS rate_limit_log (
+            key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            user_key UUID NOT NULL REFERENCES "user"(key) ON DELETE CASCADE,
+            endpoint TEXT NOT NULL,
+            date_created TIMESTAMPTZ DEFAULT NOW()
+        );
+        CREATE INDEX idx_rate_limit_lookup
+            ON rate_limit_log (user_key, endpoint, date_created);
 
         CREATE TABLE IF NOT EXISTS session (
             key UUID PRIMARY KEY DEFAULT gen_random_uuid(),

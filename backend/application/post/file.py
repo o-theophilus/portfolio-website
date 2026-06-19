@@ -1,26 +1,18 @@
 from flask import Blueprint, jsonify, request
 
 from ..log import log
-from ..postgres import db_close, db_open
 from ..storage import storage
-from ..tools import get_session
+from ..tools import rate_limit, session
 from .get import post_schema
 
 bp = Blueprint("post_file", __name__)
 
 
 @bp.post("/posts/<key>/file")
-def add_file(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(20, 1)
+def add_file(cur, user, key):
     if "post.edit_files" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -29,7 +21,6 @@ def add_file(key):
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
     if 'files' not in request.files or not post:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -55,7 +46,6 @@ def add_file(key):
     if files == []:
         if not error:
             error = "no file"
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": error
@@ -89,7 +79,6 @@ def add_file(key):
         }
     )
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post_schema(post),
@@ -98,17 +87,10 @@ def add_file(key):
 
 
 @bp.put("/posts/<key>/file")
-def order_delete_file(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(10, 1)
+def order_delete_file(cur, user, key):
     if "post.edit_files" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -120,7 +102,6 @@ def order_delete_file(key):
     files = request.json.get("files")
 
     if not post or not files or type(files) is not list:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -129,7 +110,6 @@ def order_delete_file(key):
     files = [p.split("/")[-1] for p in files]
 
     if not all(x in post["files"] for x in files):
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -162,7 +142,6 @@ def order_delete_file(key):
     ))
     post = cur.fetchone()
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post_schema(post)

@@ -1,26 +1,18 @@
 from flask import Blueprint, jsonify, request
 
 from ..log import log
-from ..postgres import db_close, db_open
 from ..storage import storage
-from ..tools import get_session
+from ..tools import rate_limit, session
 from .get import post_schema
 
 bp = Blueprint("post_photo", __name__)
 
 
 @bp.put("/posts/<key>/photo")
-def add_photo(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(10, 1)
+def add_photo(cur, user, key):
     if "post.edit_photo" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -29,7 +21,6 @@ def add_photo(key):
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
     if 'file' not in request.files or not post:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -37,7 +28,6 @@ def add_photo(key):
 
     file = request.files["file"]
     if file.content_type not in ['image/jpeg', 'image/png']:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "invalid file"
@@ -73,7 +63,6 @@ def add_photo(key):
         }
     )
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post_schema(post)
@@ -81,17 +70,10 @@ def add_photo(key):
 
 
 @bp.delete("/posts/<key>/photo")
-def delete_photo(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(10, 1)
+def delete_photo(cur, user, key):
     if "post.edit_photo" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -100,7 +82,6 @@ def delete_photo(key):
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
     if not post or not post["photo"]:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -138,7 +119,6 @@ def delete_photo(key):
     ))
     post = cur.fetchone()
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post_schema(post)

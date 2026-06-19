@@ -14,23 +14,37 @@
 
 		loading.open(`Deleting comment . . .`);
 
-		let resp = await fetch(
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comments/${comment.key}`, {
+			method: 'delete',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: app.token
+			}
+		});
+		let get_comments = await fetch(
 			`${import.meta.env.VITE_BACKEND}/comments/${comment.key}?${new URLSearchParams(
 				module.value.searchParams
 			).toString()}`,
 			{
-				method: 'delete',
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: app.token
 				}
 			}
 		);
-		loading.close();
+
 		resp = await resp.json();
+		get_comments = await get_comments.json();
+		loading.close();
 
 		if (resp.status == 200) {
-			module.value.update(resp.comments, resp.total_comment, resp.total_page);
+			if (resp.status == 200) {
+				module.value.update(
+					get_comments.comments,
+					get_comments.total_comment,
+					get_comments.total_page
+				);
+			}
 			module.close();
 			notify.open('Comment Deleted');
 			scroll('#comment_section');

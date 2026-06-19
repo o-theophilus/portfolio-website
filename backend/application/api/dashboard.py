@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 
-from .postgres import db_close, db_open
-from .tools import get_session
+from ..tools import session
 
 bp = Blueprint("dashboard", __name__)
 
@@ -255,15 +254,8 @@ def item_top_purchase(cur, interval):
 
 
 @bp.get("/dashboard")
-def dashboard():
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    # user = session["user"]
-
+@session(True)
+def dashboard(cur, user):
     intervals = {
         "today": "1 day",
         "24 hours": "24 hours",
@@ -282,7 +274,6 @@ def dashboard():
     # _top_users = top_users(cur)
     # _item_available = item_available(cur)
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "new_users": _new_users,

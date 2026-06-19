@@ -1,25 +1,16 @@
 from flask import Blueprint, jsonify, request
 
 from ..log import log
-from ..postgres import db_close, db_open
-from ..tools import get_session
-from .get import get_many
+from ..tools import rate_limit, session
 
 bp = Blueprint("report", __name__)
 
 
 @bp.put("/reports/<key>")
-def resolve(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(20, 1)
+def resolve(cur, user, key):
     if "report.resolve" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -32,7 +23,6 @@ def resolve(key):
         or report["reported_key"] == user["key"]
         or report["status"] != "active"
     ):
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -102,23 +92,16 @@ def resolve(key):
                 misc={"comment": comment}
             )
 
-    reports = get_many(cur)
-    db_close(con, cur)
-    return reports
+    return jsonify({
+        "status": 200,
+    })
 
 
 @bp.delete("/reports/<key>")
-def dismiss(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(20, 1)
+def dismiss(cur, user, key):
     if "report.resolve" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -131,7 +114,6 @@ def dismiss(key):
         or report["reported_key"] == user["key"]
         or report["status"] != "active"
     ):
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -160,6 +142,6 @@ def dismiss(key):
         entity_key=report["key"],
     )
 
-    reports = get_many(cur)
-    db_close(con, cur)
-    return reports
+    return jsonify({
+        "status": 200,
+    })

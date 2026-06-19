@@ -71,7 +71,7 @@
 
 	<div class="line space">
 		<div class="line">
-			{#if app.user.access.includes('item.add')}
+			{#if app.user.access.includes('post.add')}
 				<Dropdown
 					--select-height="32px"
 					--select-padding-x="8px"

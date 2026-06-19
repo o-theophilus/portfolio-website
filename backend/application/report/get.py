@@ -2,28 +2,15 @@ from math import ceil
 
 from flask import Blueprint, jsonify, request
 
-from ..postgres import db_close, db_open
-from ..tools import get_session
+from ..tools import session
 
 bp = Blueprint("report_get", __name__)
 
 
 @bp.get("/reports")
-def get_many(cur=None):
-    close_conn = not cur
-    if not cur:
-        con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        if close_conn:
-            db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+def get_many(cur, user):
     if "report.view" not in user["access"]:
-        if close_conn:
-            db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -174,8 +161,6 @@ def get_many(cur=None):
     ))
     total_page = cur.fetchone()["count"]
 
-    if close_conn:
-        db_close(con, cur)
     return jsonify({
         "status": 200,
         "reports": reports,

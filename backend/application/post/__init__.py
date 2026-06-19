@@ -6,26 +6,18 @@ from flask import Blueprint, jsonify, request
 from werkzeug.security import check_password_hash
 
 from ..log import log
-from ..postgres import db_close, db_open
 from ..storage import storage
-from ..tools import get_session, reserved_words
-from .get import get_comments, get_feature, get_posts, post_schema
+from ..tools import rate_limit, reserved_words, session
+from .get import post_schema
 
 bp = Blueprint("post", __name__)
 
 
 @bp.post("/posts")
-def add():
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(10, 1)
+def add(cur, user):
     if "post.add" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -39,7 +31,6 @@ def add():
     elif len(title) > 100:
         error["title"] = "This field cannot exceed 100 characters"
     if error:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             **error
@@ -66,31 +57,19 @@ def add():
         entity_key=post["key"],
     )
 
-    posts = get_posts(cur)
-
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post_schema(post),
-        "posts": posts.json["posts"],
-        "total_page": posts.json["total_page"]
     })
 
 
 @bp.put("/posts/<key>")
-def edit(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(10, 1)
+def edit(cur, user, key):
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
     if not post:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -200,7 +179,6 @@ def edit(key):
             error["status"] = "no content"
 
     if error:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             **error
@@ -228,7 +206,6 @@ def edit(key):
         misc=request.json
     )
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post_schema(post)
@@ -236,17 +213,10 @@ def edit(key):
 
 
 @bp.post("/posts/<key>/feature")
-def feature(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(10, 1)
+def feature(cur, user, key):
     if "post.edit_featured" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error":  "unauthorized access"
@@ -255,7 +225,6 @@ def feature(key):
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
     if not post or post["status"] != "active":
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -292,7 +261,6 @@ def feature(key):
         entity_key=post["key"],
     )
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "post": post_schema(post)
@@ -300,15 +268,9 @@ def feature(key):
 
 
 @bp.delete("/posts/<key>")
-def delete(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(10, 1)
+def delete(cur, user, key):
     password = request.json.GET("password")
 
     error = None
@@ -319,7 +281,6 @@ def delete(key):
     elif not check_password_hash(user["password"], password):
         error = "Incorrect password"
     if error:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": error
@@ -328,7 +289,6 @@ def delete(key):
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
     if not post:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -350,22 +310,15 @@ def delete(key):
         entity_key=post["key"]
     )
 
-    db_close(con, cur)
     return jsonify({
         "status": 200
     })
 
 
 @bp.post("/posts/<key>/like")
-def like(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(10, 1)
+def like(cur, user, key):
     reaction = request.json.get("reaction")
 
     if reaction not in ["like", "dislike"]:
@@ -376,7 +329,6 @@ def like(key):
 
     cur.execute("""SELECT * FROM post WHERE key = %s;""", (key,))
     if not cur.fetchone():
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -424,7 +376,6 @@ def like(key):
     """, (user["key"], user["key"], user["key"], key))
     reactions = cur.fetchone()
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         **reactions
@@ -432,21 +383,14 @@ def like(key):
 
 
 @bp.post("/posts/<key>/comment")
-def add_comment(key):
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(10, 1)
+def add_comment(cur, user, key):
     cur.execute("""
         SELECT * FROM post WHERE slug = %s OR key = %s;
     """, (key, key))
     post = cur.fetchone()
     if not post:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -457,7 +401,6 @@ def add_comment(key):
         cur.execute("SELECT * FROM comment WHERE key = %s;", (parent_key,))
         parent = cur.fetchone()
         if not parent or parent["parent_key"] is not None:
-            db_close(con, cur)
             return jsonify({
                 "status": 400,
                 "error": "Invalid request"
@@ -470,7 +413,6 @@ def add_comment(key):
     elif len(comment) > 500:
         error["comment"] = "This field cannot exceed 500 characters"
     if error:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             **error
@@ -491,23 +433,16 @@ def add_comment(key):
         misc={"post_key": post["key"]}
     )
 
-    comment_resp = get_comments(post["key"], cur)
-    db_close(con, cur)
-    return comment_resp
+    return jsonify({
+        "status": 200
+    })
 
 
 @bp.put("/posts/feature")
-def edit_feature():
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+@rate_limit(10, 1)
+def edit_feature(cur, user):
     if "post.edit_featured" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error":  "unauthorized access"
@@ -516,7 +451,6 @@ def edit_feature():
     keys = request.json.get("keys")
 
     if not keys or type(keys) is not list:
-        db_close(con, cur)
         return jsonify({
             "status": 400,
             "error": "Invalid request"
@@ -543,10 +477,6 @@ def edit_feature():
 
     )
 
-    posts = get_feature(cur).json["posts"]
-
-    db_close(con, cur)
     return jsonify({
         "status": 200,
-        "posts": posts
     })

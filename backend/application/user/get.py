@@ -2,21 +2,14 @@ from math import ceil
 
 from flask import Blueprint, jsonify, request
 
-from ..postgres import db_close, db_open
-from ..tools import access_pass, get_session, user_schema
+from ..tools import access_pass, session, user_schema
 
 bp = Blueprint("user_get", __name__)
 
 
 @bp.get("/users/<key>")
-def get_user(key):
-    con, cur = db_open()
-
-    session = get_session(cur)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-
+@session(False)
+def get_user(cur, _user, key):
     cur.execute("""
         SELECT
             "user".*,
@@ -29,7 +22,6 @@ def get_user(key):
     user = cur.fetchone()
 
     if not user:
-        db_close(con, cur)
         return jsonify({
             "status": 404,
             "error": "Oops! The user you're looking for doesn't exist"
@@ -44,7 +36,6 @@ def get_user(key):
                     _access[x][y[1]] = []
                 _access[x][y[1]].append(y[0])
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "user": user_schema(user),
@@ -53,16 +44,9 @@ def get_user(key):
 
 
 @bp.get("/users")
-def get_users():
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-
-    if "user.view" not in session["user"]["access"]:
-        db_close(con, cur)
+@session(True)
+def get_users(cur, user):
+    if "user.view" not in user["access"]:
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -131,7 +115,6 @@ def get_users():
     ))
     total_page = cur.fetchone()["count"]
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "users": [user_schema(x) for x in users],
@@ -143,17 +126,9 @@ def get_users():
 
 
 @bp.get("/users/admin")
-def get_admin_users():
-    con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+def get_admin_users(cur, user):
     if "user.set_access" not in user["access"]:
-        db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -222,7 +197,6 @@ def get_admin_users():
             for y in access_pass[x]:
                 access[x].append(y[0])
 
-    db_close(con, cur)
     return jsonify({
         "status": 200,
         "users": [user_schema(x) for x in users],
@@ -234,21 +208,9 @@ def get_admin_users():
 
 
 @bp.get("/users/block")
-def get_blocked_users(cur=None):
-    close_conn = not cur
-    if not cur:
-        con, cur = db_open()
-
-    session = get_session(cur, True)
-    if session["status"] != 200:
-        if close_conn:
-            db_close(con, cur)
-        return jsonify(session)
-    user = session["user"]
-
+@session(True)
+def get_blocked_users(cur, user):
     if "block.view" not in user["access"]:
-        if close_conn:
-            db_close(con, cur)
         return jsonify({
             "status": 403,
             "error": "unauthorized access"
@@ -325,8 +287,6 @@ def get_blocked_users(cur=None):
             if x["user"]["photo"] else None
         )
 
-    if close_conn:
-        db_close(con, cur)
     return jsonify({
         "status": 200,
         "blocks": blocks,
