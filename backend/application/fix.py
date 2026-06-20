@@ -12,21 +12,21 @@ bp = Blueprint("fix", __name__)
 def quick_fix():
     con, cur = db_open()
 
-    # cur.execute("""
-    #     CREATE TABLE IF NOT EXISTS rate_limit_log (
-    #         key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    #         user_key UUID NOT NULL REFERENCES "user"(key) ON DELETE CASCADE,
-    #         endpoint TEXT NOT NULL,
-    #         date_created TIMESTAMPTZ DEFAULT NOW()
-    #     );
-    #     CREATE INDEX idx_rate_limit_lookup
-    #         ON rate_limit_log (user_key, endpoint, date_created);
-    # """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS rate_limit_log (
+            key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            user_key UUID NOT NULL REFERENCES "user"(key) ON DELETE CASCADE,
+            endpoint TEXT NOT NULL,
+            date_created TIMESTAMPTZ DEFAULT NOW()
+        );
+        CREATE INDEX idx_rate_limit_lookup
+            ON rate_limit_log (user_key, endpoint, date_created);
+    """)
 
-    # cur.execute("""
-    #     ALTER TABLE log
-    #     ALTER COLUMN entity_key DROP NOT NULL;
-    # """)
+    cur.execute("""
+        ALTER TABLE log
+        ALTER COLUMN entity_key DROP NOT NULL;
+    """)
 
     cur.execute("""
         DROP TABLE IF EXISTS session CASCADE;
