@@ -68,15 +68,17 @@
 		}
 	};
 
-	onMount(async () => {
+	onMount(async () => {});
+
+	afterNavigate(() => {
+		hard_update(post);
+
 		if (page.url.searchParams.has('edit') && is_admin) {
 			page.url.searchParams.delete('edit');
 			edit_mode = true;
-			replaceState(page.url.href);
+			queueMicrotask(() => replaceState(page.url.href));
 		}
 	});
-
-	afterNavigate(() => hard_update(post));
 </script>
 
 {#key post.key}

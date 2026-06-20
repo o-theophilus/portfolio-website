@@ -57,7 +57,7 @@
 						name: 'OK',
 						icon: 'check',
 						fn: () => {
-							goto(`/${resp.post.slug}?edit=true`);
+							goto(`/${resp.post.slug}?edit`);
 							module.close();
 						}
 					}

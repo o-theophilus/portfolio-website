@@ -62,9 +62,7 @@ access_pass = {
 
 def get_session(cur, login=False):
     token = request.headers.get("Authorization")
-    print(token)
     if not token:
-        print(1)
         return {
             "status": 401,
             "error": "invalid or expired token"
@@ -137,7 +135,7 @@ def rate_limit(times=20, mins=1):
             if count >= times:
                 return {
                     "status": 429,
-                    "message": f"""Rate limit exceeded.
+                    "error": f"""Rate limit exceeded.
                         Please wait for
                         {mins} {"minutes" if mins > 1 else "minute"}
                         and try again"""
@@ -170,7 +168,7 @@ def log(entity_type):
                 "entity_key": None,
                 "entity_type": entity_type,
                 "status": status,
-                "misc": body
+                "misc": body if status != 200 else {}
             }
 
             log_data = body.pop("log", None)
