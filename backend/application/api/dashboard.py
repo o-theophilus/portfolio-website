@@ -250,7 +250,6 @@ def item_top_purchase(cur, interval):
         LIMIT 10;
     """)
     return cur.fetchall()
-    # TODO: JOIN item_version
 
 
 @bp.get("/dashboard")

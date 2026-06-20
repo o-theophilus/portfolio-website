@@ -146,7 +146,6 @@ def create_tables():
             remember BOOL NOT NULL DEFAULT FALSE
         );
     """)
-    # TODO: CREATE INDEX for session table
 
     con.commit()
     cur.close()
