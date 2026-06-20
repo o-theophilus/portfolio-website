@@ -1,8 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
-from ..log import log
 from ..storage import storage
-from ..tools import rate_limit, session
+from ..tools import log, rate_limit, session
 
 bp = Blueprint("file_error", __name__)
 
@@ -12,10 +11,10 @@ bp = Blueprint("file_error", __name__)
 @rate_limit(20, 1)
 def get_file_error(cur, user):
     if "admin.manage_files" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     cur.execute("""SELECT photo FROM "user";""")
     users_photo = cur.fetchall()
@@ -46,26 +45,29 @@ def get_file_error(cur, user):
     """, (post_store_photo, post_store_photo))
     posts_with_missing_photo = cur.fetchall()
 
-    return jsonify({
+    return {
         "status": 200,
-        "unused_post_photo": [f"{request.host_url}photo/post/{x}"
-                   for x in post_store_photo if x not in posts_photo],
-        "unused_user_photo": [f"{request.host_url}photo/user/{x}"
-                   for x in user_store_photo if x not in users_photo],
+        "unused_post_photo": [
+            f"{request.host_url}photo/post/{x}"
+            for x in post_store_photo if x not in posts_photo],
+        "unused_user_photo": [
+            f"{request.host_url}photo/user/{x}"
+            for x in user_store_photo if x not in users_photo],
         "users": users_with_missing_photo,
         "posts": posts_with_missing_photo
-    })
+    }, 200
 
 
 @bp.delete("/file_error")
 @session(True)
 @rate_limit(20, 1)
+@log("app")
 def delete_file(cur, user):
     if "admin.manage_files" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     photos = request.json.get("photos")
     entity = request.json.get("entity")
@@ -74,26 +76,20 @@ def delete_file(cur, user):
         not photos or type(photos) is not list
         or not entity or entity not in ["user", "post"]
     ):
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     for x in photos:
         storage.delete(x.split("/")[-1], entity)
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="deleted unuded photo(s)",
-        entity_key="app",
-        entity_type="app",
-        misc={
-            "photo(s)": photos,
-            "from": entity
+    return {
+        "status": 200,
+        "log": {
+            "misc": {
+                "photo(s)": photos,
+                "from": entity
+            }
         }
-    )
-
-    return jsonify({
-        "status": 200
-    })
+    }, 200

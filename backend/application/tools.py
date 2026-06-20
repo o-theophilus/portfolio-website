@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from functools import wraps
 
 import resend
-from flask import current_app, jsonify, request
+from flask import current_app, request
 from psycopg2.extras import Json
 
 from .postgres import db_close, db_open
@@ -21,7 +21,7 @@ access_pass = {
         ['reset_username', 2],
         ['reset_photo', 2],
         ['block', 2],
-        ['set_access', 3]
+        ['edit_access', 3]
     ],
     "admin": [
         ['manage_files', 3]
@@ -62,33 +62,43 @@ access_pass = {
 
 def get_session(cur, login=False):
     token = request.headers.get("Authorization")
+    print(token)
     if not token:
-        return {"status": 401, "error": "invalid or expired token"}
+        print(1)
+        return {
+            "status": 401,
+            "error": "invalid or expired token"
+        }
 
     cur.execute("""SELECT * FROM session WHERE key::TEXT = %s;""", (token,))
     session = cur.fetchone()
     if not session:
-        return {"status": 401, "error": "invalid or expired token"}
+        return {
+            "status": 401,
+            "error": "invalid or expired token"
+        }
 
-    if login and session["login"] == "false":
-        return {"status": 401, "error": "invalid or expired token"}
+    if login and not session["login"]:
+        return {
+            "status": 401,
+            "error": "invalid or expired token"
+        }
 
     cur.execute("""
         SELECT * FROM "user" WHERE key = %s;
     """, (session["user_key"],))
     user = cur.fetchone()
+    user["login"] = session["login"]
 
     cur.execute("""
         UPDATE session SET date_updated = now() WHERE key = %s;
     """, (session["key"],))
 
-    return {"status": 200, "user": user, "login": session["login"] != "false"}
+    return {
+        "status": 200,
+        "user": user
+    }
 
-
-# TODO: Decorators are commonly used for:
-
-# ✅ Logging
-# ✅ Permissions
 
 def session(login=False):
     def decorator(fn):
@@ -97,24 +107,13 @@ def session(login=False):
             con, cur = db_open()
             try:
                 session = get_session(cur, login)
-                if session["status"] != 200:
-                    return jsonify(session), session["status"]
+                if request.endpoint == "auth.init":
+                    return fn(cur, session, *args, **kwargs)
+                elif session["status"] != 200:
+                    return session, session["status"]
                 return fn(cur, session["user"], *args, **kwargs)
             finally:
                 db_close(con, cur)
-
-        return wrapper
-    return decorator
-
-
-def logg(times=20, mins=1):
-    def decorator(fn):
-        @wraps(fn)
-        def wrapper(cur, user, *args, **kwargs):
-            print("logg")
-            result = fn(cur, user, *args, **kwargs)
-            print(result.json)
-            return result
 
         return wrapper
     return decorator
@@ -136,13 +135,13 @@ def rate_limit(times=20, mins=1):
             count = cur.fetchone()["count"]
 
             if count >= times:
-                return jsonify({
+                return {
                     "status": 429,
                     "message": f"""Rate limit exceeded.
                         Please wait for
                         {mins} {"minutes" if mins > 1 else "minute"}
                         and try again"""
-                }), 429
+                }, 429
 
             cur.execute("""
                 INSERT INTO rate_limit_log (user_key, endpoint)
@@ -150,6 +149,44 @@ def rate_limit(times=20, mins=1):
             """, (user["key"], endpoint))
 
             return fn(cur, user, *args, **kwargs)
+
+        return wrapper
+    return decorator
+
+
+def log(entity_type):
+    def decorator(fn):
+        @wraps(fn)
+        def wrapper(cur, user, *args, **kwargs):
+            result = fn(cur, user, *args, **kwargs)
+
+            body, status = result, 200
+            if isinstance(result, tuple):
+                body, status = result
+
+            _log = {
+                "user_key": user["key"],
+                "action": request.endpoint,
+                "entity_key": None,
+                "entity_type": entity_type,
+                "status": status,
+                "misc": body
+            }
+
+            log_data = body.pop("log", None)
+            if log_data:
+                _log = {**_log, **log_data}
+
+            cur.execute("""
+                INSERT INTO log (
+                    user_key, action, entity_key, entity_type, status, misc
+                ) VALUES (%s, %s, %s, %s, %s, %s);
+            """, (
+                _log["user_key"], _log["action"], _log["entity_key"],
+                _log["entity_type"], _log["status"], Json(_log["misc"])
+            ))
+
+            return body, status
 
         return wrapper
     return decorator
@@ -191,6 +228,7 @@ def check_code(cur, user_key, email, n="code"):
     elif len(pin) != 6:
         error = "invalid code"
 
+    # TODO: use the time SQL time keyword
     cur.execute("""
         SELECT * FROM code WHERE user_key = %s AND pin = %s AND email = %s;
     """, (user_key, pin, email))

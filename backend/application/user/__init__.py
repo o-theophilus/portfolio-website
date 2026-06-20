@@ -2,11 +2,10 @@ import os
 import re
 from uuid import uuid4
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from werkzeug.security import check_password_hash
 
-from ..log import log
-from ..tools import rate_limit, reserved_words, session, user_schema
+from ..tools import log, rate_limit, reserved_words, session, user_schema
 
 bp = Blueprint("user", __name__)
 
@@ -14,41 +13,38 @@ bp = Blueprint("user", __name__)
 @bp.post("/user/theme")
 @session(True)
 @rate_limit(20, 1)
+@log("user")
 def theme(cur, user):
     theme = request.json.get("theme")
     if theme not in ["light", "dark", "system"]:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="changed theme",
-        entity_type="user",
-        entity_key=user["key"],
-        misc={
-            "from": user["theme"],
-            "to": theme
-        }
-    )
+    misc = {
+        "from": user["theme"],
+        "to": theme
+    }
 
     cur.execute("""
         UPDATE "user" SET theme = %s WHERE key = %s RETURNING *
     ;""", (theme, user["key"]))
     user = cur.fetchone()
 
-    return jsonify({
+    return {
         "status": 200,
-        "user": user_schema(user)
-    })
+        "user": user_schema(user),
+        "log": {
+            "misc": misc
+        }
+    }, 200
 
 
 @bp.put("/user")
 @session(True)
 @rate_limit(20, 1)
-def edit_user(cur, user):
+def edit(cur, user):
     error = {}
 
     name = user["name"]
@@ -94,10 +90,10 @@ def edit_user(cur, user):
             error["phone"] = "This field cannot exceed 20 characters"
 
     if error:
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     cur.execute("""
         UPDATE "user"
@@ -106,34 +102,29 @@ def edit_user(cur, user):
     """, (name, username, phone, user["key"]))
     user = cur.fetchone()
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="edited profile",
-        entity_type="user",
-        entity_key=user["key"],
-        misc=request.json
-    )
-
-    return jsonify({
+    return {
         "status": 200,
-        "user": user_schema(user)
-    })
+        "user": user_schema(user),
+        "log": {
+            "misc": request.json
+        }
+    }, 200
 
 
 # TODO: user report and comment report can be unified
 @bp.post("/users/<key>/report")
 @session(True)
 @rate_limit(20, 1)
+@log("user")
 def report(cur, user, key):
     comment = request.json.get("comment", "").strip()
     tags = request.json.get("tags")
 
     if type(tags) is not list:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     error = {}
     if not comment:
@@ -141,18 +132,18 @@ def report(cur, user, key):
     elif len(comment) > 500:
         error["comment"] = "This field cannot exceed 500 characters"
     if error:
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
     user2 = cur.fetchone()
     if not user2:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     cur.execute("""
         INSERT INTO report (reporter_key, reporter_comment,
@@ -161,33 +152,30 @@ def report(cur, user, key):
     """, (user["key"], comment, tags, user2["key"]))
     report = cur.fetchone()
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="reported user",
-        entity_type="user",
-        entity_key=user2["key"],
-        misc={
-            "report_key": report["key"]
-        }
-    )
+    return {
+        "status": 200,
+        "log": {
+            "entity_key": user2["key"],
+            "misc": {
+                "report_key": report["key"]
+            }
 
-    return jsonify({
-        "status": 200
-    })
+        }
+    }, 200
 
 
 @bp.post("/users/<key>/block")
 @session(True)
 @rate_limit(20, 1)
+@log("user")
 def block(cur, user, key):
     comment = request.json.get("comment", "").strip()
 
     if "user.block" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
     user2 = cur.fetchone()
@@ -202,10 +190,10 @@ def block(cur, user, key):
         or user2["email"] == os.environ["MAIL_USERNAME"]
         or block
     ):
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     error = {}
     if not comment:
@@ -213,10 +201,10 @@ def block(cur, user, key):
     elif len(comment) > 500:
         error["comment"] = "This field cannot exceed 500 characters"
     if error:
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     cur.execute("""
         INSERT INTO block (admin_key, user_key, comment)
@@ -226,15 +214,6 @@ def block(cur, user, key):
     cur.execute("""
         DELETE FROM session WHERE user_key = %s;
     """, (user2["key"],))
-
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="blocked user",
-        entity_type="user",
-        entity_key=user2["key"],
-        misc={"comment":  comment}
-    )
 
     cur.execute("""
         SELECT
@@ -247,23 +226,30 @@ def block(cur, user, key):
     """, (key, key))
     user2 = cur.fetchone()
 
-    return jsonify({
+    return {
         "status": 200,
-        "user": user_schema(user2)
-    })
+        "user": user_schema(user2),
+        "log": {
+            "entity_key": user2["key"],
+            "misc": {
+                "comment":  comment
+            }
+        }
+    }, 200
 
 
 @bp.delete("/users/<key>/block")
 @session(True)
 @rate_limit(20, 1)
+@log("user")
 def unblock(cur, user, key):
     comment = request.json.get("comment", "").strip()
 
     if "block.unblock" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
     user2 = cur.fetchone()
@@ -274,10 +260,10 @@ def unblock(cur, user, key):
         or user2["status"] != "active"
         or user2["email"] == os.environ["MAIL_USERNAME"]
     ):
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     error = {}
     if not comment:
@@ -285,41 +271,39 @@ def unblock(cur, user, key):
     elif len(comment) > 500:
         error["comment"] = "This field cannot exceed 500 characters"
     if error:
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     cur.execute("DELETE FROM block WHERE user_key = %s;", (user2["key"],))
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="unblocked user",
-        entity_type="user",
-        entity_key=user2["key"],
-        misc={"comment":  comment}
-    )
-
-    return jsonify({
+    return {
         "status": 200,
-    })
+        "log": {
+            "entity_key": user2["key"],
+            "misc": {
+                "comment":  comment
+            }
+        }
+    }, 200
 
 
 @bp.put("/users/<key>/action")
 @session(True)
 @rate_limit(10, 1)
-def perform_action(cur, user, key):
+@log("user")
+def reset(cur, user, key):
     cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
     user2 = cur.fetchone()
     if (
         not user2 or user["key"] == user2["key"]
         or user2["email"] == os.environ["MAIL_USERNAME"]
     ):
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     _actions = request.json.get("actions")
     comment = request.json.get("comment")
@@ -330,10 +314,10 @@ def perform_action(cur, user, key):
     if not comment:
         error["comment"] = "This field is required"
     if error:
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     actions = []
     error = None
@@ -356,10 +340,10 @@ def perform_action(cur, user, key):
     if actions == []:
         error = "Invalid request"
     if error:
-        return jsonify({
+        return {
             "status": 403,
             "error": error
-        })
+        }, 403
 
     _key = uuid4().hex
     cur.execute("""
@@ -373,33 +357,29 @@ def perform_action(cur, user, key):
     ))
     user2 = cur.fetchone()
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="reset profile",
-        entity_type="user",
-        entity_key=user2["key"],
-        misc={
-            "field(s)": ", ".join(actions),
-            "comment": comment
-        }
-    )
-
-    return jsonify({
+    return {
         "status": 200,
-        "user": user_schema(user2)
-    })
+        "user": user_schema(user2),
+        "log": {
+            "entity_key": user2["key"],
+            "misc": {
+                "field(s)": ", ".join(actions),
+                "comment": comment
+            }
+        }
+    }, 200
 
 
 @bp.put("/users/<key>/access")
 @session(True)
 @rate_limit(10, 1)
-def set_access(cur, user, key):
-    if "user.set_access" not in user["access"]:
-        return jsonify({
+@log("user")
+def edit_access(cur, user, key):
+    if "user.edit_access" not in user["access"]:
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     cur.execute('SELECT * FROM "user" WHERE key = %s;', (key,))
     user2 = cur.fetchone()
@@ -414,10 +394,10 @@ def set_access(cur, user, key):
         or user2["email"] == os.environ["MAIL_USERNAME"]
         or user2["status"] != "active"
     ):
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     password = request.json.get("password")
 
@@ -427,25 +407,23 @@ def set_access(cur, user, key):
     elif not check_password_hash(user["password"], password):
         error = "incorrect password"
     if error:
-        return jsonify({
+        return {
             "status": 400,
             "password": error
-        })
+        }, 400
 
     cur.execute("""
         UPDATE "user" SET access = %s WHERE key = %s;
     """, (access, user2["key"]))
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="changed access",
-        entity_type="user",
-        entity_key=user2["key"],
-        misc={"from": user2["access"], "to": access}
-    )
-
-    return jsonify({
+    return {
         "status": 200,
-        "user": user_schema(user2)
-    })
+        "user": user_schema(user2),
+        "log": {
+            "entity_key": user2["key"],
+            "misc": {
+                "from": user2["access"],
+                "to": access
+            }
+        }
+    }, 200

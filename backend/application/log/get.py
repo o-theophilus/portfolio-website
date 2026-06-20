@@ -1,6 +1,6 @@
 from math import ceil
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from ..tools import session
 
@@ -27,10 +27,10 @@ def get_many(cur, user):
     page_size = min(page_size, 100)
 
     if "log.view" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     if "log.view_others" not in user["access"]:
         u_search = user["key"]
@@ -124,10 +124,10 @@ def get_many(cur, user):
         else:
             search_query[x["entity_type"]] = ["all", x["action"]]
 
-    return jsonify({
+    return {
         "status": 200,
         "logs": logs,
         "search_query": search_query,
         "total_page": ceil(logs[0]["_count"] / page_size) if logs else 0,
         "searchParams": searchParams
-    })
+    }, 200

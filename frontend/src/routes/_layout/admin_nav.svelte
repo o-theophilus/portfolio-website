@@ -16,7 +16,7 @@
 		{
 			name: 'Admin',
 			href: '/admin/users_admin',
-			access: app.user.access.includes('user.set_access'),
+			access: app.user.access.includes('user.edit_access'),
 			icon: 'shield-check'
 		},
 		{

@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from ..tools import session
 
@@ -274,7 +274,7 @@ def dashboard(cur, user):
     # _top_users = top_users(cur)
     # _item_available = item_available(cur)
 
-    return jsonify({
+    return {
         "status": 200,
         "new_users": _new_users,
         "post_summary": _post_summary,
@@ -282,4 +282,4 @@ def dashboard(cur, user):
         # "item_available": _item_available,
         "searchParams": searchParams,
         "filters": list(intervals.keys()),
-    })
+    }, 200

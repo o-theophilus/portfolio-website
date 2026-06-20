@@ -1,7 +1,6 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
-from ..log import log
-from ..tools import rate_limit, session
+from ..tools import log, rate_limit, session
 
 bp = Blueprint("report", __name__)
 
@@ -9,12 +8,13 @@ bp = Blueprint("report", __name__)
 @bp.put("/reports/<key>")
 @session(True)
 @rate_limit(20, 1)
+@log("report")
 def resolve(cur, user, key):
     if "report.resolve" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     cur.execute("SELECT * FROM report WHERE key = %s;", (key,))
     report = cur.fetchone()
@@ -23,10 +23,10 @@ def resolve(cur, user, key):
         or report["reported_key"] == user["key"]
         or report["status"] != "active"
     ):
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     comment = request.json.get("comment", "").strip()
     handle = request.json.get("handle", False)
@@ -44,13 +44,9 @@ def resolve(cur, user, key):
         WHERE key = %s;
     """, (user["key"], comment, key))
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="resolved report",
-        entity_type="report",
-        entity_key=report["key"],
-    )
+    misc = {
+        "entity_key": report["key"],
+    }
 
     if handle:
         if (
@@ -66,14 +62,10 @@ def resolve(cur, user, key):
                 DELETE FROM session WHERE user_key = %s;
             """, (user["key"],))
 
-            log(
-                cur=cur,
-                user_key=user["key"],
-                action="blocked user",
-                entity_type="user",
-                entity_key=report["reported_key"],
-                misc={"comment":  comment}
-            )
+            misc["action"] = "block"
+            misc["entity_type"] = "user"
+            misc["entity_key"] = report["reported_key"]
+            misc["comment"] = comment
 
         elif (
             report["reported_comment_key"]
@@ -83,29 +75,29 @@ def resolve(cur, user, key):
                 "DELETE FROM comment WHERE key = %s;",
                 (report["reported_comment_key"],))
 
-            log(
-                cur=cur,
-                user_key=user["key"],
-                action="deleted comment",
-                entity_type="comment",
-                entity_key=report["reported_comment_key"],
-                misc={"comment": comment}
-            )
+            misc["action"] = "delete"
+            misc["entity_type"] = "comment"
+            misc["entity_key"] = report["reported_comment_key"]
+            misc["comment"] = comment
 
-    return jsonify({
+    return {
         "status": 200,
-    })
+        "log": {
+            "misc": misc
+        }
+    }, 200
 
 
 @bp.delete("/reports/<key>")
 @session(True)
 @rate_limit(20, 1)
+@log("report")
 def dismiss(cur, user, key):
     if "report.resolve" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     cur.execute("SELECT * FROM report WHERE key = %s;", (key,))
     report = cur.fetchone()
@@ -114,10 +106,10 @@ def dismiss(cur, user, key):
         or report["reported_key"] == user["key"]
         or report["status"] != "active"
     ):
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     comment = request.json.get("comment", "").strip()
 
@@ -134,14 +126,9 @@ def dismiss(cur, user, key):
         WHERE key = %s;
     """, (user["key"], comment, key))
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="dismissed report",
-        entity_type="report",
-        entity_key=report["key"],
-    )
-
-    return jsonify({
+    return {
         "status": 200,
-    })
+        "log": {
+            "entity_key": report["key"],
+        }
+    }, 200

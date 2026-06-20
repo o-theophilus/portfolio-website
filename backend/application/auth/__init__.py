@@ -2,16 +2,13 @@ import os
 import re
 from uuid import uuid4
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from ..log import log
 from ..post.get import get_tags
-from ..postgres import db_close, db_open
 from ..storage import storage
-from ..tools import (access_pass, check_code, generate_code, get_session,
-                     rate_limit, reserved_words, send_mail, session,
-                     user_schema)
+from ..tools import (access_pass, check_code, generate_code, log, rate_limit,
+                     reserved_words, send_mail, session, user_schema)
 
 bp = Blueprint("auth", __name__)
 
@@ -40,44 +37,40 @@ def new_token(cur, user_key, login=False, remember=False):
 
 
 @bp.post("/init")
-def init():
-    con, cur = db_open()
+@session(False)
+def init(cur, _session):
 
-    session = get_session(cur)
-
-    if session["status"] == 200:
-        user = session["user"]
+    if _session["status"] == 200:
+        user = _session["user"]
         token = request.headers.get("Authorization")
-        login = session["login"]
+        login = user.pop("login")
 
     else:
         user = new_user(cur)
         token = new_token(cur, user["key"])
         login = False
 
-        log(
-            cur=cur,
-            user_key=user["key"],
-            action="created",
-            entity_type="user",
-            entity_key=user["key"]
-        )
+        cur.execute("""
+            INSERT INTO log (
+                user_key, action, entity_type
+            ) VALUES (%s, %s, %s);
+        """, (user["key"], "auth.init", "user"))
 
     tags = get_tags(cur)
 
-    db_close(con, cur)
-    return jsonify({
+    return {
         "status": 200,
         "user": user_schema(user),
         "token": token,
         "login": login,
-        "tags": tags
-    })
+        "tags": tags,
+    }, 200
 
 
 @bp.post("/signup")
 @session(False)
 @rate_limit(10, 1)
+@log("user")
 def signup(cur, user):
     name = ' '.join(request.json.get("name", "").strip().split())
     email = request.json.get("email", "").strip()
@@ -85,11 +78,11 @@ def signup(cur, user):
     confirm_password = request.json.get("confirm_password")
     email_template = request.json.get("email_template")
 
-    if session["login"] or not email_template:
-        return jsonify({
+    if user["login"] or not email_template:
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     error = {}
 
@@ -128,10 +121,10 @@ def signup(cur, user):
         match"""
 
     if error:
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     if email_user:
         user = email_user
@@ -161,14 +154,6 @@ def signup(cur, user):
     ))
     user = cur.fetchone()
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="signedup",
-        entity_type="user",
-        entity_key=user["key"]
-    )
-
     send_mail(
         user["email"],
         "Welcome to my portfolio website! Complete your signup with this Code",
@@ -178,38 +163,39 @@ def signup(cur, user):
         )
     )
 
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200
 
 
 @bp.post("/confirm")
 @session(False)
 @rate_limit(10, 1)
+@log("user")
 def confirm(cur, _user):
     email = request.json.get("email")
 
     error = None
     if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     cur.execute('SELECT * FROM "user" WHERE email = %s;', (email,))
     user = cur.fetchone()
     if not user or user["status"] != 'signedup':
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     error = check_code(cur, user["key"], user["email"])
     if error:
-        return jsonify({
+        return {
             "status": 400,
             "error": error
-        })
+        }, 400
 
     cur.execute("""
         UPDATE "user"
@@ -222,31 +208,24 @@ def confirm(cur, _user):
         user["key"]
     ))
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="activated account",
-        entity_type="user",
-        entity_key=user["key"]
-    )
-
     cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))
 
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200
 
 
 @bp.post("/login")
 @session(False)
 @rate_limit(10, 1)
+@log("user")
 def login(cur, user):
     email_template = request.json.get("email_template")
-    if session["login"] or not email_template:
-        return jsonify({
+    if user["login"] or not email_template:
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     email = request.json.get("email")
     password = request.json.get("password")
@@ -258,10 +237,10 @@ def login(cur, user):
     if not password:
         error["password"] = "This field is required"
     if error:
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     user2 = None
     if user["email"] == email:
@@ -277,17 +256,17 @@ def login(cur, user):
         or user2["status"] not in ['signedup', 'active']
         or not check_password_hash(user2["password"], password)
     ):
-        return jsonify({
+        return {
             "status": 400,
             "error": "your email or password is incorrect"
-        })
+        }, 400
 
     cur.execute("SELECT * FROM block WHERE user_key = %s;", (user2["key"],))
     if cur.fetchone():
-        return jsonify({
+        return {
             "status": 400,
             "error": "account blocked"
-        })
+        }, 400
 
     if user2["status"] == "signedup":
         send_mail(
@@ -300,10 +279,10 @@ def login(cur, user):
                     cur, user2["key"], user2["email"], "login")
             )
         )
-        return jsonify({
+        return {
             "status": 400,
             "error": "not active"
-        })
+        }, 400
 
     cur.execute("""
         DELETE FROM session WHERE user_key = %s;
@@ -312,90 +291,57 @@ def login(cur, user):
 
     token = new_token(cur, user2["key"], True, remember)
 
-    log(
-        cur=cur,
-        user_key=user2["key"],
-        action="logged in",
-        entity_type="user",
-        entity_key=user2["key"],
-        misc={
-            "key": user["key"],
-            "name": user["name"]
-        }
-    )
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="logged out",
-        entity_type="user",
-        entity_key=user["key"],
-        misc={
-            "key": user2["key"],
-            "name": user2["name"]
-        }
-    )
-
-    return jsonify({
+    return {
         "status": 200,
-        "token": token
-    })
+        "token": token,
+        "log": {
+            "misc": {
+                "from_key": user["key"],
+                "from_name": user["name"]
+            }
+        }
+    }, 200
 
 
 @bp.delete("/logout")
 @session(True)
 @rate_limit(10, 1)
+@log("user")
 def logout(cur, user):
-    user2 = new_user(cur)
-
     cur.execute("""
         DELETE FROM session WHERE user_key = %s;
     """, (user["key"],))
 
+    user2 = new_user(cur)
     token = new_token(cur, user2["key"])
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="logged out",
-        entity_type="user",
-        entity_key=user["key"],
-        misc={
-            "key": user2["key"],
-            "name": user2["name"]
-        }
-    )
-    log(
-        cur=cur,
-        user_key=user2["key"],
-        action="created",
-        entity_type="user",
-        entity_key=user2["key"],
-        misc={
-            "from": user["key"],
-            "name": user["name"]
-        }
-    )
-
-    return jsonify({
+    return {
         "status": 200,
         "user": user_schema(user2),
-        "token": token
-    })
+        "token": token,
+        "log": {
+            "misc": {
+                "to_key": user2["key"],
+                "to_name": user2["name"]
+            }
+        }
+    }, 200
 
 
 @bp.delete("/deactivate")
 @session(True)
 @rate_limit(10, 1)
+@log("user")
 def deactivate(cur, user):
     password = request.json.get("password")
     note = request.json.get("note")
     email_template = request.json.get("email_template")
 
     if not email_template:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     error = {}
     if not password:
@@ -403,10 +349,10 @@ def deactivate(cur, user):
     elif not check_password_hash(user["password"], password):
         error["password"] = "Incorrect password"
     if error:
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     cur.execute("""
         UPDATE post
@@ -424,34 +370,21 @@ def deactivate(cur, user):
     user2 = new_user(cur)
     token = new_token(cur, user2["key"])
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="deleted account",
-        entity_type="user",
-        entity_key=user["key"],
-        misc={"note": note} if note else {}
-    )
-    log(
-        cur=cur,
-        user_key=user2["key"],
-        action="created",
-        entity_type="user",
-        entity_key=user2["key"],
-        misc={
-            "key": user["key"],
-            "name": user["name"]
-        }
-    )
-
     send_mail(
         user["email"],
         "You've Successfully Deleted Your Account",
         email_template.format(name=user["name"])
     )
 
-    return jsonify({
+    return {
         "status": 200,
         "user": user_schema(user2),
-        "token": token
-    })
+        "token": token,
+        "log": {
+            "misc": {
+                "note": note,
+                "to_key": user2["key"],
+                "to_name": user2["name"]
+            }
+        }
+    }, 200

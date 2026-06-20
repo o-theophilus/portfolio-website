@@ -1,6 +1,6 @@
 from math import ceil
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from ..tools import access_pass, session, user_schema
 
@@ -22,10 +22,10 @@ def get_user(cur, _user, key):
     user = cur.fetchone()
 
     if not user:
-        return jsonify({
+        return {
             "status": 404,
             "error": "Oops! The user you're looking for doesn't exist"
-        })
+        }, 404
 
     _access = {}
     for x in access_pass:
@@ -36,21 +36,21 @@ def get_user(cur, _user, key):
                     _access[x][y[1]] = []
                 _access[x][y[1]].append(y[0])
 
-    return jsonify({
+    return {
         "status": 200,
         "user": user_schema(user),
         "access": _access
-    })
+    }, 200
 
 
 @bp.get("/users")
 @session(True)
 def get_users(cur, user):
     if "user.view" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     order_by = {
         'latest': 'date_created',
@@ -115,24 +115,24 @@ def get_users(cur, user):
     ))
     total_page = cur.fetchone()["count"]
 
-    return jsonify({
+    return {
         "status": 200,
         "users": [user_schema(x) for x in users],
         "order_by": list(order_by.keys()),
         "_status": ['anonymous', 'signedup', 'active'],
         "total_page": ceil(total_page / page_size),
         "searchParams": searchParams
-    })
+    }, 200
 
 
 @bp.get("/users/admin")
 @session(True)
 def get_admin_users(cur, user):
-    if "user.set_access" not in user["access"]:
-        return jsonify({
+    if "user.edit_access" not in user["access"]:
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     order_by = {
         'latest': 'date_created',
@@ -197,24 +197,24 @@ def get_admin_users(cur, user):
             for y in access_pass[x]:
                 access[x].append(y[0])
 
-    return jsonify({
+    return {
         "status": 200,
         "users": [user_schema(x) for x in users],
         "access": access,
         "order_by": list(order_by.keys()),
         "total_page": ceil(users[0]["_count"] / page_size) if users else 0,
         "searchParams": searchParams
-    })
+    }, 200
 
 
 @bp.get("/users/block")
 @session(True)
 def get_blocked_users(cur, user):
     if "block.view" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     order_by = {
         'latest': 'date_created',
@@ -287,10 +287,10 @@ def get_blocked_users(cur, user):
             if x["user"]["photo"] else None
         )
 
-    return jsonify({
+    return {
         "status": 200,
         "blocks": blocks,
         "total_page": ceil(blocks[0]["_count"] / page_size) if blocks else 0,
         "order_by": list(order_by.keys()),
         "searchParams": searchParams,
-    })
+    }, 200

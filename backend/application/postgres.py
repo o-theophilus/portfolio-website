@@ -2,7 +2,7 @@ import os
 
 import psycopg2
 import psycopg2.extras
-from flask import Blueprint, jsonify
+from flask import Blueprint
 from psycopg2.extras import Json
 
 bp = Blueprint("postgres", __name__)
@@ -122,7 +122,7 @@ def create_tables():
             date_created TIMESTAMPTZ DEFAULT now(),
             user_key UUID NOT NULL,
             action TEXT NOT NULL,
-            entity_key TEXT NOT NULL,
+            entity_key TEXT,
             entity_type TEXT NOT NULL,
             status TEXT NOT NULL DEFAULT '200',
             misc JSONB DEFAULT '{}'::jsonb
@@ -142,17 +142,18 @@ def create_tables():
             date_created TIMESTAMPTZ DEFAULT now(),
             date_updated TIMESTAMPTZ DEFAULT now(),
             user_key UUID NOT NULL REFERENCES "user"(key) ON DELETE CASCADE,
-            login TEXT NOT NULL DEFAULT 'false',
+            login BOOL NOT NULL DEFAULT FALSE,
             remember BOOL NOT NULL DEFAULT FALSE
         );
     """)
+    # TODO: CREATE INDEX for session table
 
     con.commit()
     cur.close()
     con.close()
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200
 
 
 def copy_db():
@@ -205,6 +206,6 @@ def copy_db():
     to_cur.close()
     to_con.close()
 
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200

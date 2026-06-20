@@ -1,8 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
-from ..log import log
 from ..storage import storage
-from ..tools import rate_limit, session, user_schema
+from ..tools import log, rate_limit, session, user_schema
 
 bp = Blueprint("user_photo", __name__)
 
@@ -10,19 +9,20 @@ bp = Blueprint("user_photo", __name__)
 @bp.put("/user/photo")
 @session(True)
 @rate_limit(10, 1)
-def add_photo(cur, user):
+@log("user")
+def add(cur, user):
     if 'file' not in request.files:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     file = request.files["file"]
     if file.content_type not in ['image/jpeg', 'image/png']:
-        return jsonify({
+        return {
             "status": 400,
             "error": "invalid file"
-        })
+        }, 400
 
     old_photo = None
     if user["photo"]:
@@ -42,33 +42,28 @@ def add_photo(cur, user):
     ))
     user = cur.fetchone()
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="updated profile photo",
-        entity_type="user",
-        entity_key=user["key"],
-        misc={
-            "from": old_photo,
-            "to": file_name
-        }
-    )
-
-    return jsonify({
+    return {
         "status": 200,
-        "user": user_schema(user)
-    })
+        "user": user_schema(user),
+        "log": {
+            "misc": {
+                "from": old_photo,
+                "to": file_name
+            }
+        }
+    }, 200
 
 
 @bp.delete("/user/photo")
 @session(True)
 @rate_limit(10, 1)
-def delete_photo(cur, user):
+@log("user")
+def remove(cur, user):
     if not user["photo"]:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     storage.delete(user["photo"], "user")
 
@@ -80,16 +75,12 @@ def delete_photo(cur, user):
     """, (user["key"],))
     user = cur.fetchone()
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="deleted profile photo",
-        entity_type="user",
-        entity_key=user["key"],
-        misc={"photo": user["photo"]}
-    )
-
-    return jsonify({
+    return {
         "status": 200,
-        "user": user_schema(user)
-    })
+        "user": user_schema(user),
+        "log": {
+            "misc": {
+                "photo": user["photo"]
+            }
+        }
+    }, 200

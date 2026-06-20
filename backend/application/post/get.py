@@ -2,7 +2,7 @@ import os
 import re
 from math import ceil
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from ..tools import session
 
@@ -48,25 +48,25 @@ def get(cur, user, key):
     post = cur.fetchone()
 
     if not post:
-        return jsonify({
+        return {
             "status": 404,
             "error": "Oops! The post you're looking for doesn't exist"
-        })
+        }, 404
 
     if (
         post["status"] != "active"
         and "post.add" not in user["access"]
         and "post.edit_status" not in user["access"]
     ):
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
-    return jsonify({
+    return {
         "status": 200,
         "post": post_schema(post)
-    })
+    }, 200
 
 
 @bp.get("/posts")
@@ -182,14 +182,14 @@ def get_posts(cur, user):
     """, (*params,))
     total_page = cur.fetchone()["count"]
 
-    return jsonify({
+    return {
         "status": 200,
         "posts": [post_schema(x) for x in posts],
         "order_by": list(order_by.keys()),
         "_status": ['active', 'draft'],
         "total_page": ceil(total_page / page_size),
         "searchParams": searchParams
-    })
+    }, 200
 
 
 @bp.get("/posts/feature")
@@ -202,10 +202,10 @@ def get_feature(cur, user):
     """)
     posts = cur.fetchall()
 
-    return jsonify({
+    return {
         "status": 200,
         "posts": [post_schema(x) for x in posts]
-    })
+    }, 200
 
 
 def get_comments(cur, user, key):
@@ -366,14 +366,14 @@ def get_comments(cur, user, key):
     total = row["total"]
     total_parent = row["total_parent"]
 
-    return jsonify({
+    return {
         "status": 200,
         "comments": final_comments,
         "order_by": list(order_by.keys()),
         "total_comment": total,
         "total_page": ceil(total_parent / page_size),
         "searchParams": searchParams,
-    })
+    }
 
 
 def get_engagement(cur, key, user_key):
@@ -470,7 +470,7 @@ def get_similar(cur, key):
 @bp.get("/posts/<key>/comments")
 @session(False)
 def _get_comments(cur, user, key):
-    return get_comments(cur, user, key)
+    return get_comments(cur, user, key), 200
 
 
 @bp.get("/posts/<key>/after")
@@ -478,13 +478,13 @@ def _get_comments(cur, user, key):
 def after_get(cur, user, key):
     engagement = get_engagement(cur, key, user["key"])
     author = get_author(cur, key)
-    comment_resp = get_comments(cur, user, key).json
+    comment_resp = get_comments(cur, user, key)
     similar = get_similar(cur, key)
 
-    return jsonify({
+    return {
         "status": 200,
         "engagement": engagement,
         "author": author,
         "comment_resp": comment_resp,
         "similar": similar
-    })
+    }, 200

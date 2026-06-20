@@ -1,53 +1,27 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from psycopg2.extras import Json
 
-from ..postgres import db_close, db_open
-from ..tools import get_session
+from ..tools import session
 
 bp = Blueprint("log", __name__)
 
 
 @bp.post("/logs")
-def log(
-    cur=None,
-    user_key=None,
-    action=None,
-    entity_key=None,
-    entity_type=None,
-    status=200,
-    misc={}
-):
-    close_conn = not cur
-    if not cur:
-        con, cur = db_open()
+@session(False)
+def log(cur, user):
 
-    if request.get_json(silent=True):
-        if not user_key:
-            session = get_session(cur)
-            if session["status"] != 200:
-                if close_conn:
-                    db_close(con, cur)
-                return jsonify(session)
-            user_key = session["user"]["key"]
-        if not action:
-            action = request.json.get("action")
-        if not entity_type:
-            entity_type = request.json.get("entity_type")
-        if not entity_key:
-            entity_key = request.json.get("entity_key")
-        if status == 200:
-            status = request.json.get("status", 200)
-        if misc == {}:
-            misc = request.json.get("misc", {})
+    action = request.json.get("action")
+    entity_key = request.json.get("entity_key")
+    entity_type = request.json.get("entity_type")
+    status = request.json.get("status", 200)
+    misc = request.json.get("misc", {})
 
     cur.execute("""
         INSERT INTO log (
             user_key, action, entity_key, entity_type, status, misc
         ) VALUES (%s, %s, %s, %s, %s, %s);
-    """, (user_key, action, entity_key, entity_type, status, Json(misc)))
+    """, (user["key"], action, entity_key, entity_type, status, Json(misc)))
 
-    if close_conn:
-        db_close(con, cur)
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200

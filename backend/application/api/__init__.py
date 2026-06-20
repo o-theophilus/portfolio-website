@@ -1,16 +1,16 @@
 import os
 import re
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
+from psycopg2.extras import Json
 
-from ..log import log
 from ..postgres import db_close, db_open
 from ..tools import rate_limit, send_mail, session
 
 bp = Blueprint("api", __name__)
 
 
-def delete_anonymous(cur, user):
+def delete_anonymous_user(cur, user):
     cur.execute("""
         DELETE FROM "user"
         WHERE status = 'anonymous'
@@ -18,16 +18,15 @@ def delete_anonymous(cur, user):
         RETURNING key;
     """)
     users = cur.fetchall()
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="cleaned up anonymous users",
-        entity_key="maintenance",
-        entity_type="app",
-        misc={
-            "deleted_users": [x["key"] for x in users],
-        }
-    )
+
+    cur.execute("""
+        INSERT INTO log (
+            user_key, action, entity_type, misc
+        ) VALUES (%s, %s, %s, %s);
+    """, (
+        user["key"], "api.delete_anonymous_user", "app",
+        Json({"deleted_users": [x["key"] for x in users]})
+    ))
 
 
 @bp.post("/maintenance/anonymous")
@@ -35,16 +34,16 @@ def delete_anonymous(cur, user):
 @rate_limit(20, 1)
 def user_delete_anonymous(cur, user):
     if "maintenance.anonymous" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
-    delete_anonymous(cur, user)
+    delete_anonymous_user(cur, user)
 
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200
 
 
 @bp.get("/cron")
@@ -56,7 +55,7 @@ def cron():
     """, (os.environ["MAIL_USERNAME"],))
     user = cur.fetchone()
 
-    delete_anonymous(cur, user)
+    delete_anonymous_user(cur, user)
 
     cur.execute("""
         DELETE FROM rate_limit_log
@@ -76,9 +75,9 @@ def cron():
     """)
 
     db_close(con, cur)
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200
 
 
 @bp.post("/contact")
@@ -92,10 +91,10 @@ def footer_send_email(cur, user):
     message = request.json.get("message")
 
     if not email_template:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     error = {}
     if not name:
@@ -113,10 +112,10 @@ def footer_send_email(cur, user):
     if not message:
         error["message"] = "This field is required"
     if error:
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     message = email_template.format(
         name=name, email=email, message=message)
@@ -127,6 +126,6 @@ def footer_send_email(cur, user):
         message
     )
 
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 400

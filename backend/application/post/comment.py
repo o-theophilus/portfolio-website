@@ -1,7 +1,6 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
-from ..log import log
-from ..tools import rate_limit, session
+from ..tools import log, rate_limit, session
 
 bp = Blueprint("comment", __name__)
 
@@ -9,45 +8,44 @@ bp = Blueprint("comment", __name__)
 @bp.delete("/comments/<key>")
 @session(True)
 @rate_limit(20, 1)
+@log("comment")
 def delete(cur, user, key):
     cur.execute("""
         SELECT * FROM comment WHERE key = %s AND user_key = %s;
     """, (key, user["key"]))
     comment = cur.fetchone()
     if not comment:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     cur.execute("""DELETE FROM comment WHERE key = %s;""", (comment["key"],))
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="deleted comment",
-        entity_type="comment",
-        entity_key=comment["key"],
-        misc={"post_key": comment["post_key"]}
-    )
-
-    return jsonify({
+    return {
         "status": 200,
-    })
+        "log": {
+            "entity_key": comment["key"],
+            "misc": {
+                "post_key": comment["post_key"]
+            }
+        }
+    }, 200
 
 
 @bp.post("/comments/<key>/like")
 @session(True)
 @rate_limit(20, 1)
+@log("comment")
 def like(cur, user, key):
     reaction = request.json.get("reaction")
 
     cur.execute("""SELECT * FROM comment WHERE key = %s;""", (key,))
     if not cur.fetchone() or reaction not in ["like", "dislike"]:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     cur.execute("""
         SELECT * FROM "like"
@@ -71,14 +69,6 @@ def like(cur, user, key):
             SET date_created = now(), reaction = %s WHERE key = %s;
         """, (reaction, user_reaction["key"]))
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action=f"{un}{reaction} comment",
-        entity_type="comment",
-        entity_key=key,
-    )
-
     cur.execute("""
         SELECT
             COUNT(CASE WHEN user_key != %s
@@ -91,24 +81,31 @@ def like(cur, user, key):
     """, (user["key"], user["key"], user["key"], key))
     reactions = cur.fetchone()
 
-    return jsonify({
+    return {
         "status": 200,
-        **reactions
-    })
+        **reactions,
+        "log": {
+            "entity_key": key,
+            "misc": {
+                "action": f"{un}{reaction}"
+            }
+        }
+    }, 200
 
 
 @bp.post("/comments/<key>/report")
 @session(True)
 @rate_limit(10, 1)
+@log("comment")
 def report(cur, user, key):
     comment = request.json.get("comment", "").strip()
     tags = request.json.get("tags")
 
     if type(tags) is not list:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     error = {}
     if not comment:
@@ -116,18 +113,18 @@ def report(cur, user, key):
     elif len(comment) > 500:
         error["comment"] = "This field cannot exceed 500 characters"
     if error:
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     cur.execute("""SELECT * FROM comment WHERE key = %s;""", (key,))
     reported_comment = cur.fetchone()
     if not reported_comment:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     cur.execute("""
         INSERT INTO report (reporter_key, reporter_comment, tags,
@@ -139,17 +136,12 @@ def report(cur, user, key):
     )
     report = cur.fetchone()
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="reported comment",
-        entity_type="comment",
-        entity_key=reported_comment["key"],
-        misc={
-            "report_key": report["key"]
+    return {
+        "status": 200,
+        "log": {
+            "entity_key": reported_comment["key"],
+            "misc": {
+                "report_key": report["key"]
+            }
         }
-    )
-
-    return jsonify({
-        "status": 200
-    })
+    }, 200

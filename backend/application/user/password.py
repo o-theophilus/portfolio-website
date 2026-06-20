@@ -1,10 +1,10 @@
 import re
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from ..log import log
-from ..tools import check_code, generate_code, rate_limit, send_mail, session
+from ..tools import (check_code, generate_code, log, rate_limit, send_mail,
+                     session)
 
 bp = Blueprint("user_password", __name__)
 
@@ -15,10 +15,10 @@ bp = Blueprint("user_password", __name__)
 def password_1_email(cur, user):
     email_template = request.json.get("email_template")
     if not email_template:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     send_mail(
         user["email"],
@@ -30,9 +30,9 @@ def password_1_email(cur, user):
         )
     )
 
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200
 
 
 @bp.post("/user/password/2")
@@ -41,26 +41,27 @@ def password_1_email(cur, user):
 def password_2_code(cur, user):
     error = check_code(cur, user["key"], user["email"])
     if error:
-        return jsonify({
+        return {
             "status": 400,
             "code": error
-        })
+        }, 400
 
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200
 
 
 @bp.post("/user/password/3")
 @session(True)
 @rate_limit(5, 1)
-def password_3_password(cur, user):
+@log("user")
+def edit(cur, user):
     error = check_code(cur, user["key"], user["email"])
     if error:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     password = request.json.get("password")
     confirm_password = request.json.get("confirm_password")
@@ -85,10 +86,10 @@ def password_3_password(cur, user):
         error["confirm_password"] = """Password and confirm_password password
          does not match"""
     if error:
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     cur.execute("""
         UPDATE "user" SET password = %s WHERE key = %s;
@@ -96,16 +97,9 @@ def password_3_password(cur, user):
         generate_password_hash(password, method="scrypt"),
         user["key"]
     ))
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="changed password",
-        entity_type="user",
-        entity_key=user["key"]
-    )
 
     cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))
 
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200

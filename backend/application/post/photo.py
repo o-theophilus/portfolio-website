@@ -1,8 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
-from ..log import log
 from ..storage import storage
-from ..tools import rate_limit, session
+from ..tools import log, rate_limit, session
 from .get import post_schema
 
 bp = Blueprint("post_photo", __name__)
@@ -11,27 +10,28 @@ bp = Blueprint("post_photo", __name__)
 @bp.put("/posts/<key>/photo")
 @session(True)
 @rate_limit(10, 1)
+@log("post")
 def add_photo(cur, user, key):
     if "post.edit_photo" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
     if 'file' not in request.files or not post:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     file = request.files["file"]
     if file.content_type not in ['image/jpeg', 'image/png']:
-        return jsonify({
+        return {
             "status": 400,
             "error": "invalid file"
-        })
+        }, 400
 
     old_photo = None
     if post["photo"]:
@@ -51,62 +51,45 @@ def add_photo(cur, user, key):
     ))
     post = cur.fetchone()
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="updated post photo",
-        entity_type="post",
-        entity_key=post["key"],
-        misc={
-            "from": old_photo,
-            "to": file_name
-        }
-    )
-
-    return jsonify({
+    return {
         "status": 200,
-        "post": post_schema(post)
-    })
+        "post": post_schema(post),
+        "log": {
+            "entity_key": post["key"],
+            "misc": {
+                "from": old_photo,
+                "to": file_name
+            }
+        }
+    }, 200
 
 
 @bp.delete("/posts/<key>/photo")
 @session(True)
 @rate_limit(10, 1)
+@log("post")
 def delete_photo(cur, user, key):
     if "post.edit_photo" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
     if not post or not post["photo"]:
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     storage.delete(post["photo"], "post")
 
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="deleted post photo",
-        entity_type="post",
-        entity_key=post["key"],
-        misc={"photo": post["photo"]}
-    )
-
+    misc = {
+        "photo": post["photo"],
+    }
     if post["status"] == "active":
-        log(
-            cur=cur,
-            user_key=user["key"],
-            action="edited post",
-            entity_type="post",
-            entity_key=post["key"],
-            misc={"status": "draft"}
-        )
+        misc["status"] = "draft"
 
     cur.execute("""
         UPDATE post
@@ -119,7 +102,11 @@ def delete_photo(cur, user, key):
     ))
     post = cur.fetchone()
 
-    return jsonify({
+    return {
         "status": 200,
-        "post": post_schema(post)
-    })
+        "post": post_schema(post),
+        "log": {
+            "entity_key": post["key"],
+            "misc": misc
+        }
+    }, 200

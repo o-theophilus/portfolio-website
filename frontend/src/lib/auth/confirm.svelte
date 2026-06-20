@@ -1,10 +1,10 @@
 <script>
-	import { module, loading } from '$lib/store.svelte.js';
+	import { app, loading, module } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
-	import { Form } from '$lib/layout';
 	import { Dialogue, Note } from '$lib/info';
+	import { IG } from '$lib/input';
+	import { Form } from '$lib/layout';
 	import Login from './login.svelte';
 
 	let form = $state({
@@ -29,7 +29,8 @@
 		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/confirm`, {
 			method: 'post',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				Authorization: app.token
 			},
 			body: JSON.stringify(form)
 		});

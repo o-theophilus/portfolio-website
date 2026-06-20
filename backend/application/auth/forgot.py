@@ -1,27 +1,26 @@
 import os
 import re
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from ..log import log
-from ..postgres import db_close, db_open
-from ..tools import access_pass, check_code, generate_code, send_mail
+from ..tools import (access_pass, check_code, generate_code, log, rate_limit,
+                     send_mail, session)
 
-bp = Blueprint("auth_forgot", __name__)
+bp = Blueprint("password_forgot", __name__)
 
 
 @bp.post("/forgot/1")
-def forgot_1_email():
-    con, cur = db_open()
-
+@session(False)
+@rate_limit(10, 1)
+@log("user")
+def forgot_1_email(cur, _user):
     email_template = request.json.get("email_template")
     if not email_template:
-        db_close(con, cur)
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     email = request.json.get("email")
 
@@ -31,22 +30,20 @@ def forgot_1_email():
     elif not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
         error = "Invalid email address"
     if error:
-        db_close(con, cur)
-        return jsonify({
+        return {
             "status": 400,
             "email": error
-        })
+        }, 400
 
     cur.execute("""
         SELECT * FROM "user" WHERE email = %s
     ;""", (email,))
     user = cur.fetchone()
     if not user or user["status"] not in ['signedup', 'active']:
-        db_close(con, cur)
-        return jsonify({
+        return {
             "status": 400,
             "email": "there is no user registered with this email"
-        })
+        }, 400
 
     send_mail(
         user["email"],
@@ -58,78 +55,72 @@ def forgot_1_email():
         )
     )
 
-    db_close(con, cur)
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200
 
 
 @bp.post("/forgot/2")
-def forgot_2_code():
-    con, cur = db_open()
-
+@session(False)
+@rate_limit(10, 1)
+@log("user")
+def forgot_2_code(cur, _user):
     email = request.json.get("email")
     if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
-        db_close(con, cur)
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     cur.execute("""SELECT * FROM "user" WHERE email = %s;""", (email,))
     user = cur.fetchone()
     if not user or user["status"] not in ['signedup', 'active']:
-        db_close(con, cur)
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     error = check_code(cur, user["key"], user["email"])
     if error:
-        db_close(con, cur)
-        return jsonify({
+        return {
             "status": 400,
             "code": error
-        })
+        }, 400
 
-    db_close(con, cur)
-    return jsonify({
+    return {
         "status": 200
-    })
+    }, 200
 
 
 @bp.post("/forgot/3")
-def forgot_3_password():
-    con, cur = db_open()
-
+@session(False)
+@rate_limit(10, 1)
+@log("user")
+def edit(cur, _user):
     email = request.json.get("email")
 
     if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
-        db_close(con, cur)
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     cur.execute("""
         SELECT * FROM "user" WHERE email = %s
     ;""", (email,))
     user = cur.fetchone()
     if not user or user["status"] not in ['signedup', 'active']:
-        db_close(con, cur)
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     error = check_code(cur, user["key"], user["email"])
     if error:
-        db_close(con, cur)
-        return jsonify({
+        return {
             "status": 400,
             "error": "Invalid request"
-        })
+        }, 400
 
     password = request.json.get("password")
     confirm_password = request.json.get("confirm_password")
@@ -153,11 +144,10 @@ def forgot_3_password():
         error["confirm_password"] = """Password and confirm_password password
          does not match"""
     if error:
-        db_close(con, cur)
-        return jsonify({
+        return {
             "status": 400,
             **error
-        })
+        }, 400
 
     cur.execute("""
         UPDATE "user" SET password = %s WHERE key = %s;
@@ -165,14 +155,8 @@ def forgot_3_password():
         generate_password_hash(password, method="scrypt"),
         user["key"]
     ))
-    log(
-        cur=cur,
-        user_key=user["key"],
-        action="changed password",
-        entity_type="user",
-        entity_key=user["key"]
-    )
 
+    log = {}
     if user["status"] != "active":
         cur.execute("""
             UPDATE "user"
@@ -185,17 +169,15 @@ def forgot_3_password():
             user["key"]
         ))
 
-        log(
-            cur=cur,
-            user_key=user["key"],
-            action="activated account",
-            entity_type="user",
-            entity_key=user["key"]
-        )
+        log = {
+            "misc": {
+                "action": "activated"
+            }
+        }
 
     cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))
 
-    db_close(con, cur)
-    return jsonify({
-        "status": 200
-    })
+    return {
+        "status": 200,
+        "log": log
+    }, 200

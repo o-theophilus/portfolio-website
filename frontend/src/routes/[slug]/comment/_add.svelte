@@ -29,7 +29,7 @@
 
 	const submit = async () => {
 		loading.open('Adding Comment . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}/comment`, {
+		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}/comments`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -38,7 +38,7 @@
 			body: JSON.stringify(form)
 		});
 		let get_comments = await fetch(
-			`${import.meta.env.VITE_BACKEND}/posts/${post.key}/comment?${new URLSearchParams(
+			`${import.meta.env.VITE_BACKEND}/posts/${post.key}/comments?${new URLSearchParams(
 				module.value.searchParams
 			).toString()}`,
 			{

@@ -1,6 +1,6 @@
 from math import ceil
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from ..tools import session
 
@@ -11,10 +11,10 @@ bp = Blueprint("report_get", __name__)
 @session(True)
 def get_many(cur, user):
     if "report.view" not in user["access"]:
-        return jsonify({
+        return {
             "status": 403,
             "error": "unauthorized access"
-        })
+        }, 403
 
     order_by = {
         'latest': 'report.date_created',
@@ -161,7 +161,7 @@ def get_many(cur, user):
     ))
     total_page = cur.fetchone()["count"]
 
-    return jsonify({
+    return {
         "status": 200,
         "reports": reports,
         "order_by": list(order_by.keys()),
@@ -169,4 +169,4 @@ def get_many(cur, user):
         "type": ["all", "user", "comment"],
         "total_page": ceil(total_page / page_size),
         "searchParams": searchParams
-    })
+    }, 200
