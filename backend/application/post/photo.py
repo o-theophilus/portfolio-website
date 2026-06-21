@@ -20,11 +20,17 @@ def add_photo(cur, user, key):
 
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
-    if 'file' not in request.files or not post:
+    if not post:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
+
+    if 'file' not in request.files:
+        return {
+            "status": 422,
+            "error": "Invalid request"
+        }, 422
 
     file = request.files["file"]
     if file.content_type not in ['image/jpeg', 'image/png']:
@@ -79,9 +85,9 @@ def delete_photo(cur, user, key):
     post = cur.fetchone()
     if not post or not post["photo"]:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     storage.delete(post["photo"], "post")
 

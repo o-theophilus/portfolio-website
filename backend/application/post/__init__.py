@@ -215,8 +215,7 @@ def feature(cur, user, key):
         }, 403
 
     cur.execute("""
-        SELECT * FROM post
-        WHERE key = %s AND status = 'active';
+        SELECT * FROM post WHERE key = %s AND status = 'active';
     """, (key,))
     post = cur.fetchone()
     if not post:
@@ -265,20 +264,11 @@ def feature(cur, user, key):
 @rate_limit(10, 1)
 @log("post")
 def delete(cur, user, key):
-    password = request.json.GET("password")
-
-    error = None
     if "post.edit_status" not in user["access"]:
-        error = "unauthorized access"
-    elif not password:
-        error = "This field is required"
-    elif not check_password_hash(user["password"], password):
-        error = "Incorrect password"
-    if error:
         return {
-            "status": 422,
-            "error": error
-        }, 422
+            "status": 403,
+            "error":  "unauthorized access"
+        }, 403
 
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
@@ -287,6 +277,18 @@ def delete(cur, user, key):
             "status": 404,
             "error": "Invalid request"
         }, 404
+
+    password = request.json.GET("password")
+    error = None
+    if not password:
+        error = "This field is required"
+    elif not check_password_hash(user["password"], password):
+        error = "Incorrect password"
+    if error:
+        return {
+            "status": 422,
+            "error": error
+        }, 422
 
     cur.execute("""
         DELETE FROM post WHERE key = %s;
@@ -309,20 +311,19 @@ def delete(cur, user, key):
 @rate_limit(10, 1)
 @log("post")
 def like(cur, user, key):
-    reaction = request.json.get("reaction")
-
-    if reaction not in ["like", "dislike"]:
-        return {
-            "status": 422,
-            "error": "Invalid request"
-        }, 422
-
     cur.execute("""SELECT * FROM post WHERE key = %s;""", (key,))
     if not cur.fetchone():
         return {
             "status": 404,
             "error": "Invalid request"
         }, 404
+
+    reaction = request.json.get("reaction")
+    if reaction not in ["like", "dislike"]:
+        return {
+            "status": 422,
+            "error": "Invalid request"
+        }, 422
 
     cur.execute("""
         SELECT * FROM "like"
@@ -386,6 +387,8 @@ def create_comment(cur, user, key):
         }, 404
 
     parent_key = request.json.get("parent_key")
+    comment = request.json.get("comment", "").strip()
+
     if parent_key:
         cur.execute("SELECT * FROM comment WHERE key = %s;", (parent_key,))
         parent = cur.fetchone()
@@ -395,7 +398,6 @@ def create_comment(cur, user, key):
                 "error": "Invalid request"
             }, 404
 
-    comment = request.json.get("comment", "").strip()
     error = {}
     if not comment:
         error["comment"] = "This field is required"

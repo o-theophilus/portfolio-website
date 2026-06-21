@@ -72,17 +72,23 @@ def init(cur, _session):
 @rate_limit(10, 1)
 @log("user")
 def signup(cur, user):
+    if user["login"]:
+        return {
+            "status": 401,
+            "error": "Invalid request"
+        }, 401
+
     name = ' '.join(request.json.get("name", "").strip().split())
     email = request.json.get("email", "").strip()
     password = request.json.get("password")
     confirm_password = request.json.get("confirm_password")
     email_template = request.json.get("email_template")
 
-    if user["login"] or not email_template:
+    if not email_template:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     error = {}
 
@@ -174,8 +180,6 @@ def signup(cur, user):
 @log("user")
 def confirm(cur, _user):
     email = request.json.get("email")
-
-    error = None
     if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
         return {
             "status": 422,
@@ -223,16 +227,22 @@ def confirm(cur, _user):
 @rate_limit(10, 1)
 @log("user")
 def login(cur, user):
-    email_template = request.json.get("email_template")
-    if user["login"] or not email_template:
+    if user["login"]:
         return {
-            "status": 400,
+            "status": 401,
             "error": "Invalid request"
-        }, 400
+        }, 401
 
+    email_template = request.json.get("email_template")
     email = request.json.get("email")
     password = request.json.get("password")
     remember = request.json.get("remember", False)
+
+    if not email_template:
+        return {
+            "status": 422,
+            "error": "Invalid request"
+        }, 422
 
     error = {}
     if not email:

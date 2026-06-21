@@ -20,7 +20,6 @@ def get_user(cur, _user, key):
         WHERE "user".key::TEXT = %s OR "user".username = %s;
     """, (key, key))
     user = cur.fetchone()
-
     if not user:
         return {
             "status": 404,

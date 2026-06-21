@@ -46,7 +46,6 @@ def get(cur, user, key):
         SELECT * FROM post WHERE slug = %s OR key::TEXT = %s
     """, (key, key))
     post = cur.fetchone()
-
     if not post:
         return {
             "status": 404,

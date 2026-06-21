@@ -38,14 +38,19 @@ def delete(cur, user, key):
 @rate_limit(20, 1)
 @log("comment")
 def like(cur, user, key):
-    reaction = request.json.get("reaction")
-
     cur.execute("""SELECT * FROM comment WHERE key = %s;""", (key,))
-    if not cur.fetchone() or reaction not in ["like", "dislike"]:
+    if not cur.fetchone():
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
+
+    reaction = request.json.get("reaction")
+    if reaction not in ["like", "dislike"]:
+        return {
+            "status": 422,
+            "error": "Invalid request"
+        }, 422
 
     cur.execute("""
         SELECT * FROM "like"
@@ -98,6 +103,14 @@ def like(cur, user, key):
 @rate_limit(10, 1)
 @log("comment")
 def report(cur, user, key):
+    cur.execute("""SELECT * FROM comment WHERE key = %s;""", (key,))
+    reported_comment = cur.fetchone()
+    if not reported_comment:
+        return {
+            "status": 404,
+            "error": "Invalid request"
+        }, 404
+
     comment = request.json.get("comment", "").strip()
     tags = request.json.get("tags")
 
@@ -117,14 +130,6 @@ def report(cur, user, key):
             "status": 422,
             **error
         }, 422
-
-    cur.execute("""SELECT * FROM comment WHERE key = %s;""", (key,))
-    reported_comment = cur.fetchone()
-    if not reported_comment:
-        return {
-            "status": 404,
-            "error": "Invalid request"
-        }, 404
 
     cur.execute("""
         INSERT INTO report (reporter_key, reporter_comment, tags,

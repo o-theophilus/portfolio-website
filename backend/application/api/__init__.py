@@ -84,7 +84,6 @@ def cron():
 @session(False)
 @rate_limit(20, 1)
 def footer_send_email(cur, user):
-
     email_template = request.json.get("email_template")
     name = request.json.get("name")
     email = request.json.get("email")

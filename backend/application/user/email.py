@@ -13,6 +13,12 @@ bp = Blueprint("user_email", __name__)
 @session(True)
 @rate_limit(5, 1)
 def email_1_old_email(cur, user):
+    if user["email"] == os.environ["MAIL_USERNAME"]:
+        return {
+            "status": 403,
+            "error": "Invalid request"
+        }, 403
+
     email_template = request.json.get("email_template")
     if not email_template:
         return {
@@ -102,6 +108,12 @@ def email_3_new_email(cur, user):
 @rate_limit(5, 1)
 @log("user")
 def edit(cur, user):
+    if user["email"] == os.environ["MAIL_USERNAME"]:
+        return {
+            "status": 403,
+            "error": "Invalid request"
+        }, 403
+
     error = check_code(cur, user["key"], user["email"], "code_1")
     if error:
         return {
@@ -133,13 +145,6 @@ def edit(cur, user):
             "status": 422,
             "code_2": error
         }, 422
-
-    if user["email"] == os.environ["MAIL_USERNAME"]:
-        cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))
-        return {
-            "status": 400,
-            "error": "LoL"
-        }, 400
 
     misc = {
         "from": user['email'],

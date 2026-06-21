@@ -117,6 +117,14 @@ def edit(cur, user):
 @rate_limit(20, 1)
 @log("user")
 def report(cur, user, key):
+    cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
+    user2 = cur.fetchone()
+    if not user2:
+        return {
+            "status": 404,
+            "error": "Invalid request"
+        }, 404
+
     comment = request.json.get("comment", "").strip()
     tags = request.json.get("tags")
 
@@ -136,14 +144,6 @@ def report(cur, user, key):
             "status": 422,
             **error
         }, 422
-
-    cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
-    user2 = cur.fetchone()
-    if not user2:
-        return {
-            "status": 404,
-            "error": "Invalid request"
-        }, 404
 
     cur.execute("""
         INSERT INTO report (reporter_key, reporter_comment,
@@ -169,8 +169,6 @@ def report(cur, user, key):
 @rate_limit(20, 1)
 @log("user")
 def block(cur, user, key):
-    comment = request.json.get("comment", "").strip()
-
     if "user.block" not in user["access"]:
         return {
             "status": 403,
@@ -179,10 +177,8 @@ def block(cur, user, key):
 
     cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
     user2 = cur.fetchone()
-
     cur.execute("""SELECT * FROM block WHERE user_key = %s;""", (key,))
     block = cur.fetchone()
-
     if (
         not user2
         or user2["key"] == user["key"]
@@ -194,6 +190,8 @@ def block(cur, user, key):
             "status": 404,
             "error": "Invalid request"
         }, 404
+
+    comment = request.json.get("comment", "").strip()
 
     error = {}
     if not comment:
@@ -243,8 +241,6 @@ def block(cur, user, key):
 @rate_limit(20, 1)
 @log("user")
 def unblock(cur, user, key):
-    comment = request.json.get("comment", "").strip()
-
     if "block.unblock" not in user["access"]:
         return {
             "status": 403,
@@ -264,6 +260,8 @@ def unblock(cur, user, key):
             "status": 404,
             "error": "Invalid request"
         }, 404
+
+    comment = request.json.get("comment", "").strip()
 
     error = {}
     if not comment:
@@ -383,23 +381,25 @@ def edit_access(cur, user, key):
 
     cur.execute('SELECT * FROM "user" WHERE key = %s;', (key,))
     user2 = cur.fetchone()
-
-    access = request.json.get("access")
-
     if (
         not user2
-        or user["key"] == user2["key"]
-        or not access
-        or type(access) is not list
+        or user2["key"] == user["key"]
         or user2["email"] == os.environ["MAIL_USERNAME"]
         or user2["status"] != "active"
     ):
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
+    access = request.json.get("access")
     password = request.json.get("password")
+
+    if not access or type(access) is not list:
+        return {
+            "status": 422,
+            "error": "Invalid request"
+        }, 422
 
     error = None
     if not password:

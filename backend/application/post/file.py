@@ -20,11 +20,17 @@ def add_file(cur, user, key):
 
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
-    if 'files' not in request.files or not post:
+    if not post:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
+
+    if 'files' not in request.files:
+        return {
+            "status": 422,
+            "error": "Invalid request"
+        }, 422
 
     error = ""
     files = []
@@ -94,14 +100,18 @@ def order_delete_file(cur, user, key):
 
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
+    if not post:
+        return {
+            "status": 404,
+            "error": "Invalid request"
+        }, 404
 
     files = request.json.get("files")
-
-    if not post or not files or type(files) is not list:
+    if not files or type(files) is not list:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     files = [p.split("/")[-1] for p in files]
 
