@@ -18,9 +18,9 @@ def theme(cur, user):
     theme = request.json.get("theme")
     if theme not in ["light", "dark", "system"]:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     misc = {
         "from": user["theme"],
@@ -122,9 +122,9 @@ def report(cur, user, key):
 
     if type(tags) is not list:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     error = {}
     if not comment:
@@ -133,17 +133,17 @@ def report(cur, user, key):
         error["comment"] = "This field cannot exceed 500 characters"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
     user2 = cur.fetchone()
     if not user2:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     cur.execute("""
         INSERT INTO report (reporter_key, reporter_comment,
@@ -191,9 +191,9 @@ def block(cur, user, key):
         or block
     ):
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     error = {}
     if not comment:
@@ -202,9 +202,9 @@ def block(cur, user, key):
         error["comment"] = "This field cannot exceed 500 characters"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     cur.execute("""
         INSERT INTO block (admin_key, user_key, comment)
@@ -261,9 +261,9 @@ def unblock(cur, user, key):
         or user2["email"] == os.environ["MAIL_USERNAME"]
     ):
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     error = {}
     if not comment:
@@ -272,9 +272,9 @@ def unblock(cur, user, key):
         error["comment"] = "This field cannot exceed 500 characters"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     cur.execute("DELETE FROM block WHERE user_key = %s;", (user2["key"],))
 
@@ -301,9 +301,9 @@ def reset(cur, user, key):
         or user2["email"] == os.environ["MAIL_USERNAME"]
     ):
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     _actions = request.json.get("actions")
     comment = request.json.get("comment")
@@ -315,9 +315,9 @@ def reset(cur, user, key):
         error["comment"] = "This field is required"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     actions = []
     error = None
@@ -408,9 +408,9 @@ def edit_access(cur, user, key):
         error = "incorrect password"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "password": error
-        }, 400
+        }, 422
 
     cur.execute("""
         UPDATE "user" SET access = %s WHERE key = %s;

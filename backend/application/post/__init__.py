@@ -32,9 +32,9 @@ def create(cur, user):
         error["title"] = "This field cannot exceed 100 characters"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     slug = re.sub('-+', '-', re.sub('[^a-zA-Z0-9]', '-', title.lower()))
     slug = slug[:100]
@@ -67,9 +67,9 @@ def edit(cur, user, key):
     post = cur.fetchone()
     if not post:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     error = {}
 
@@ -214,13 +214,16 @@ def feature(cur, user, key):
             "error":  "unauthorized access"
         }, 403
 
-    cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
+    cur.execute("""
+        SELECT * FROM post
+        WHERE key = %s AND status = 'active';
+    """, (key,))
     post = cur.fetchone()
-    if not post or post["status"] != "active":
+    if not post:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     action = "add"
     if post["featured"] > 0:
@@ -273,17 +276,17 @@ def delete(cur, user, key):
         error = "Incorrect password"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "error": error
-        }, 400
+        }, 422
 
     cur.execute('SELECT * FROM post WHERE key = %s;', (key,))
     post = cur.fetchone()
     if not post:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     cur.execute("""
         DELETE FROM post WHERE key = %s;
@@ -310,16 +313,16 @@ def like(cur, user, key):
 
     if reaction not in ["like", "dislike"]:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     cur.execute("""SELECT * FROM post WHERE key = %s;""", (key,))
     if not cur.fetchone():
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     cur.execute("""
         SELECT * FROM "like"
@@ -378,9 +381,9 @@ def create_comment(cur, user, key):
     post = cur.fetchone()
     if not post:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     parent_key = request.json.get("parent_key")
     if parent_key:
@@ -388,9 +391,9 @@ def create_comment(cur, user, key):
         parent = cur.fetchone()
         if not parent or parent["parent_key"] is not None:
             return {
-                "status": 400,
+                "status": 404,
                 "error": "Invalid request"
-            }, 400
+            }, 404
 
     comment = request.json.get("comment", "").strip()
     error = {}
@@ -400,9 +403,9 @@ def create_comment(cur, user, key):
         error["comment"] = "This field cannot exceed 500 characters"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     cur.execute("""
         INSERT INTO comment (user_key, post_key, comment, parent_key)
@@ -438,9 +441,9 @@ def edit_home_feature(cur, user):
 
     if not keys or type(keys) is not list:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     cur.execute("UPDATE post SET featured = 0;")
 

@@ -122,9 +122,9 @@ def signup(cur, user):
 
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     if email_user:
         user = email_user
@@ -178,24 +178,27 @@ def confirm(cur, _user):
     error = None
     if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
-    cur.execute('SELECT * FROM "user" WHERE email = %s;', (email,))
+    cur.execute("""
+        SELECT * FROM "user"
+        WHERE email = %s AND status = 'signedup';
+    """, (email,))
     user = cur.fetchone()
-    if not user or user["status"] != 'signedup':
+    if not user:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     error = check_code(cur, user["key"], user["email"])
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "error": error
-        }, 400
+        }, 422
 
     cur.execute("""
         UPDATE "user"
@@ -238,9 +241,9 @@ def login(cur, user):
         error["password"] = "This field is required"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     user2 = None
     if user["email"] == email:
@@ -257,16 +260,16 @@ def login(cur, user):
         or not check_password_hash(user2["password"], password)
     ):
         return {
-            "status": 400,
+            "status": 401,
             "error": "your email or password is incorrect"
-        }, 400
+        }, 401
 
     cur.execute("SELECT * FROM block WHERE user_key = %s;", (user2["key"],))
     if cur.fetchone():
         return {
-            "status": 400,
+            "status": 401,
             "error": "account blocked"
-        }, 400
+        }, 401
 
     if user2["status"] == "signedup":
         send_mail(
@@ -280,9 +283,9 @@ def login(cur, user):
             )
         )
         return {
-            "status": 400,
+            "status": 401,
             "error": "not active"
-        }, 400
+        }, 401
 
     cur.execute("""
         DELETE FROM session WHERE user_key = %s;
@@ -339,9 +342,9 @@ def deactivate(cur, user):
 
     if not email_template:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     error = {}
     if not password:
@@ -350,9 +353,9 @@ def deactivate(cur, user):
         error["password"] = "Incorrect password"
     if error:
         return {
-            "status": 400,
+            "status": 401,
             **error
-        }, 400
+        }, 401
 
     cur.execute("""
         UPDATE post

@@ -47,9 +47,9 @@ def add_file(cur, user, key):
         if not error:
             error = "no file"
         return {
-            "status": 400,
+            "status": 422,
             "error": error
-        }, 400
+        }, 422
 
     file_names = []
     for x in files:
@@ -107,9 +107,9 @@ def order_delete_file(cur, user, key):
 
     if not all(x in post["files"] for x in files):
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     for x in post["files"]:
         if x not in files:

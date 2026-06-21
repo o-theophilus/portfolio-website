@@ -16,9 +16,9 @@ def password_1_email(cur, user):
     email_template = request.json.get("email_template")
     if not email_template:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     send_mail(
         user["email"],
@@ -42,9 +42,9 @@ def password_2_code(cur, user):
     error = check_code(cur, user["key"], user["email"])
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "code": error
-        }, 400
+        }, 422
 
     return {
         "status": 200
@@ -59,9 +59,9 @@ def edit(cur, user):
     error = check_code(cur, user["key"], user["email"])
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     password = request.json.get("password")
     confirm_password = request.json.get("confirm_password")
@@ -87,9 +87,9 @@ def edit(cur, user):
          does not match"""
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     cur.execute("""
         UPDATE "user" SET password = %s WHERE key = %s;

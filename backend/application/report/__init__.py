@@ -16,17 +16,16 @@ def resolve(cur, user, key):
             "error": "unauthorized access"
         }, 403
 
-    cur.execute("SELECT * FROM report WHERE key = %s;", (key,))
+    cur.execute("""
+        SELECT * FROM report
+        WHERE key = %s AND reported_key != %s AND status = 'active';
+    """, (key, user["key"]))
     report = cur.fetchone()
-    if (
-        not report
-        or report["reported_key"] == user["key"]
-        or report["status"] != "active"
-    ):
+    if not report:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     comment = request.json.get("comment", "").strip()
     handle = request.json.get("handle", False)
@@ -99,17 +98,16 @@ def dismiss(cur, user, key):
             "error": "unauthorized access"
         }, 403
 
-    cur.execute("SELECT * FROM report WHERE key = %s;", (key,))
+    cur.execute("""
+        SELECT * FROM report
+        WHERE key = %s AND reported_key != %s AND status = 'active';
+    """, (key, user["key"]))
     report = cur.fetchone()
-    if (
-        not report
-        or report["reported_key"] == user["key"]
-        or report["status"] != "active"
-    ):
+    if not report:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     comment = request.json.get("comment", "").strip()
 

@@ -16,9 +16,9 @@ def delete(cur, user, key):
     comment = cur.fetchone()
     if not comment:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     cur.execute("""DELETE FROM comment WHERE key = %s;""", (comment["key"],))
 
@@ -103,9 +103,9 @@ def report(cur, user, key):
 
     if type(tags) is not list:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     error = {}
     if not comment:
@@ -114,17 +114,17 @@ def report(cur, user, key):
         error["comment"] = "This field cannot exceed 500 characters"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     cur.execute("""SELECT * FROM comment WHERE key = %s;""", (key,))
     reported_comment = cur.fetchone()
     if not reported_comment:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     cur.execute("""
         INSERT INTO report (reporter_key, reporter_comment, tags,

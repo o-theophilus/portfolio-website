@@ -13,16 +13,16 @@ bp = Blueprint("user_photo", __name__)
 def add(cur, user):
     if 'file' not in request.files:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     file = request.files["file"]
     if file.content_type not in ['image/jpeg', 'image/png']:
         return {
-            "status": 400,
+            "status": 422,
             "error": "invalid file"
-        }, 400
+        }, 422
 
     old_photo = None
     if user["photo"]:
@@ -61,9 +61,9 @@ def add(cur, user):
 def remove(cur, user):
     if not user["photo"]:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     storage.delete(user["photo"], "user")
 

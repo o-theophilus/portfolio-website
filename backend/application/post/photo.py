@@ -29,9 +29,9 @@ def add_photo(cur, user, key):
     file = request.files["file"]
     if file.content_type not in ['image/jpeg', 'image/png']:
         return {
-            "status": 400,
+            "status": 422,
             "error": "invalid file"
-        }, 400
+        }, 422
 
     old_photo = None
     if post["photo"]:

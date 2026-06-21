@@ -18,9 +18,9 @@ def forgot_1_email(cur, _user):
     email_template = request.json.get("email_template")
     if not email_template:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     email = request.json.get("email")
 
@@ -31,9 +31,9 @@ def forgot_1_email(cur, _user):
         error = "Invalid email address"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "email": error
-        }, 400
+        }, 422
 
     cur.execute("""
         SELECT * FROM "user" WHERE email = %s
@@ -41,9 +41,9 @@ def forgot_1_email(cur, _user):
     user = cur.fetchone()
     if not user or user["status"] not in ['signedup', 'active']:
         return {
-            "status": 400,
+            "status": 404,
             "email": "there is no user registered with this email"
-        }, 400
+        }, 404
 
     send_mail(
         user["email"],
@@ -68,24 +68,27 @@ def forgot_2_code(cur, _user):
     email = request.json.get("email")
     if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
-    cur.execute("""SELECT * FROM "user" WHERE email = %s;""", (email,))
+    cur.execute("""
+        SELECT * FROM "user"
+        WHERE email = %s AND status IN ('signedup', 'active');
+    """, (email,))
     user = cur.fetchone()
-    if not user or user["status"] not in ['signedup', 'active']:
+    if not user:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     error = check_code(cur, user["key"], user["email"])
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "code": error
-        }, 400
+        }, 422
 
     return {
         "status": 200
@@ -101,26 +104,27 @@ def edit(cur, _user):
 
     if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     cur.execute("""
-        SELECT * FROM "user" WHERE email = %s
-    ;""", (email,))
+        SELECT * FROM "user"
+        WHERE email = %s AND status IN ('signedup', 'active');
+    """, (email,))
     user = cur.fetchone()
-    if not user or user["status"] not in ['signedup', 'active']:
+    if not user:
         return {
-            "status": 400,
+            "status": 404,
             "error": "Invalid request"
-        }, 400
+        }, 404
 
     error = check_code(cur, user["key"], user["email"])
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     password = request.json.get("password")
     confirm_password = request.json.get("confirm_password")
@@ -145,9 +149,9 @@ def edit(cur, _user):
          does not match"""
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     cur.execute("""
         UPDATE "user" SET password = %s WHERE key = %s;

@@ -16,9 +16,9 @@ def email_1_old_email(cur, user):
     email_template = request.json.get("email_template")
     if not email_template:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     send_mail(
         user["email"],
@@ -41,9 +41,9 @@ def email_2_old_code(cur, user):
     error = check_code(cur, user["key"], user["email"], "code_1")
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "code_1": error
-        }, 400
+        }, 422
 
     return {
         "status": 200
@@ -57,9 +57,9 @@ def email_3_new_email(cur, user):
     email_template = request.json.get("email_template")
     if not email_template:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     email = request.json.get("email")
     error = None
@@ -67,26 +67,20 @@ def email_3_new_email(cur, user):
         error = "This field is required"
     elif not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
         error = "Invalid email address"
+    elif user["email"] == email:
+        error = "please use a different email form your current email"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "email": error
-        }, 400
+        }, 422
 
-    if user["email"] == email:
+    cur.execute('SELECT * FROM "user" WHERE email = %s;', (email,))
+    if cur.fetchone():
         return {
-            "status": 400,
-            "email": "please use a different email form your current email"
-        }, 400
-
-    cur.execute('SELECT * FROM "user" WHERE email = %s;',
-                (email,))
-    exist = cur.fetchone()
-    if exist:
-        return {
-            "status": 400,
+            "status": 422,
             "email": "email is already in use"
-        }, 400
+        }, 422
 
     send_mail(
         email,
@@ -111,37 +105,34 @@ def edit(cur, user):
     error = check_code(cur, user["key"], user["email"], "code_1")
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     email = request.json.get("email")
-    if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
+    if (
+        not email
+        or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email)
+        or user["email"] == email
+    ):
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
-
-    if user["email"] == email:
-        return {
-            "status": 400,
-            "error": "Invalid request"
-        }, 400
+        }, 422
 
     cur.execute('SELECT * FROM "user" WHERE email = %s;', (email,))
-    exist = cur.fetchone()
-    if exist:
+    if cur.fetchone():
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     error = check_code(cur, user["key"], email, "code_2")
     if error:
         return {
-            "status": 400,
+            "status": 422,
             "code_2": error
-        }, 400
+        }, 422
 
     if user["email"] == os.environ["MAIL_USERNAME"]:
         cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))

@@ -92,9 +92,9 @@ def footer_send_email(cur, user):
 
     if not email_template:
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     error = {}
     if not name:
@@ -113,9 +113,9 @@ def footer_send_email(cur, user):
         error["message"] = "This field is required"
     if error:
         return {
-            "status": 400,
+            "status": 422,
             **error
-        }, 400
+        }, 422
 
     message = email_template.format(
         name=name, email=email, message=message)
@@ -128,4 +128,4 @@ def footer_send_email(cur, user):
 
     return {
         "status": 200
-    }, 400
+    }, 200

@@ -77,9 +77,9 @@ def delete_file(cur, user):
         or not entity or entity not in ["user", "post"]
     ):
         return {
-            "status": 400,
+            "status": 422,
             "error": "Invalid request"
-        }, 400
+        }, 422
 
     for x in photos:
         storage.delete(x.split("/")[-1], entity)
