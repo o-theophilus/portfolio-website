@@ -4,6 +4,7 @@ from math import ceil
 
 from flask import Blueprint, request
 
+from ..comments import many as many_comment
 from ..tools import session
 
 bp = Blueprint("post_get", __name__)
@@ -48,7 +49,6 @@ def get(cur, user, key):
     post = cur.fetchone()
     if not post:
         return {
-            "status": 404,
             "error": "Oops! The post you're looking for doesn't exist"
         }, 404
 
@@ -58,19 +58,15 @@ def get(cur, user, key):
         and "post.edit_status" not in user["access"]
     ):
         return {
-            "status": 403,
             "error": "unauthorized access"
         }, 403
 
     return {
-        "status": 200,
         "post": post_schema(post)
     }, 200
 
 
-@bp.get("/posts")
-@session(False)
-def get_posts(cur, user):
+def many(cur, user):
     order_by = {
         'latest': 'post.date_created',
         'oldest': 'post.date_created',
@@ -182,7 +178,6 @@ def get_posts(cur, user):
     total_page = cur.fetchone()["count"]
 
     return {
-        "status": 200,
         "posts": [post_schema(x) for x in posts],
         "order_by": list(order_by.keys()),
         "_status": ['active', 'draft'],
@@ -191,9 +186,13 @@ def get_posts(cur, user):
     }, 200
 
 
-@bp.get("/posts/feature")
+@bp.get("/posts")
 @session(False)
-def get_feature(cur, user):
+def _many(cur, user):
+    return many(cur, user), 200
+
+
+def many_feature(cur, user):
     cur.execute("""
         SELECT * FROM post
         WHERE status = 'active' AND featured > 0
@@ -202,177 +201,14 @@ def get_feature(cur, user):
     posts = cur.fetchall()
 
     return {
-        "status": 200,
         "posts": [post_schema(x) for x in posts]
     }, 200
 
 
-def get_comments(cur, user, key):
-    order_by = {
-        'latest': 'c.date_created',
-        'oldest': 'c.date_created',
-        'most reply': 'reply_count',
-        # 'like': '"like"',
-        # 'dislike': 'dislike',
-        'most relevant': 'most_like',
-        # 'most engaged': 'most_engaged',
-    }
-    order_dir = {
-        'latest': 'DESC',
-        'oldest': 'ASC',
-        'most reply': 'DESC',
-        'like': 'DESC',
-        'dislike': 'DESC',
-        'most relevant': 'DESC',
-        'most engaged': 'DESC',
-    }
-
-    searchParams = {
-        "order": 'most relevant',
-        "page_no": 1,
-        "page_size": 24
-    }
-    order = request.args.get("order", searchParams["order"])
-    page_no = int(request.args.get("page_no", searchParams["page_no"]))
-    page_size = int(request.args.get("page_size", searchParams["page_size"]))
-    page_size = min(page_size, 100)
-
-    cur.execute(f"""
-        SELECT
-            c.key, c.date_created, c.comment, c.parent_key,
-            u.key AS user_key, u.name, u.username, u.photo,
-            COALESCE(sub_c.reply_count, 0) AS reply_count,
-            COALESCE(l."like", 0) AS "like",
-            COALESCE(l.dislike, 0) AS dislike,
-            COALESCE(l."like", 0) - COALESCE(l.dislike, 0) AS most_like,
-            COALESCE(sub_c.reply_count, 0) + COALESCE(l."like", 0)
-                + COALESCE(l.dislike, 0) AS most_engaged
-        FROM comment c
-        JOIN "user" u ON u.key = c.user_key
-
-        LEFT JOIN (
-            SELECT parent_key, COUNT(*) AS reply_count
-            FROM comment
-            WHERE parent_key IS NOT NULL
-                AND post_key = %s
-            GROUP BY parent_key
-        ) sub_c ON sub_c.parent_key = c.key
-
-        LEFT JOIN (
-            SELECT comment_key,
-                COUNT(*) FILTER (WHERE reaction = 'like') AS "like",
-                COUNT(*) FILTER (WHERE reaction = 'dislike') AS dislike
-            FROM "like"
-            GROUP BY comment_key
-        ) l ON l.comment_key = c.key
-
-        WHERE c.post_key = %s AND c.parent_key IS NULL
-        ORDER BY {order_by[order]} {order_dir[order]}, c.key DESC
-        LIMIT %s OFFSET %s;
-    """, (key, key, page_size, (page_no - 1) * page_size))
-    comments = cur.fetchall()
-    replies = []
-    likes = []
-
-    if comments:
-        comment_keys = [r["key"] for r in comments]
-
-        cur.execute("""
-            SELECT
-                c.key, c.date_created, c.comment, c.parent_key,
-                u.key AS user_key, u.name, u.username, u.photo
-            FROM comment c
-            JOIN "user" u ON u.key = c.user_key
-            WHERE c.parent_key::TEXT = ANY(%s)
-            ORDER BY c.date_created ASC
-        """, (comment_keys,))
-        replies = cur.fetchall()
-
-        for x in replies:
-            comment_keys.append(x["key"])
-
-        cur.execute("""
-            SELECT
-                comment_key,
-                COUNT(*) FILTER (WHERE reaction = 'like' AND user_key != %s)
-                    AS others_like,
-                COUNT(*) FILTER (WHERE reaction = 'dislike' AND user_key != %s)
-                    AS others_dislike,
-                MAX(reaction) FILTER (WHERE user_key = %s) AS user_reaction
-            FROM "like"
-            WHERE comment_key::TEXT = ANY(%s)
-            GROUP BY comment_key
-        """, (user["key"], user["key"], user["key"], comment_keys))
-        likes = cur.fetchall()
-
-    likes_map = {
-        x["comment_key"]: {
-            "others_like": x["others_like"],
-            "others_dislike": x["others_dislike"],
-            "user_reaction": x["user_reaction"]
-        }
-        for x in likes
-    }
-
-    replies_map = {}
-    for x in replies:
-        replies_map.setdefault(x["parent_key"], []).append({
-            "key": x["key"],
-            "date_created": x["date_created"],
-            "comment": x["comment"],
-            "user": {
-                "key": x["user_key"],
-                "name": x["name"],
-                "username": x["username"],
-                "photo": f'{request.host_url}photo/user/{x["photo"]}' if x[
-                    "photo"] else None
-            },
-            "engagement": likes_map.get(x["key"], {
-                "others_like": 0,
-                "others_dislike": 0,
-                "user_reaction": None
-            }),
-        })
-
-    final_comments = []
-    for x in comments:
-        final_comments.append({
-            "key": x["key"],
-            "date_created": x["date_created"],
-            "comment": x["comment"],
-            "user": {
-                "key": x["user_key"],
-                "name": x["name"],
-                "username": x["username"],
-                "photo": f'{request.host_url}photo/user/{x["photo"]}' if x[
-                    "photo"] else None
-            },
-            "engagement": likes_map.get(x["key"], {
-                "others_like": 0,
-                "others_dislike": 0,
-                "user_reaction": None
-            }),
-            "replies": replies_map.get(x["key"], [])
-        })
-
-    cur.execute("""
-        SELECT
-            COUNT(*) AS total,
-            COUNT(*) FILTER (WHERE parent_key IS NULL) AS total_parent
-        FROM comment WHERE post_key = %s;
-    """, (key,))
-    row = cur.fetchone()
-    total = row["total"]
-    total_parent = row["total_parent"]
-
-    return {
-        "status": 200,
-        "comments": final_comments,
-        "order_by": list(order_by.keys()),
-        "total_comment": total,
-        "total_page": ceil(total_parent / page_size),
-        "searchParams": searchParams,
-    }
+@bp.get("/posts/feature")
+@session(False)
+def _many_feature(cur, user):
+    return many_feature(cur, user), 200
 
 
 def get_engagement(cur, key, user_key):
@@ -466,24 +302,12 @@ def get_similar(cur, key):
     return [post_schema(x) for x in posts]
 
 
-@bp.get("/posts/<key>/comments")
-@session(False)
-def _get_comments(cur, user, key):
-    return get_comments(cur, user, key), 200
-
-
 @bp.get("/posts/<key>/after")
 @session(False)
 def after_get(cur, user, key):
-    engagement = get_engagement(cur, key, user["key"])
-    author = get_author(cur, key)
-    comment_resp = get_comments(cur, user, key)
-    similar = get_similar(cur, key)
-
     return {
-        "status": 200,
-        "engagement": engagement,
-        "author": author,
-        "comment_resp": comment_resp,
-        "similar": similar
+        "engagement": get_engagement(cur, key, user["key"]),
+        "author": get_author(cur, key),
+        "comment_resp": many_comment(cur, user, key),
+        "similar": get_similar(cur, key)
     }, 200

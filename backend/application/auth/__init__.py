@@ -3,12 +3,14 @@ import re
 from uuid import uuid4
 
 from flask import Blueprint, request
+from psycopg2.extras import Json
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..post.get import get_tags
 from ..storage import storage
-from ..tools import (access_pass, check_code, generate_code, log, rate_limit,
-                     reserved_words, send_mail, session, user_schema)
+from ..tools import (access_pass, check_code, generate_code, get_client_info,
+                     log, rate_limit, reserved_words, send_mail, session,
+                     user_schema)
 
 bp = Blueprint("auth", __name__)
 
@@ -52,14 +54,13 @@ def init(cur, _session):
 
         cur.execute("""
             INSERT INTO log (
-                user_key, action, entity_type
-            ) VALUES (%s, %s, %s);
-        """, (user["key"], "auth.init", "user"))
+                user_key, action, entity_type, misc
+            ) VALUES (%s, 'auth.init', 'user', %s);
+        """, (user["key"], Json(get_client_info())))
 
     tags = get_tags(cur)
 
     return {
-        "status": 200,
         "user": user_schema(user),
         "token": token,
         "login": login,
@@ -74,7 +75,6 @@ def init(cur, _session):
 def signup(cur, user):
     if user["login"]:
         return {
-            "status": 401,
             "error": "Invalid request"
         }, 401
 
@@ -86,7 +86,6 @@ def signup(cur, user):
 
     if not email_template:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -128,7 +127,6 @@ def signup(cur, user):
 
     if error:
         return {
-            "status": 422,
             **error
         }, 422
 
@@ -170,7 +168,6 @@ def signup(cur, user):
     )
 
     return {
-        "status": 200
     }, 200
 
 
@@ -182,7 +179,6 @@ def confirm(cur, _user):
     email = request.json.get("email")
     if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -193,14 +189,12 @@ def confirm(cur, _user):
     user = cur.fetchone()
     if not user:
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
     error = check_code(cur, user["key"], user["email"])
     if error:
         return {
-            "status": 422,
             "error": error
         }, 422
 
@@ -218,7 +212,6 @@ def confirm(cur, _user):
     cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))
 
     return {
-        "status": 200
     }, 200
 
 
@@ -229,7 +222,6 @@ def confirm(cur, _user):
 def login(cur, user):
     if user["login"]:
         return {
-            "status": 401,
             "error": "Invalid request"
         }, 401
 
@@ -240,7 +232,6 @@ def login(cur, user):
 
     if not email_template:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -251,7 +242,6 @@ def login(cur, user):
         error["password"] = "This field is required"
     if error:
         return {
-            "status": 422,
             **error
         }, 422
 
@@ -270,14 +260,12 @@ def login(cur, user):
         or not check_password_hash(user2["password"], password)
     ):
         return {
-            "status": 401,
             "error": "your email or password is incorrect"
         }, 401
 
     cur.execute("SELECT * FROM block WHERE user_key = %s;", (user2["key"],))
     if cur.fetchone():
         return {
-            "status": 401,
             "error": "account blocked"
         }, 401
 
@@ -293,7 +281,6 @@ def login(cur, user):
             )
         )
         return {
-            "status": 401,
             "error": "not active"
         }, 401
 
@@ -305,12 +292,12 @@ def login(cur, user):
     token = new_token(cur, user2["key"], True, remember)
 
     return {
-        "status": 200,
         "token": token,
         "log": {
             "misc": {
                 "from_key": user["key"],
-                "from_name": user["name"]
+                "from_name": user["name"],
+                **get_client_info()
             }
         }
     }, 200
@@ -329,13 +316,13 @@ def logout(cur, user):
     token = new_token(cur, user2["key"])
 
     return {
-        "status": 200,
         "user": user_schema(user2),
         "token": token,
         "log": {
             "misc": {
                 "to_key": user2["key"],
-                "to_name": user2["name"]
+                "to_name": user2["name"],
+                **get_client_info()
             }
         }
     }, 200
@@ -352,7 +339,6 @@ def deactivate(cur, user):
 
     if not email_template:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -363,7 +349,6 @@ def deactivate(cur, user):
         error["password"] = "Incorrect password"
     if error:
         return {
-            "status": 401,
             **error
         }, 401
 
@@ -390,7 +375,6 @@ def deactivate(cur, user):
     )
 
     return {
-        "status": 200,
         "user": user_schema(user2),
         "token": token,
         "log": {

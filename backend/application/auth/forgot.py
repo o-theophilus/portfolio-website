@@ -18,7 +18,6 @@ def forgot_1_email(cur, _user):
     email_template = request.json.get("email_template")
     if not email_template:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -31,7 +30,6 @@ def forgot_1_email(cur, _user):
         error = "Invalid email address"
     if error:
         return {
-            "status": 422,
             "email": error
         }, 422
 
@@ -41,7 +39,6 @@ def forgot_1_email(cur, _user):
     user = cur.fetchone()
     if not user or user["status"] not in ['signedup', 'active']:
         return {
-            "status": 404,
             "email": "there is no user registered with this email"
         }, 404
 
@@ -56,7 +53,6 @@ def forgot_1_email(cur, _user):
     )
 
     return {
-        "status": 200
     }, 200
 
 
@@ -68,7 +64,6 @@ def forgot_2_code(cur, _user):
     email = request.json.get("email")
     if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -79,19 +74,16 @@ def forgot_2_code(cur, _user):
     user = cur.fetchone()
     if not user:
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
     error = check_code(cur, user["key"], user["email"])
     if error:
         return {
-            "status": 422,
             "code": error
         }, 422
 
     return {
-        "status": 200
     }, 200
 
 
@@ -104,7 +96,6 @@ def edit(cur, _user):
 
     if not email or not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -115,14 +106,12 @@ def edit(cur, _user):
     user = cur.fetchone()
     if not user:
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
     error = check_code(cur, user["key"], user["email"])
     if error:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -149,7 +138,6 @@ def edit(cur, _user):
          does not match"""
     if error:
         return {
-            "status": 422,
             **error
         }, 422
 
@@ -182,6 +170,5 @@ def edit(cur, _user):
     cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))
 
     return {
-        "status": 200,
         "log": log
     }, 200

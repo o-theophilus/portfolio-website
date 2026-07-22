@@ -22,7 +22,7 @@
 
 	const submit = async () => {
 		loading.open('Saving User . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/user`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -30,15 +30,15 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			module.value.update(resp.user);
+		if (response.status == 200) {
+			module.value.update(result.user);
 			notify.open('Phone Number Changed');
 			module.close();
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

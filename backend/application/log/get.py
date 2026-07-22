@@ -9,7 +9,7 @@ bp = Blueprint("log_get", __name__)
 
 @bp.get("/logs")
 @session(True)
-def get_many(cur, user):
+def many(cur, user):
     searchParams = {
         "u_search": "",
         "entity_type": "all",
@@ -28,7 +28,6 @@ def get_many(cur, user):
 
     if "log.view" not in user["access"]:
         return {
-            "status": 403,
             "error": "unauthorized access"
         }, 403
 
@@ -125,7 +124,6 @@ def get_many(cur, user):
             search_query[x["entity_type"]] = ["all", x["action"]]
 
     return {
-        "status": 200,
         "logs": logs,
         "search_query": search_query,
         "total_page": ceil(logs[0]["_count"] / page_size) if logs else 0,

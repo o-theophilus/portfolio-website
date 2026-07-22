@@ -3,6 +3,7 @@ import random
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 
+import requests
 import resend
 from flask import current_app, request
 from psycopg2.extras import Json
@@ -270,3 +271,82 @@ def user_schema(user):
         if user["photo"] else None
     )
     return user
+
+
+def parse_user_agent(ua_string: str):
+    ua = ua_string.lower()
+
+    # --- DEVICE TYPE ---
+    if "mobile" in ua:
+        device = "mobile"
+    elif "tablet" in ua or "ipad" in ua:
+        device = "tablet"
+    else:
+        device = "pc"
+
+    # --- OS ---
+    if "windows" in ua:
+        os = "Windows"
+    elif "mac os" in ua or "macintosh" in ua:
+        os = "MacOS"
+    elif "android" in ua:
+        os = "Android"
+    elif "iphone" in ua or "ios" in ua:
+        os = "iOS"
+    elif "linux" in ua:
+        os = "Linux"
+    else:
+        os = "Unknown"
+
+    # --- BROWSER ---
+    if "chrome" in ua and "edg" not in ua:
+        browser = "Chrome"
+    elif "safari" in ua and "chrome" not in ua:
+        browser = "Safari"
+    elif "firefox" in ua:
+        browser = "Firefox"
+    elif "edg" in ua:
+        browser = "Edge"
+    elif "opr" in ua or "opera" in ua:
+        browser = "Opera"
+    else:
+        browser = "Unknown"
+
+    return device, browser, os
+
+
+def get_client_info():
+    # --- IP ---
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+    if ip and "," in ip:
+        ip = ip.split(",")[0].strip()
+
+    # --- USER AGENT ---
+    ua_string = request.headers.get("User-Agent", "")
+    device, browser, os = parse_user_agent(ua_string)
+
+    # --- LOCATION (IP GEO) ---
+    location = {}
+
+    try:
+        res = requests.get(f"http://ip-api.com/json/{ip}", timeout=2)
+        data = res.json()
+
+        if data.get("status") == "success":
+            location = {
+                "country": data.get("country"),
+                "region": data.get("regionName"),
+                "city": data.get("city"),
+                "lat": data.get("lat"),
+                "lon": data.get("lon"),
+            }
+    except Exception:
+        pass
+
+    return {
+        "ip": ip,
+        "device": device,
+        "browser": browser,
+        "os": os,
+        "location": location
+    }

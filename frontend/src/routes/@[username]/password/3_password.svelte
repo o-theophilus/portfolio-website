@@ -1,8 +1,8 @@
 <script>
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
 	let form = $state({ ...module.value });
@@ -34,7 +34,7 @@
 
 	const submit = async () => {
 		loading.open('loading . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/password/3`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/user/password/3`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -42,14 +42,14 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			notify.open('Password changed');
 			module.close();
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

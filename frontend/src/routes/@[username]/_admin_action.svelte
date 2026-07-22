@@ -28,7 +28,7 @@
 		error = {};
 
 		loading.open(`Taking action${form.actions.length > 1 ? 's' : ''} . . .`);
-		let resp = await fetch(
+		let response = await fetch(
 			`${import.meta.env.VITE_BACKEND}/users/${module.value.user.key}/action`,
 			{
 				method: 'put',
@@ -39,16 +39,16 @@
 				body: JSON.stringify(form)
 			}
 		);
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			replaceState(`/@${resp.user.username}`);
-			module.value.update(resp.user);
+		if (response.status == 200) {
+			replaceState(`/@${result.user.username}`);
+			module.value.update(result.user);
 			module.close();
 			notify.open('Done');
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

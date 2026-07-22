@@ -1,9 +1,9 @@
 <script>
-	import { module, app, loading } from '$lib/store.svelte.js';
+	import { app, loading, module } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
-	import { IG } from '$lib/input';
 	import { Note } from '$lib/info';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
 	import Code from './4_code.svelte';
@@ -32,7 +32,7 @@
 
 	const submit = async () => {
 		loading.open('Requesting Code . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/email/3`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/user/email/3`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -40,13 +40,13 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			module.open(Code, { ...form, update: module.value.update });
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

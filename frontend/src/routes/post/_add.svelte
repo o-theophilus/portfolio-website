@@ -25,7 +25,7 @@
 	const submit = async () => {
 		loading.open('Creating Post . . .');
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/posts${page.url.search}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -33,23 +33,11 @@
 			},
 			body: JSON.stringify(form)
 		});
-
-		let posts = await fetch(`${import.meta.env.VITE_BACKEND}/posts${page.url.search}`, {
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: app.token
-			}
-		});
-
-		resp = await resp.json();
-		posts = await posts.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			if (posts.status == 200) {
-				module.value.update(posts.posts, posts.total_page);
-			}
-
+		if (response.status == 200) {
+			module.value.update(result.posts, result.total_page);
 			module.open(Dialogue, {
 				message: 'Post Created',
 				buttons: [
@@ -57,14 +45,14 @@
 						name: 'OK',
 						icon: 'check',
 						fn: () => {
-							goto(`/${resp.post.slug}?edit`);
+							goto(`/${result.post.slug}?edit`);
 							module.close();
 						}
 					}
 				]
 			});
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

@@ -22,7 +22,7 @@
 		error = {};
 
 		loading.open('saving . . .');
-		let resp = await fetch(
+		let response = await fetch(
 			`${import.meta.env.VITE_BACKEND}/users/${module.value.user.key}/access`,
 			{
 				method: 'put',
@@ -33,15 +33,15 @@
 				body: JSON.stringify(form)
 			}
 		);
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			notify.open('Access saved');
-			module.value.update(resp.user);
+			module.value.update(result.user);
 			module.close();
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

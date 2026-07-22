@@ -1,5 +1,5 @@
 <script>
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
 	import { IG } from '$lib/input';
@@ -22,7 +22,7 @@
 
 	const submit = async () => {
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${module.value.key}`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${module.value.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -30,15 +30,15 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			module.value.update(resp.post);
+		if (response.status == 200) {
+			module.value.update(result.post);
 			module.close();
 			notify.open('Date Saved');
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

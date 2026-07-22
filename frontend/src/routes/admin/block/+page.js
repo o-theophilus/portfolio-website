@@ -1,5 +1,5 @@
+import { loading, page_state } from "$lib/store.svelte.js";
 import { error } from '@sveltejs/kit';
-import { loading, page_state } from "$lib/store.svelte.js"
 
 export const load = async ({ fetch, url, parent, depends }) => {
 	depends(true)
@@ -24,25 +24,25 @@ export const load = async ({ fetch, url, parent, depends }) => {
 		return page_state.state[page_name].data
 	}
 
-	let backend = new URL(`${import.meta.env.VITE_BACKEND}/users/block`)
+	let backend = new URL(`${import.meta.env.VITE_BACKEND}/blocks`)
 	backend.search = new URLSearchParams(page_state.state[page_name].searchParams);
-	let resp = await fetch(backend.href, {
+	let response = await fetch(backend.href, {
 		method: 'get',
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: a.locals.token
 		}
 	});
-	resp = await resp.json();
+	let result = await response.json();
 	loading.close()
 
-	if (resp.status == 200) {
-		resp.page_name = page_name
-		page_state.state[page_name].data = resp
+	if (response.status == 200) {
+		result.page_name = page_name
+		page_state.state[page_name].data = result
 		page_state.state[page_name].loaded = true
 
-		return resp
+		return result
 	} else {
-		throw error(resp.status, resp.error)
+		throw error(result.status, result.error)
 	}
 }

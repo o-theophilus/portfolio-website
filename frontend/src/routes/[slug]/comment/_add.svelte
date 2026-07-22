@@ -29,43 +29,29 @@
 
 	const submit = async () => {
 		loading.open('Adding Comment . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}/comments`, {
-			method: 'post',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: app.token
-			},
-			body: JSON.stringify(form)
-		});
-		let get_comments = await fetch(
-			`${import.meta.env.VITE_BACKEND}/posts/${post.key}/comments?${new URLSearchParams(
+		let response = await fetch(
+			`${import.meta.env.VITE_BACKEND}/comments/${post.key}?${new URLSearchParams(
 				module.value.searchParams
 			).toString()}`,
 			{
+				method: 'post',
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: app.token
-				}
+				},
+				body: JSON.stringify(form)
 			}
 		);
-
-		resp = await resp.json();
-		get_comments = await get_comments.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			if (resp.status == 200) {
-				module.value.update(
-					get_comments.comments,
-					get_comments.total_comment,
-					get_comments.total_page
-				);
-			}
+		if (response.status == 200) {
+			module.value.update(result.comments, result.total_comment, result.total_page);
 			module.close();
 			notify.open('Comment Added');
 			scroll('#comment_section');
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

@@ -125,7 +125,7 @@ def create_tables():
             entity_key TEXT,
             entity_type TEXT NOT NULL,
             status TEXT NOT NULL DEFAULT '200',
-            misc JSONB DEFAULT '{}'::jsonb
+            misc JSONB DEFAULT '{}'::JSONB
         );
 
         CREATE TABLE IF NOT EXISTS rate_limit_log (
@@ -151,7 +151,6 @@ def create_tables():
     cur.close()
     con.close()
     return {
-        "status": 200
     }, 200
 
 
@@ -206,5 +205,4 @@ def copy_db():
     to_con.close()
 
     return {
-        "status": 200
     }, 200

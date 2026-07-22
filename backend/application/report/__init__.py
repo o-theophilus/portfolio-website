@@ -1,8 +1,110 @@
 from flask import Blueprint, request
 
 from ..tools import log, rate_limit, session
+from .get import many
 
 bp = Blueprint("report", __name__)
+
+
+# TODO: user report and comment report can be unified
+@bp.post("/reports/user/<key>")
+@session(True)
+@rate_limit(20, 1)
+@log("report")
+def report_user(cur, user, key):
+    cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
+    user2 = cur.fetchone()
+    if not user2:
+        return {
+            "error": "Invalid request"
+        }, 404
+
+    comment = request.json.get("comment", "").strip()
+    tags = request.json.get("tags")
+
+    if type(tags) is not list:
+        return {
+            "error": "Invalid request"
+        }, 422
+
+    error = {}
+    if not comment:
+        error["comment"] = "This field is required"
+    elif len(comment) > 500:
+        error["comment"] = "This field cannot exceed 500 characters"
+    if error:
+        return {
+            **error
+        }, 422
+
+    cur.execute("""
+        INSERT INTO report (reporter_key, reporter_comment,
+            tags, reported_key)
+        VALUES (%s, %s, %s, %s) RETURNING *;
+    """, (user["key"], comment, tags, user2["key"]))
+    report = cur.fetchone()
+
+    return {
+        "log": {
+            "entity_key": report["key"],
+            "misc": {
+                "entity_key": user2["key"],
+                "entity_type": "user"
+            }
+
+        }
+    }, 200
+
+
+@bp.post("/reports/comment/<key>")
+@session(True)
+@rate_limit(10, 1)
+@log("report")
+def report_comment(cur, user, key):
+    cur.execute("""SELECT * FROM comment WHERE key = %s;""", (key,))
+    reported_comment = cur.fetchone()
+    if not reported_comment:
+        return {
+            "error": "Invalid request"
+        }, 404
+
+    comment = request.json.get("comment", "").strip()
+    tags = request.json.get("tags")
+
+    if type(tags) is not list:
+        return {
+            "error": "Invalid request"
+        }, 422
+
+    error = {}
+    if not comment:
+        error["comment"] = "This field is required"
+    elif len(comment) > 500:
+        error["comment"] = "This field cannot exceed 500 characters"
+    if error:
+        return {
+            **error
+        }, 422
+
+    cur.execute("""
+        INSERT INTO report (reporter_key, reporter_comment, tags,
+            reported_key, reported_comment_key)
+        VALUES (%s, %s, %s, %s, %s) RETURNING *;
+    """, (
+        user["key"], comment, tags,
+        reported_comment["user_key"], reported_comment["key"])
+    )
+    report = cur.fetchone()
+
+    return {
+        "log": {
+            "entity_key": report["key"],
+            "misc": {
+                "entity_key": reported_comment["key"],
+                "entity_type": "comment"
+            }
+        }
+    }, 200
 
 
 @bp.put("/reports/<key>")
@@ -12,7 +114,6 @@ bp = Blueprint("report", __name__)
 def resolve(cur, user, key):
     if "report.resolve" not in user["access"]:
         return {
-            "status": 403,
             "error": "unauthorized access"
         }, 403
 
@@ -23,7 +124,6 @@ def resolve(cur, user, key):
     report = cur.fetchone()
     if not report:
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
@@ -43,10 +143,6 @@ def resolve(cur, user, key):
         WHERE key = %s;
     """, (user["key"], comment, key))
 
-    misc = {
-        "entity_key": report["key"],
-    }
-
     if handle:
         if (
             not report["reported_comment_key"]
@@ -61,10 +157,14 @@ def resolve(cur, user, key):
                 DELETE FROM session WHERE user_key = %s;
             """, (user["key"],))
 
-            misc["action"] = "block"
-            misc["entity_type"] = "user"
-            misc["entity_key"] = report["reported_key"]
-            misc["comment"] = comment
+            cur.execute("""
+                INSERT INTO log (
+                    user_key, action, entity_type, entity_key, misc
+                ) VALUES (%s, 'user_block.block', 'user', %s, %s);
+            """, (
+                user["key"], report["reported_key"],
+                {"comment":  comment}
+            ))
 
         elif (
             report["reported_comment_key"]
@@ -74,15 +174,24 @@ def resolve(cur, user, key):
                 "DELETE FROM comment WHERE key = %s;",
                 (report["reported_comment_key"],))
 
-            misc["action"] = "delete"
-            misc["entity_type"] = "comment"
-            misc["entity_key"] = report["reported_comment_key"]
-            misc["comment"] = comment
+            cur.execute("""
+                INSERT INTO log (
+                    user_key, action, entity_type, entity_key, misc
+                ) VALUES (%s, 'comment.delete', 'comment', %s, %s);
+            """, (
+                user["key"], report["reported_comment_key"],
+                {"comment":  comment}
+            ))
+
+    _many = many(cur, user)
 
     return {
-        "status": 200,
+        "reports": _many["reports"],
+        "total_page": _many["total_page"],
         "log": {
-            "misc": misc
+            "misc": {
+                "entity_key": report["key"]
+            }
         }
     }, 200
 
@@ -94,7 +203,6 @@ def resolve(cur, user, key):
 def dismiss(cur, user, key):
     if "report.resolve" not in user["access"]:
         return {
-            "status": 403,
             "error": "unauthorized access"
         }, 403
 
@@ -105,7 +213,6 @@ def dismiss(cur, user, key):
     report = cur.fetchone()
     if not report:
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
@@ -124,8 +231,11 @@ def dismiss(cur, user, key):
         WHERE key = %s;
     """, (user["key"], comment, key))
 
+    _many = many(cur, user)
+
     return {
-        "status": 200,
+        "reports": _many["reports"],
+        "total_page": _many["total_page"],
         "log": {
             "entity_key": report["key"],
         }

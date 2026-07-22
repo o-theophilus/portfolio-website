@@ -22,7 +22,7 @@
 
 	const submit = async (id = 'default') => {
 		loading.open('Loading . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${module.value.key}`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${module.value.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -30,15 +30,15 @@
 			},
 			body: JSON.stringify({ author_key: id })
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			module.value.update(resp.post);
+		if (response.status == 200) {
+			module.value.update(result.post);
 			module.close();
 			notify.open('Author Saved');
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

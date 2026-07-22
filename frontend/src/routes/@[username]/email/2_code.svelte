@@ -1,10 +1,10 @@
 <script>
-	import { module, loading, app } from '$lib/store.svelte.js';
+	import { app, loading, module } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
+	import { Note } from '$lib/info';
 	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
-	import { Note } from '$lib/info';
 
 	import Email from './3_email.svelte';
 
@@ -25,7 +25,7 @@
 
 	const submit = async () => {
 		loading.open('loading . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/email/2`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/user/email/2`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -33,13 +33,13 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			module.open(Email, { ...form, update: module.value.update });
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

@@ -15,16 +15,16 @@
 	};
 
 	onMount(async () => {
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/notification`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/notification`, {
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: app.token
 			}
 		});
-		resp = await resp.json();
+		let result = await response.json();
 
-		if (resp.status == 200) {
-			nots = resp.nots.map((x) => format(x));
+		if (response.status == 200) {
+			nots = result.nots.map((x) => format(x));
 		}
 	});
 
@@ -137,7 +137,7 @@
 		font-size: 0.7rem;
 		font-weight: 800;
 	}
-	
+
 	a {
 		border-top: 1px solid var(--bg1);
 		padding: 8px 16px;

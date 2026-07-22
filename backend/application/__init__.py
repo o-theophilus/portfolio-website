@@ -1,11 +1,14 @@
 from flask import Flask
 from flask_cors import CORS
 
-from . import api, auth, fix, log, post, postgres, report, storage, user
+from . import (api, auth, block, comment, fix, like, log, post, postgres,
+               report, storage, user)
 from .api import dashboard, file_error
 from .auth import forgot
+from .block import get as block_get
+from .comment import get as comment_get
 from .log import get as log_get
-from .post import comment, file
+from .post import file
 from .post import get as post_get
 from .post import photo as post_photo
 from .report import get as report_get
@@ -25,7 +28,6 @@ def create_app(conf=None):
     @app.route("/")
     def index():
         return {
-            "status": 200,
             "message": "Welcome to Theophilus Portfolio Website"
         }, 200
 
@@ -39,6 +41,8 @@ def create_app(conf=None):
     app.register_blueprint(dashboard.bp)
     app.register_blueprint(report.bp)
     app.register_blueprint(report_get.bp)
+    app.register_blueprint(block.bp)
+    app.register_blueprint(block_get.bp)
     app.register_blueprint(user.bp)
     app.register_blueprint(user_get.bp)
     app.register_blueprint(email.bp)
@@ -49,6 +53,8 @@ def create_app(conf=None):
     app.register_blueprint(file.bp)
     app.register_blueprint(post_photo.bp)
     app.register_blueprint(comment.bp)
+    app.register_blueprint(like.bp)
+    app.register_blueprint(comment_get.bp)
     app.register_blueprint(api.bp)
     app.register_blueprint(fix.bp)
 

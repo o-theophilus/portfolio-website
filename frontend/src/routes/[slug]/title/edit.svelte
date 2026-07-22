@@ -22,7 +22,7 @@
 
 	const submit = async () => {
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${module.value.key}`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${module.value.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -30,16 +30,16 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			replaceState(`/${resp.item.slug}`);
-			module.value.update(resp.item);
+		if (response.status == 200) {
+			replaceState(`/${result.item.slug}`);
+			module.value.update(result.item);
 			notify.open('Title Saved');
 			module.close();
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

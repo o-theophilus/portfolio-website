@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash
 
 from ..storage import storage
 from ..tools import log, rate_limit, reserved_words, session
-from .get import post_schema
+from .get import many, many_feature, post_schema
 
 bp = Blueprint("post", __name__)
 
@@ -19,7 +19,6 @@ bp = Blueprint("post", __name__)
 def create(cur, user):
     if "post.add" not in user["access"]:
         return {
-            "status": 403,
             "error": "unauthorized access"
         }, 403
 
@@ -32,7 +31,6 @@ def create(cur, user):
         error["title"] = "This field cannot exceed 100 characters"
     if error:
         return {
-            "status": 422,
             **error
         }, 422
 
@@ -49,9 +47,12 @@ def create(cur, user):
     """, (title, slug, user["key"],))
     post = cur.fetchone()
 
+    _many = many(cur, user)
+
     return {
-        "status": 200,
         "post": post_schema(post),
+        "posts": _many["posts"],
+        "total_page": _many["total_page"],
         "log": {
             "entity_key": post["key"],
         }
@@ -67,7 +68,6 @@ def edit(cur, user, key):
     post = cur.fetchone()
     if not post:
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
@@ -176,7 +176,6 @@ def edit(cur, user, key):
 
     if error:
         return {
-            "status": 400,
             **error
         }, 400
 
@@ -194,7 +193,6 @@ def edit(cur, user, key):
     post = cur.fetchone()
 
     return {
-        "status": 200,
         "post": post_schema(post),
         "log": {
             "entity_key": post["key"],
@@ -210,7 +208,6 @@ def edit(cur, user, key):
 def feature(cur, user, key):
     if "post.edit_featured" not in user["access"]:
         return {
-            "status": 403,
             "error":  "unauthorized access"
         }, 403
 
@@ -220,7 +217,6 @@ def feature(cur, user, key):
     post = cur.fetchone()
     if not post:
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
@@ -248,7 +244,6 @@ def feature(cur, user, key):
     """)
 
     return {
-        "status": 200,
         "post": post_schema(post),
         "log": {
             "entity_key": post["key"],
@@ -266,7 +261,6 @@ def feature(cur, user, key):
 def delete(cur, user, key):
     if "post.edit_status" not in user["access"]:
         return {
-            "status": 403,
             "error":  "unauthorized access"
         }, 403
 
@@ -274,7 +268,6 @@ def delete(cur, user, key):
     post = cur.fetchone()
     if not post:
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
@@ -286,7 +279,6 @@ def delete(cur, user, key):
         error = "Incorrect password"
     if error:
         return {
-            "status": 422,
             "error": error
         }, 422
 
@@ -299,132 +291,9 @@ def delete(cur, user, key):
         storage.delete(x, "post")
 
     return {
-        "status": 200,
         "log": {
             "entity_key": post["key"]
         }
-    }, 200
-
-
-@bp.post("/posts/<key>/like")
-@session(True)
-@rate_limit(10, 1)
-@log("post")
-def like(cur, user, key):
-    cur.execute("""SELECT * FROM post WHERE key = %s;""", (key,))
-    if not cur.fetchone():
-        return {
-            "status": 404,
-            "error": "Invalid request"
-        }, 404
-
-    reaction = request.json.get("reaction")
-    if reaction not in ["like", "dislike"]:
-        return {
-            "status": 422,
-            "error": "Invalid request"
-        }, 422
-
-    cur.execute("""
-        SELECT * FROM "like"
-        WHERE user_key = %s AND post_key = %s;
-    """, (user["key"], key))
-    user_reaction = cur.fetchone()
-
-    un = ""
-    if not user_reaction:
-        cur.execute("""
-            INSERT INTO "like" (user_key, reaction, post_key)
-            VALUES (%s, %s, %s);
-        """, (user["key"], reaction, key))
-    elif user_reaction["reaction"] == reaction:
-        un = "un"
-        cur.execute("""DELETE FROM "like" WHERE key = %s;""",
-                    (user_reaction["key"],))
-    else:
-        cur.execute("""
-            UPDATE "like"
-            SET date_created = now(), reaction = %s WHERE key = %s;
-        """, (reaction, user_reaction["key"]))
-
-    cur.execute("""
-        SELECT
-            COUNT(CASE WHEN user_key != %s
-                AND reaction = 'like' THEN 1 END) AS others_like,
-            COUNT(CASE WHEN user_key != %s
-                AND reaction = 'dislike' THEN 1 END) AS others_dislike,
-            MAX(CASE WHEN user_key = %s THEN reaction END) AS user_reaction
-        FROM "like"
-        WHERE post_key = %s;
-    """, (user["key"], user["key"], user["key"], key))
-    reactions = cur.fetchone()
-
-    return {
-        "status": 200,
-        **reactions,
-        "log": {
-            "entity_key": key,
-            "misc": {
-                "action": f"{un}{reaction}"
-            }
-        }
-    }, 200
-
-
-@bp.post("/posts/<key>/comments")
-@session(True)
-@rate_limit(10, 1)
-@log("comment")
-def create_comment(cur, user, key):
-    cur.execute("""
-        SELECT * FROM post WHERE slug = %s OR key = %s;
-    """, (key, key))
-    post = cur.fetchone()
-    if not post:
-        return {
-            "status": 404,
-            "error": "Invalid request"
-        }, 404
-
-    parent_key = request.json.get("parent_key")
-    comment = request.json.get("comment", "").strip()
-
-    if parent_key:
-        cur.execute("SELECT * FROM comment WHERE key = %s;", (parent_key,))
-        parent = cur.fetchone()
-        if not parent or parent["parent_key"] is not None:
-            return {
-                "status": 404,
-                "error": "Invalid request"
-            }, 404
-
-    error = {}
-    if not comment:
-        error["comment"] = "This field is required"
-    elif len(comment) > 500:
-        error["comment"] = "This field cannot exceed 500 characters"
-    if error:
-        return {
-            "status": 422,
-            **error
-        }, 422
-
-    cur.execute("""
-        INSERT INTO comment (user_key, post_key, comment, parent_key)
-        VALUES (%s, %s, %s, %s) RETURNING *;
-    """, (user["key"], post["key"], comment, parent_key))
-    comment = cur.fetchone()
-
-    return {
-        "status": 200,
-        "log": {
-            "entity_key": comment["key"],
-            "action": "comment.create",
-            "misc": {
-                "post_key": post["key"]
-            }
-        }
-
     }, 200
 
 
@@ -435,7 +304,6 @@ def create_comment(cur, user, key):
 def edit_home_feature(cur, user):
     if "post.edit_featured" not in user["access"]:
         return {
-            "status": 403,
             "error":  "unauthorized access"
         }, 403
 
@@ -443,7 +311,6 @@ def edit_home_feature(cur, user):
 
     if not keys or type(keys) is not list:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -459,6 +326,4 @@ def edit_home_feature(cur, user):
         WHERE post.key = x.key;
     """, (keys,))
 
-    return {
-        "status": 200,
-    }, 200
+    return many_feature(cur, user), 200

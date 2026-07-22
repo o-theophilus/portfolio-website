@@ -27,23 +27,26 @@
 	const submit = async () => {
 		loading.open('Sending Report . . .');
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/users/${module.value.user.key}/report`, {
-			method: 'post',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: app.token
-			},
-			body: JSON.stringify(form)
-		});
-		resp = await resp.json();
+		let response = await fetch(
+			`${import.meta.env.VITE_BACKEND}/reports/user/${module.value.user.key}`,
+			{
+				method: 'post',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: app.token
+				},
+				body: JSON.stringify(form)
+			}
+		);
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			notify.open('Report Submitted');
 			page_state.clear('report');
 			module.close();
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

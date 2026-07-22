@@ -14,7 +14,6 @@ bp = Blueprint("post_photo", __name__)
 def add_photo(cur, user, key):
     if "post.edit_photo" not in user["access"]:
         return {
-            "status": 403,
             "error": "unauthorized access"
         }, 403
 
@@ -22,20 +21,17 @@ def add_photo(cur, user, key):
     post = cur.fetchone()
     if not post:
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
     if 'file' not in request.files:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
     file = request.files["file"]
     if file.content_type not in ['image/jpeg', 'image/png']:
         return {
-            "status": 422,
             "error": "invalid file"
         }, 422
 
@@ -58,7 +54,6 @@ def add_photo(cur, user, key):
     post = cur.fetchone()
 
     return {
-        "status": 200,
         "post": post_schema(post),
         "log": {
             "entity_key": post["key"],
@@ -77,7 +72,6 @@ def add_photo(cur, user, key):
 def delete_photo(cur, user, key):
     if "post.edit_photo" not in user["access"]:
         return {
-            "status": 403,
             "error": "unauthorized access"
         }, 403
 
@@ -85,7 +79,6 @@ def delete_photo(cur, user, key):
     post = cur.fetchone()
     if not post or not post["photo"]:
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
@@ -109,7 +102,6 @@ def delete_photo(cur, user, key):
     post = cur.fetchone()
 
     return {
-        "status": 200,
         "post": post_schema(post),
         "log": {
             "entity_key": post["key"],

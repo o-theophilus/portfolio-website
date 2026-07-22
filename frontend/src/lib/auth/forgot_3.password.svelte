@@ -1,8 +1,8 @@
 <script>
-	import { module, loading, app } from '$lib/store.svelte.js';
+	import { app, loading, module } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
 	import { Dialogue } from '$lib/info';
@@ -37,7 +37,7 @@
 
 	const submit = async () => {
 		loading.open('loading . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/forgot/3`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/forgot/3`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -45,10 +45,10 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			module.open(Dialogue, {
 				message: 'Password Successfully changed',
 				buttons: [
@@ -62,7 +62,7 @@
 				]
 			});
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

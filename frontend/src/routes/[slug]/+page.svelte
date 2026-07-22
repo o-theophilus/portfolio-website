@@ -50,21 +50,21 @@
 		edit_mode = false;
 		loading = true;
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}/after`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}/after`, {
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: app.token
 			}
 		});
 
-		resp = await resp.json();
+		let result = await response.json();
 		loading = false;
 
-		if (resp.status == 200) {
-			engagement = resp.engagement;
-			author = resp.author;
-			comment_resp = resp.comment_resp;
-			similar = resp.similar;
+		if (response.status == 200) {
+			engagement = result.engagement;
+			author = result.author;
+			comment_resp = result.comment_resp;
+			similar = result.similar;
 		}
 	};
 

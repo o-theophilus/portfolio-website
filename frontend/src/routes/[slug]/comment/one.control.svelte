@@ -32,7 +32,7 @@
 			engagement.user_reaction = reaction;
 		}
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/comments/${comment.key}/like`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/like/comment/${comment.key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -40,16 +40,16 @@
 			},
 			body: JSON.stringify({ reaction })
 		});
-		resp = await resp.json();
+		let result = await response.json();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			engagement = {
-				others_like: resp.others_like,
-				others_dislike: resp.others_dislike,
-				user_reaction: resp.user_reaction
+				others_like: result.others_like,
+				others_dislike: result.others_dislike,
+				user_reaction: result.user_reaction
 			};
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

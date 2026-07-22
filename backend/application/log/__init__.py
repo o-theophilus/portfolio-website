@@ -23,5 +23,4 @@ def log(cur, user):
     """, (user["key"], action, entity_key, entity_type, status, Json(misc)))
 
     return {
-        "status": 200
     }, 200

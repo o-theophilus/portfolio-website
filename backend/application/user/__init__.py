@@ -18,7 +18,6 @@ def theme(cur, user):
     theme = request.json.get("theme")
     if theme not in ["light", "dark", "system"]:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -33,7 +32,6 @@ def theme(cur, user):
     user = cur.fetchone()
 
     return {
-        "status": 200,
         "user": user_schema(user),
         "log": {
             "misc": misc
@@ -91,7 +89,6 @@ def edit(cur, user):
 
     if error:
         return {
-            "status": 400,
             **error
         }, 400
 
@@ -103,186 +100,9 @@ def edit(cur, user):
     user = cur.fetchone()
 
     return {
-        "status": 200,
         "user": user_schema(user),
         "log": {
             "misc": request.json
-        }
-    }, 200
-
-
-# TODO: user report and comment report can be unified
-@bp.post("/users/<key>/report")
-@session(True)
-@rate_limit(20, 1)
-@log("user")
-def report(cur, user, key):
-    cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
-    user2 = cur.fetchone()
-    if not user2:
-        return {
-            "status": 404,
-            "error": "Invalid request"
-        }, 404
-
-    comment = request.json.get("comment", "").strip()
-    tags = request.json.get("tags")
-
-    if type(tags) is not list:
-        return {
-            "status": 422,
-            "error": "Invalid request"
-        }, 422
-
-    error = {}
-    if not comment:
-        error["comment"] = "This field is required"
-    elif len(comment) > 500:
-        error["comment"] = "This field cannot exceed 500 characters"
-    if error:
-        return {
-            "status": 422,
-            **error
-        }, 422
-
-    cur.execute("""
-        INSERT INTO report (reporter_key, reporter_comment,
-            tags, reported_key)
-        VALUES (%s, %s, %s, %s) RETURNING *;
-    """, (user["key"], comment, tags, user2["key"]))
-    report = cur.fetchone()
-
-    return {
-        "status": 200,
-        "log": {
-            "entity_key": user2["key"],
-            "misc": {
-                "report_key": report["key"]
-            }
-
-        }
-    }, 200
-
-
-@bp.post("/users/<key>/block")
-@session(True)
-@rate_limit(20, 1)
-@log("user")
-def block(cur, user, key):
-    if "user.block" not in user["access"]:
-        return {
-            "status": 403,
-            "error": "unauthorized access"
-        }, 403
-
-    cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
-    user2 = cur.fetchone()
-    cur.execute("""SELECT * FROM block WHERE user_key = %s;""", (key,))
-    block = cur.fetchone()
-    if (
-        not user2
-        or user2["key"] == user["key"]
-        or user2["status"] != "active"
-        or user2["email"] == os.environ["MAIL_USERNAME"]
-        or block
-    ):
-        return {
-            "status": 404,
-            "error": "Invalid request"
-        }, 404
-
-    comment = request.json.get("comment", "").strip()
-
-    error = {}
-    if not comment:
-        error["comment"] = "This field is required"
-    elif len(comment) > 500:
-        error["comment"] = "This field cannot exceed 500 characters"
-    if error:
-        return {
-            "status": 422,
-            **error
-        }, 422
-
-    cur.execute("""
-        INSERT INTO block (admin_key, user_key, comment)
-        VALUES (%s, %s, %s);
-    """, (user["key"], user2["key"], comment))
-
-    cur.execute("""
-        DELETE FROM session WHERE user_key = %s;
-    """, (user2["key"],))
-
-    cur.execute("""
-        SELECT
-            "user".*,
-            CASE WHEN block.user_key IS NOT NULL
-                THEN true ELSE false END AS blocked
-        FROM "user"
-        LEFT JOIN block ON "user".key = block.user_key
-        WHERE "user".key::TEXT = %s OR "user".username = %s;
-    """, (key, key))
-    user2 = cur.fetchone()
-
-    return {
-        "status": 200,
-        "user": user_schema(user2),
-        "log": {
-            "entity_key": user2["key"],
-            "misc": {
-                "comment":  comment
-            }
-        }
-    }, 200
-
-
-@bp.delete("/users/<key>/block")
-@session(True)
-@rate_limit(20, 1)
-@log("user")
-def unblock(cur, user, key):
-    if "block.unblock" not in user["access"]:
-        return {
-            "status": 403,
-            "error": "unauthorized access"
-        }, 403
-
-    cur.execute("""SELECT * FROM "user" WHERE key = %s;""", (key,))
-    user2 = cur.fetchone()
-
-    if (
-        not user2
-        or user2["key"] == user["key"]
-        or user2["status"] != "active"
-        or user2["email"] == os.environ["MAIL_USERNAME"]
-    ):
-        return {
-            "status": 404,
-            "error": "Invalid request"
-        }, 404
-
-    comment = request.json.get("comment", "").strip()
-
-    error = {}
-    if not comment:
-        error["comment"] = "This field is required"
-    elif len(comment) > 500:
-        error["comment"] = "This field cannot exceed 500 characters"
-    if error:
-        return {
-            "status": 422,
-            **error
-        }, 422
-
-    cur.execute("DELETE FROM block WHERE user_key = %s;", (user2["key"],))
-
-    return {
-        "status": 200,
-        "log": {
-            "entity_key": user2["key"],
-            "misc": {
-                "comment":  comment
-            }
         }
     }, 200
 
@@ -299,7 +119,6 @@ def reset(cur, user, key):
         or user2["email"] == os.environ["MAIL_USERNAME"]
     ):
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
@@ -313,7 +132,6 @@ def reset(cur, user, key):
         error["comment"] = "This field is required"
     if error:
         return {
-            "status": 422,
             **error
         }, 422
 
@@ -339,7 +157,6 @@ def reset(cur, user, key):
         error = "Invalid request"
     if error:
         return {
-            "status": 403,
             "error": error
         }, 403
 
@@ -356,7 +173,6 @@ def reset(cur, user, key):
     user2 = cur.fetchone()
 
     return {
-        "status": 200,
         "user": user_schema(user2),
         "log": {
             "entity_key": user2["key"],
@@ -375,7 +191,6 @@ def reset(cur, user, key):
 def edit_access(cur, user, key):
     if "user.edit_access" not in user["access"]:
         return {
-            "status": 403,
             "error": "unauthorized access"
         }, 403
 
@@ -388,7 +203,6 @@ def edit_access(cur, user, key):
         or user2["status"] != "active"
     ):
         return {
-            "status": 404,
             "error": "Invalid request"
         }, 404
 
@@ -397,7 +211,6 @@ def edit_access(cur, user, key):
 
     if not access or type(access) is not list:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -408,7 +221,6 @@ def edit_access(cur, user, key):
         error = "incorrect password"
     if error:
         return {
-            "status": 422,
             "password": error
         }, 422
 
@@ -417,7 +229,6 @@ def edit_access(cur, user, key):
     """, (access, user2["key"]))
 
     return {
-        "status": 200,
         "user": user_schema(user2),
         "log": {
             "entity_key": user2["key"],

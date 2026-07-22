@@ -15,14 +15,12 @@ bp = Blueprint("user_email", __name__)
 def email_1_old_email(cur, user):
     if user["email"] == os.environ["MAIL_USERNAME"]:
         return {
-            "status": 403,
             "error": "Invalid request"
         }, 403
 
     email_template = request.json.get("email_template")
     if not email_template:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -36,7 +34,6 @@ def email_1_old_email(cur, user):
     )
 
     return {
-        "status": 200
     }, 200
 
 
@@ -47,12 +44,10 @@ def email_2_old_code(cur, user):
     error = check_code(cur, user["key"], user["email"], "code_1")
     if error:
         return {
-            "status": 422,
             "code_1": error
         }, 422
 
     return {
-        "status": 200
     }, 200
 
 
@@ -63,7 +58,6 @@ def email_3_new_email(cur, user):
     email_template = request.json.get("email_template")
     if not email_template:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -77,14 +71,12 @@ def email_3_new_email(cur, user):
         error = "please use a different email form your current email"
     if error:
         return {
-            "status": 422,
             "email": error
         }, 422
 
     cur.execute('SELECT * FROM "user" WHERE email = %s;', (email,))
     if cur.fetchone():
         return {
-            "status": 422,
             "email": "email is already in use"
         }, 422
 
@@ -99,7 +91,6 @@ def email_3_new_email(cur, user):
     )
 
     return {
-        "status": 200
     }, 200
 
 
@@ -109,15 +100,14 @@ def email_3_new_email(cur, user):
 @log("user")
 def edit(cur, user):
     if user["email"] == os.environ["MAIL_USERNAME"]:
+        cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))
         return {
-            "status": 403,
             "error": "Invalid request"
         }, 403
 
     error = check_code(cur, user["key"], user["email"], "code_1")
     if error:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -128,21 +118,18 @@ def edit(cur, user):
         or user["email"] == email
     ):
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
     cur.execute('SELECT * FROM "user" WHERE email = %s;', (email,))
     if cur.fetchone():
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
     error = check_code(cur, user["key"], email, "code_2")
     if error:
         return {
-            "status": 422,
             "code_2": error
         }, 422
 
@@ -159,7 +146,6 @@ def edit(cur, user):
     cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))
 
     return {
-        "status": 200,
         "user": user_schema(user),
         "log": {
             "misc": misc

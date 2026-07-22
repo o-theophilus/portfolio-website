@@ -6,8 +6,8 @@
 	import { Button, Link } from '$lib/button';
 	import { Checkbox, IG } from '$lib/input';
 	import { Form } from '$lib/layout';
-	import Confirm from './confirm.svelte';
 	import EmailTemplate from './confirm.email_template.svelte';
+	import Confirm from './confirm.svelte';
 	import Forgot from './forgot_1.email.svelte';
 	import Signup from './signup.svelte';
 
@@ -40,7 +40,7 @@
 		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
 		loading.open('Loading . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/login`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/login`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -49,20 +49,20 @@
 			body: JSON.stringify(form)
 		});
 
-		resp = await resp.json();
-		if (resp.status != 200) {
+		let result = await response.json();
+		if (result.status != 200) {
 			loading.close();
 		}
 
-		if (resp.status == 200) {
-			app.token = resp.token;
+		if (response.status == 200) {
+			app.token = result.token;
 			app.login = true;
 			app.user = {};
 			document.location = return_url;
-		} else if (resp.error == 'not active') {
+		} else if (result.error == 'not active') {
 			module.open(Confirm, { email: form.email });
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

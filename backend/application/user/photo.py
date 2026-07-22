@@ -13,14 +13,12 @@ bp = Blueprint("user_photo", __name__)
 def add(cur, user):
     if 'file' not in request.files:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
     file = request.files["file"]
     if file.content_type not in ['image/jpeg', 'image/png']:
         return {
-            "status": 422,
             "error": "invalid file"
         }, 422
 
@@ -43,7 +41,6 @@ def add(cur, user):
     user = cur.fetchone()
 
     return {
-        "status": 200,
         "user": user_schema(user),
         "log": {
             "misc": {
@@ -61,7 +58,6 @@ def add(cur, user):
 def remove(cur, user):
     if not user["photo"]:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -76,7 +72,6 @@ def remove(cur, user):
     user = cur.fetchone()
 
     return {
-        "status": 200,
         "user": user_schema(user),
         "log": {
             "misc": {

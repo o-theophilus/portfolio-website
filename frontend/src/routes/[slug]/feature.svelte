@@ -6,18 +6,18 @@
 	const submit = async () => {
 		loading.open('Updating feature . . .');
 
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}/feature`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}/feature`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: app.token
 			}
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			update(resp.post);
+		if (response.status == 200) {
+			update(result.post);
 			app.featured = null;
 			let msg = 'Added post to featured';
 			if (post.featured == 0) {
@@ -25,7 +25,7 @@
 			}
 			notify.open(msg);
 		} else {
-			notify.open(resp.error, 400);
+			notify.open(result.error, 400);
 		}
 	};
 </script>

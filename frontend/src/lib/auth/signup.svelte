@@ -4,8 +4,8 @@
 	import { Button, Link } from '$lib/button';
 	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
-	import Confirm from './confirm.svelte';
 	import EmailTemplate from './confirm.email_template.svelte';
+	import Confirm from './confirm.svelte';
 	import Login from './login.svelte';
 
 	let form = $state({ email: module.value.email });
@@ -56,7 +56,7 @@
 		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
 		loading.open('Loading . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/signup`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/signup`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -64,13 +64,13 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			module.open(Confirm, { email: form.email });
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

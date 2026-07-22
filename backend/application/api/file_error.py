@@ -12,7 +12,6 @@ bp = Blueprint("file_error", __name__)
 def get_file_error(cur, user):
     if "admin.manage_files" not in user["access"]:
         return {
-            "status": 403,
             "error": "unauthorized access"
         }, 403
 
@@ -46,7 +45,6 @@ def get_file_error(cur, user):
     posts_with_missing_photo = cur.fetchall()
 
     return {
-        "status": 200,
         "unused_post_photo": [
             f"{request.host_url}photo/post/{x}"
             for x in post_store_photo if x not in posts_photo],
@@ -65,7 +63,6 @@ def get_file_error(cur, user):
 def delete_file(cur, user):
     if "admin.manage_files" not in user["access"]:
         return {
-            "status": 403,
             "error": "unauthorized access"
         }, 403
 
@@ -77,7 +74,6 @@ def delete_file(cur, user):
         or not entity or entity not in ["user", "post"]
     ):
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -85,7 +81,6 @@ def delete_file(cur, user):
         storage.delete(x.split("/")[-1], entity)
 
     return {
-        "status": 200,
         "log": {
             "misc": {
                 "photo(s)": photos,

@@ -1,8 +1,8 @@
 <script>
-	import { module, notify, loading, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
-	import { IG } from '$lib/input';
 	import { Button } from '$lib/button';
+	import { IG } from '$lib/input';
 	import { Form } from '$lib/layout';
 
 	let form = $state({ name: app.user.name });
@@ -24,7 +24,7 @@
 
 	const submit = async () => {
 		loading.open('Saving User . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/user`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -32,15 +32,15 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			module.value.update(resp.user);
+		if (response.status == 200) {
+			module.value.update(result.user);
 			notify.open('Name Changed');
 			module.close();
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

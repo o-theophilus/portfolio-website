@@ -4,7 +4,7 @@
 	import { Button } from '$lib/button';
 
 	const submit = async () => {
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/logout`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/logout`, {
 			method: 'delete',
 			headers: {
 				'Content-Type': 'application/json',
@@ -12,10 +12,10 @@
 			}
 		});
 
-		resp = await resp.json();
+		let result = await response.json();
 
-		if (resp.status == 200) {
-			app.token = resp.token;
+		if (response.status == 200) {
+			app.token = result.token;
 			app.login = false;
 			document.location = '/';
 		}

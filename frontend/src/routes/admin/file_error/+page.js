@@ -6,18 +6,18 @@ export const load = async ({ parent, fetch }) => {
 		throw error(404, "Unauthorized access")
 	}
 
-	let resp = await fetch(`${import.meta.env.VITE_BACKEND}/file_error`, {
+	let response = await fetch(`${import.meta.env.VITE_BACKEND}/file_error`, {
 		method: 'get',
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: a.locals.token
 		}
 	});
-	resp = await resp.json();
+	let result = await response.json();
 
-	if (resp.status == 200) {
-		return resp
+	if (response.status == 200) {
+		return result
 	} else {
-		throw error(resp.status, resp.error)
+		throw error(result.status, result.error)
 	}
 }

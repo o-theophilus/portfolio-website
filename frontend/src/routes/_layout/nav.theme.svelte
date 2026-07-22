@@ -10,7 +10,7 @@
 
 		clearTimeout(timeout);
 		timeout = setTimeout(async () => {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/theme`, {
+			let response = await fetch(`${import.meta.env.VITE_BACKEND}/user/theme`, {
 				method: 'post',
 				headers: {
 					'Content-Type': 'application/json',
@@ -18,10 +18,10 @@
 				},
 				body: JSON.stringify({ theme })
 			});
-			resp = await resp.json();
+			let result = await response.json();
 
-			if (resp.status == 200) {
-				app.user = resp.user;
+			if (response.status == 200) {
+				app.user = result.user;
 			} else {
 				throw new Error('invalid request');
 			}

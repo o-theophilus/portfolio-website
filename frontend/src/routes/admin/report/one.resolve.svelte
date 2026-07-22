@@ -29,7 +29,7 @@
 		error = {};
 
 		loading.open('Resolving Report . . .');
-		let resp = await fetch(
+		let response = await fetch(
 			`${import.meta.env.VITE_BACKEND}/reports/${module.value.report.key}?${new URLSearchParams(
 				module.value.searchParams
 			).toString()}`,
@@ -42,31 +42,15 @@
 				body: JSON.stringify(form)
 			}
 		);
-		let get_reports = await fetch(
-			`${import.meta.env.VITE_BACKEND}/reports/${module.value.report.key}?${new URLSearchParams(
-				module.value.searchParams
-			).toString()}`,
-			{
-				method: 'put',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: app.token
-				},
-				body: JSON.stringify(form)
-			}
-		);
-		resp = await resp.json();
-		get_reports = await get_reports.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			if (get_reports.status == 200) {
-				module.value.update(get_reports.reports, get_reports.total_page);
-			}
+		if (response.status == 200) {
+			module.value.update(result.reports, result.total_page);
 			notify.open('Report Resolved');
 			module.close();
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

@@ -16,7 +16,6 @@ def password_1_email(cur, user):
     email_template = request.json.get("email_template")
     if not email_template:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -31,7 +30,6 @@ def password_1_email(cur, user):
     )
 
     return {
-        "status": 200
     }, 200
 
 
@@ -42,12 +40,10 @@ def password_2_code(cur, user):
     error = check_code(cur, user["key"], user["email"])
     if error:
         return {
-            "status": 422,
             "code": error
         }, 422
 
     return {
-        "status": 200
     }, 200
 
 
@@ -59,7 +55,6 @@ def edit(cur, user):
     error = check_code(cur, user["key"], user["email"])
     if error:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -87,7 +82,6 @@ def edit(cur, user):
          does not match"""
     if error:
         return {
-            "status": 422,
             **error
         }, 422
 
@@ -101,5 +95,4 @@ def edit(cur, user):
     cur.execute("DELETE FROM code WHERE user_key = %s;", (user["key"],))
 
     return {
-        "status": 200
     }, 200

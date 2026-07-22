@@ -44,7 +44,7 @@
 		error = {};
 
 		loading.open('Updating feature . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/feature`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/posts/feature`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -54,27 +54,17 @@
 				keys: posts.map((x) => x.key)
 			})
 		});
-		let get_posts = await fetch(`${import.meta.env.VITE_BACKEND}/posts/feature`, {
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: app.token
-			}
-		});
-
-		resp = await resp.json();
-		get_posts = await get_posts.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			if (get_posts.status == 200) {
-				app.featured = resp.posts;
-			}
+		if (response.status == 200) {
+			app.featured = result.posts;
 			posts = [...app.featured];
 			init = [...app.featured];
 			module.value.reset_index();
 			notify.open('Feature updated');
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

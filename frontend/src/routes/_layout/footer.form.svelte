@@ -1,12 +1,12 @@
 <script>
 	import { page } from '$app/state';
-	import { loading, module, app } from '$lib/store.svelte.js';
+	import { app, loading, module } from '$lib/store.svelte.js';
 
-	import { template } from './footer.form.template.js';
 	import { Button } from '$lib/button';
-	import { EmailTemplate, Form } from '$lib/layout';
 	import { Dialogue } from '$lib/info';
-	import { IG, Dropdown } from '$lib/input';
+	import { Dropdown, IG } from '$lib/input';
+	import { EmailTemplate, Form } from '$lib/layout';
+	import { template } from './footer.form.template.js';
 
 	let email_template;
 	let form = $state({});
@@ -44,7 +44,7 @@
 		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
 		loading.open('Sending Email . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/contact`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/contact`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -52,10 +52,10 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			form = {};
 
 			module.open(Dialogue, {
@@ -76,7 +76,7 @@
 				]
 			});
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

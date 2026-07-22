@@ -28,8 +28,8 @@
 	const submit = async () => {
 		loading.open('Sending Report . . .');
 
-		let resp = await fetch(
-			`${import.meta.env.VITE_BACKEND}/comments/${module.value.comment.key}/report`,
+		let response = await fetch(
+			`${import.meta.env.VITE_BACKEND}/reports/comment/${module.value.comment.key}`,
 			{
 				method: 'post',
 				headers: {
@@ -39,15 +39,15 @@
 				body: JSON.stringify(form)
 			}
 		);
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			notify.open('Report Submitted');
 			page_state.clear('report');
 			module.close();
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

@@ -32,7 +32,7 @@
 	export const load = async () => {
 		loading = true;
 
-		let resp = await fetch(
+		let response = await fetch(
 			`${import.meta.env.VITE_BACKEND}/posts/${post.key}/comments?${new URLSearchParams(searchParams).toString()}`,
 			{
 				headers: {
@@ -41,10 +41,10 @@
 				}
 			}
 		);
-		resp = await resp.json();
+		let result = await response.json();
 
-		if (resp.status == 200) {
-			comments = resp.comments;
+		if (response.status == 200) {
+			comments = result.comments;
 		}
 
 		loading = false;

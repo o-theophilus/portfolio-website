@@ -1,10 +1,10 @@
 <script>
-	import { module, loading, notify, app } from '$lib/store.svelte.js';
+	import { app, loading, module, notify } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
 	import { Form } from '$lib/layout';
-	import Delete from './delete.svelte';
 	import { slide } from 'svelte/transition';
+	import Delete from './delete.svelte';
 
 	let post = {
 		key: module.value.key,
@@ -23,7 +23,7 @@
 		error = {};
 
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -31,15 +31,15 @@
 			},
 			body: JSON.stringify({ status })
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			module.value.update(resp.post);
+		if (response.status == 200) {
+			module.value.update(result.post);
 			module.close();
 			notify.open('Status Changed');
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

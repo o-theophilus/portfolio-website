@@ -23,7 +23,7 @@
 		error = {};
 
 		loading.open('Blocking User . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/users/${module.value.user.key}/block`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/blocks/${module.value.user.key}`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -31,16 +31,16 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			notify.open('User Blocked');
-			module.value.update(resp.user);
+			module.value.update(result.user);
 			page_state.clear('block');
 			module.close();
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

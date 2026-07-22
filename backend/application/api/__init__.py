@@ -10,7 +10,7 @@ from ..tools import rate_limit, send_mail, session
 bp = Blueprint("api", __name__)
 
 
-def delete_anonymous_user(cur, user):
+def delete_anonymous_user(cur, user_key):
     cur.execute("""
         DELETE FROM "user"
         WHERE status = 'anonymous'
@@ -22,9 +22,9 @@ def delete_anonymous_user(cur, user):
     cur.execute("""
         INSERT INTO log (
             user_key, action, entity_type, misc
-        ) VALUES (%s, %s, %s, %s);
+        ) VALUES (%s, 'api.delete_anonymous_user', 'app', %s);
     """, (
-        user["key"], "api.delete_anonymous_user", "app",
+        user_key,
         Json({"deleted_users": [x["key"] for x in users]})
     ))
 
@@ -35,14 +35,12 @@ def delete_anonymous_user(cur, user):
 def user_delete_anonymous(cur, user):
     if "maintenance.anonymous" not in user["access"]:
         return {
-            "status": 403,
             "error": "unauthorized access"
         }, 403
 
-    delete_anonymous_user(cur, user)
+    delete_anonymous_user(cur, user["key"])
 
     return {
-        "status": 200
     }, 200
 
 
@@ -55,7 +53,7 @@ def cron():
     """, (os.environ["MAIL_USERNAME"],))
     user = cur.fetchone()
 
-    delete_anonymous_user(cur, user)
+    delete_anonymous_user(cur, user["key"])
 
     cur.execute("""
         DELETE FROM rate_limit_log
@@ -76,7 +74,6 @@ def cron():
 
     db_close(con, cur)
     return {
-        "status": 200
     }, 200
 
 
@@ -91,7 +88,6 @@ def footer_send_email(cur, user):
 
     if not email_template:
         return {
-            "status": 422,
             "error": "Invalid request"
         }, 422
 
@@ -112,7 +108,6 @@ def footer_send_email(cur, user):
         error["message"] = "This field is required"
     if error:
         return {
-            "status": 422,
             **error
         }, 422
 
@@ -126,5 +121,4 @@ def footer_send_email(cur, user):
     )
 
     return {
-        "status": 200
     }, 200

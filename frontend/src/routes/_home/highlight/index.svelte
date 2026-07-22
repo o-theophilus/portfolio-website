@@ -30,16 +30,16 @@
 
 	onMount(async () => {
 		if (!app.featured) {
-			let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/feature`, {
+			let response = await fetch(`${import.meta.env.VITE_BACKEND}/posts/feature`, {
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: app.token
 				}
 			});
-			resp = await resp.json();
+			let result = await response.json();
 
-			if (resp.status == 200) {
-				app.featured = resp.posts;
+			if (response.status == 200) {
+				app.featured = result.posts;
 			}
 		}
 	});

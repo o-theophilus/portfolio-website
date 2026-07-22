@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from ..tools import session
+from ..tools import rate_limit, session
 
 bp = Blueprint("dashboard", __name__)
 
@@ -253,6 +253,7 @@ def item_top_purchase(cur, interval):
 
 @bp.get("/dashboard")
 @session(True)
+@rate_limit(20, 1)
 def dashboard(cur, user):
     intervals = {
         "today": "1 day",
@@ -273,7 +274,6 @@ def dashboard(cur, user):
     # _item_available = item_available(cur)
 
     return {
-        "status": 200,
         "new_users": _new_users,
         "post_summary": _post_summary,
         # "top_users": _top_users,

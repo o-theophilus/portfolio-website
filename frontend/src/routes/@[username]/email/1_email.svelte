@@ -1,10 +1,10 @@
 <script>
-	import { module, loading, app } from '$lib/store.svelte.js';
+	import { app, loading, module } from '$lib/store.svelte.js';
 
 	import { Button } from '$lib/button';
 	import { Note } from '$lib/info';
 	import { Form } from '$lib/layout';
-	
+
 	import Code from './2_code.svelte';
 	import EmailTemplate from './email_template.svelte';
 
@@ -16,7 +16,7 @@
 		form.email_template = email_template.innerHTML.replace(/&amp;/g, '&');
 
 		loading.open('Requesting Code . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/user/email/1`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/user/email/1`, {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json',
@@ -24,13 +24,13 @@
 			},
 			body: JSON.stringify(form)
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
+		if (response.status == 200) {
 			module.open(Code, { ...form, update: module.value.update });
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>

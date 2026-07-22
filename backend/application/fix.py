@@ -42,7 +42,6 @@ def quick_fix():
 
     db_close(con, cur)
     return {
-        "status": 200
     }, 200
 
 
@@ -58,5 +57,4 @@ def fix_access():
 
     db_close(con, cur)
     return {
-        "status": 200
     }, 200

@@ -26,7 +26,7 @@
 
 	const submit = async () => {
 		loading.open('Saving Post . . .');
-		let resp = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}`, {
+		let response = await fetch(`${import.meta.env.VITE_BACKEND}/posts/${post.key}`, {
 			method: 'put',
 			headers: {
 				'Content-Type': 'application/json',
@@ -34,15 +34,15 @@
 			},
 			body: JSON.stringify({ content })
 		});
-		resp = await resp.json();
+		let result = await response.json();
 		loading.close();
 
-		if (resp.status == 200) {
-			module.value.update(resp.post);
+		if (response.status == 200) {
+			module.value.update(result.post);
 			module.close();
 			notify.open('Content Saved');
 		} else {
-			error = resp;
+			error = result;
 		}
 	};
 </script>
