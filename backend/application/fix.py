@@ -19,7 +19,7 @@ def quick_fix():
             endpoint TEXT NOT NULL,
             date_created TIMESTAMPTZ DEFAULT NOW()
         );
-        CREATE INDEX idx_rate_limit_lookup
+        CREATE INDEX IF NOT EXISTS idx_rate_limit_lookup
             ON rate_limit_log (user_key, endpoint, date_created);
     """)
 
