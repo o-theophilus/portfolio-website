@@ -64,6 +64,7 @@ def many(cur, user):
 
     searchParams = {
         "search": "",
+        "status": "active",
         "order": "latest",
         "page_no": 1,
         "page_size": 24
@@ -113,7 +114,7 @@ def many(cur, user):
     return {
         "users": [user_schema(x) for x in users],
         "order_by": list(order_by.keys()),
-        "_status": ['anonymous', 'signedup', 'active'],
+        "status": ['anonymous', 'signedup', 'active'],
         "total_page": ceil(total_page / page_size),
         "searchParams": searchParams
     }, 200

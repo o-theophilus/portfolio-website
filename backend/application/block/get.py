@@ -4,7 +4,7 @@ from flask import Blueprint, request
 
 from ..tools import session
 
-bp = Blueprint("user_get", __name__)
+bp = Blueprint("block_get", __name__)
 
 
 def many(cur, user):

@@ -4,7 +4,7 @@ from math import ceil
 
 from flask import Blueprint, request
 
-from ..comments import many as many_comment
+from ..comment import many as many_comment
 from ..tools import session
 
 bp = Blueprint("post_get", __name__)
@@ -180,10 +180,10 @@ def many(cur, user):
     return {
         "posts": [post_schema(x) for x in posts],
         "order_by": list(order_by.keys()),
-        "_status": ['active', 'draft'],
+        "status": ['active', 'draft'],
         "total_page": ceil(total_page / page_size),
         "searchParams": searchParams
-    }, 200
+    }
 
 
 @bp.get("/posts")

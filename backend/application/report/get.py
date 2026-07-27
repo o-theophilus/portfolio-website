@@ -161,7 +161,7 @@ def many(cur, user):
     return {
         "reports": reports,
         "order_by": list(order_by.keys()),
-        "_status": ["active", "resolved", "dismissed"],
+        "status": ["active", "resolved", "dismissed"],
         "type": ["all", "user", "comment"],
         "total_page": ceil(total_page / page_size),
         "searchParams": searchParams

@@ -5,7 +5,7 @@ from flask import Blueprint, request
 from ..tools import log, rate_limit, session, user_schema
 from .get import many
 
-bp = Blueprint("user_block", __name__)
+bp = Blueprint("block", __name__)
 
 
 @bp.post("/blocks/<key>")

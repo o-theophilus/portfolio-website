@@ -47,10 +47,7 @@
 						<a
 							class="link"
 							href="/{post.slug}"
-							onclick={() => {
-								prerender(post);
-								update(post);
-							}}
+							onclick={() => prerender(post)}
 							onmouseenter={() => prerender(post)}
 						>
 							{post.title}
