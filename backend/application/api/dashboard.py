@@ -262,11 +262,11 @@ def dashboard(cur, user):
         "1 month": "1 month",
     }
 
-    searchParams = {
+    search_params = {
         "interval": "24 hours",
     }
 
-    interval = request.args.get("interval", searchParams["interval"])
+    interval = request.args.get("interval", search_params["interval"])
 
     _new_users = new_users(cur, intervals[interval])
     _post_summary = post_summary(cur)
@@ -278,6 +278,6 @@ def dashboard(cur, user):
         "post_summary": _post_summary,
         # "top_users": _top_users,
         # "item_available": _item_available,
-        "searchParams": searchParams,
+        "search_params": search_params,
         "filters": list(intervals.keys()),
     }, 200

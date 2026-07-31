@@ -10,7 +10,7 @@ bp = Blueprint("log_get", __name__)
 @bp.get("/logs")
 @session(True)
 def many(cur, user):
-    searchParams = {
+    search_params = {
         "u_search": "",
         "entity_type": "all",
         "action": "all",
@@ -18,12 +18,12 @@ def many(cur, user):
         "page_no": 1,
         "page_size": 24
     }
-    u_search = request.args.get("u_search", searchParams["u_search"]).strip()
-    entity_type = request.args.get("entity_type", searchParams["entity_type"])
-    action = request.args.get("action", searchParams["action"])
-    e_search = request.args.get("e_search", searchParams["e_search"]).strip()
-    page_no = int(request.args.get("page_no", searchParams["page_no"]))
-    page_size = int(request.args.get("page_size", searchParams["page_size"]))
+    u_search = request.args.get("u_search", search_params["u_search"]).strip()
+    entity_type = request.args.get("entity_type", search_params["entity_type"])
+    action = request.args.get("action", search_params["action"])
+    e_search = request.args.get("e_search", search_params["e_search"]).strip()
+    page_no = int(request.args.get("page_no", search_params["page_no"]))
+    page_size = int(request.args.get("page_size", search_params["page_size"]))
     page_size = min(page_size, 100)
 
     if "log.view" not in user["access"]:
@@ -127,5 +127,5 @@ def many(cur, user):
         "logs": logs,
         "search_query": search_query,
         "total_page": ceil(logs[0]["_count"] / page_size) if logs else 0,
-        "searchParams": searchParams
+        "search_params": search_params
     }, 200

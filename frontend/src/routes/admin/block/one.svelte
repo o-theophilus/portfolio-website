@@ -5,7 +5,7 @@
 	import { app, module } from '$lib/store.svelte.js';
 	import Form from './one.form.svelte';
 
-	let { block, update, searchParams } = $props();
+	let { block, update, search_params } = $props();
 	let open = $state(false);
 </script>
 
@@ -65,7 +65,7 @@
 					--button-font-size="0.8rem"
 					--button-height="32px"
 					--button-outline-color-hover="var(--ol)"
-					onclick={() => module.open(Form, { user: block.user, update, searchParams })}
+					onclick={() => module.open(Form, { user: block.user, update, search_params })}
 				>
 					Unblock
 				</Button>

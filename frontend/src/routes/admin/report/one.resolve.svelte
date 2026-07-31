@@ -31,7 +31,7 @@
 		loading.open('Resolving Report . . .');
 		let response = await fetch(
 			`${import.meta.env.VITE_BACKEND}/reports/${module.value.report.key}?${new URLSearchParams(
-				module.value.searchParams
+				module.value.search_params
 			).toString()}`,
 			{
 				method: 'put',

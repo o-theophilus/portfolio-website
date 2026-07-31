@@ -6,7 +6,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
 
     let a = await parent();
     if (!a.locals.login || a.locals.user.access.length == 0) {
-        throw error(404, "Unauthorized access")
+        throw error(403, "Unauthorized access")
     }
 
     let page_name = "dashboard"
@@ -16,7 +16,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
             sp[key] = value
         }
         page_state.state[page_name] = {
-            searchParams: sp,
+            search_params: sp,
             data: [],
             loaded: false
         }
@@ -25,7 +25,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
     }
 
     let backend = new URL(`${import.meta.env.VITE_BACKEND}/dashboard`)
-    backend.search = new URLSearchParams(page_state.state[page_name].searchParams);
+    backend.search = new URLSearchParams(page_state.state[page_name].search_params);
     let response = await fetch(backend.href, {
         method: 'get',
         headers: {

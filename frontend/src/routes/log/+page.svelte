@@ -15,15 +15,15 @@
 	let logs = $derived(data.logs);
 	let total_page = $derived(data.total_page);
 	let search_query = $derived(data.search_query);
-	let searchParams = $state({ ...data.searchParams });
-	let defaultParams = $state(data.searchParams);
+	let search_params = $state({ ...data.search_params });
+	let default_params = $state(data.search_params);
 
 	onMount(() => {
-		const sp = page_state.searchParams;
+		const sp = page_state.search_params;
 		if (Object.keys(sp).length) {
 			queueMicrotask(() => replaceState(`?${new URLSearchParams(sp)}`));
-			for (const key of Object.keys(searchParams)) {
-				if (sp[key]) searchParams[key] = sp[key];
+			for (const key of Object.keys(search_params)) {
+				if (sp[key]) search_params[key] = sp[key];
 			}
 		}
 	});
@@ -40,17 +40,17 @@
 		<div class="line nowrap">
 			<Search
 				placeholder="Search for User"
-				bind:value={searchParams.u_search}
+				bind:value={search_params.u_search}
 				ondone={(v) => {
-					searchParams.page_no = 1;
+					search_params.page_no = 1;
 					page_state.set({ u_search: v });
 				}}
 			></Search>
 			<Button
-				disabled={searchParams.u_search == app.user.key}
+				disabled={search_params.u_search == app.user.key}
 				onclick={() => {
-					searchParams.page_no = 1;
-					searchParams.u_search = app.user.key;
+					search_params.page_no = 1;
+					search_params.u_search = app.user.key;
 					page_state.set({ u_search: app.user.key });
 				}}>Me</Button
 			>
@@ -61,12 +61,12 @@
 		<Dropdown
 			icon2="chevron-down"
 			list={Object.keys(search_query)}
-			bind:value={searchParams.entity_type}
+			bind:value={search_params.entity_type}
 			onchange={(v) => {
-				searchParams.page_no = 1;
-				searchParams.action = 'all';
+				search_params.page_no = 1;
+				search_params.action = 'all';
 				page_state.set({
-					entity_type: v == defaultParams.entity_type ? '' : v,
+					entity_type: v == default_params.entity_type ? '' : v,
 					action: ''
 				});
 			}}
@@ -74,21 +74,21 @@
 		/>
 		<Dropdown
 			icon2="chevron-down"
-			list={search_query[searchParams.entity_type]}
-			bind:value={searchParams.action}
+			list={search_query[search_params.entity_type]}
+			bind:value={search_params.action}
 			onchange={(v) => {
-				searchParams.page_no = 1;
-				page_state.set({ action: v == defaultParams.action ? '' : v });
+				search_params.page_no = 1;
+				page_state.set({ action: v == default_params.action ? '' : v });
 			}}
 			--select-width="100%"
 		/>
 	</div>
 
 	<Search
-		placeholder="Search for {searchParams.entity_type}"
-		bind:value={searchParams.e_search}
+		placeholder="Search for {search_params.entity_type}"
+		bind:value={search_params.e_search}
 		ondone={(v) => {
-			searchParams.page_no = 1;
+			search_params.page_no = 1;
 			page_state.set({ e_search: v });
 		}}
 	></Search>
@@ -97,7 +97,7 @@
 <Content --content-padding-top="1px">
 	{#each logs as log (log.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<One {log} bind:searchParams />
+			<One {log} bind:search_params />
 		</div>
 	{:else}
 		<PageNote>
@@ -108,7 +108,7 @@
 
 	<Pagination
 		{total_page}
-		bind:value={searchParams.page_no}
+		bind:value={search_params.page_no}
 		ondone={(v) => {
 			if (v == 1) v = 0;
 			page_state.set({ page_no: v });

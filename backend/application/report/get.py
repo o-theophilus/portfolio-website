@@ -23,7 +23,7 @@ def many(cur, user):
         'oldest': 'ASC'
     }
 
-    searchParams = {
+    search_params = {
         "search": "",
         "status": "active",
         "type": "all",
@@ -31,12 +31,12 @@ def many(cur, user):
         "page_no": 1,
         "page_size": 24
     }
-    search = request.args.get("search", searchParams["search"]).strip()
-    _type = request.args.get("type", searchParams["type"])
-    status = request.args.get("status", searchParams["status"])
-    order = request.args.get("order", searchParams["order"])
-    page_no = int(request.args.get("page_no", searchParams["page_no"]))
-    page_size = int(request.args.get("page_size", searchParams["page_size"]))
+    search = request.args.get("search", search_params["search"]).strip()
+    _type = request.args.get("type", search_params["type"])
+    status = request.args.get("status", search_params["status"])
+    order = request.args.get("order", search_params["order"])
+    page_no = int(request.args.get("page_no", search_params["page_no"]))
+    page_size = int(request.args.get("page_size", search_params["page_size"]))
     page_size = min(page_size, 100)
 
     cur.execute(f"""
@@ -164,7 +164,7 @@ def many(cur, user):
         "status": ["active", "resolved", "dismissed"],
         "type": ["all", "user", "comment"],
         "total_page": ceil(total_page / page_size),
-        "searchParams": searchParams
+        "search_params": search_params
     }
 
 

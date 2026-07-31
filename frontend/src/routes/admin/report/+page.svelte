@@ -17,15 +17,15 @@
 	let { order_by } = data;
 	let { type } = data;
 	let { status } = data;
-	let searchParams = $state({ ...data.searchParams });
-	let defaultParams = $state(data.searchParams);
+	let search_params = $state({ ...data.search_params });
+	let default_params = $state(data.search_params);
 
 	onMount(() => {
-		const sp = page_state.searchParams;
+		const sp = page_state.search_params;
 		if (Object.keys(sp).length) {
 			queueMicrotask(() => replaceState(`?${new URLSearchParams(sp)}`));
-			for (const key of Object.keys(searchParams)) {
-				if (sp[key]) searchParams[key] = sp[key];
+			for (const key of Object.keys(search_params)) {
+				if (sp[key]) search_params[key] = sp[key];
 			}
 		}
 	});
@@ -45,9 +45,9 @@
 	</div>
 
 	<Search
-		bind:value={searchParams.search}
+		bind:value={search_params.search}
 		ondone={(v) => {
-			searchParams.page_no = 1;
+			search_params.page_no = 1;
 			page_state.set({ search: v });
 		}}
 	></Search>
@@ -60,12 +60,12 @@
 				--select-font-size="0.8rem"
 				icon="list-filter"
 				icon2="chevron-down"
-				label="Type: {searchParams.type}"
+				label="Type: {search_params.type}"
 				list={type}
-				bind:value={searchParams.type}
+				bind:value={search_params.type}
 				onchange={(v) => {
-					searchParams.page_no = 1;
-					page_state.set({ type: v == defaultParams.type ? '' : v });
+					search_params.page_no = 1;
+					page_state.set({ type: v == default_params.type ? '' : v });
 				}}
 			/>
 			<Dropdown
@@ -74,12 +74,12 @@
 				--select-font-size="0.8rem"
 				icon="list-filter"
 				icon2="chevron-down"
-				label="Status: {searchParams.status}"
+				label="Status: {search_params.status}"
 				list={status}
-				bind:value={searchParams.status}
+				bind:value={search_params.status}
 				onchange={(v) => {
-					searchParams.page_no = 1;
-					page_state.set({ status: v == defaultParams.status ? '' : v });
+					search_params.page_no = 1;
+					page_state.set({ status: v == default_params.status ? '' : v });
 				}}
 			/>
 		</div>
@@ -93,14 +93,14 @@
 			--select-color="var(--ft2)"
 			--select-color-hover="var(--ft1)"
 			--select-outline-color="transparent"
-			label="Sort: {searchParams.order}"
+			label="Sort: {search_params.order}"
 			icon="arrow-down-up"
 			icon2="chevron-down"
 			list={order_by}
-			bind:value={searchParams.order}
+			bind:value={search_params.order}
 			onchange={(v) => {
-				searchParams.page_no = 1;
-				page_state.set({ order: v == defaultParams.order ? '' : v });
+				search_params.page_no = 1;
+				page_state.set({ order: v == default_params.order ? '' : v });
 			}}
 		/>
 	</div>
@@ -109,7 +109,7 @@
 <Content --content-padding-top="1px">
 	{#each reports as report (report.key)}
 		<div animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
-			<One {report} {update} {searchParams} />
+			<One {report} {update} {search_params} />
 		</div>
 	{:else}
 		<PageNote>
@@ -120,7 +120,7 @@
 
 	<Pagination
 		{total_page}
-		bind:value={searchParams.page_no}
+		bind:value={search_params.page_no}
 		ondone={(v) => {
 			if (v == 1) v = 0;
 			page_state.set({ page_no: v });

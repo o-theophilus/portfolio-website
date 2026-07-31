@@ -19,7 +19,7 @@
 	let total_comment = $derived(comment_resp.total_comment);
 	let total_page = $derived(comment_resp.total_page);
 	let order_by = $derived(comment_resp.order_by);
-	let searchParams = $derived(comment_resp.searchParams);
+	let search_params = $derived(comment_resp.search_params);
 
 	let open = $derived(comments?.length > 0);
 
@@ -33,7 +33,7 @@
 		loading = true;
 
 		let response = await fetch(
-			`${import.meta.env.VITE_BACKEND}/posts/${post.key}/comments?${new URLSearchParams(searchParams).toString()}`,
+			`${import.meta.env.VITE_BACKEND}/posts/${post.key}/comments?${new URLSearchParams(search_params).toString()}`,
 			{
 				headers: {
 					'Content-Type': 'application/json',
@@ -87,13 +87,13 @@
 					--select-color="var(--ft2)"
 					--select-color-hover="var(--ft1)"
 					--select-outline-color="transparent"
-					label="Sort: {searchParams.order}"
+					label="Sort: {search_params.order}"
 					list={order_by}
 					icon="arrow-down-up"
 					icon2="chevron-down"
-					bind:value={searchParams.order}
+					bind:value={search_params.order}
 					onchange={(v) => {
-						searchParams.page_no = 1;
+						search_params.page_no = 1;
 						load();
 					}}
 				/>
@@ -104,11 +104,11 @@
 			<div class="comment" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
 				<div class="main">
 					<One {comment}></One>
-					<Control {comment} {post} {searchParams} {update}>
+					<Control {comment} {post} {search_params} {update}>
 						{#snippet reply()}
 							<RoundButton
 								icon="reply"
-								onclick={() => module.open(Add, { comment, post, searchParams, update })}
+								onclick={() => module.open(Add, { comment, post, search_params, update })}
 							/>
 						{/snippet}
 					</Control>
@@ -116,7 +116,7 @@
 				{#each comment.replies as reply (reply.key)}
 					<div class="reply" animate:flip={{ delay: 0, duration: 250, easing: cubicInOut }}>
 						<One comment={reply}></One>
-						<Control comment={reply} {post} {searchParams} {update}></Control>
+						<Control comment={reply} {post} {search_params} {update}></Control>
 					</div>
 				{/each}
 			</div>
@@ -129,7 +129,7 @@
 
 		<Pagination
 			{total_page}
-			bind:value={searchParams.page_no}
+			bind:value={search_params.page_no}
 			ondone={(v) => {
 				load();
 			}}
@@ -141,7 +141,7 @@
 	{#if app.login}
 		<Button
 			icon="message-circle-plus"
-			onclick={() => module.open(Add, { post, update, searchParams })}
+			onclick={() => module.open(Add, { post, update, search_params })}
 		>
 			Add comment
 		</Button>

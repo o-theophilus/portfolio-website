@@ -5,7 +5,7 @@
 
 	let text = $derived.by(() => {
 		let text = '';
-		const sp = page_state.searchParams;
+		const sp = page_state.search_params;
 
 		if (sp.search || sp.tag) text = 'Showing result';
 		if (sp.search) text += ` for [${sp.search}]`;

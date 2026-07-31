@@ -87,7 +87,7 @@ def many(cur, user):
         'like': 'DESC'
     }
 
-    searchParams = {
+    search_params = {
         "search": "",
         "status": "active",
         "tag": "",
@@ -95,12 +95,12 @@ def many(cur, user):
         "page_no": 1,
         "page_size": 24
     }
-    search = request.args.get("search", searchParams["search"]).strip()
-    status = request.args.get("status", searchParams["status"])
-    tag = request.args.get("tag", searchParams["tag"])
-    order = request.args.get("order", searchParams["order"])
-    page_no = int(request.args.get("page_no", searchParams["page_no"]))
-    page_size = int(request.args.get("page_size", searchParams["page_size"]))
+    search = request.args.get("search", search_params["search"]).strip()
+    status = request.args.get("status", search_params["status"])
+    tag = request.args.get("tag", search_params["tag"])
+    order = request.args.get("order", search_params["order"])
+    page_no = int(request.args.get("page_no", search_params["page_no"]))
+    page_size = int(request.args.get("page_size", search_params["page_size"]))
     page_size = min(page_size, 100)
 
     if (
@@ -182,7 +182,7 @@ def many(cur, user):
         "order_by": list(order_by.keys()),
         "status": ['active', 'draft'],
         "total_page": ceil(total_page / page_size),
-        "searchParams": searchParams
+        "search_params": search_params
     }
 
 

@@ -62,18 +62,18 @@ def many(cur, user):
         'name (z-a)': 'DESC'
     }
 
-    searchParams = {
+    search_params = {
         "search": "",
         "status": "active",
         "order": "latest",
         "page_no": 1,
         "page_size": 24
     }
-    search = request.args.get("search", searchParams["search"]).strip()
-    status = request.args.get("status", searchParams["status"])
-    order = request.args.get("order", searchParams["order"])
-    page_no = int(request.args.get("page_no", searchParams["page_no"]))
-    page_size = int(request.args.get("page_size", searchParams["page_size"]))
+    search = request.args.get("search", search_params["search"]).strip()
+    status = request.args.get("status", search_params["status"])
+    order = request.args.get("order", search_params["order"])
+    page_no = int(request.args.get("page_no", search_params["page_no"]))
+    page_size = int(request.args.get("page_size", search_params["page_size"]))
     page_size = min(page_size, 100)
 
     cur.execute(f"""
@@ -116,7 +116,7 @@ def many(cur, user):
         "order_by": list(order_by.keys()),
         "status": ['anonymous', 'signedup', 'active'],
         "total_page": ceil(total_page / page_size),
-        "searchParams": searchParams
+        "search_params": search_params
     }, 200
 
 
@@ -142,7 +142,7 @@ def many_admin(cur, user):
         'name (z-a)': 'DESC'
     }
 
-    searchParams = {
+    search_params = {
         "entity_type": "all",
         "action": "all",
         "search": "",
@@ -150,12 +150,12 @@ def many_admin(cur, user):
         "page_no": 1,
         "page_size": 24
     }
-    entity_type = request.args.get("entity_type", searchParams["entity_type"])
-    action = request.args.get("action", searchParams["action"])
-    search = request.args.get("search", searchParams["search"]).strip()
-    order = request.args.get("order", searchParams["order"])
-    page_no = int(request.args.get("page_no", searchParams["page_no"]))
-    page_size = int(request.args.get("page_size", searchParams["page_size"]))
+    entity_type = request.args.get("entity_type", search_params["entity_type"])
+    action = request.args.get("action", search_params["action"])
+    search = request.args.get("search", search_params["search"]).strip()
+    order = request.args.get("order", search_params["order"])
+    page_no = int(request.args.get("page_no", search_params["page_no"]))
+    page_size = int(request.args.get("page_size", search_params["page_size"]))
     page_size = min(page_size, 100)
 
     cur.execute(f"""
@@ -196,5 +196,5 @@ def many_admin(cur, user):
         "access": access,
         "order_by": list(order_by.keys()),
         "total_page": ceil(users[0]["_count"] / page_size) if users else 0,
-        "searchParams": searchParams
+        "search_params": search_params
     }, 200

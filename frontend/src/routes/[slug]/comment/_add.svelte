@@ -31,7 +31,7 @@
 		loading.open('Adding Comment . . .');
 		let response = await fetch(
 			`${import.meta.env.VITE_BACKEND}/comments/${post.key}?${new URLSearchParams(
-				module.value.searchParams
+				module.value.search_params
 			).toString()}`,
 			{
 				method: 'post',

@@ -9,7 +9,7 @@
 	import Delete from './_delete.svelte';
 	import Report from './_report.svelte';
 
-	let { comment, post, searchParams, update, reply } = $props();
+	let { comment, post, search_params, update, reply } = $props();
 
 	let error = $state({});
 	let open_menu = $state(false);
@@ -90,7 +90,7 @@
 			{#if open_menu}
 				<div class="menu" transition:slide={{ delay: 0, duration: 200, easing: cubicInOut }}>
 					{#if comment.user.key == app.user.key}
-						<button onclick={() => module.open(Delete, { comment, update, searchParams })}>
+						<button onclick={() => module.open(Delete, { comment, update, search_params })}>
 							<Icon icon="trash-2"></Icon>
 							Delete
 						</button>

@@ -2,7 +2,7 @@
 	import { Datetime, Icon } from '$lib/macro';
 	import { app, page_state } from '$lib/store.svelte.js';
 
-	let { log, searchParams = $bindable() } = $props();
+	let { log, search_params = $bindable() } = $props();
 
 	let href = $state('');
 	if (log.entity.type == 'post') {
@@ -39,8 +39,8 @@
 	{#if log.user.key && app.user.access.includes('log.view_others')}
 		<button
 			onclick={() => {
-				searchParams.page_no = 1;
-				searchParams.u_search = log.user.key;
+				search_params.page_no = 1;
+				search_params.u_search = log.user.key;
 				page_state.set({ u_search: log.user.key });
 			}}
 		>
@@ -58,8 +58,8 @@
 
 		<button
 			onclick={() => {
-				searchParams.page_no = 1;
-				searchParams.e_search = log.entity.key;
+				search_params.page_no = 1;
+				search_params.e_search = log.entity.key;
 				page_state.set({ e_search: log.entity.key });
 			}}
 		>
@@ -90,7 +90,7 @@
 		border-radius: 8px;
 		padding: 16px;
 		outline: 1px solid var(--ol);
-		outline-offset: -1pxs;
+		outline-offset: -1px;
 
 		font-size: 0.8rem;
 	}

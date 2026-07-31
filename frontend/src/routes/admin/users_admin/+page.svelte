@@ -17,15 +17,15 @@
 	let { access } = data;
 
 	let { order_by } = data;
-	let searchParams = $state({ ...data.searchParams });
-	let defaultParams = $state(data.searchParams);
+	let search_params = $state({ ...data.search_params });
+	let default_params = $state(data.search_params);
 
 	onMount(() => {
-		const sp = page_state.searchParams;
+		const sp = page_state.search_params;
 		if (Object.keys(sp).length) {
 			queueMicrotask(() => replaceState(`?${new URLSearchParams(sp)}`));
-			for (const key of Object.keys(searchParams)) {
-				if (sp[key]) searchParams[key] = sp[key];
+			for (const key of Object.keys(search_params)) {
+				if (sp[key]) search_params[key] = sp[key];
 			}
 		}
 	});
@@ -40,9 +40,9 @@
 	</div>
 
 	<Search
-		bind:value={searchParams.search}
+		bind:value={search_params.search}
 		ondone={(v) => {
-			searchParams.page_no = 1;
+			search_params.page_no = 1;
 			page_state.set({ search: v });
 		}}
 	></Search>
@@ -54,14 +54,14 @@
 				--select-padding-x="8px"
 				--select-font-size="0.8rem"
 				icon2="chevron-down"
-				label="Type: {searchParams.entity_type}"
+				label="Type: {search_params.entity_type}"
 				list={Object.keys(access)}
-				bind:value={searchParams.entity_type}
+				bind:value={search_params.entity_type}
 				onchange={(v) => {
-					searchParams.page_no = 1;
-					searchParams.action = defaultParams.action;
+					search_params.page_no = 1;
+					search_params.action = default_params.action;
 					page_state.set({
-						entity_type: v == defaultParams.entity_type ? '' : v,
+						entity_type: v == default_params.entity_type ? '' : v,
 						action: ''
 					});
 				}}
@@ -71,12 +71,12 @@
 				--select-padding-x="8px"
 				--select-font-size="0.8rem"
 				icon2="chevron-down"
-				label="Action: {searchParams.action}"
-				list={access[searchParams.entity_type]}
-				bind:value={searchParams.action}
+				label="Action: {search_params.action}"
+				list={access[search_params.entity_type]}
+				bind:value={search_params.action}
 				onchange={(v) => {
-					searchParams.page_no = 1;
-					page_state.set({ action: v == defaultParams.action ? '' : v });
+					search_params.page_no = 1;
+					page_state.set({ action: v == default_params.action ? '' : v });
 				}}
 			/>
 		</div>
@@ -90,14 +90,14 @@
 			--select-color="var(--ft2)"
 			--select-color-hover="var(--ft1)"
 			--select-outline-color="transparent"
-			label="Sort: {searchParams.order}"
+			label="Sort: {search_params.order}"
 			list={order_by}
 			icon="arrow-down-up"
 			icon2="chevron-down"
-			bind:value={searchParams.order}
+			bind:value={search_params.order}
 			onchange={(v) => {
-				searchParams.page_no = 1;
-				page_state.set({ order: v == defaultParams.order ? '' : v });
+				search_params.page_no = 1;
+				page_state.set({ order: v == default_params.order ? '' : v });
 			}}
 		/>
 	</div>
@@ -117,7 +117,7 @@
 
 	<Pagination
 		{total_page}
-		bind:value={searchParams.page_no}
+		bind:value={search_params.page_no}
 		ondone={(v) => {
 			if (v == 1) v = 0;
 			page_state.set({ page_no: v });

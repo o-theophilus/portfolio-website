@@ -27,14 +27,14 @@ def many(cur, user, key):
         'most engaged': 'DESC',
     }
 
-    searchParams = {
+    search_params = {
         "order": 'most relevant',
         "page_no": 1,
         "page_size": 24
     }
-    order = request.args.get("order", searchParams["order"])
-    page_no = int(request.args.get("page_no", searchParams["page_no"]))
-    page_size = int(request.args.get("page_size", searchParams["page_size"]))
+    order = request.args.get("order", search_params["order"])
+    page_no = int(request.args.get("page_no", search_params["page_no"]))
+    page_size = int(request.args.get("page_size", search_params["page_size"]))
     page_size = min(page_size, 100)
 
     cur.execute(f"""
@@ -170,7 +170,7 @@ def many(cur, user, key):
         "order_by": list(order_by.keys()),
         "total_comment": total,
         "total_page": ceil(total_parent / page_size),
-        "searchParams": searchParams,
+        "search_params": search_params,
     }
 
 

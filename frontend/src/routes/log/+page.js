@@ -4,7 +4,7 @@ import { error } from "@sveltejs/kit";
 export const load = async ({ fetch, url, parent, depends }) => {
 	let a = await parent();
 	if (!a.locals.login || !a.locals.user.access.includes('log.view')) {
-		throw error(400, "Unauthorized access")
+		throw error(403, "Unauthorized access")
 	}
 
 	depends(true)
@@ -16,7 +16,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
 			sp[key] = value
 		}
 		page_state.state[page_name] = {
-			searchParams: sp,
+			search_params: sp,
 			data: [],
 			loaded: false
 		}
@@ -25,7 +25,7 @@ export const load = async ({ fetch, url, parent, depends }) => {
 	}
 
 	let backend = new URL(`${import.meta.env.VITE_BACKEND}/logs`)
-	backend.search = new URLSearchParams(page_state.state[page_name].searchParams);
+	backend.search = new URLSearchParams(page_state.state[page_name].search_params);
 	let response = await fetch(backend.href, {
 		method: 'get',
 		headers: {
