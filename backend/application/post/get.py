@@ -202,7 +202,7 @@ def many_feature(cur, user):
 
     return {
         "posts": [post_schema(x) for x in posts]
-    }, 200
+    }
 
 
 @bp.get("/posts/feature")
